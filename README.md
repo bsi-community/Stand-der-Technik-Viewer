@@ -367,7 +367,6 @@ Der Viewer ist auf groessere OSCAL-Dokumente ausgelegt. Wichtige Massnahmen:
 ## Start
 
 1. `Stand der Technik-Viewer.html` im Browser oeffnen.
-   Alternativ kann zum Testen der aktuellen Oberflaeche auch `DESIGN_NEU_Stand der Technik-Viewer - Kopie.html` geoeffnet werden.
 2. Catalog und/oder Component Definition per Datei oder URL laden.
 3. Zwischen `Katalog` und `Komponenten` wechseln.
 4. Tabs, Suche, Filter, Diagramme und PDF-Export verwenden.
