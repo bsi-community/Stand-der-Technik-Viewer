@@ -3457,7 +3457,7 @@ function baseMatches(c){ return matches(c); }
           body.appendChild(remarks);
         }
       if(impl.props && impl.props.length) appendGenericObjectList(body, 'Props', impl.props, searchTerm, componentState.resourceByUuid, componentState.baseUrl);
-      if(impl.links && impl.links.length) appendGenericObjectList(body, 'Links', impl.links, searchTerm, componentState.resourceByUuid, componentState.baseUrl);
+      if(impl.links && impl.links.length) appendDocumentLinksSection(body, impl.links, searchTerm);
       if(impl.setParameters && impl.setParameters.length) appendGenericObjectList(body, 'Gesetzte Parameter', impl.setParameters, searchTerm, componentState.resourceByUuid, componentState.baseUrl);
       renderResponsibleRoles(body, 'Verantwortliche Rollen', impl.responsibleRoles, searchTerm);
       appendRemainingObjectFields(body, 'Weitere Felder', impl.raw, ['uuid','source','description','props','links','set-parameters','responsible-roles','implemented-requirements','remarks'], searchTerm, componentState.resourceByUuid, componentState.baseUrl);
@@ -3537,11 +3537,11 @@ function baseMatches(c){ return matches(c); }
       parent.appendChild(section);
     }
 
-    function appendComponentLinksSection(parent, links, searchTerm){
+    function appendDocumentLinksSection(parent, links, searchTerm){
       if(!links || !links.length) return;
 
       var details=document.createElement('details');
-      details.innerHTML='<summary><strong>Links & Dokumentationen</strong></summary>';
+      details.innerHTML='<summary><strong>Links und Dokumentationen</strong></summary>';
 
       var wrap=document.createElement('div');
       wrap.className='component-link-list';
@@ -3642,7 +3642,7 @@ function baseMatches(c){ return matches(c); }
         extra.appendChild(rem);
       }
       if(req.props && req.props.length) appendGenericObjectList(extra, 'Props', req.props, searchTerm, componentState.resourceByUuid, componentState.baseUrl);
-      if(req.links && req.links.length) appendGenericObjectList(extra, 'Links', req.links, searchTerm, componentState.resourceByUuid, componentState.baseUrl);
+      if(req.links && req.links.length) appendDocumentLinksSection(extra, req.links, searchTerm);
       if(req.setParameters && req.setParameters.length) appendGenericObjectList(extra, 'Gesetzte Parameter', req.setParameters, searchTerm, componentState.resourceByUuid, componentState.baseUrl);
       renderResponsibleRoles(extra, 'Verantwortliche Rollen', req.responsibleRoles, searchTerm);
       appendRemainingObjectFields(extra, 'Weitere Felder', req.raw, ['uuid','control-id','description','props','links','set-parameters','responsible-roles','statements','remarks'], searchTerm, componentState.resourceByUuid, componentState.baseUrl);
@@ -3669,7 +3669,7 @@ function baseMatches(c){ return matches(c); }
             stmtCard.appendChild(stmtRemarks);
           }
           if(stmt.props && stmt.props.length) appendGenericObjectList(stmtCard, 'Props', stmt.props, searchTerm, componentState.resourceByUuid, componentState.baseUrl);
-          if(stmt.links && stmt.links.length) appendGenericObjectList(stmtCard, 'Links', stmt.links, searchTerm, componentState.resourceByUuid, componentState.baseUrl);
+          if(stmt.links && stmt.links.length) appendDocumentLinksSection(stmtCard, stmt.links, searchTerm);
           renderResponsibleRoles(stmtCard, 'Verantwortliche Rollen', stmt.responsibleRoles, searchTerm);
           appendRemainingObjectFields(stmtCard, 'Weitere Felder', stmt.raw, ['statement-id','uuid','description','props','links','responsible-roles','remarks'], searchTerm, componentState.resourceByUuid, componentState.baseUrl);
           stmtWrap.appendChild(stmtCard);
@@ -3733,7 +3733,7 @@ function baseMatches(c){ return matches(c); }
         card.appendChild(rem);
       }
       if(owner.kind==='component' && owner.links && owner.links.length){
-        appendComponentLinksSection(card, owner.links, searchTerm);
+        appendDocumentLinksSection(card, owner.links, searchTerm);
       }
       if(owner.kind==='capability' && owner.incorporatesComponents && owner.incorporatesComponents.length){
         appendCapabilityComponentsSection(card, owner, searchTerm);
