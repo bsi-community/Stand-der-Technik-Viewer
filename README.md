@@ -11,7 +11,7 @@ Die gesamte Verarbeitung erfolgt clientseitig im Browser. Es gibt keinen Servera
 
 - `Stand der Technik-Viewer.html`
   Hauptviewer mit eingebettetem CSS und JavaScript.
-- `DESIGN_NEU_Stand der Technik-Viewer - Kopie.html`
+- `Stand der Technik-Viewer.html`
   Aktuelle Design- und UX-Arbeitsversion mit derselben Kernlogik, aber modernisierter Oberflaeche.
 - `d3.v7.min.js`
   Lokal eingebundene D3-Bibliothek fuer Graph-, Sunburst- und Balkendiagramm-Ansichten.
