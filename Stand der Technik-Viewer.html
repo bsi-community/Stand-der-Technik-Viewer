@@ -840,6 +840,10 @@
       return highlightSearchInHtml(escapeHtml(raw==null?'':String(raw)), searchTerm);
     }
 
+    function looksUuidLikeId(v){
+      return /^_?[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(v||''));
+    }
+
     // Minimalistische Map/Set-Hilfen fuer schnelle Lookups ohne externe Abhaengigkeiten.
     function ObjMap(){ this._ = {}; } ObjMap.prototype.set=function(k,v){this._[k]=v;}; ObjMap.prototype.get=function(k){return this._[k];}; ObjMap.prototype.has=function(k){return Object.prototype.hasOwnProperty.call(this._,k);}; ObjMap.prototype.clear=function(){this._={};};
     function StrSet(){ this._={}; } StrSet.prototype.add=function(k){this._[k]=true;}; StrSet.prototype.has=function(k){return !!this._[k];}; StrSet.prototype.values=function(){var a=[];for(var k in this._){if(this._.hasOwnProperty(k))a.push(k);}return a;};
@@ -851,7 +855,7 @@
     var $=function(s){return document.querySelector(s);}; var $$=function(s){return Array.prototype.slice.call(document.querySelectorAll(s));};
 
     // Zentraler Laufzeitstatus fuer Katalogdaten, Komponentendaten und UI-Zustaende.
-    var state={controls:[], idMap:new ObjMap(), edgesBase:[], q:'', qRaw:'', groups:[], classes:[], secs:[], targets:[], tags:[], efforts:[], modalverbs:[], documentations:[], actionwords:[], topics:[], topicById:new ObjMap(), childrenByTopic:{}, childrenByPractice:{}, groupRoots:[], groupByKey:new ObjMap(), controlsByGroup:{}, ungroupedControls:[], openTopics:{}, practices:[], practiceById:new ObjMap(), topicsByPractice:{}, openPractices:{}, openGroups:{}, jsonText:'', catalogUuid:'', catalogMetadata:null, catalogBackMatter:null, catalogBaseUrl:'', catalogResourcesByUuid:new ObjMap()};
+    var state={controls:[], idMap:new ObjMap(), uuidMap:new ObjMap(), edgesBase:[], q:'', qRaw:'', groups:[], classes:[], secs:[], targets:[], tags:[], efforts:[], modalverbs:[], documentations:[], actionwords:[], topics:[], topicById:new ObjMap(), childrenByTopic:{}, childrenByPractice:{}, groupRoots:[], groupByKey:new ObjMap(), controlsByGroup:{}, ungroupedControls:[], openTopics:{}, practices:[], practiceById:new ObjMap(), topicsByPractice:{}, openPractices:{}, openGroups:{}, jsonText:'', catalogUuid:'', catalogMetadata:null, catalogBackMatter:null, catalogBaseUrl:'', catalogResourcesByUuid:new ObjMap()};
     function createComponentState(){
       return {
         documentUuid:'',
@@ -1884,7 +1888,7 @@
 
     // Catalog parsen, Hierarchien aufbauen und Controls in eine renderbare Struktur ueberfuehren.
     function processCatalog(root){
-      state.controls=[]; state.idMap=new ObjMap(); state.edgesBase=[]; state.topics=[]; state.topicById=new ObjMap(); state.childrenByTopic={}; state.childrenByPractice={}; state.groupRoots=[]; state.groupByKey=new ObjMap(); state.controlsByGroup={}; state.ungroupedControls=[]; state.openTopics={}; state.practices=[]; state.practiceById=new ObjMap(); state.topicsByPractice={}; state.openPractices={}; state.openGroups={}; state.catalogUuid=''; state.catalogMetadata=null; state.catalogBackMatter=null; state.catalogResourcesByUuid=new ObjMap();
+      state.controls=[]; state.idMap=new ObjMap(); state.uuidMap=new ObjMap(); state.edgesBase=[]; state.topics=[]; state.topicById=new ObjMap(); state.childrenByTopic={}; state.childrenByPractice={}; state.groupRoots=[]; state.groupByKey=new ObjMap(); state.controlsByGroup={}; state.ungroupedControls=[]; state.openTopics={}; state.practices=[]; state.practiceById=new ObjMap(); state.topicsByPractice={}; state.openPractices={}; state.openGroups={}; state.catalogUuid=''; state.catalogMetadata=null; state.catalogBackMatter=null; state.catalogResourcesByUuid=new ObjMap();
 
       var catCandidate = root && (root.catalog || root.profile || root.component || root);
       if(!catCandidate){ throw new Error('Ungültige JSON-Struktur: Erwartet ein "catalog" / "profile" / "component" Objekt.'); }
@@ -1899,9 +1903,6 @@
       }
 
       // Control sammeln und in Anzeige-Objekt transformieren
-      function looksUuidLikeId(v){
-        return /^_?[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(v||''));
-      }
       function collectControl(c, path, topicId, practiceId, groupKey, parentId, enhDepth){
         var labelId = valueOfProp(c.props,'label') || '';
         var rawId = c.id || '';
@@ -1952,7 +1953,7 @@
                     searchText: hay,
                     statement:partText(parts,'statement'), guidance:partText(parts,'guidance'),
                     links:(c.links||[]), path:[].concat(path), paramMap:paramMap };
-        state.controls.push(entry); state.idMap.set(id, entry); if(rawId && rawId!==id){ state.idMap.set(rawId, entry); }
+        state.controls.push(entry); state.idMap.set(id, entry); if(rawId && rawId!==id){ state.idMap.set(rawId, entry); } if(uuid){ state.uuidMap.set(uuid, entry); }
         if(groupKey){
           if(!state.controlsByGroup[groupKey]) state.controlsByGroup[groupKey]=[];
           state.controlsByGroup[groupKey].push(entry);
@@ -3018,6 +3019,24 @@ function baseMatches(c){ return matches(c); }
       return entry.kind==='capability' ? (entry.name || entry.title || 'Capability') : (entry.title || entry.name || 'Komponente');
     }
 
+    function getCatalogControlByRef(controlRef){
+      var key=String(controlRef||'').trim();
+      if(!key) return null;
+      return state.uuidMap.get(key) || state.idMap.get(key) || null;
+    }
+
+    function getCatalogControlDisplayId(controlRef){
+      var control=getCatalogControlByRef(controlRef);
+      return control ? (control.id || control.labelId || control.rawId || '') : '';
+    }
+
+    function getCatalogControlUuid(controlRef){
+      var control=getCatalogControlByRef(controlRef);
+      if(control && control.uuid) return control.uuid;
+      var key=String(controlRef||'').trim();
+      return looksUuidLikeId(key) ? key : '';
+    }
+
     function createImplementationEntry(impl, owner){
       var source=String(impl && impl.source || '').trim();
       var sourceResource=getBackMatterResource(componentState.resourceByUuid, source);
@@ -3049,6 +3068,8 @@ function baseMatches(c){ return matches(c); }
           id:reqKey,
           uuid:req.uuid || '',
           controlId:req['control-id'] || '',
+          catalogControlId:'',
+          catalogControlUuid:'',
           description:req.description || '',
           props:req.props || [],
           links:req.links || [],
@@ -3115,8 +3136,12 @@ function baseMatches(c){ return matches(c); }
         var reqs=impl.requirements || [];
         for(var r=0;r<reqs.length;r++){
           var req=reqs[r];
+          req.catalogControlId=getCatalogControlDisplayId(req.controlId);
+          req.catalogControlUuid=getCatalogControlUuid(req.controlId);
           parts.push(
             req.controlId,
+            req.catalogControlId,
+            req.catalogControlUuid,
             req.uuid,
             replaceParams(req.description, req.paramMap),
             replaceParams(req.remarks, req.paramMap)
@@ -3135,10 +3160,8 @@ function baseMatches(c){ return matches(c); }
       return parts.join(' \n ').toLowerCase();
     }
 
-    function getCatalogParamMapForControl(controlId){
-      var key=String(controlId||'').trim();
-      if(!key) return {};
-      var control=state.idMap.get(key);
+    function getCatalogParamMapForControl(controlRef){
+      var control=getCatalogControlByRef(controlRef);
       return control && control.paramMap ? control.paramMap : {};
     }
 
@@ -3359,12 +3382,12 @@ function baseMatches(c){ return matches(c); }
       appendGenericObjectList(parent, title, roles, searchTerm, componentState.resourceByUuid, componentState.baseUrl);
     }
 
-    function goToCatalogControl(controlId){
-      var id=String(controlId||'').trim();
-      if(!id) return;
-      var target=state.idMap.get(id);
+    function goToCatalogControl(controlRef){
+      var ref=String(controlRef||'').trim();
+      if(!ref) return;
+      var target=getCatalogControlByRef(ref);
       if(!target){
-        showMsg('<strong>Die referenzierte Anforderung wurde im geladenen Katalog nicht gefunden:</strong><br/><code>'+escapeHtml(id)+'</code>', true);
+        showMsg('<strong>Die referenzierte Anforderung wurde im geladenen Katalog nicht gefunden:</strong><br/><code>'+escapeHtml(ref)+'</code>', true);
         return;
       }
       switchTab('list');
@@ -3577,12 +3600,15 @@ function baseMatches(c){ return matches(c); }
       var card=document.createElement('article');
       card.className='card component-card requirement';
       card.id='component-req-'+cssId(req.id);
-      var jumpAvailable=!!state.idMap.get(req.controlId);
+      var catalogControl=getCatalogControlByRef(req.controlId);
+      var jumpAvailable=!!catalogControl;
+      var displayId=req.catalogControlId || (catalogControl && catalogControl.id) || req.controlId || 'ohne-control-id';
+      var displayUuid=req.catalogControlUuid || (catalogControl && catalogControl.uuid) || (looksUuidLikeId(req.controlId) ? req.controlId : '') || '–';
       var meta=document.createElement('div');
       meta.className='meta';
-      meta.innerHTML='<span class="kv"><strong>UUID:</strong> <code>'+renderHighlightedInline(req.uuid||'–', searchTerm)+'</code></span>'
+      meta.innerHTML='<span class="kv"><strong>UUID:</strong> <code>'+renderHighlightedInline(displayUuid, searchTerm)+'</code></span>'
         + '<span class="kv"><strong>Quelle:</strong> <code>'+renderHighlightedInline(req.sourceLabel||'–', searchTerm)+'</code></span>';
-      card.innerHTML='<div class="title"><h3><mark>'+renderHighlightedInline(req.controlId||'ohne-control-id', searchTerm)+'</mark> – Implementierte Anforderung</h3></div>';
+      card.innerHTML='<div class="title"><h3><mark>'+renderHighlightedInline(displayId, searchTerm)+'</mark> – Implementierte Anforderung</h3></div>';
       card.appendChild(meta);
       if(req.description){
         var desc=document.createElement('div');
@@ -3948,7 +3974,7 @@ function baseMatches(c){ return matches(c); }
               var reqNodeId='req:'+req.id;
               addNode({
                 id:reqNodeId,
-                label:req.controlId || 'Requirement',
+                label:req.catalogControlId || getCatalogControlDisplayId(req.controlId) || req.controlId || 'Requirement',
                 nodeType:'requirement',
                 owner:owner,
                 requirement:req
@@ -4029,7 +4055,7 @@ function baseMatches(c){ return matches(c); }
           node.append('text').text(function(d){ return d.label; }).attr('x',14).attr('y',4).attr('font-size','12px').attr('fill','#162434');
           node.on('click', function(ev,d){
             if(d.nodeType==='requirement'){
-              if(d.requirement && state.idMap.get(d.requirement.controlId)){ goToCatalogControlFromComponent(d.requirement); }
+              if(d.requirement && getCatalogControlByRef(d.requirement.controlId)){ goToCatalogControlFromComponent(d.requirement); }
               else { openComponentLocation(d.owner, d.requirement); }
             } else {
               openComponentLocation(d.owner);
