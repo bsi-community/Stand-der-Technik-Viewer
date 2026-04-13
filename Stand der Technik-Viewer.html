@@ -872,6 +872,8 @@
         componentByUuid:new ObjMap(),
         capabilityByUuid:new ObjMap(),
         controlRefMap:{},
+        capabilityComponents:{},
+        componentCapabilityKeys:{},
         componentToCapabilities:{},
         q:'',
         qRaw:'',
@@ -1338,7 +1340,11 @@
       if(!target) return;
       uiState.componentReturnTarget=null;
       if(target.ownerKind==='capability'){ componentState.openCapabilities[target.ownerKey]=true; }
-      else { componentState.openComponents[target.ownerKey]=true; }
+      else {
+        componentState.openComponents[target.ownerKey]=true;
+        var ownerCaps=componentState.componentCapabilityKeys[target.ownerKey] || [];
+        for(var oc=0;oc<ownerCaps.length;oc++){ componentState.openCapabilities[ownerCaps[oc]]=true; }
+      }
       if(target.implKey){ componentState.openImplementations[target.implKey]=true; }
       setTimeout(function(){
         var el = document.getElementById(target.anchorId || ('component-wrapper-'+cssId(target.ownerKey)));
@@ -3280,10 +3286,20 @@ function baseMatches(c){ return matches(c); }
 
       for(var cp=0;cp<componentState.capabilities.length;cp++){
         var capEntry=componentState.capabilities[cp];
+        var capKey=capEntry.uuid || capEntry.name;
+        if(!componentState.capabilityComponents[capKey]) componentState.capabilityComponents[capKey]=[];
         var incs=capEntry.incorporatesComponents || [];
         for(var ic=0;ic<incs.length;ic++){
           var compUuid=(incs[ic] && incs[ic]['component-uuid']) || '';
           if(!compUuid) continue;
+          var linkedComp=componentState.componentByUuid.get(compUuid);
+          if(linkedComp){
+            componentState.capabilityComponents[capKey].push(linkedComp);
+            if(!componentState.componentCapabilityKeys[compUuid]) componentState.componentCapabilityKeys[compUuid]=[];
+            if(componentState.componentCapabilityKeys[compUuid].indexOf(capKey)===-1){
+              componentState.componentCapabilityKeys[compUuid].push(capKey);
+            }
+          }
           if(!componentState.componentToCapabilities[compUuid]) componentState.componentToCapabilities[compUuid]=[];
           if(componentState.componentToCapabilities[compUuid].indexOf(capEntry.name)===-1){
             componentState.componentToCapabilities[compUuid].push(capEntry.name);
@@ -3680,7 +3696,35 @@ function baseMatches(c){ return matches(c); }
       return card;
     }
 
-    function renderComponentOwner(owner, searchTerm){
+    function getCapabilityComponents(owner){
+      if(!owner || owner.kind!=='capability') return [];
+      var key=owner.uuid || owner.name;
+      return componentState.capabilityComponents[key] || [];
+    }
+
+    function getMatchedCapabilityComponents(owner){
+      var items=getCapabilityComponents(owner);
+      var out=[];
+      for(var i=0;i<items.length;i++){
+        if(matchesComponentOwner(items[i])) out.push(items[i]);
+      }
+      return out;
+    }
+
+    function getVisibleComponentCapabilityKeys(owner){
+      var keys=(owner && owner.uuid) ? (componentState.componentCapabilityKeys[owner.uuid] || []) : [];
+      var visible=[];
+      for(var i=0;i<keys.length;i++){
+        var cap=componentState.capabilityByUuid.get(keys[i]) || null;
+        if(cap && (matchesComponentOwner(cap) || getMatchedCapabilityComponents(cap).length)){
+          visible.push(keys[i]);
+        }
+      }
+      return visible;
+    }
+
+    function renderComponentOwner(owner, searchTerm, options){
+      options=options || {};
       var wrapper=document.createElement('details');
       wrapper.className='practice-group';
       var stateKey=owner.uuid || owner.name;
@@ -3735,7 +3779,7 @@ function baseMatches(c){ return matches(c); }
       if(owner.kind==='component' && owner.links && owner.links.length){
         appendDocumentLinksSection(card, owner.links, searchTerm);
       }
-      if(owner.kind==='capability' && owner.incorporatesComponents && owner.incorporatesComponents.length){
+      if(owner.kind==='capability' && !options.childComponents && owner.incorporatesComponents && owner.incorporatesComponents.length){
         appendCapabilityComponentsSection(card, owner, searchTerm);
       }
       if(owner.props && owner.props.length) appendGenericObjectList(card, 'Props', owner.props, searchTerm, componentState.resourceByUuid, componentState.baseUrl);
@@ -3758,6 +3802,11 @@ function baseMatches(c){ return matches(c); }
       card.appendChild(actions);
 
       body.appendChild(card);
+      if(owner.kind==='capability' && options.childComponents && options.childComponents.length){
+        for(var cc=0;cc<options.childComponents.length;cc++){
+          body.appendChild(renderComponentOwner(options.childComponents[cc], searchTerm));
+        }
+      }
       wrapper.appendChild(body);
       return wrapper;
     }
@@ -3881,7 +3930,31 @@ function baseMatches(c){ return matches(c); }
           ]
         });
 
-        if(!matchedCapabilities.length && !matchedComponents.length){
+        var capabilitySections=[];
+        var renderedComponentKeys={};
+        for(var mc=0;mc<componentState.capabilities.length;mc++){
+          var capability=componentState.capabilities[mc];
+          var capabilityMatches=matchesComponentOwner(capability);
+          var childComponents=getMatchedCapabilityComponents(capability);
+          if(!capabilityMatches && !childComponents.length) continue;
+          capabilitySections.push({ capability:capability, components:childComponents });
+          for(var g=0;g<childComponents.length;g++){
+            renderedComponentKeys[childComponents[g].uuid || childComponents[g].name]=true;
+          }
+        }
+
+        var standaloneComponents=[];
+        for(var mp=0;mp<matchedComponents.length;mp++){
+          var component=matchedComponents[mp];
+          var componentKey=component.uuid || component.name;
+          if(getVisibleComponentCapabilityKeys(component).length){
+            renderedComponentKeys[componentKey]=true;
+            continue;
+          }
+          if(!renderedComponentKeys[componentKey]) standaloneComponents.push(component);
+        }
+
+        if(!capabilitySections.length && !standaloneComponents.length){
           var empty=document.createElement('div');
           empty.className='card';
           empty.textContent='Keine Ergebnisse für die aktuelle Filterung.';
@@ -3890,24 +3963,15 @@ function baseMatches(c){ return matches(c); }
           return;
         }
 
-        if(matchedCapabilities.length){
-          var capHeading=document.createElement('h2');
-          capHeading.className='component-doc-heading';
-          capHeading.textContent='Capabilities';
-          els.componentTab.appendChild(capHeading);
-          for(var mc=0;mc<matchedCapabilities.length;mc++){
-            els.componentTab.appendChild(renderComponentOwner(matchedCapabilities[mc], componentState.qRaw));
-          }
+        var compHeading=document.createElement('h2');
+        compHeading.className='component-doc-heading';
+        compHeading.textContent='Komponenten';
+        els.componentTab.appendChild(compHeading);
+        for(var cs=0;cs<capabilitySections.length;cs++){
+          els.componentTab.appendChild(renderComponentOwner(capabilitySections[cs].capability, componentState.qRaw, { childComponents:capabilitySections[cs].components }));
         }
-
-        if(matchedComponents.length){
-          var compHeading=document.createElement('h2');
-          compHeading.className='component-doc-heading';
-          compHeading.textContent='Komponenten';
-          els.componentTab.appendChild(compHeading);
-          for(var mp=0;mp<matchedComponents.length;mp++){
-            els.componentTab.appendChild(renderComponentOwner(matchedComponents[mp], componentState.qRaw));
-          }
+        for(var sc=0;sc<standaloneComponents.length;sc++){
+          els.componentTab.appendChild(renderComponentOwner(standaloneComponents[sc], componentState.qRaw));
         }
         var graphData=buildComponentGraphData();
         compEls.graphInfo.textContent='Graph: '+graphData.nodes.length+' Knoten / '+graphData.links.length+' Kanten';
@@ -3918,7 +3982,11 @@ function baseMatches(c){ return matches(c); }
       if(!owner) return;
       var key=owner.uuid || owner.name;
       if(owner.kind==='capability'){ componentState.openCapabilities[key]=true; }
-      else { componentState.openComponents[key]=true; }
+      else {
+        componentState.openComponents[key]=true;
+        var ownerCaps=componentState.componentCapabilityKeys[owner.uuid] || [];
+        for(var oc=0;oc<ownerCaps.length;oc++){ componentState.openCapabilities[ownerCaps[oc]]=true; }
+      }
       switchTab('components');
       renderComponentView();
       setTimeout(function(){
