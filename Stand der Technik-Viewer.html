@@ -167,9 +167,6 @@
     .component-ref-btn{width:auto;display:inline-flex;align-items:center;justify-content:center}
     .component-ref-btn[disabled]{cursor:not-allowed;opacity:.55}
     .component-empty{color:var(--dim);font-style:italic}
-    .component-source{font-size:12px;color:var(--dim)}
-    .component-source a{color:var(--accent)}
-    .component-source code{font-size:11px}
     .component-jump-note{margin-top:10px}
     .component-link-list{display:flex;flex-direction:column;gap:10px;margin-top:8px}
     .component-link-card{padding:12px;border:1px solid var(--muted);border-radius:12px;background:#f8fbff}
@@ -717,10 +714,9 @@
         <hr class="filter-split" />
         <div style="margin-top:12px;display:grid;gap:8px" class="toolbar">
           <label class="field-label" for="compQ">Suche in Komponenten</label>
-          <input id="compQ" class="input" type="text" placeholder="Suchen (Komponente, Control-ID, Beschreibung, Quelle…)" autocomplete="off" autocapitalize="off" spellcheck="false" name="q_component_viewer" />
+          <input id="compQ" class="input" type="text" placeholder="Suchen (Komponente, Control-ID, Beschreibung…)" autocomplete="off" autocapitalize="off" spellcheck="false" name="q_component_viewer" />
           <div class="section-caption">Filter einschränken</div>
           <details class="ms" id="compTypeMS"><summary>Alle Komponententypen</summary><div class="ms-menu" id="compTypeMS_menu"></div></details>
-          <details class="ms" id="compSourceMS"><summary>Alle Quellen</summary><div class="ms-menu" id="compSourceMS_menu"></div></details>
           <details class="ms" id="compNameMS"><summary>Alle Komponenten</summary><div class="ms-menu" id="compNameMS_menu"></div></details>
           <details class="ms" id="compCapabilityMS"><summary>Alle Capabilities</summary><div class="ms-menu" id="compCapabilityMS_menu"></div></details>
         </div>
@@ -890,7 +886,7 @@
     var componentState=createComponentState();
     var uiState={ dataMode:'catalog', view:'list', componentReturnTarget:null, catalogExpandOverride:null, componentExpandOverride:null };
     var allGroups=[], allClasses=[], allSecs=[], allTargets=[], allTags=[], allEfforts=[], allModalverbs=[], allDocumentations=[], allActionwords=[];
-    var allComponentTypes=[], allComponentSources=[], allComponentNames=[], allCapabilityNames=[];
+    var allComponentTypes=[], allComponentNames=[], allCapabilityNames=[];
     // Aufwand-Definitionen aus stufen.csv (Stufe 0..5)
     var effortDefinitions={
       '0':'Der Aufwand der Anforderung wird nicht bewertet, da ihre Implementierung in jedem Fall zwingend erforderlich ist. Beispiel: Benennung eines Informationssicherheitsbeauftragten.',
@@ -911,8 +907,8 @@
       jsonModal:$('#jsonModal'), jsonModalBody:$('#jsonModalBody'), jsonModalClose:$('#jsonModalClose') };
     var compEls={
       file:$('#compFile'), urlInput:$('#compUrlInput'), urlLoadBtn:$('#compUrlLoadBtn'), q:$('#compQ'),
-      type:$('#compTypeMS'), source:$('#compSourceMS'), name:$('#compNameMS'), capability:$('#compCapabilityMS'),
-      typeMenu:$('#compTypeMS_menu'), sourceMenu:$('#compSourceMS_menu'), nameMenu:$('#compNameMS_menu'), capabilityMenu:$('#compCapabilityMS_menu'),
+      type:$('#compTypeMS'), name:$('#compNameMS'), capability:$('#compCapabilityMS'),
+      typeMenu:$('#compTypeMS_menu'), nameMenu:$('#compNameMS_menu'), capabilityMenu:$('#compCapabilityMS_menu'),
       fileInfo:$('#compFileInfo'), countInfo:$('#compCountInfo'), graphInfo:$('#compGraphInfo'), selectionState:$('#componentSelectionState'),
       resetBtn:$('#compResetBtn'), exportPdfBtn:$('#compExportPdfBtn')
     };
@@ -1143,7 +1139,7 @@
         components:'Komponenten, Capabilities und implementierte Anforderungen strukturiert prüfen.',
         graph:'Beziehungen und Abhängigkeiten als Netz visualisieren und gezielt anspringen.',
         sunburst:'Verteilungen verdichtet lesen, um Schwerpunkte schnell zu erkennen.',
-        bar:'Mengenverhältnisse zwischen Praktiken oder Quellen direkt vergleichen.',
+        bar:'Mengenverhältnisse in der aktuellen Ansicht direkt vergleichen.',
         json:'Rohdaten ohne Transformationsverlust inspizieren.'
       };
       els.viewSubtitle.textContent = map[view] || map.list;
@@ -1189,7 +1185,6 @@
       var chips=[];
       if(componentState.qRaw){ chips.push('Suche: ' + componentState.qRaw); }
       if(allComponentTypes.length && componentState.types.length && componentState.types.length !== allComponentTypes.length){ chips.push('Typen: ' + formatChipValues(componentState.types, 2)); }
-      if(allComponentSources.length && componentState.sources.length && componentState.sources.length !== allComponentSources.length){ chips.push('Quellen: ' + formatChipValues(componentState.sources, 2)); }
       if(allComponentNames.length && componentState.names.length && componentState.names.length !== allComponentNames.length){ chips.push('Komponenten: ' + formatChipValues(componentState.names, 2)); }
       if(allCapabilityNames.length && componentState.capabilityNames.length && componentState.capabilityNames.length !== allCapabilityNames.length){ chips.push('Capabilities: ' + formatChipValues(componentState.capabilityNames, 2)); }
       return chips;
@@ -1575,7 +1570,6 @@
       componentState.qRaw = (compEls.q && compEls.q.value || '').trim();
       componentState.q = componentState.qRaw.toLowerCase();
       componentState.types = msGetSelected(compEls.type, compEls.typeMenu);
-      componentState.sources = msGetSelected(compEls.source, compEls.sourceMenu);
       componentState.names = msGetSelected(compEls.name, compEls.nameMenu);
       componentState.capabilityNames = msGetSelected(compEls.capability, compEls.capabilityMenu);
       if(!isComponentFilterActive()){
@@ -3031,16 +3025,15 @@ function baseMatches(c){ return matches(c); }
       return state.uuidMap.get(key) || state.idMap.get(key) || null;
     }
 
-    function getCatalogControlDisplayId(controlRef){
-      var control=getCatalogControlByRef(controlRef);
-      return control ? (control.id || control.labelId || control.rawId || '') : '';
+    function getCatalogControlById(controlId){
+      var key=String(controlId||'').trim();
+      if(!key) return null;
+      return state.idMap.get(key) || null;
     }
 
-    function getCatalogControlUuid(controlRef){
-      var control=getCatalogControlByRef(controlRef);
-      if(control && control.uuid) return control.uuid;
-      var key=String(controlRef||'').trim();
-      return looksUuidLikeId(key) ? key : '';
+    function getCatalogControlDisplayId(controlRef){
+      var control=getCatalogControlById(controlRef);
+      return control ? (control.id || control.labelId || control.rawId || '') : '';
     }
 
     function createImplementationEntry(impl, owner){
@@ -3069,13 +3062,11 @@ function baseMatches(c){ return matches(c); }
       var reqs=(impl && impl['implemented-requirements']) || [];
       for(var i=0;i<reqs.length;i++){
         var req=reqs[i] || {};
-        var reqKey=(owner.uuid||owner.id||owner.name||'owner')+'::'+(implEntry.uuid||implEntry.sourceLabel||'impl')+'::'+(req.uuid||req['control-id']||('req-'+i));
+        var reqKey=(owner.uuid||owner.id||owner.name||'owner')+'::'+(implEntry.uuid||implEntry.sourceLabel||'impl')+'::'+((req && req['control-id']) || ('req-'+i));
         var reqEntry={
           id:reqKey,
-          uuid:req.uuid || '',
           controlId:req['control-id'] || '',
           catalogControlId:'',
-          catalogControlUuid:'',
           description:req.description || '',
           props:req.props || [],
           links:req.links || [],
@@ -3134,8 +3125,6 @@ function baseMatches(c){ return matches(c); }
         var impl=impls[i];
         parts.push(
           impl.uuid,
-          impl.source,
-          impl.sourceLabel,
           replaceParams(impl.description, impl.paramMap),
           replaceParams(impl.remarks, impl.paramMap)
         );
@@ -3143,12 +3132,9 @@ function baseMatches(c){ return matches(c); }
         for(var r=0;r<reqs.length;r++){
           var req=reqs[r];
           req.catalogControlId=getCatalogControlDisplayId(req.controlId);
-          req.catalogControlUuid=getCatalogControlUuid(req.controlId);
           parts.push(
             req.controlId,
             req.catalogControlId,
-            req.catalogControlUuid,
-            req.uuid,
             replaceParams(req.description, req.paramMap),
             replaceParams(req.remarks, req.paramMap)
           );
@@ -3167,7 +3153,7 @@ function baseMatches(c){ return matches(c); }
     }
 
     function getCatalogParamMapForControl(controlRef){
-      var control=getCatalogControlByRef(controlRef);
+      var control=getCatalogControlById(controlRef);
       return control && control.paramMap ? control.paramMap : {};
     }
 
@@ -3330,25 +3316,21 @@ function baseMatches(c){ return matches(c); }
       }
     }
 
-    // Komponentenfilter aus Typen, Quellen, Komponenten und Capabilities ableiten.
+    // Komponentenfilter aus Typen, Komponenten und Capabilities ableiten.
     function renderComponentFilters(){
-      var typesRaw=[], sourcesRaw=[], namesRaw=[], capsRaw=[];
+      var typesRaw=[], namesRaw=[], capsRaw=[];
       for(var i=0;i<componentState.components.length;i++){
         var comp=componentState.components[i];
         if(comp.type) typesRaw.push(comp.type);
         namesRaw.push(componentOwnerName(comp));
-        for(var s=0;s<comp.sources.length;s++){ if(comp.sources[s]) sourcesRaw.push(comp.sources[s]); }
       }
       for(var c=0;c<componentState.capabilities.length;c++){
         capsRaw.push(componentOwnerName(componentState.capabilities[c]));
-        for(var sc=0;sc<componentState.capabilities[c].sources.length;sc++){ if(componentState.capabilities[c].sources[sc]) sourcesRaw.push(componentState.capabilities[c].sources[sc]); }
       }
       allComponentTypes=uniqueList(typesRaw).sort();
-      allComponentSources=uniqueList(sourcesRaw).sort();
       allComponentNames=uniqueList(namesRaw).sort();
       allCapabilityNames=uniqueList(capsRaw).sort();
       msSetItems(compEls.type, compEls.typeMenu, 'Alle Komponententypen', allComponentTypes, refreshComponentViews);
-      msSetItems(compEls.source, compEls.sourceMenu, 'Alle Quellen', allComponentSources, refreshComponentViews);
       msSetItems(compEls.name, compEls.nameMenu, 'Alle Komponenten', allComponentNames, refreshComponentViews);
       msSetItems(compEls.capability, compEls.capabilityMenu, 'Alle Capabilities', allCapabilityNames, refreshComponentViews);
       bindComponentResetButton();
@@ -3358,7 +3340,6 @@ function baseMatches(c){ return matches(c); }
     function isComponentFilterActive(){
       if(componentState.q) return true;
       if(allComponentTypes.length && componentState.types.length !== allComponentTypes.length) return true;
-      if(allComponentSources.length && componentState.sources.length !== allComponentSources.length) return true;
       if(allComponentNames.length && componentState.names.length !== allComponentNames.length) return true;
       if(allCapabilityNames.length && componentState.capabilityNames.length !== allCapabilityNames.length) return true;
       return false;
@@ -3381,13 +3362,6 @@ function baseMatches(c){ return matches(c); }
           if(capNames.indexOf(componentState.capabilityNames[ci])!==-1){ okCap=true; break; }
         }
         if(!okCap) return false;
-      }
-      if(allComponentSources.length && componentState.sources.length !== allComponentSources.length){
-        var okSource=false;
-        for(var s=0;s<componentState.sources.length;s++){
-          if(entry.sources.indexOf(componentState.sources[s])!==-1){ okSource=true; break; }
-        }
-        if(!okSource) return false;
       }
       if(componentState.q && (entry.searchText||'').indexOf(componentState.q)===-1) return false;
       return true;
@@ -3427,13 +3401,18 @@ function baseMatches(c){ return matches(c); }
     function goToCatalogControlFromComponent(req){
       if(!req) return;
       var ownerKey=req.ownerUuid || req.ownerName || '';
+      var target=getCatalogControlById(req.controlId);
+      if(!target){
+        showMsg('<strong>Die referenzierte Anforderung wurde im geladenen Katalog nicht gefunden:</strong><br/><code>'+escapeHtml(String(req.controlId||''))+'</code>', true);
+        return;
+      }
       uiState.componentReturnTarget={
         ownerKey:ownerKey,
         ownerKind:req.ownerKind || 'component',
         implKey:req.implKey || '',
         anchorId:'component-req-'+cssId(req.id)
       };
-      goToCatalogControl(req.controlId);
+      goToCatalogControl(target.id);
     }
 
     function appendImplementationSections(container, owner, searchTerm){
@@ -3455,8 +3434,7 @@ function baseMatches(c){ return matches(c); }
         details.addEventListener('toggle', (function(key, el){ return function(){ uiState.componentExpandOverride=null; componentState.openImplementations[key]=el.open; }; })(implKey, details));
         var reqCount=impl.requirements.length;
         var summary=document.createElement('summary');
-        summary.innerHTML='<span class="component-summary"><strong>Implementierungsnachweis</strong><span class="badge">'+escapeHtml(reqCount+' Anforderungen')+'</span></span>'
-          + '<span class="component-source" style="display:block;margin-top:6px"><strong>Quelle:</strong> '+buildDocumentLinkHtml(impl.sourceLabel, impl.source, searchTerm, componentState.resourceByUuid, componentState.baseUrl)+'</span>';
+        summary.innerHTML='<span class="component-summary"><strong>Implementierungsnachweis</strong><span class="badge">'+escapeHtml(reqCount+' Anforderungen')+'</span></span>';
         details.appendChild(summary);
 
         var body=document.createElement('div');
@@ -3616,16 +3594,10 @@ function baseMatches(c){ return matches(c); }
       var card=document.createElement('article');
       card.className='card component-card requirement';
       card.id='component-req-'+cssId(req.id);
-      var catalogControl=getCatalogControlByRef(req.controlId);
+      var catalogControl=getCatalogControlById(req.controlId);
       var jumpAvailable=!!catalogControl;
       var displayId=req.catalogControlId || (catalogControl && catalogControl.id) || req.controlId || 'ohne-control-id';
-      var displayUuid=req.catalogControlUuid || (catalogControl && catalogControl.uuid) || (looksUuidLikeId(req.controlId) ? req.controlId : '') || '–';
-      var meta=document.createElement('div');
-      meta.className='meta';
-      meta.innerHTML='<span class="kv"><strong>UUID:</strong> <code>'+renderHighlightedInline(displayUuid, searchTerm)+'</code></span>'
-        + '<span class="kv"><strong>Quelle:</strong> <code>'+renderHighlightedInline(req.sourceLabel||'–', searchTerm)+'</code></span>';
       card.innerHTML='<div class="title"><h3><mark>'+renderHighlightedInline(displayId, searchTerm)+'</mark> – Implementierte Anforderung</h3></div>';
-      card.appendChild(meta);
       if(req.description){
         var desc=document.createElement('div');
         desc.className='catalog-md';
@@ -3789,6 +3761,9 @@ function baseMatches(c){ return matches(c); }
       appendRemainingObjectFields(card, 'Weitere Felder', owner.raw, owner.kind==='capability' ? ['uuid','name','title','description','remarks','props','links','protocols','responsible-roles','incorporates-components','control-implementations'] : ['uuid','type','title','name','description','purpose','remarks','props','links','protocols','responsible-roles','control-implementations'], searchTerm, componentState.resourceByUuid, componentState.baseUrl);
       appendImplementationSections(card, owner, searchTerm);
 
+      var hasVisibleCardContent=card.childElementCount>0;
+      var skipEmptyCapabilityCard=owner.kind==='capability' && options.childComponents && options.childComponents.length && !hasVisibleCardContent;
+
       var actions=document.createElement('div');
       actions.style.marginTop='10px';
       actions.style.display='flex';
@@ -3799,9 +3774,10 @@ function baseMatches(c){ return matches(c); }
       jsonBtn.textContent='JSON';
       jsonBtn.addEventListener('click', function(){ openJsonModal(owner.raw); });
       actions.appendChild(jsonBtn);
-      card.appendChild(actions);
-
-      body.appendChild(card);
+      if(!skipEmptyCapabilityCard){
+        card.appendChild(actions);
+        body.appendChild(card);
+      }
       if(owner.kind==='capability' && options.childComponents && options.childComponents.length){
         for(var cc=0;cc<options.childComponents.length;cc++){
           body.appendChild(renderComponentOwner(options.childComponents[cc], searchTerm));
@@ -3889,7 +3865,7 @@ function baseMatches(c){ return matches(c); }
               { label:'Komponenten', value:'0', note:'Geladene Einträge' },
               { label:'Capabilities', value:'0', note:'Geladene Einträge' },
               { label:'Treffer', value:'0', note:'Sichtbare Einträge' },
-              { label:'Quellen', value:'0', note:'Erkannte Herkunft' }
+              { label:'Anforderungen', value:'0', note:'Implementierte Anforderungen' }
             ],
             chips:[],
             actions:[]
@@ -3910,6 +3886,19 @@ function baseMatches(c){ return matches(c); }
         for(var c=0;c<componentState.components.length;c++){
           if(matchesComponentOwner(componentState.components[c])) matchedComponents.push(componentState.components[c]);
         }
+        var totalRequirementCount=0;
+        for(var mcReq=0;mcReq<matchedComponents.length;mcReq++){
+          var componentImpls=matchedComponents[mcReq].controlImplementations || [];
+          for(var ciReq=0;ciReq<componentImpls.length;ciReq++){
+            totalRequirementCount += componentImpls[ciReq].requirements.length;
+          }
+        }
+        for(var maReq=0;maReq<matchedCapabilities.length;maReq++){
+          var capabilityImpls=matchedCapabilities[maReq].controlImplementations || [];
+          for(var caReq=0;caReq<capabilityImpls.length;caReq++){
+            totalRequirementCount += capabilityImpls[caReq].requirements.length;
+          }
+        }
         var activeComponentChips=collectComponentActiveFilterChips();
         renderSelectionState(compEls.selectionState, 'Komponentenfokus', (matchedCapabilities.length + matchedComponents.length)+' sichtbare Einträge', activeComponentChips);
         renderOverviewCard({
@@ -3919,7 +3908,7 @@ function baseMatches(c){ return matches(c); }
             { label:'Komponenten', value:String(componentState.components.length), note:'Geladene Komponenten' },
             { label:'Capabilities', value:String(componentState.capabilities.length), note:'Geladene Capabilities' },
             { label:'Sichtbar', value:String(matchedCapabilities.length + matchedComponents.length), note:'Aktuelle Treffer' },
-            { label:'Quellen', value:String(allComponentSources.length), note:'Erkannte Herkunft' }
+            { label:'Anforderungen', value:String(totalRequirementCount), note:'Implementierte Anforderungen in der Ansicht' }
           ],
           chips:activeComponentChips,
           actions:[
@@ -4123,7 +4112,7 @@ function baseMatches(c){ return matches(c); }
           node.append('text').text(function(d){ return d.label; }).attr('x',14).attr('y',4).attr('font-size','12px').attr('fill','#162434');
           node.on('click', function(ev,d){
             if(d.nodeType==='requirement'){
-              if(d.requirement && getCatalogControlByRef(d.requirement.controlId)){ goToCatalogControlFromComponent(d.requirement); }
+              if(d.requirement && getCatalogControlById(d.requirement.controlId)){ goToCatalogControlFromComponent(d.requirement); }
               else { openComponentLocation(d.owner, d.requirement); }
             } else {
               openComponentLocation(d.owner);
@@ -4199,20 +4188,22 @@ function baseMatches(c){ return matches(c); }
         var matched=getMatchedComponentOwners();
         var counts={};
         for(var i=0;i<matched.components.length;i++){
-          var impls=matched.components[i].controlImplementations || [];
+          var comp=matched.components[i];
+          var impls=comp.controlImplementations || [];
+          var compKey=componentOwnerName(comp);
           for(var ii=0;ii<impls.length;ii++){
-            var key=impls[ii].sourceLabel || 'Ohne Quelle';
-            counts[key]=(counts[key]||0)+impls[ii].requirements.length;
+            counts[compKey]=(counts[compKey]||0)+impls[ii].requirements.length;
           }
         }
         for(var c=0;c<matched.capabilities.length;c++){
-          var capImpls=matched.capabilities[c].controlImplementations || [];
+          var cap=matched.capabilities[c];
+          var capImpls=cap.controlImplementations || [];
+          var capKey=componentOwnerName(cap);
           for(var ci=0;ci<capImpls.length;ci++){
-            var capKey=capImpls[ci].sourceLabel || 'Ohne Quelle';
             counts[capKey]=(counts[capKey]||0)+capImpls[ci].requirements.length;
           }
         }
-        var keys=Object.keys(counts).sort();
+        var keys=Object.keys(counts).sort(function(a,b){ return (counts[b]||0)-(counts[a]||0) || a.localeCompare(b); });
         if(!keys.length){ container.innerHTML='<div class="card">Keine Daten für die aktuelle Filterung.</div>'; return; }
         var data=keys.map(function(k){ return { group:k, value:counts[k] }; });
         var margin={top:30,right:20,bottom:80,left:60};
@@ -5009,7 +5000,6 @@ function baseMatches(c){ return matches(c); }
           msUpdateSummary(detailsEl, allLabel, itemCbs);
         }
         checkAll(compEls.typeMenu, compEls.type, 'Alle Komponententypen');
-        checkAll(compEls.sourceMenu, compEls.source, 'Alle Quellen');
         checkAll(compEls.nameMenu, compEls.name, 'Alle Komponenten');
         checkAll(compEls.capabilityMenu, compEls.capability, 'Alle Capabilities');
         var openDropdowns = document.querySelectorAll('#componentPanel details.ms[open]');
