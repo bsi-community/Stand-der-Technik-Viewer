@@ -646,13 +646,20 @@
         <div class="panel-intro">
           <div class="panel-kicker">Katalogdaten</div>
           <h3 class="panel-title">OSCAL Catalog laden</h3>
-          <p class="panel-copy">Lade eine lokale JSON-Datei oder referenziere eine URL. Die Verarbeitung läuft vollständig im Browser.</p>
+          <p class="panel-copy">Lade einen oder mehrere lokale JSON-Kataloge oder referenziere zusätzliche URLs. Angezeigt wird immer der aktuell ausgewählte Katalog, Sprünge aus der Komponentenansicht funktionieren katalogübergreifend.</p>
         </div>
-        <input id="file" class="input" type="file" accept=".json" />
+        <input id="file" class="input" type="file" accept=".json" multiple />
         <div style="margin-top:10px;display:grid;gap:8px">
           <input id="urlInput" class="input" type="url" placeholder="Katalog-URL einfügen (JSON)" autocomplete="off" spellcheck="false" />
           <button id="urlLoadBtn" class="btn" type="button" style="width:100%; justify-content:center;">Von URL laden</button>
           <div class="note">Hinweis: Bei GitHub-Links ggf. auf die Raw-URL umschreiben.</div>
+        </div>
+        <div style="margin-top:12px;display:grid;gap:8px">
+          <label class="field-label" for="catalogPicker">Aktiver Katalog in der Katalogansicht</label>
+          <select id="catalogPicker" class="input" disabled>
+            <option value="">Kein Katalog geladen</option>
+          </select>
+          <div class="note">Im Dropdown wählst du, welcher der geladenen Kataloge in Katalog-, Graph-, Sunburst-, Balken- und JSON-Ansicht dargestellt wird.</div>
         </div>
 
         <hr class="filter-split" />
@@ -702,7 +709,7 @@
         <div class="panel-intro">
           <div class="panel-kicker">Komponentendaten</div>
           <h3 class="panel-title">Component Definition laden</h3>
-          <p class="panel-copy">Wenn die in einer Component-Definition referenzierten Anforderungen aus einem Katalog verlinkt werden sollen, dann muss der entsprechende Anforderungskatalog im Katalog-Tab parallel hochgeladen werden.</p>
+          <p class="panel-copy">Wenn die in einer Component-Definition referenzierten Anforderungen verlinkt werden sollen, müssen die passenden Anforderungskataloge im Katalog-Tab parallel geladen sein. Der Viewer springt dann automatisch in den richtigen Katalog.</p>
         </div>
         <input id="compFile" class="input" type="file" accept=".json" />
         <div style="margin-top:10px;display:grid;gap:8px">
@@ -737,7 +744,7 @@
           Als PDF exportieren
         </button>
 
-        <p class="note component-jump-note">Referenzierte Anforderungen können direkt in den Katalog springen, sobald zusätzlich ein passender OSCAL Catalog geladen ist.</p>
+        <p class="note component-jump-note">Referenzierte Anforderungen können direkt in den jeweils passenden geladenen OSCAL-Katalog springen.</p>
       </div>
     </aside>
 
@@ -851,7 +858,11 @@
     var $=function(s){return document.querySelector(s);}; var $$=function(s){return Array.prototype.slice.call(document.querySelectorAll(s));};
 
     // Zentraler Laufzeitstatus fuer Katalogdaten, Komponentendaten und UI-Zustaende.
-    var state={controls:[], idMap:new ObjMap(), uuidMap:new ObjMap(), edgesBase:[], q:'', qRaw:'', groups:[], classes:[], secs:[], targets:[], tags:[], efforts:[], modalverbs:[], documentations:[], actionwords:[], topics:[], topicById:new ObjMap(), childrenByTopic:{}, childrenByPractice:{}, groupRoots:[], groupByKey:new ObjMap(), controlsByGroup:{}, ungroupedControls:[], openTopics:{}, practices:[], practiceById:new ObjMap(), topicsByPractice:{}, openPractices:{}, openGroups:{}, jsonText:'', catalogUuid:'', catalogMetadata:null, catalogBackMatter:null, catalogBaseUrl:'', catalogResourcesByUuid:new ObjMap()};
+    function createCatalogState(){
+      return {controls:[], idMap:new ObjMap(), uuidMap:new ObjMap(), edgesBase:[], q:'', qRaw:'', groups:[], classes:[], secs:[], targets:[], tags:[], efforts:[], modalverbs:[], documentations:[], actionwords:[], topics:[], topicById:new ObjMap(), childrenByTopic:{}, childrenByPractice:{}, groupRoots:[], groupByKey:new ObjMap(), controlsByGroup:{}, ungroupedControls:[], openTopics:{}, practices:[], practiceById:new ObjMap(), topicsByPractice:{}, openPractices:{}, openGroups:{}, jsonText:'', catalogUuid:'', catalogMetadata:null, catalogBackMatter:null, catalogBaseUrl:'', catalogResourcesByUuid:new ObjMap()};
+    }
+    var state=createCatalogState();
+    var catalogLibrary={ items:[], activeKey:'', nextId:1 };
     function createComponentState(){
       return {
         documentUuid:'',
@@ -899,7 +910,7 @@
 
 
     // Gesammelte DOM-Referenzen fuer schnelle Zugriffe ohne wiederholte Query-Selektoren.
-    var els={ file:$('#file'), urlInput:$('#urlInput'), urlLoadBtn:$('#urlLoadBtn'), q:$('#q'), group:$('#groupMS'), cls:$('#classMS'), sec:$('#secMS'), target:$('#targetMS'), tag:$('#tagMS'), effort:$('#effortMS'), modalverb:$('#modalverbMS'), documentation:$('#documentationMS'), actionword:$('#actionwordMS'), groupMenu:$('#groupMS_menu'), clsMenu:$('#classMS_menu'), secMenu:$('#secMS_menu'), targetMenu:$('#targetMS_menu'), tagMenu:$('#tagMS_menu'), effortMenu:$('#effortMS_menu'), modalverbMenu:$('#modalverbMS_menu'), documentationMenu:$('#documentationMS_menu'), actionwordMenu:$('#actionwordMS_menu'), resetBtn:$('#resetBtn'), exportPdfBtn:$('#exportPdfBtn'),
+    var els={ file:$('#file'), urlInput:$('#urlInput'), urlLoadBtn:$('#urlLoadBtn'), catalogPicker:$('#catalogPicker'), q:$('#q'), group:$('#groupMS'), cls:$('#classMS'), sec:$('#secMS'), target:$('#targetMS'), tag:$('#tagMS'), effort:$('#effortMS'), modalverb:$('#modalverbMS'), documentation:$('#documentationMS'), actionword:$('#actionwordMS'), groupMenu:$('#groupMS_menu'), clsMenu:$('#classMS_menu'), secMenu:$('#secMS_menu'), targetMenu:$('#targetMS_menu'), tagMenu:$('#tagMS_menu'), effortMenu:$('#effortMS_menu'), modalverbMenu:$('#modalverbMS_menu'), documentationMenu:$('#documentationMS_menu'), actionwordMenu:$('#actionwordMS_menu'), resetBtn:$('#resetBtn'), exportPdfBtn:$('#exportPdfBtn'),
       sideTabCatalog:$('#side-tab-catalog'), sideTabComponents:$('#side-tab-components'), catalogPanel:$('#catalogPanel'), componentPanel:$('#componentPanel'),
       viewSubtitle:$('#viewSubtitle'), viewSummary:$('#viewSummary'), selectionState:$('#catalogSelectionState'),
       fileInfo:$('#fileInfo'), countInfo:$('#countInfo'), graphInfo:$('#graphInfo'),
@@ -914,7 +925,7 @@
     };
 
     // Aufbau und Synchronisation der facettierten Multi-Select-Dropdowns.
-    function msSetItems(detailsEl, menuEl, allLabel, items, onChange){
+    function msSetItems(detailsEl, menuEl, allLabel, items, onChange, selectedValues){
       onChange = onChange || RefreshViews;
       menuEl.innerHTML = '';
       // "All" item
@@ -1011,9 +1022,20 @@
         onChange();
       });
 
-      // default: all selected
+      // default: all selected, unless a persisted subset should be restored
       const cbs = [...menuEl.querySelectorAll('input[type="checkbox"]')].filter(x=>x.dataset.value!=='__all__');
-      cbs.forEach(x=>x.checked=true);
+      const wanted = Array.isArray(selectedValues) ? selectedValues.filter(Boolean) : null;
+      if(wanted && wanted.length){
+        const selectedSet = makeSetFromArray(wanted);
+        let matchedAny = false;
+        cbs.forEach(x => {
+          x.checked = selectedSet.has(String(x.dataset.value||''));
+          if(x.checked) matchedAny = true;
+        });
+        if(!matchedAny){ cbs.forEach(x=>x.checked=true); }
+      } else {
+        cbs.forEach(x=>x.checked=true);
+      }
       updateAllState();
     }
 
@@ -1038,6 +1060,138 @@
     function msGetSelected(detailsEl, menuEl){
       const cbs = [...menuEl.querySelectorAll('input[type="checkbox"]')].filter(x=>x.dataset.value!=='__all__');
       return cbs.filter(x=>x.checked).map(x=>x.dataset.value);
+    }
+
+    function findCatalogEntryByKey(key){
+      var wanted=String(key||'');
+      for(var i=0;i<catalogLibrary.items.length;i++){
+        if(catalogLibrary.items[i] && catalogLibrary.items[i].key===wanted) return catalogLibrary.items[i];
+      }
+      return null;
+    }
+
+    function getCatalogDisplayName(entry){
+      if(!entry) return 'Unbenannter Katalog';
+      var meta=entry.state && entry.state.catalogMetadata ? entry.state.catalogMetadata : null;
+      return (meta && meta.title) || entry.label || entry.sourceLabel || ('Katalog '+String(entry.key||''));
+    }
+
+    function getCatalogPickerOptionLabel(entry){
+      if(!entry) return '';
+      var name=getCatalogDisplayName(entry);
+      if(entry.label && entry.label!==name) return name+' ['+entry.label+']';
+      return name;
+    }
+
+    function renderCatalogPicker(){
+      if(!els.catalogPicker) return;
+      els.catalogPicker.innerHTML='';
+      if(!catalogLibrary.items.length){
+        els.catalogPicker.disabled=true;
+        els.catalogPicker.innerHTML='<option value="">Kein Katalog geladen</option>';
+        return;
+      }
+      els.catalogPicker.disabled=false;
+      for(var i=0;i<catalogLibrary.items.length;i++){
+        var entry=catalogLibrary.items[i];
+        var opt=document.createElement('option');
+        opt.value=entry.key;
+        opt.textContent=getCatalogPickerOptionLabel(entry);
+        if(entry.key===catalogLibrary.activeKey) opt.selected=true;
+        els.catalogPicker.appendChild(opt);
+      }
+    }
+
+    function createCatalogEntry(meta){
+      return {
+        key:'catalog-'+(catalogLibrary.nextId++),
+        label:meta && meta.label ? meta.label : '',
+        sourceLabel:meta && meta.sourceLabel ? meta.sourceLabel : '',
+        sourceKind:meta && meta.sourceKind ? meta.sourceKind : 'file',
+        state:createCatalogState()
+      };
+    }
+
+    function syncCatalogUiFromState(){
+      renderCatalogPicker();
+      if(els.q) els.q.value=state.qRaw || '';
+      if(!catalogLibrary.items.length){
+        els.fileInfo.textContent='Katalog: keine Datei';
+        els.countInfo.textContent='–';
+        els.graphInfo.textContent='Graph: 0 Knoten';
+      } else {
+        var activeEntry=findCatalogEntryByKey(catalogLibrary.activeKey);
+        els.fileInfo.textContent='Katalog: '+getCatalogPickerOptionLabel(activeEntry);
+        els.countInfo.textContent=state.controls.length+' Anforderungen';
+        els.graphInfo.textContent='Graph: '+state.controls.length+' Knoten';
+      }
+    }
+
+    function activateCatalogEntry(key, options){
+      var entry=findCatalogEntryByKey(key);
+      if(!entry) return false;
+      catalogLibrary.activeKey=entry.key;
+      state=entry.state;
+      syncComponentParamMaps();
+      syncCatalogUiFromState();
+      renderFilters();
+      RefreshViews();
+      if(uiState.view==='components'){ renderComponentView(); }
+      if(uiState.view==='json' && uiState.dataMode==='catalog'){ renderJsonView(); }
+      if(!options || options.keepMessage!==true) hideMsg();
+      return true;
+    }
+
+    function loadCatalogJsonIntoEntry(entry, json, jsonText, baseUrl){
+      var previousState=state;
+      var targetState=entry.state || createCatalogState();
+      entry.state=targetState;
+      state=targetState;
+      state.jsonText=jsonText || JSON.stringify(json, null, 2);
+      state.catalogBaseUrl=baseUrl || '';
+      try{
+        processCatalog(json);
+      } finally {
+        state=previousState;
+      }
+    }
+
+    function addCatalogEntry(meta, json, jsonText, baseUrl){
+      var entry=createCatalogEntry(meta);
+      loadCatalogJsonIntoEntry(entry, json, jsonText, baseUrl);
+      catalogLibrary.items.push(entry);
+      activateCatalogEntry(entry.key);
+      return entry;
+    }
+
+    function getCatalogControlFromState(catalogState, controlRef){
+      if(!catalogState) return null;
+      var key=String(controlRef||'').trim();
+      if(!key) return null;
+      var uuidKey=normalizeCatalogControlUuid(key);
+      return (uuidKey ? catalogState.uuidMap.get(uuidKey) : null) || catalogState.idMap.get(key) || null;
+    }
+
+    function findLoadedCatalogControl(controlRef){
+      var activeEntry=findCatalogEntryByKey(catalogLibrary.activeKey);
+      var ordered=[];
+      if(activeEntry) ordered.push(activeEntry);
+      for(var i=0;i<catalogLibrary.items.length;i++){
+        var entry=catalogLibrary.items[i];
+        if(!entry || (activeEntry && entry.key===activeEntry.key)) continue;
+        ordered.push(entry);
+      }
+      for(var j=0;j<ordered.length;j++){
+        var control=getCatalogControlFromState(ordered[j].state, controlRef);
+        if(control) return { entry:ordered[j], control:control };
+      }
+      return null;
+    }
+
+    if(els.catalogPicker){
+      els.catalogPicker.addEventListener('change', function(){
+        activateCatalogEntry(els.catalogPicker.value);
+      });
     }
 
 
@@ -1388,19 +1542,36 @@
 
     // Catalog per Datei laden und anschliessend in Parser, Filter und Renderer geben.
     els.file.addEventListener('change', function(ev){
-      var f = ev.target.files && ev.target.files[0]; if(!f) return;
-      els.fileInfo.textContent='Katalog: '+f.name;
-      var reader = new FileReader();
-      reader.onload=function(e){
-        try{
-          state.jsonText = e.target.result || '';
-          state.catalogBaseUrl = '';
-          var json=JSON.parse(e.target.result);
-          processCatalog(json); renderFilters(); RefreshViews(); if(uiState.view==='components'){ renderComponentView(); } hideMsg();
-        }catch(err){ showMsg('<strong>Fehler beim Laden der JSON:</strong><br/><code>'+escapeHtml(String(err.message||err))+'</code>', true); clearCatalogUI(); }
-      };
-      reader.onerror=function(){ showMsg('<strong>Fehler beim Lesen der Datei.</strong>', true); };
-      reader.readAsText(f);
+      var files = ev.target.files ? Array.prototype.slice.call(ev.target.files) : [];
+      if(!files.length) return;
+      function readNext(index){
+        if(index>=files.length){
+          ev.target.value='';
+          return;
+        }
+        var f=files[index];
+        els.fileInfo.textContent='Katalog: '+f.name;
+        var reader = new FileReader();
+        reader.onload=function(e){
+          try{
+            var text=e.target.result || '';
+            var json=JSON.parse(text);
+            addCatalogEntry({ label:f.name, sourceLabel:f.name, sourceKind:'file' }, json, text, '');
+            readNext(index+1);
+          }catch(err){
+            showMsg('<strong>Fehler beim Laden der JSON:</strong><br/><code>'+escapeHtml(String(err.message||err))+'</code>', true);
+            if(!catalogLibrary.items.length) clearCatalogUI();
+            ev.target.value='';
+          }
+        };
+        reader.onerror=function(){
+          showMsg('<strong>Fehler beim Lesen der Datei.</strong>', true);
+          if(!catalogLibrary.items.length) clearCatalogUI();
+          ev.target.value='';
+        };
+        reader.readAsText(f);
+      }
+      readNext(0);
     });
 
     function normalizeCatalogUrl(input){
@@ -1423,13 +1594,11 @@
           return res.json();
         })
         .then(function(json){
-          state.jsonText = JSON.stringify(json, null, 2);
-          state.catalogBaseUrl = url;
-          processCatalog(json); renderFilters(); RefreshViews(); if(uiState.view==='components'){ renderComponentView(); } hideMsg();
+          addCatalogEntry({ label:url, sourceLabel:url, sourceKind:'url' }, json, JSON.stringify(json, null, 2), url);
         })
         .catch(function(err){
           showMsg('<strong>Fehler beim Laden der URL:</strong><br/><code>'+escapeHtml(String(err.message||err))+'</code>', true);
-          clearCatalogUI();
+          if(!catalogLibrary.items.length) clearCatalogUI();
         });
     }
 
@@ -1503,15 +1672,18 @@
 
     // UI-Container und Status nach Fehlern oder beim Leeren der Daten zuruecksetzen.
     function clearCatalogUI(){
+      catalogLibrary.items=[];
+      catalogLibrary.activeKey='';
+      state=createCatalogState();
       els.listTab.innerHTML='';
       var g=document.querySelector('#graph'); if(g) g.innerHTML='<div class="graph-toolbar"><button id="fitBtn" class="btn" title="Alles anzeigen">Alles anzeigen</button></div>';
       var sb=document.querySelector('#sunburst'); if(sb) sb.innerHTML='';
       var bar=document.querySelector('#bar'); if(bar) bar.innerHTML='';
-      els.fileInfo.textContent='Katalog: keine Datei';
+      renderCatalogPicker();
+      syncCatalogUiFromState();
       els.countInfo.textContent='–';
       els.graphInfo.textContent='Graph: 0 Knoten';
       uiState.catalogExpandOverride = null;
-      state.catalogUuid=''; state.catalogMetadata=null; state.catalogBackMatter=null; state.catalogBaseUrl=''; state.catalogResourcesByUuid=new ObjMap();
       syncComponentParamMaps();
       renderSelectionState(els.selectionState, 'Katalogstatus', 'Kein Datensatz geladen', []);
       if(uiState.view==='list'){ renderOverviewCard(null); }
@@ -1953,7 +2125,7 @@
                     searchText: hay,
                     statement:partText(parts,'statement'), guidance:partText(parts,'guidance'),
                     links:(c.links||[]), path:[].concat(path), paramMap:paramMap };
-        state.controls.push(entry); state.idMap.set(id, entry); if(rawId && rawId!==id){ state.idMap.set(rawId, entry); } if(uuid){ state.uuidMap.set(uuid, entry); }
+        state.controls.push(entry); state.idMap.set(id, entry); if(rawId && rawId!==id){ state.idMap.set(rawId, entry); } if(uuid){ state.uuidMap.set(String(uuid).toLowerCase(), entry); }
         if(groupKey){
           if(!state.controlsByGroup[groupKey]) state.controlsByGroup[groupKey]=[];
           state.controlsByGroup[groupKey].push(entry);
@@ -2051,11 +2223,11 @@
       var groupsRaw=[]; for(var i=0;i<state.controls.length;i++){ var g=(state.controls[i].path && state.controls[i].path[0]) || ''; if(g) groupsRaw.push(g); }
       var groups=uniqueList(groupsRaw).sort();
       allGroups = uniqueList(groupsRaw).sort();
-      msSetItems(els.group, els.groupMenu, 'Alle Praktiken', allGroups);
+      msSetItems(els.group, els.groupMenu, 'Alle Praktiken', allGroups, RefreshViews, state.groups);
 var classesRaw=[]; for(var j=0;j<state.controls.length;j++){ var c=state.controls[j].class||''; if(c) classesRaw.push(c); }
       var classes=uniqueList(classesRaw).sort();
       allClasses = uniqueList(classesRaw).sort();
-      msSetItems(els.cls, els.clsMenu, 'Alle Quellkataloge', allClasses);
+      msSetItems(els.cls, els.clsMenu, 'Alle Quellkataloge', allClasses, RefreshViews, state.classes);
 var secRaw=[];
       for(var s=0;s<state.controls.length;s++){
         var v=(state.controls[s].sec_level||'');
@@ -2068,11 +2240,11 @@ var secRaw=[];
         }
       }
       allSecs = uniqueList(secRaw).sort();
-      msSetItems(els.sec, els.secMenu, 'Alle Sicherheitsniveaus', allSecs);
+      msSetItems(els.sec, els.secMenu, 'Alle Sicherheitsniveaus', allSecs, RefreshViews, state.secs);
 var targetsRaw=[]; for(var k=0;k<state.controls.length;k++){ var t=(state.controls[k].target||''); if(t){ var parts=t.split(','); for(var p=0;p<parts.length;p++){ var s=String(parts[p]).trim(); if(s) targetsRaw.push(s); } } }
       var targets=uniqueList(targetsRaw).sort();
       allTargets = uniqueList(targetsRaw).sort();
-      msSetItems(els.target, els.targetMenu, 'Alle Zielobjektkategorien', allTargets);
+      msSetItems(els.target, els.targetMenu, 'Alle Zielobjektkategorien', allTargets, RefreshViews, state.targets);
 
       // Tags (each control may have multiple)
       var tagsRaw=[];
@@ -2084,12 +2256,12 @@ var targetsRaw=[]; for(var k=0;k<state.controls.length;k++){ var t=(state.contro
         }
       }
       allTags = uniqueList(tagsRaw).sort();
-      msSetItems(els.tag, els.tagMenu, 'Alle Tags', allTags);
+      msSetItems(els.tag, els.tagMenu, 'Alle Tags', allTags, RefreshViews, state.tags);
 
       // Aufwaende (0 wird als n/a angezeigt)
       var effortOrder=['n/a','1','2','3','4','5'];
       allEfforts = effortOrder.slice();
-      msSetItems(els.effort, els.effortMenu, 'Alle Aufwände', allEfforts);
+      msSetItems(els.effort, els.effortMenu, 'Alle Aufwände', allEfforts, RefreshViews, state.efforts);
 
       // Modalverben
       var mvRaw=[];
@@ -2110,7 +2282,7 @@ var targetsRaw=[]; for(var k=0;k<state.controls.length;k++){ var t=(state.contro
         if(mvOrdered.indexOf(mvAll[mx])===-1) mvOrdered.push(mvAll[mx]);
       }
       allModalverbs = mvOrdered;
-      msSetItems(els.modalverb, els.modalverbMenu, 'Alle Modalverben', allModalverbs);
+      msSetItems(els.modalverb, els.modalverbMenu, 'Alle Modalverben', allModalverbs, RefreshViews, state.modalverbs);
 
       // Dokumentationsempfehlungen
       var docsRaw=[];
@@ -2122,7 +2294,7 @@ var targetsRaw=[]; for(var k=0;k<state.controls.length;k++){ var t=(state.contro
         }
       }
       allDocumentations = uniqueList(docsRaw).sort();
-      msSetItems(els.documentation, els.documentationMenu, 'Alle Dokumentationsempfehlungen', allDocumentations);
+      msSetItems(els.documentation, els.documentationMenu, 'Alle Dokumentationsempfehlungen', allDocumentations, RefreshViews, state.documentations);
 
       // Handlungswörter
       var awRaw=[];
@@ -2134,11 +2306,11 @@ var targetsRaw=[]; for(var k=0;k<state.controls.length;k++){ var t=(state.contro
         }
       }
       allActionwords = uniqueList(awRaw).sort();
-      msSetItems(els.actionword, els.actionwordMenu, 'Alle Handlungswörter', allActionwords);
+      msSetItems(els.actionword, els.actionwordMenu, 'Alle Handlungswörter', allActionwords, RefreshViews, state.actionwords);
       bindResetButton();
-    bindExportButton();
-}
-function baseMatches(c){ return matches(c); }
+      bindExportButton();
+    }
+    function baseMatches(c){ return matches(c); }
 
 
     // Pruefen, ob Suche/Filter aktiv sind (steuert Auto-Open)
@@ -2990,6 +3162,30 @@ function baseMatches(c){ return matches(c); }
       parent.appendChild(section);
     }
 
+    function appendComponentBackMatterResourceList(parent, title, items, searchTerm){
+      var section=document.createElement('section');
+      section.className='catalog-section';
+      var heading=document.createElement('h4');
+      heading.className='catalog-section-title';
+      heading.innerHTML=renderHighlightedInline(title, searchTerm);
+      section.appendChild(heading);
+      if(!Array.isArray(items) || !items.length){
+        appendEmptyNotice(section, 'Keine Eintraege vorhanden.');
+        parent.appendChild(section);
+        return;
+      }
+      for(var i=0;i<items.length;i++){
+        var item=document.createElement('div');
+        item.className='catalog-subitem';
+        if(items[i] && items[i].uuid){
+          item.id='component-backmatter-resource-'+cssId(items[i].uuid);
+        }
+        item.appendChild(buildGenericObjectInline(items[i], searchTerm, componentState.resourceByUuid, componentState.baseUrl));
+        section.appendChild(item);
+      }
+      parent.appendChild(section);
+    }
+
     function appendRemainingObjectFields(parent, title, obj, excludedKeys, searchTerm, resourceMap, baseUrl){
       var excluded={};
       for(var i=0;i<(excludedKeys||[]).length;i++){ excluded[excludedKeys[i]]=true; }
@@ -3019,21 +3215,86 @@ function baseMatches(c){ return matches(c); }
       return entry.kind==='capability' ? (entry.name || entry.title || 'Capability') : (entry.title || entry.name || 'Komponente');
     }
 
-    function getCatalogControlByRef(controlRef){
+    function normalizeCatalogControlUuid(controlRef){
       var key=String(controlRef||'').trim();
-      if(!key) return null;
-      return state.uuidMap.get(key) || state.idMap.get(key) || null;
+      if(!key) return '';
+      if(key.charAt(0)==='_') key=key.slice(1);
+      return looksUuidLikeId(key) ? key.toLowerCase() : '';
+    }
+
+    function getCatalogControlByRef(controlRef){
+      var hit=findLoadedCatalogControl(controlRef);
+      return hit ? hit.control : null;
     }
 
     function getCatalogControlById(controlId){
-      var key=String(controlId||'').trim();
-      if(!key) return null;
-      return state.idMap.get(key) || null;
+      return getCatalogControlByRef(controlId);
     }
 
     function getCatalogControlDisplayId(controlRef){
-      var control=getCatalogControlById(controlRef);
+      var control=getCatalogControlByRef(controlRef);
       return control ? (control.id || control.labelId || control.rawId || '') : '';
+    }
+
+    function getComponentBackMatterResourceAnchor(rawUrl){
+      var url=String(rawUrl||'').trim();
+      if(!url || url.charAt(0)!=='#') return '';
+      return 'component-backmatter-resource-'+cssId(url.slice(1));
+    }
+
+    function openComponentBackMatterResource(rawUrl){
+      var anchorId=getComponentBackMatterResourceAnchor(rawUrl);
+      if(!anchorId) return false;
+      var backDetails=document.getElementById('component-backmatter-details');
+      var target=document.getElementById(anchorId);
+      if(!backDetails || !target) return false;
+      backDetails.open=true;
+      target.scrollIntoView({behavior:'smooth',block:'center'});
+      target.classList.add('highlight');
+      setTimeout(function(){ target.classList.remove('highlight'); }, 1500);
+      return true;
+    }
+
+    function appendImplementationSourceMeta(parent, impl, searchTerm){
+      var source=String(impl && impl.source || '').trim();
+      if(!source) return;
+
+      var meta=document.createElement('div');
+      meta.className='component-inline-list';
+
+      var chip=document.createElement('span');
+      chip.className='kv';
+      chip.innerHTML='<strong>Quelle:</strong> ';
+
+      var resource=getBackMatterResource(componentState.resourceByUuid, source);
+      var sourceLabel=(impl && impl.sourceLabel) || (resource ? getBackMatterResourceLabel(resource) : source) || source;
+
+      if(resource && source.charAt(0)==='#'){
+        var link=document.createElement('a');
+        link.className='catalog-link';
+        link.href='#'+getComponentBackMatterResourceAnchor(source);
+        link.innerHTML=renderHighlightedInline(sourceLabel, searchTerm);
+        link.addEventListener('click', function(ev){
+          ev.preventDefault();
+          openComponentBackMatterResource(source);
+        });
+        chip.appendChild(link);
+      } else {
+        var value=document.createElement('span');
+        value.innerHTML=buildActiveLinkHtml(sourceLabel, source, searchTerm);
+        chip.appendChild(value);
+      }
+
+      meta.appendChild(chip);
+      parent.appendChild(meta);
+    }
+
+    function renderImplementationDescriptionHtml(impl, owner, searchTerm){
+      var description=String(impl && impl.description || '');
+      if(owner && owner.kind==='component' && /^control implementation for\b/i.test(description.trim())){
+        return '<p>Anforderungsimplementation fuer die Komponente &quot;'+renderHighlightedInline(componentOwnerName(owner), searchTerm)+'&quot;</p>';
+      }
+      return renderMarkupWithParams(description, impl.paramMap, searchTerm);
     }
 
     function createImplementationEntry(impl, owner){
@@ -3153,7 +3414,7 @@ function baseMatches(c){ return matches(c); }
     }
 
     function getCatalogParamMapForControl(controlRef){
-      var control=getCatalogControlById(controlRef);
+      var control=getCatalogControlByRef(controlRef);
       return control && control.paramMap ? control.paramMap : {};
     }
 
@@ -3375,11 +3636,13 @@ function baseMatches(c){ return matches(c); }
     function goToCatalogControl(controlRef){
       var ref=String(controlRef||'').trim();
       if(!ref) return;
-      var target=getCatalogControlByRef(ref);
-      if(!target){
+      var hit=findLoadedCatalogControl(ref);
+      var target=hit ? hit.control : null;
+      if(!target || !hit || !hit.entry){
         showMsg('<strong>Die referenzierte Anforderung wurde im geladenen Katalog nicht gefunden:</strong><br/><code>'+escapeHtml(ref)+'</code>', true);
         return;
       }
+      activateCatalogEntry(hit.entry.key, { keepMessage:true });
       switchTab('list');
       if(target.groupKey){ openGroupChain(target.groupKey); }
       if(target.topicId){
@@ -3401,8 +3664,9 @@ function baseMatches(c){ return matches(c); }
     function goToCatalogControlFromComponent(req){
       if(!req) return;
       var ownerKey=req.ownerUuid || req.ownerName || '';
-      var target=getCatalogControlById(req.controlId);
-      if(!target){
+      var hit=findLoadedCatalogControl(req.controlId);
+      var target=hit ? hit.control : null;
+      if(!target || !hit || !hit.entry){
         showMsg('<strong>Die referenzierte Anforderung wurde im geladenen Katalog nicht gefunden:</strong><br/><code>'+escapeHtml(String(req.controlId||''))+'</code>', true);
         return;
       }
@@ -3412,6 +3676,7 @@ function baseMatches(c){ return matches(c); }
         implKey:req.implKey || '',
         anchorId:'component-req-'+cssId(req.id)
       };
+      activateCatalogEntry(hit.entry.key, { keepMessage:true });
       goToCatalogControl(target.id);
     }
 
@@ -3421,7 +3686,7 @@ function baseMatches(c){ return matches(c); }
         if(owner && owner.kind==='capability') return;
         var empty=document.createElement('div');
         empty.className='component-empty';
-        empty.textContent='Keine Implementierungsnachweise vorhanden.';
+        empty.textContent='Keine Implementierungsbeschreibungen vorhanden.';
         container.appendChild(empty);
         return;
       }
@@ -3434,15 +3699,16 @@ function baseMatches(c){ return matches(c); }
         details.addEventListener('toggle', (function(key, el){ return function(){ uiState.componentExpandOverride=null; componentState.openImplementations[key]=el.open; }; })(implKey, details));
         var reqCount=impl.requirements.length;
         var summary=document.createElement('summary');
-        summary.innerHTML='<span class="component-summary"><strong>Implementierungsnachweis</strong><span class="badge">'+escapeHtml(reqCount+' Anforderungen')+'</span></span>';
+        summary.innerHTML='<span class="component-summary"><strong>Implementierungsbeschreibung</strong><span class="badge">'+escapeHtml(reqCount+' Anforderungen')+'</span></span>';
         details.appendChild(summary);
 
         var body=document.createElement('div');
         body.className='component-children';
+        appendImplementationSourceMeta(body, impl, searchTerm);
         if(impl.description){
           var desc=document.createElement('div');
           desc.className='catalog-md';
-          desc.innerHTML=renderMarkupWithParams(impl.description, impl.paramMap, searchTerm);
+          desc.innerHTML=renderImplementationDescriptionHtml(impl, owner, searchTerm);
           body.appendChild(desc);
         }
         if(impl.remarks){
@@ -3594,7 +3860,7 @@ function baseMatches(c){ return matches(c); }
       var card=document.createElement('article');
       card.className='card component-card requirement';
       card.id='component-req-'+cssId(req.id);
-      var catalogControl=getCatalogControlById(req.controlId);
+      var catalogControl=getCatalogControlByRef(req.controlId);
       var jumpAvailable=!!catalogControl;
       var displayId=req.catalogControlId || (catalogControl && catalogControl.id) || req.controlId || 'ohne-control-id';
       card.innerHTML='<div class="title"><h3><mark>'+renderHighlightedInline(displayId, searchTerm)+'</mark> – Implementierte Anforderung</h3></div>';
@@ -3639,11 +3905,12 @@ function baseMatches(c){ return matches(c); }
         stmtWrap.className='component-children';
         for(var s=0;s<req.statements.length;s++){
           var stmt=req.statements[s];
+          var stmtDisplayId=req.catalogControlId || (catalogControl && catalogControl.id) || req.controlId || 'ohne-control-id';
           var stmtCard=document.createElement('article');
           stmtCard.className='card component-card statement';
           stmtCard.id='component-stmt-'+cssId(stmt.id);
-          stmtCard.innerHTML='<div class="title"><h3><mark>'+renderHighlightedInline(stmt.statementId||'statement', searchTerm)+'</mark> – Statement</h3></div>'
-            + '<div class="meta"><span class="kv"><strong>UUID:</strong> <code>'+renderHighlightedInline(stmt.uuid||'–', searchTerm)+'</code></span></div>';
+          stmtCard.innerHTML='<div class="title"><h3><mark>'+renderHighlightedInline(stmtDisplayId, searchTerm)+'</mark> – Statement</h3></div>'
+            + '<div class="meta"><span class="kv"><strong>Statement-ID:</strong> <code>'+renderHighlightedInline(stmt.statementId||'–', searchTerm)+'</code></span><span class="kv"><strong>UUID:</strong> <code>'+renderHighlightedInline(stmt.uuid||'–', searchTerm)+'</code></span></div>';
           if(stmt.description){
             var stmtDesc=document.createElement('div');
             stmtDesc.className='catalog-md';
@@ -3838,10 +4105,11 @@ function baseMatches(c){ return matches(c); }
       if(hasBackMatter){
         var backDetails=document.createElement('details');
         backDetails.className='catalog-info-box';
+        backDetails.id='component-backmatter-details';
         backDetails.innerHTML='<summary><strong>Back Matter</strong></summary>';
         var backBody=document.createElement('div');
         backBody.className='catalog-info-content';
-        appendGenericObjectList(backBody, 'Ressourcen', componentState.backMatter.resources, searchTerm, componentState.resourceByUuid, componentState.baseUrl);
+        appendComponentBackMatterResourceList(backBody, 'Ressourcen', componentState.backMatter.resources, searchTerm);
         appendRemainingObjectFields(backBody, 'Weitere Back-Matter-Felder', componentState.backMatter, ['resources'], searchTerm, componentState.resourceByUuid, componentState.baseUrl);
         backDetails.appendChild(backBody);
         container.appendChild(backDetails);
@@ -4229,6 +4497,8 @@ function baseMatches(c){ return matches(c); }
         renderCatalogInfo();
         var matched=[]; for(var i=0;i<state.controls.length;i++){ var c=state.controls[i]; if(matches(c)) matched.push(c); }
         var activeCatalogChips=collectCatalogActiveFilterChips();
+        var activeCatalogEntry=findCatalogEntryByKey(catalogLibrary.activeKey);
+        var activeCatalogName=getCatalogDisplayName(activeCatalogEntry);
         if(!state.controls.length && !state.catalogMetadata && !state.catalogBackMatter){
           renderSelectionState(els.selectionState, 'Katalogstatus', 'Kein Datensatz geladen', []);
           renderOverviewCard({
@@ -4250,7 +4520,7 @@ function baseMatches(c){ return matches(c); }
           els.graphInfo.textContent='Graph: 0 Knoten';
           return;
         }
-        renderSelectionState(els.selectionState, 'Katalogfokus', matched.length+' von '+state.controls.length+' Anforderungen sichtbar', activeCatalogChips);
+        renderSelectionState(els.selectionState, 'Katalogfokus', matched.length+' von '+state.controls.length+' Anforderungen sichtbar · aktiv: '+activeCatalogName+' · geladen: '+catalogLibrary.items.length, activeCatalogChips);
         renderOverviewCard({
           title:matched.length ? 'Kataloganalyse' : 'Keine Treffer im Katalog',
           description:matched.length ? 'Die Übersicht priorisiert sichtbare Treffer, aktive Einschränkungen und Schnellaktionen, damit Navigation und Auswertung ohne Suchaufwand funktionieren.' : 'Die aktuelle Suche oder Filterung liefert keine sichtbaren Anforderungen. Passe die Einschränkungen an oder setze sie gesammelt zurück.',
@@ -4920,6 +5190,7 @@ function baseMatches(c){ return matches(c); }
     // Initiales Rendering (vor Laden einer Datei leer)
     updateHeaderSubtitle('list');
     setSidebarMode('catalog');
+    syncCatalogUiFromState();
     renderSelectionState(compEls.selectionState, 'Komponentenstatus', 'Kein Datensatz geladen', []);
     renderList();
 
