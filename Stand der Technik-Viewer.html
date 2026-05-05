@@ -164,6 +164,10 @@
     .component-card.capability{border-left-color:#2f6fd6}
     .component-card.requirement{border-left-color:#3b7a57}
     .component-card.statement{border-left-color:#7a3e00}
+    .component-owner-card{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;gap:12px 16px}
+    .component-owner-main{min-width:0}
+    .component-card-actions{display:flex;justify-content:flex-end}
+    .component-owner-card .component-card-actions{margin-top:0;align-self:start}
     .component-ref-btn{width:auto;display:inline-flex;align-items:center;justify-content:center}
     .component-ref-btn[disabled]{cursor:not-allowed;opacity:.55}
     .component-empty{color:var(--dim);font-style:italic}
@@ -2298,6 +2302,12 @@
       }
       return '';
     }
+    function getCatalogControlLabelValue(control){
+      if(control && control.label!=null && String(control.label).trim()){
+        return String(control.label).trim();
+      }
+      return valueOfProp(control && control.props, 'label') || '';
+    }
     function detectEffortLabel(props){
       var label='Aufwand';
       if(!props || !props.length) return label;
@@ -2592,10 +2602,9 @@
 
       // Control sammeln und in Anzeige-Objekt transformieren
       function collectControl(c, path, topicId, practiceId, groupKey, parentId, enhDepth){
-        var labelId = valueOfProp(c.props,'label') || '';
+        var labelId = getCatalogControlLabelValue(c);
         var rawId = c.id || '';
-        var id = rawId || labelId || c.title || (c.uuid ? ('id-'+String(c.uuid).substring(0,8)) : 'ohne-id');
-        if(labelId && (!rawId || looksUuidLikeId(rawId))) id = labelId;
+        var id = labelId || rawId || c.title || (c.uuid ? ('id-'+String(c.uuid).substring(0,8)) : 'ohne-id');
         // Enhancement controls: remember parent + nesting depth for indented rendering
         var enhParentId = parentId || '';
         var enhDepthVal = enhDepth || 0;
@@ -2625,7 +2634,7 @@
         if(parts){ for(var pi=0; pi<parts.length; pi++){ if(parts[pi] && parts[pi].prose) allProse += ' ' + parts[pi].prose; } }
         var hay = [id, rawId, labelId, (c.title||''), uuid, cls, secLevel, effortLabel, targetsArr.join(', '), tagsArr.join(', '), modalverbsArr.join(', '), documentationArr.join(', '), actionWordsArr.join(', '), remarks, allProse, topicIdVal, topicTitleVal].join(' \n ').toLowerCase();
 
-        var entry={ id:id, rawId:rawId, labelId:labelId, uuid:uuid, title:(c.title||''), class:cls, cls:cls, sec_level:secLevel, sec:secLevel,
+        var entry={ id:id, displayId:id, rawId:rawId, labelId:labelId, uuid:uuid, title:(c.title||''), class:cls, cls:cls, sec_level:secLevel, sec:secLevel,
                     effort:effort, effortLabel:effortLabel,
                     target:(targetsArr.join(', ')), targetsArr:targetsArr,
                     tags:(tagsArr.join(', ')), tagsArr:tagsArr,
@@ -3771,7 +3780,7 @@ var targetsRaw=[]; for(var k=0;k<state.controls.length;k++){ var t=(state.contro
 
     function getCatalogControlDisplayId(controlRef){
       var control=getCatalogControlByRef(controlRef);
-      return control ? (control.id || control.labelId || control.rawId || '') : '';
+      return control ? (control.displayId || control.labelId || control.id || control.rawId || '') : '';
     }
 
     function getComponentBackMatterResourceAnchor(rawUrl){
@@ -4400,7 +4409,7 @@ var targetsRaw=[]; for(var k=0;k<state.controls.length;k++){ var t=(state.contro
       card.id='component-req-'+cssId(req.id);
       var catalogControl=getCatalogControlByRef(req.controlId);
       var jumpAvailable=!!catalogControl;
-      var displayId=req.catalogControlId || (catalogControl && catalogControl.id) || req.controlId || 'ohne-control-id';
+      var displayId=req.catalogControlId || getCatalogControlDisplayId(req.controlId) || req.controlId || 'ohne-control-id';
       card.innerHTML='<div class="title"><h3><mark>'+renderHighlightedInline(displayId, searchTerm)+'</mark> – Implementierte Anforderung</h3></div>';
       if(req.description){
         var desc=document.createElement('div');
@@ -4443,7 +4452,7 @@ var targetsRaw=[]; for(var k=0;k<state.controls.length;k++){ var t=(state.contro
         stmtWrap.className='component-children';
         for(var s=0;s<req.statements.length;s++){
           var stmt=req.statements[s];
-          var stmtDisplayId=req.catalogControlId || (catalogControl && catalogControl.id) || req.controlId || 'ohne-control-id';
+          var stmtDisplayId=req.catalogControlId || getCatalogControlDisplayId(req.controlId) || req.controlId || 'ohne-control-id';
           var stmtCard=document.createElement('article');
           stmtCard.className='card component-card statement';
           stmtCard.id='component-stmt-'+cssId(stmt.id);
@@ -4534,45 +4543,45 @@ var targetsRaw=[]; for(var k=0;k<state.controls.length;k++){ var t=(state.contro
       var body=document.createElement('div');
       body.className=owner.kind==='capability' ? 'topic-children' : 'practice-children';
       var card=document.createElement('article');
-      card.className='card component-card '+(owner.kind==='capability' ? 'capability' : '');
+      card.className='card component-card component-owner-card '+(owner.kind==='capability' ? 'capability' : '');
       card.id='component-owner-'+cssId(stateKey);
+      var content=document.createElement('div');
+      content.className='component-owner-main';
       if(owner.description){
         var desc=document.createElement('div');
         desc.className='catalog-md';
         desc.innerHTML=renderMarkupWithParams(owner.description, owner.paramMap, searchTerm);
-        card.appendChild(desc);
+        content.appendChild(desc);
       }
       if(owner.purpose){
         var pur=document.createElement('details');
         pur.open=true;
         pur.innerHTML='<summary><strong>Zweck</strong></summary><div class="catalog-md">'+renderMarkupWithParams(owner.purpose, owner.paramMap, searchTerm)+'</div>';
-        card.appendChild(pur);
+        content.appendChild(pur);
       }
       if(owner.remarks){
         var rem=document.createElement('details');
         rem.innerHTML='<summary><strong>Remarks</strong></summary><div class="catalog-md">'+renderMarkupWithParams(owner.remarks, owner.paramMap, searchTerm)+'</div>';
-        card.appendChild(rem);
+        content.appendChild(rem);
       }
       if(owner.kind==='component' && owner.links && owner.links.length){
-        appendDocumentLinksSection(card, owner.links, searchTerm);
+        appendDocumentLinksSection(content, owner.links, searchTerm);
       }
       if(owner.kind==='capability' && !options.childComponents && owner.incorporatesComponents && owner.incorporatesComponents.length){
-        appendCapabilityComponentsSection(card, owner, searchTerm);
+        appendCapabilityComponentsSection(content, owner, searchTerm);
       }
-      if(owner.props && owner.props.length) appendGenericObjectList(card, 'Props', owner.props, searchTerm, componentState.resourceByUuid, componentState.baseUrl);
-      if(owner.kind!=='component' && owner.links && owner.links.length) appendGenericObjectList(card, 'Links', owner.links, searchTerm, componentState.resourceByUuid, componentState.baseUrl);
-      if(owner.protocols && owner.protocols.length) appendGenericObjectList(card, 'Protokolle', owner.protocols, searchTerm, componentState.resourceByUuid, componentState.baseUrl);
-      renderResponsibleRoles(card, 'Verantwortliche Rollen', owner.responsibleRoles, searchTerm);
-      appendRemainingObjectFields(card, 'Weitere Felder', owner.raw, owner.kind==='capability' ? ['uuid','name','title','description','remarks','props','links','protocols','responsible-roles','incorporates-components','control-implementations'] : ['uuid','type','title','name','description','purpose','remarks','props','links','protocols','responsible-roles','control-implementations'], searchTerm, componentState.resourceByUuid, componentState.baseUrl);
-      appendImplementationSections(card, owner, searchTerm);
+      if(owner.props && owner.props.length) appendGenericObjectList(content, 'Props', owner.props, searchTerm, componentState.resourceByUuid, componentState.baseUrl);
+      if(owner.kind!=='component' && owner.links && owner.links.length) appendGenericObjectList(content, 'Links', owner.links, searchTerm, componentState.resourceByUuid, componentState.baseUrl);
+      if(owner.protocols && owner.protocols.length) appendGenericObjectList(content, 'Protokolle', owner.protocols, searchTerm, componentState.resourceByUuid, componentState.baseUrl);
+      renderResponsibleRoles(content, 'Verantwortliche Rollen', owner.responsibleRoles, searchTerm);
+      appendRemainingObjectFields(content, 'Weitere Felder', owner.raw, owner.kind==='capability' ? ['uuid','name','title','description','remarks','props','links','protocols','responsible-roles','incorporates-components','control-implementations'] : ['uuid','type','title','name','description','purpose','remarks','props','links','protocols','responsible-roles','control-implementations'], searchTerm, componentState.resourceByUuid, componentState.baseUrl);
+      appendImplementationSections(content, owner, searchTerm);
 
-      var hasVisibleCardContent=card.childElementCount>0;
+      var hasVisibleCardContent=content.childElementCount>0;
       var skipEmptyCapabilityCard=owner.kind==='capability' && options.childComponents && options.childComponents.length && !hasVisibleCardContent;
 
       var actions=document.createElement('div');
-      actions.style.marginTop='10px';
-      actions.style.display='flex';
-      actions.style.justifyContent='flex-end';
+      actions.className='component-card-actions';
       var jsonBtn=document.createElement('button');
       jsonBtn.className='btn small';
       jsonBtn.type='button';
@@ -4580,6 +4589,7 @@ var targetsRaw=[]; for(var k=0;k<state.controls.length;k++){ var t=(state.contro
       jsonBtn.addEventListener('click', function(){ openJsonModal(owner.raw); });
       actions.appendChild(jsonBtn);
       if(!skipEmptyCapabilityCard){
+        card.appendChild(content);
         card.appendChild(actions);
         body.appendChild(card);
       }
