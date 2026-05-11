@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
@@ -164,13 +164,12 @@
     .component-card.capability{border-left-color:#2f6fd6}
     .component-card.requirement{border-left-color:#3b7a57}
     .component-card.statement{border-left-color:#7a3e00}
-    .component-owner-card{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;gap:12px 16px}
-    .component-owner-main{min-width:0}
-    .component-card-actions{display:flex;justify-content:flex-end}
-    .component-owner-card .component-card-actions{margin-top:0;align-self:start}
     .component-ref-btn{width:auto;display:inline-flex;align-items:center;justify-content:center}
     .component-ref-btn[disabled]{cursor:not-allowed;opacity:.55}
     .component-empty{color:var(--dim);font-style:italic}
+    .component-source{font-size:12px;color:var(--dim)}
+    .component-source a{color:var(--accent)}
+    .component-source code{font-size:11px}
     .component-jump-note{margin-top:10px}
     .component-link-list{display:flex;flex-direction:column;gap:10px;margin-top:8px}
     .component-link-card{padding:12px;border:1px solid var(--muted);border-radius:12px;background:#f8fbff}
@@ -193,11 +192,11 @@
     .practice-children{margin-top:10px;margin-left:10px;display:flex;flex-direction:column;gap:14px}
 
     .topic-summary{position:relative;padding-right:20px}
-    .topic-summary::after{content:"▾";position:absolute;right:0;top:0;color:var(--muted)}
-    .topic-group[open] > .topic-summary::after{content:"▴"}
+    .topic-summary::after{content:"\25BE";position:absolute;right:0;top:0;color:var(--muted)}
+    .topic-group[open] > .topic-summary::after{content:"\25B4"}
     .practice-summary{position:relative;padding-right:20px}
-    .practice-summary::after{content:"▾";position:absolute;right:0;top:0;color:var(--muted)}
-    .practice-group[open] > .practice-summary::after{content:"▴"}
+    .practice-summary::after{content:"\25BE";position:absolute;right:0;top:0;color:var(--muted)}
+    .practice-group[open] > .practice-summary::after{content:"\25B4"}
 
     .topic-group:focus-within{outline:2px solid rgba(77,163,255,.25)}
     .topic-group{border:2px solid var(--muted);border-radius:16px;background:#f0f4fa;padding:10px 12px}
@@ -229,8 +228,8 @@
     /* Multi-Select-Dropdowns fuer Suche und facettierte Filter. */
 
     details.ms > summary { position: relative; padding-right: 20px; }
-    details.ms > summary::after { content: "▾"; position: absolute; right: 0; top: 0; color: var(--muted); }
-    details.ms[open] > summary::after { content: "▴"; }
+    details.ms > summary::after { content: "\25BE"; position: absolute; right: 0; top: 0; color: var(--muted); }
+    details.ms[open] > summary::after { content: "\25B4"; }
 
     details.ms { background: var(--card); border: 1px solid rgba(0,0,0,.08); border-radius: 12px; padding: 8px 10px; }
     details.ms > summary { cursor: pointer; list-style: none; color: var(--text); font-weight: 600; user-select: none; }
@@ -246,10 +245,6 @@
 
     /* Design-Neu-Override: moderne Farbwelt, klarere Hierarchien und staerkere Kontraste. */
     :root{
-      --app-bg:
-        radial-gradient(circle at top left, rgba(23,92,211,.10), transparent 28%),
-        radial-gradient(circle at top right, rgba(15,75,184,.08), transparent 24%),
-        linear-gradient(180deg, #f7fafc 0%, #edf2f7 100%);
       --bg:#edf2f7;
       --panel:#eef4fb;
       --card:#ffffff;
@@ -264,97 +259,26 @@
       --warning:#9a6700;
       --warning-soft:#fff3d9;
       --shadow:0 18px 44px rgba(20,36,52,.08);
-      --header-bg:rgba(248,251,255,.92);
-      --panel-border:rgba(200,213,228,.9);
-      --sidebar-bg:linear-gradient(180deg, rgba(255,255,255,.86) 0%, rgba(240,246,253,.96) 100%);
-      --sidebar-intro-bg:linear-gradient(160deg, rgba(23,92,211,.08) 0%, rgba(255,255,255,.95) 60%);
-      --sidebar-intro-border:rgba(23,92,211,.14);
-      --nav-bg:rgba(255,255,255,.9);
-      --nav-subtle-bg:rgba(255,255,255,.72);
-      --surface:#ffffff;
-      --surface-soft:#f7fafc;
-      --surface-alt:#f5f8fc;
-      --surface-glass:rgba(255,255,255,.78);
-      --overview-bg:linear-gradient(140deg, rgba(255,255,255,.96) 0%, rgba(234,241,255,.96) 100%);
-      --card-bg:linear-gradient(180deg, rgba(255,255,255,.99) 0%, rgba(247,250,253,.98) 100%);
-      --detail-bg:rgba(246,249,252,.95);
-      --detail-border:rgba(200,213,228,.9);
-      --group-bg:linear-gradient(180deg, rgba(255,255,255,.94) 0%, rgba(238,244,251,.94) 100%);
-      --group-border:rgba(184,201,220,.96);
-      --chip-bg:#f5f8fc;
-      --chip-border:rgba(200,213,228,.96);
-      --control-bg:#ffffff;
-      --control-bg-soft:#eef4fb;
-      --control-border:rgba(170,188,210,.95);
-      --button-bg:linear-gradient(180deg,#ffffff 0%,#eef4fb 100%);
-      --button-border:rgba(170,188,210,.95);
-      --pill-bg:#ffffff;
-      --elevated-shadow:0 12px 30px rgba(20,36,52,.12);
-      --graph-bg:linear-gradient(180deg,#fbfdff 0%,#edf3f9 100%);
-      --graph-border:rgba(188,205,224,.98);
-      --graph-node:#24364b;
-      --graph-node-stroke:#5f8fe6;
-      --graph-label:#162434;
-      --graph-link:#5f8fe6;
-      --graph-link-required:#c9871f;
-      --component-node-cap:#175cd3;
-      --component-node-comp:#24364b;
-      --component-node-req:#2f7d5b;
-      --component-node-fallback:#4a5975;
-      --component-link-inc:#78a5f5;
-      --component-link-impl:#6fab83;
-      --axis-text:#40566f;
-      --axis-line:#c3d1e0;
-      --chart-text:#1b3148;
-      --chart-stroke:#ffffff;
-      --mark-bg:#e8f0ff;
-      --mark-text:#0f4bb8;
-      --mark-search-bg:#ffe08a;
-      --mark-search-text:#4f3200;
-      --code-bg:#0b1019;
-      --code-text:#e7f0ff;
-      --code-border:#27466c;
-      --separator:#9fb3cc;
-      --chart-1:#175cd3;
-      --chart-2:#2f7d5b;
-      --chart-3:#9a6700;
-      --chart-4:#7a4ac7;
-      --chart-5:#248f99;
-      --chart-6:#d35454;
-      --chart-7:#6f8b1e;
-      --chart-8:#c27919;
-      --chart-9:#3d6fb4;
-      --chart-10:#bd5aa0;
-    }
-    html{
-      min-width:1240px;
-      min-height:100%;
-      -webkit-text-size-adjust:100%;
-      text-size-adjust:100%;
     }
     body{
-      background:var(--app-bg);
+      background:
+        radial-gradient(circle at top left, rgba(23,92,211,.10), transparent 28%),
+        radial-gradient(circle at top right, rgba(15,75,184,.08), transparent 24%),
+        linear-gradient(180deg, #f7fafc 0%, var(--bg) 100%);
       color:var(--text);
       font-family:"Aptos","Segoe UI Variable","Segoe UI","Helvetica Neue",sans-serif;
       line-height:1.5;
-      min-width:1240px;
-      min-height:max(100vh,760px);
-      overflow-x:auto;
-      overflow-y:auto;
     }
     header{
       padding:20px 24px;
-      column-gap:12px;
-      row-gap:12px;
-      display:grid;
-      grid-template-columns:minmax(360px,auto) minmax(760px,1fr) auto;
-      align-items:center;
+      gap:12px;
+      align-items:flex-end;
       justify-content:flex-start;
-      background:var(--header-bg);
+      background:rgba(248,251,255,.92);
       backdrop-filter:blur(14px);
       box-shadow:0 8px 30px rgba(18,38,63,.06);
     }
-    .header-brand{display:flex;gap:16px;align-items:flex-start;min-width:360px;align-self:start}
+    .header-brand{display:flex;gap:16px;align-items:flex-start;min-width:0;flex:0 1 auto}
     .header-brand-mark{
       width:48px;height:48px;border-radius:16px;display:flex;align-items:center;justify-content:center;
       background:linear-gradient(135deg,var(--accent) 0%,#3a7ff2 100%);color:#ffffff;font-weight:800;letter-spacing:.08em;
@@ -363,38 +287,13 @@
     .eyebrow{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:800;margin-bottom:4px}
     header h1{font-size:24px;line-height:1.1}
     .header-subtitle{margin:6px 0 0 0;max-width:760px;color:var(--dim);font-size:14px}
-    .header-nav{
-      min-width:760px;
-      display:flex;
-      justify-content:flex-start;
-      min-height:48px;
-      margin-left:0;
-      overflow-x:auto;
-      overflow-y:hidden;
-      padding-bottom:2px
-    }
-    .header-actions{display:flex;align-items:center;justify-content:flex-end;align-self:center}
-    .theme-toggle{
-      width:48px;
-      min-width:48px;
-      min-height:48px;
-      padding:0;
-      border-radius:999px;
-      border:1px solid var(--panel-border);
-      background:var(--nav-bg);
-      color:var(--text);
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      box-shadow:0 8px 18px rgba(20,36,52,.05)
-    }
-    .theme-toggle .theme-toggle-icon{font-size:18px;line-height:1}
-    .wrap{grid-template-columns:minmax(310px,360px) minmax(780px,1fr);gap:20px;padding:20px;min-width:1240px;align-items:start}
+    .header-nav{min-width:0;display:flex;justify-content:flex-start;flex:1 1 620px;margin-left:1cm}
+    .wrap{grid-template-columns:minmax(310px,360px) minmax(0,1fr);gap:20px;padding:20px}
     aside{
       padding:18px;
       border-radius:24px;
-      background:var(--sidebar-bg);
-      border:1px solid var(--panel-border);
+      background:linear-gradient(180deg, rgba(255,255,255,.86) 0%, rgba(240,246,253,.96) 100%);
+      border:1px solid rgba(200,213,228,.9);
       box-shadow:var(--shadow);
       top:90px;
       max-height:calc(100vh - 108px)
@@ -402,8 +301,8 @@
     .sidebar-intro{
       padding:14px;
       border-radius:20px;
-      background:var(--sidebar-intro-bg);
-      border:1px solid var(--sidebar-intro-border);
+      background:linear-gradient(160deg, rgba(23,92,211,.08) 0%, rgba(255,255,255,.95) 60%);
+      border:1px solid rgba(23,92,211,.14);
       margin-bottom:14px
     }
     .sidebar-intro-copy{margin-top:10px}
@@ -412,38 +311,21 @@
     .viewer-logo{margin:0}
     .viewer-logo img{border-radius:18px}
     .tabs{
-      display:flex;
-      gap:10px;
-      align-items:stretch;
-      width:100%;
-      max-width:860px;
-      min-width:760px;
-      flex-wrap:nowrap
-    }
-    .tab-group{
       display:grid;
+      grid-template-columns:repeat(6,minmax(0,1fr));
       gap:6px;
       padding:6px;
-      background:var(--nav-bg);
-      border:1px solid var(--panel-border);
+      background:rgba(255,255,255,.9);
+      border:1px solid rgba(200,213,228,.9);
       border-radius:18px;
-      box-shadow:0 8px 18px rgba(20,36,52,.05)
-    }
-    .tab-group.primary{
-      grid-template-columns:repeat(2,minmax(0,1fr));
-      flex:0 0 244px
-    }
-    .tab-group.secondary{
-      grid-template-columns:repeat(4,minmax(0,1fr));
-      flex:0 0 496px
+      box-shadow:0 8px 18px rgba(20,36,52,.05);
+      width:100%;
+      max-width:860px
     }
     .tab{
       flex:initial;
       min-width:0;
       padding:8px 10px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
       border-radius:12px;
       border:1px solid transparent;
       background:transparent;
@@ -451,7 +333,7 @@
       font-weight:700;
       font-size:13px;
       line-height:1.2;
-      white-space:nowrap;
+      white-space:normal;
       text-align:center;
       transition:background .18s ease,color .18s ease,border-color .18s ease,transform .18s ease
     }
@@ -465,9 +347,9 @@
     }
     .sidebar-tabs{
       padding:6px;
-      background:var(--nav-subtle-bg);
+      background:rgba(255,255,255,.72);
       border-radius:16px;
-      border:1px solid var(--panel-border);
+      border:1px solid rgba(200,213,228,.8);
       margin:6px 0 14px 0
     }
     .sidebar-tab{
@@ -485,8 +367,8 @@
       box-shadow:inset 0 0 0 1px rgba(23,92,211,.06)
     }
     .panel-intro,.toolbar,.legend,.selection-state,.status{
-      background:var(--surface-glass);
-      border:1px solid var(--panel-border);
+      background:rgba(255,255,255,.78);
+      border:1px solid rgba(200,213,228,.82);
       border-radius:18px;
       padding:14px
     }
@@ -498,15 +380,10 @@
     .filter-split{margin:14px 0;border-top:1px dashed rgba(97,114,134,.25)}
     .input,select,button{
       min-height:44px;
-      background:var(--control-bg);
-      border:1px solid var(--control-border);
+      background:#ffffff;
+      border:1px solid rgba(200,213,228,.92);
       border-radius:14px;
       box-shadow:inset 0 1px 0 rgba(255,255,255,.9)
-    }
-    .input::file-selector-button{
-      background:var(--control-bg-soft);
-      border-color:var(--control-border);
-      color:var(--text)
     }
     .input:focus,select:focus,button:focus,summary:focus,.tab:focus,.sidebar-tab:focus{
       outline:3px solid rgba(23,92,211,.18);
@@ -514,8 +391,8 @@
       border-color:rgba(23,92,211,.55)
     }
     .btn{
-      background:var(--button-bg);
-      border-color:var(--button-border);
+      background:linear-gradient(180deg,#ffffff 0%,#eef4fb 100%);
+      border-color:rgba(170,188,210,.95);
       font-weight:700
     }
     .btn.small{min-height:36px}
@@ -530,8 +407,8 @@
       padding:10px 12px;
       border-radius:14px;
       color:var(--text);
-      background:var(--pill-bg);
-      border-color:var(--control-border);
+      background:#ffffff;
+      border-color:rgba(200,213,228,.9);
       font-size:13px
     }
     .selection-state:empty{display:none}
@@ -544,11 +421,11 @@
       padding:7px 10px;border-radius:999px;background:var(--accent-soft);color:var(--accent);
       border:1px solid rgba(23,92,211,.16);font-size:12px;font-weight:700
     }
-    .filter-chip.neutral,.overview-chip.neutral{background:var(--surface-soft);color:var(--dim);border-color:var(--panel-border)}
+    .filter-chip.neutral,.overview-chip.neutral{background:#f5f8fb;color:var(--dim);border-color:rgba(200,213,228,.9)}
     main{gap:18px}
     .overview{
-      background:var(--overview-bg);
-      border:1px solid var(--panel-border);
+      background:linear-gradient(140deg, rgba(255,255,255,.96) 0%, rgba(234,241,255,.96) 100%);
+      border:1px solid rgba(175,193,216,.9);
       border-radius:24px;
       padding:18px 20px;
       box-shadow:var(--shadow)
@@ -559,17 +436,17 @@
     .overview p{margin:8px 0 0 0;color:var(--dim);max-width:760px}
     .overview-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-top:16px}
     .overview-stat{
-      padding:14px;border-radius:18px;background:var(--surface);border:1px solid var(--panel-border);box-shadow:0 8px 18px rgba(20,36,52,.04)
+      padding:14px;border-radius:18px;background:#ffffff;border:1px solid rgba(200,213,228,.88);box-shadow:0 8px 18px rgba(20,36,52,.04)
     }
     .overview-stat-label{font-size:12px;color:var(--dim);text-transform:uppercase;letter-spacing:.07em;font-weight:800}
     .overview-stat-value{margin-top:6px;font-size:22px;font-weight:800;color:var(--text)}
     .overview-stat-note{margin-top:4px;font-size:12px;color:var(--dim)}
     .overview-section-title{margin:16px 0 8px 0;font-size:12px;color:var(--dim);font-weight:800;letter-spacing:.08em;text-transform:uppercase}
     .card{
-      border:1px solid var(--panel-border);
+      border:1px solid rgba(200,213,228,.92);
       border-radius:22px;
       padding:18px;
-      background:var(--card-bg);
+      background:linear-gradient(180deg, rgba(255,255,255,.99) 0%, rgba(247,250,253,.98) 100%);
       box-shadow:var(--shadow)
     }
     .card.enhancement{
@@ -579,8 +456,8 @@
     .title h3{font-size:18px;line-height:1.35}
     .meta{gap:10px;margin-top:12px}
     .meta .kv,.component-inline-list .kv,.component-link-meta .kv{
-      background:var(--chip-bg);
-      border-color:var(--chip-border);
+      background:#f5f8fc;
+      border-color:rgba(200,213,228,.96);
       padding:7px 12px;
       border-radius:999px;
       color:var(--text);
@@ -590,8 +467,8 @@
       margin-top:12px;
       padding:12px 14px;
       border-radius:16px;
-      background:var(--detail-bg);
-      border:1px solid var(--detail-border)
+      background:rgba(246,249,252,.95);
+      border:1px solid rgba(200,213,228,.9)
     }
     summary{
       font-weight:700;
@@ -599,8 +476,8 @@
     }
     .practice-group,.topic-group{
       border-radius:22px;
-      background:var(--group-bg);
-      border:1px solid var(--group-border);
+      background:linear-gradient(180deg, rgba(255,255,255,.94) 0%, rgba(238,244,251,.94) 100%);
+      border:1px solid rgba(184,201,220,.96);
       box-shadow:0 12px 26px rgba(20,36,52,.05)
     }
     .practice-group{padding:14px 16px}
@@ -636,8 +513,8 @@
       padding:12px;
       border-left:0;
       border-radius:18px;
-      background:var(--surface-soft);
-      border:1px solid var(--panel-border)
+      background:#f7fafc;
+      border:1px solid rgba(200,213,228,.88)
     }
     .rel-item{
       height:100%;
@@ -646,7 +523,7 @@
     }
     .rel-item.related{background:#1f2b38;border-color:#2f4156}
     .rel-item.required{background:#8f5a12;border-color:#a46517}
-    .catalog-info-box,.component-link-card{background:var(--surface)}
+    .catalog-info-box,.component-link-card{background:rgba(255,255,255,.98)}
     .catalog-section-title.emphasis{
       background:linear-gradient(135deg,#103d77 0%,#175cd3 100%);
       color:#ffffff
@@ -654,227 +531,1638 @@
     .component-card.capability{border-left-color:#175cd3}
     .component-card.requirement{border-left-color:#2f7d5b}
     .component-card.statement{border-left-color:#9a6700}
-    #graph,#sunburst,#bar{
-      height:max(82vh,560px);
-      background:var(--graph-bg);
-      border:1px solid var(--graph-border);
+    #graph,#sunburst,#bar,#jsonView{
+      height:82vh;
+      background:linear-gradient(180deg,#fbfdff 0%,#edf3f9 100%);
+      border:1px solid rgba(188,205,224,.98);
       border-radius:22px;
       box-shadow:var(--shadow)
     }
-    #jsonView,
-    .modal-card{
-      background:var(--code-bg);
-      border:1px solid var(--code-border);
-      color:var(--code-text)
-    }
-    #jsonTab{min-height:max(82vh,560px)}
-    #jsonView{
-      height:max(82vh,560px);
-      border-radius:22px;
-      box-shadow:var(--shadow)
-    }
-    .modal-header{
-      border-bottom:1px solid var(--code-border);
-      color:var(--code-text)
-    }
-    .modal-body,.json-pre{color:var(--code-text)}
     .graph-toolbar{top:12px;right:12px}
     mark{
-      background:var(--mark-bg);
-      color:var(--mark-text);
+      background:#e8f0ff;
+      color:#0f4bb8;
       padding:2px 7px;
       border-radius:999px;
       font-weight:800
     }
-    mark.search-hit{background:var(--mark-search-bg);color:var(--mark-search-text)}
+    mark.search-hit{background:#ffe08a;color:#4f3200}
     .note{color:var(--dim)}
-    .effort-tooltip{
-      background:var(--code-bg);
-      color:var(--code-text);
-      border-color:var(--code-border)
-    }
-    .catalog-separator{border-top-color:var(--separator)}
-    .catalog-md pre,.catalog-md th,.catalog-table th{background:var(--surface-soft)}
-    .catalog-table td,.catalog-md img{background:var(--surface)}
-    details.ms{
-      background:var(--surface);
-      border:1px solid var(--panel-border)
-    }
-    details.ms[open]{box-shadow:var(--elevated-shadow)}
-    .ms-divider{background:var(--panel-border)}
-
-    body[data-theme="dark"]{
-      --app-bg:
-        radial-gradient(circle at top left, rgba(79,140,255,.18), transparent 24%),
-        radial-gradient(circle at top right, rgba(77,184,255,.10), transparent 20%),
-        linear-gradient(180deg, #142132 0%, #0f1826 100%);
-      --bg:#0f1826;
-      --panel:#182435;
-      --card:#162234;
-      --muted:#45617d;
-      --accent:#6ea9ff;
-      --accent-strong:#3d83f6;
-      --accent-soft:#173253;
-      --text:#ebf2f8;
-      --dim:#b9c8d7;
-      --success:#6fcb9b;
-      --success-soft:#183827;
-      --warning:#ebb15d;
-      --warning-soft:#553811;
-      --shadow:0 18px 44px rgba(0,0,0,.34);
-      --header-bg:rgba(15,24,38,.94);
-      --panel-border:rgba(109,145,182,.96);
-      --sidebar-bg:linear-gradient(180deg, rgba(22,34,51,.98) 0%, rgba(15,24,38,.99) 100%);
-      --sidebar-intro-bg:linear-gradient(160deg, rgba(62,125,246,.22) 0%, rgba(24,37,56,.98) 58%);
-      --sidebar-intro-border:rgba(111,168,255,.36);
-      --nav-bg:rgba(18,30,46,.97);
-      --nav-subtle-bg:rgba(20,33,51,.92);
-      --surface:#172537;
-      --surface-soft:#1e3147;
-      --surface-alt:#25405a;
-      --surface-glass:rgba(23,37,55,.94);
-      --overview-bg:linear-gradient(140deg, rgba(25,40,59,.98) 0%, rgba(17,28,43,.98) 100%);
-      --card-bg:linear-gradient(180deg, rgba(22,35,53,.99) 0%, rgba(17,28,42,.99) 100%);
-      --detail-bg:rgba(22,35,53,.94);
-      --detail-border:rgba(109,145,182,.96);
-      --group-bg:linear-gradient(180deg, rgba(23,37,55,.98) 0%, rgba(17,28,42,.98) 100%);
-      --group-border:rgba(123,160,198,.96);
-      --chip-bg:#1f344a;
-      --chip-border:rgba(112,150,188,.96);
-      --control-bg:#172638;
-      --control-bg-soft:#213852;
-      --control-border:rgba(115,154,193,.96);
-      --button-bg:linear-gradient(180deg,#203752 0%,#16283b 100%);
-      --button-border:rgba(119,159,199,.96);
-      --pill-bg:#17273a;
-      --elevated-shadow:0 16px 36px rgba(0,0,0,.38);
-      --graph-bg:linear-gradient(180deg,#172638 0%,#111c2b 100%);
-      --graph-border:rgba(114,151,189,.96);
-      --graph-node:#26425c;
-      --graph-node-stroke:#7eb4ff;
-      --graph-label:#eef5ff;
-      --graph-link:#81b6ff;
-      --graph-link-required:#f2b55c;
-      --component-node-cap:#67a6ff;
-      --component-node-comp:#5f86ab;
-      --component-node-req:#6fcb9b;
-      --component-node-fallback:#7f9fbe;
-      --component-link-inc:#74b0ff;
-      --component-link-impl:#6fcb9b;
-      --axis-text:#c7d7e8;
-      --axis-line:#56718c;
-      --chart-text:#eef4fa;
-      --chart-stroke:#0f1826;
-      --mark-bg:#1f4675;
-      --mark-text:#dcebff;
-      --mark-search-bg:#e2ad5a;
-      --mark-search-text:#1c1204;
-      --code-bg:#0d1623;
-      --code-text:#eaf3ff;
-      --code-border:#4e76a1;
-      --separator:#7092b8;
-      --chart-1:#6ea9ff;
-      --chart-2:#6fcb9b;
-      --chart-3:#f2b55c;
-      --chart-4:#b885ff;
-      --chart-5:#59cad8;
-      --chart-6:#ff8d76;
-      --chart-7:#b8d36a;
-      --chart-8:#ffb866;
-      --chart-9:#82bdd5;
-      --chart-10:#f09cd1;
-    }
-    body[data-theme="dark"] header{box-shadow:0 10px 28px rgba(0,0,0,.24)}
-    body[data-theme="dark"] aside,
-    body[data-theme="dark"] .tab-group,
-    body[data-theme="dark"] .sidebar-tabs,
-    body[data-theme="dark"] .panel-intro,
-    body[data-theme="dark"] .toolbar,
-    body[data-theme="dark"] .legend,
-    body[data-theme="dark"] .selection-state,
-    body[data-theme="dark"] .status,
-    body[data-theme="dark"] .card,
-    body[data-theme="dark"] details,
-    body[data-theme="dark"] .practice-group,
-    body[data-theme="dark"] .topic-group,
-    body[data-theme="dark"] .catalog-info-box,
-    body[data-theme="dark"] .component-link-card,
-    body[data-theme="dark"] details.ms,
-    body[data-theme="dark"] .theme-toggle,
-    body[data-theme="dark"] .pill{
-      box-shadow:inset 0 0 0 1px rgba(196,223,255,.08), 0 12px 28px rgba(0,0,0,.22)
-    }
-    body[data-theme="dark"] .tab:hover,
-    body[data-theme="dark"] .sidebar-tab:hover,
-    body[data-theme="dark"] .btn:hover{transform:translateY(-1px)}
-    body[data-theme="dark"] .tab-group,
-    body[data-theme="dark"] .sidebar-tabs,
-    body[data-theme="dark"] .panel-intro,
-    body[data-theme="dark"] .toolbar,
-    body[data-theme="dark"] .legend,
-    body[data-theme="dark"] .selection-state,
-    body[data-theme="dark"] .status,
-    body[data-theme="dark"] .card,
-    body[data-theme="dark"] details,
-    body[data-theme="dark"] .practice-group,
-    body[data-theme="dark"] .topic-group,
-    body[data-theme="dark"] .catalog-info-box,
-    body[data-theme="dark"] .component-link-card,
-    body[data-theme="dark"] details.ms,
-    body[data-theme="dark"] .theme-toggle{
-      border-color:var(--panel-border)
-    }
-    body[data-theme="dark"] .tab,
-    body[data-theme="dark"] .sidebar-tab,
-    body[data-theme="dark"] .btn,
-    body[data-theme="dark"] .input,
-    body[data-theme="dark"] select,
-    body[data-theme="dark"] button{
-      border-color:var(--control-border)
-    }
-    body[data-theme="dark"] .sidebar-tab.active{box-shadow:inset 0 0 0 1px rgba(125,176,255,.16)}
-    body[data-theme="dark"] .tab.active{
-      border-color:rgba(214,232,255,.16);
-      box-shadow:inset 0 0 0 1px rgba(214,232,255,.08), 0 10px 22px rgba(0,0,0,.28)
-    }
-    body[data-theme="dark"] .theme-toggle{
-      box-shadow:inset 0 0 0 1px rgba(196,223,255,.08), 0 8px 18px rgba(0,0,0,.22)
-    }
-    body[data-theme="dark"] .tab-group.primary,
-    body[data-theme="dark"] .tab-group.secondary{
-      background:linear-gradient(180deg, rgba(20,33,51,.98) 0%, rgba(15,24,38,.98) 100%)
-    }
-    body[data-theme="dark"] .meta .kv,
-    body[data-theme="dark"] .component-inline-list .kv,
-    body[data-theme="dark"] .component-link-meta .kv{
-      border-color:var(--chip-border)
-    }
-    body[data-theme="dark"] #graph,
-    body[data-theme="dark"] #sunburst,
-    body[data-theme="dark"] #bar,
-    body[data-theme="dark"] #jsonView,
-    body[data-theme="dark"] .modal-card{
-      border-color:var(--graph-border)
-    }
-    body[data-theme="dark"] .catalog-md blockquote{border-left-color:var(--panel-border)}
-    body[data-theme="dark"] .catalog-link,
-    body[data-theme="dark"] .component-link-url a{color:#9ac1ff}
-    body[data-theme="dark"] .rel-item.related{background:#233140;border-color:#3a5169}
-    body[data-theme="dark"] .rel-item.required{background:#6b4a18;border-color:#8a6022}
-    body[data-theme="dark"] .badge.ok{border-color:rgba(226,173,90,.28);color:#ffd59a}
     @media(max-width:1220px){
-      header{padding:18px 20px}
-      .wrap{padding:18px}
+      header{align-items:flex-start;flex-direction:column}
+      .header-nav{width:100%}
+      .tabs{grid-template-columns:repeat(3,minmax(0,1fr));max-width:none;width:100%}
+      .wrap{grid-template-columns:1fr}
+      aside{position:static;max-height:none}
     }
     @media(max-width:740px){
-      header{padding:16px 18px}
-      .wrap{padding:16px}
+      header{padding:16px}
+      .wrap{padding:14px}
+      .header-brand{flex-direction:column}
+      .header-brand-mark{width:42px;height:42px;border-radius:14px}
+      .overview-top{flex-direction:column}
+      .overview-grid{grid-template-columns:1fr 1fr}
+      .card.enhancement{margin-left:calc(var(--enh-indent,0) * .45)}
+      .topic-children,.practice-children{padding-left:0;margin-left:0;border-left:0}
     }
     @media(max-width:560px){
-      .header-brand{min-width:360px}
+      .overview-grid{grid-template-columns:1fr}
+      .tabs{padding:4px;grid-template-columns:repeat(2,minmax(0,1fr))}
+      .sidebar-tabs{grid-template-columns:1fr}
     }
 
   
+
+    /* Trendorientiertes Redesign: deutliche UI-Verbesserung ohne Logik-Eingriff. */
+    :root{
+      --bg:#f3f6f3;
+      --panel:#ebf0ea;
+      --card:#ffffff;
+      --muted:#d4ddd5;
+      --accent:#1c7c68;
+      --accent-strong:#155f50;
+      --accent-soft:#e7f5f1;
+      --text:#1f2a25;
+      --dim:#627068;
+      --success:#2f7a55;
+      --success-soft:#e7f4ec;
+      --warning:#a46618;
+      --warning-soft:#fbefdd;
+      --danger:#a64b4b;
+      --shadow:0 18px 42px rgba(31,42,37,.08);
+      --shadow-soft:0 10px 24px rgba(31,42,37,.06);
+      --shell-radius:22px;
+      --card-radius:18px;
+      --control-radius:14px;
+    }
+    *{
+      scrollbar-width:thin;
+      scrollbar-color:#b7c5bc transparent;
+    }
+    body{
+      background:
+        radial-gradient(circle at top left, rgba(28,124,104,.10), transparent 30%),
+        radial-gradient(circle at top right, rgba(167,121,57,.10), transparent 24%),
+        linear-gradient(180deg, #f7faf7 0%, var(--bg) 100%);
+      color:var(--text);
+      font-family:"Aptos","Calibri","Helvetica Neue",sans-serif;
+      line-height:1.5;
+    }
+    header{
+      position:sticky;
+      top:0;
+      z-index:30;
+      display:grid;
+      grid-template-columns:minmax(0,1fr);
+      gap:16px;
+      padding:20px 24px 16px;
+      background:rgba(247,250,247,.88);
+      border-bottom:1px solid rgba(212,221,213,.9);
+      box-shadow:0 10px 30px rgba(31,42,37,.04);
+      backdrop-filter:blur(16px) saturate(140%);
+    }
+    .header-brand{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:20px;
+      min-width:0;
+      width:100%;
+    }
+    .header-brand > div:last-child{
+      min-width:0;
+    }
+    .header-brand-mark{
+      width:52px;
+      height:52px;
+      border-radius:16px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:linear-gradient(135deg, var(--accent) 0%, #29a087 100%);
+      color:#ffffff;
+      font-size:14px;
+      font-weight:800;
+      letter-spacing:.08em;
+      box-shadow:0 16px 32px rgba(28,124,104,.24);
+      flex:0 0 auto;
+    }
+    .eyebrow{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      margin-bottom:8px;
+      padding:5px 10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.82);
+      border:1px solid rgba(28,124,104,.16);
+      color:var(--accent-strong);
+      font-size:11px;
+      font-weight:800;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+    }
+    header h1{
+      margin:0;
+      font-size:30px;
+      line-height:1.02;
+      letter-spacing:-.03em;
+      white-space:normal;
+      max-width:780px;
+    }
+    .header-subtitle{
+      margin:10px 0 0;
+      max-width:900px;
+      color:var(--dim);
+      font-size:14px;
+      line-height:1.55;
+    }
+    .header-nav{
+      min-width:0;
+      display:block;
+      margin-left:0;
+    }
+    .wrap{
+      display:grid;
+      grid-template-columns:340px minmax(0,1fr);
+      gap:22px;
+      padding:22px;
+      align-items:start;
+    }
+    aside{
+      position:sticky;
+      top:116px;
+      max-height:calc(100vh - 136px);
+      padding:18px;
+      border:1px solid rgba(212,221,213,.92);
+      border-radius:var(--shell-radius);
+      background:linear-gradient(180deg, rgba(255,255,255,.84) 0%, rgba(241,246,242,.96) 100%);
+      box-shadow:var(--shadow);
+      overflow-x:hidden;
+      overflow-y:auto;
+    }
+    .sidebar-intro{
+      padding:14px;
+      border-radius:18px;
+      background:linear-gradient(180deg, rgba(255,255,255,.92) 0%, rgba(243,248,244,.96) 100%);
+      border:1px solid rgba(212,221,213,.95);
+      margin-bottom:14px;
+    }
+    .viewer-logo{
+      margin:0;
+    }
+    .viewer-logo img{
+      border-radius:14px;
+      border:1px solid rgba(212,221,213,.8);
+      background:#ffffff;
+    }
+    .sidebar-intro-copy{
+      margin-top:12px;
+    }
+    .sidebar-heading{
+      margin:0;
+      font-size:18px;
+      line-height:1.2;
+    }
+    .sidebar-copy{
+      margin:8px 0 0;
+      color:var(--dim);
+      font-size:13px;
+      line-height:1.5;
+    }
+    .tabs{
+      display:flex;
+      flex-wrap:nowrap;
+      gap:8px;
+      align-items:stretch;
+      width:100%;
+      max-width:none;
+      padding:8px;
+      background:rgba(255,255,255,.86);
+      border:1px solid rgba(212,221,213,.92);
+      border-radius:18px;
+      box-shadow:var(--shadow-soft);
+      overflow-x:auto;
+      overflow-y:hidden;
+      scroll-snap-type:x proximity;
+    }
+    .tabs::-webkit-scrollbar{
+      height:8px;
+    }
+    .tabs::-webkit-scrollbar-thumb{
+      background:#c8d5cc;
+      border-radius:999px;
+    }
+    .tab{
+      flex:0 0 auto;
+      min-width:132px;
+      padding:12px 14px;
+      border:1px solid transparent;
+      border-radius:12px;
+      background:transparent;
+      color:var(--dim);
+      cursor:pointer;
+      white-space:nowrap;
+      text-align:center;
+      font-size:13px;
+      font-weight:700;
+      line-height:1.2;
+      scroll-snap-align:start;
+      transition:background .18s ease,color .18s ease,border-color .18s ease,box-shadow .18s ease;
+    }
+    .tab:hover,.sidebar-tab:hover,.btn:hover{
+      transform:none;
+    }
+    .tab:hover{
+      background:rgba(28,124,104,.07);
+      color:var(--text);
+    }
+    .tab.active{
+      outline:none;
+      background:linear-gradient(135deg, var(--accent) 0%, #23977e 100%);
+      border-color:rgba(28,124,104,.18);
+      color:#ffffff;
+      box-shadow:0 12px 22px rgba(28,124,104,.22);
+    }
+    .sidebar-tabs{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:6px;
+      margin:6px 0 14px;
+      padding:6px;
+      background:rgba(255,255,255,.72);
+      border:1px solid rgba(212,221,213,.9);
+      border-radius:16px;
+    }
+    .sidebar-tab{
+      min-height:42px;
+      padding:10px 12px;
+      border:1px solid transparent;
+      border-radius:12px;
+      background:transparent;
+      color:var(--dim);
+      cursor:pointer;
+      font-weight:700;
+      text-align:center;
+      transition:background .18s ease,color .18s ease,border-color .18s ease;
+    }
+    .sidebar-tab.active{
+      outline:none;
+      background:#ffffff;
+      border-color:rgba(28,124,104,.14);
+      color:var(--accent-strong);
+      box-shadow:0 6px 18px rgba(31,42,37,.06);
+    }
+    .side-panel{
+      min-width:0;
+    }
+    .panel-intro,.toolbar,.legend,.selection-state,.status{
+      margin-top:14px;
+      padding:14px;
+      border:1px solid rgba(212,221,213,.88);
+      border-radius:18px;
+      background:rgba(255,255,255,.8);
+      box-shadow:var(--shadow-soft);
+    }
+    .panel-intro{
+      background:linear-gradient(180deg, rgba(255,255,255,.9) 0%, rgba(240,246,242,.9) 100%);
+    }
+    .toolbar,.legend,.selection-state,.status{
+      backdrop-filter:blur(6px);
+    }
+    .panel-kicker,.section-caption,.overview-section-title,.overview-stat-label,.selection-title{
+      font-size:11px;
+      color:var(--dim);
+      font-weight:800;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+    }
+    .panel-title{
+      margin:6px 0 0;
+      font-size:18px;
+      line-height:1.25;
+    }
+    .panel-copy{
+      margin:8px 0 0;
+      color:var(--dim);
+      font-size:13px;
+      line-height:1.5;
+    }
+    .field-label{
+      font-size:13px;
+      font-weight:700;
+      color:var(--text);
+    }
+    .filter-split{
+      margin:16px 0;
+      border-top:1px dashed rgba(98,112,104,.24);
+    }
+    .input,select,button{
+      width:100%;
+      min-height:46px;
+      padding:11px 13px;
+      background:#ffffff;
+      color:var(--text);
+      border:1px solid rgba(212,221,213,.95);
+      border-radius:var(--control-radius);
+      outline:none;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.95);
+    }
+    .input::placeholder{
+      color:#819187;
+    }
+    .input::file-selector-button{
+      padding:8px 10px;
+      border:1px solid rgba(212,221,213,.95);
+      background:#f8fbf9;
+      color:var(--text);
+      border-radius:10px;
+      margin-right:10px;
+    }
+    .input:focus,select:focus,button:focus,summary:focus,.tab:focus,.sidebar-tab:focus{
+      outline:3px solid rgba(28,124,104,.16);
+      outline-offset:1px;
+      border-color:rgba(28,124,104,.5);
+    }
+    .btn{
+      background:linear-gradient(180deg, #ffffff 0%, #f2f7f4 100%);
+      color:var(--text);
+      border-color:rgba(202,214,205,.95);
+      cursor:pointer;
+      font-weight:700;
+      transition:background .18s ease,border-color .18s ease,box-shadow .18s ease;
+    }
+    .btn:hover{
+      background:linear-gradient(180deg, #ffffff 0%, #edf6f2 100%);
+      border-color:rgba(28,124,104,.24);
+      box-shadow:0 8px 18px rgba(31,42,37,.08);
+    }
+    .btn.small{
+      min-height:36px;
+      width:auto;
+      padding:8px 12px;
+    }
+    .status{
+      display:grid;
+      gap:10px;
+      grid-template-columns:1fr;
+    }
+    .pill{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      width:100%;
+      min-width:0;
+      justify-content:flex-start;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(212,221,213,.95);
+      background:#ffffff;
+      color:var(--text);
+      font-size:12px;
+      font-weight:600;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+    .selection-state:empty{
+      display:none !important;
+    }
+    .selection-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:10px;
+      margin-bottom:10px;
+    }
+    .selection-subtitle{
+      font-size:13px;
+      color:var(--dim);
+    }
+    .chip-list,.overview-chip-list,.overview-actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+    .filter-chip,.overview-chip{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:8px 11px;
+      border-radius:999px;
+      background:var(--accent-soft);
+      color:var(--accent-strong);
+      border:1px solid rgba(28,124,104,.12);
+      font-size:12px;
+      font-weight:700;
+    }
+    .filter-chip.neutral,.overview-chip.neutral{
+      background:#f4f7f5;
+      color:var(--dim);
+      border-color:rgba(212,221,213,.95);
+    }
+    details.ms{
+      background:#ffffff;
+      border:1px solid rgba(212,221,213,.95);
+      border-radius:14px;
+      padding:10px 12px;
+      box-shadow:none;
+    }
+    details.ms > summary{
+      position:relative;
+      padding-right:24px;
+      color:var(--text);
+      font-weight:700;
+    }
+    details.ms > summary::after{
+      color:var(--dim);
+    }
+    details.ms[open]{
+      box-shadow:0 10px 24px rgba(31,42,37,.08);
+    }
+    .ms-menu{
+      margin-top:10px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      max-height:240px;
+      overflow:auto;
+      padding-right:4px;
+    }
+    .ms-item{
+      display:flex;
+      gap:8px;
+      align-items:center;
+      font-size:13px;
+      color:var(--dim);
+    }
+    .ms-item .ms-label{
+      color:var(--text);
+      font-weight:500;
+    }
+    main{
+      display:flex;
+      flex-direction:column;
+      gap:20px;
+      min-width:0;
+    }
+    main > section{
+      min-width:0;
+    }
+    .overview{
+      position:relative;
+      overflow:hidden;
+      background:radial-gradient(circle at top right, rgba(28,124,104,.10), transparent 28%), linear-gradient(135deg, rgba(255,255,255,.98) 0%, rgba(243,248,244,.98) 100%);
+      border:1px solid rgba(212,221,213,.92);
+      border-radius:26px;
+      padding:20px 22px;
+      box-shadow:var(--shadow);
+    }
+    .overview.hidden{
+      display:none !important;
+    }
+    .overview-top{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:20px;
+    }
+    .overview h2{
+      margin:0;
+      font-size:24px;
+      line-height:1.1;
+      letter-spacing:-.02em;
+    }
+    .overview p{
+      margin:8px 0 0;
+      color:var(--dim);
+      max-width:780px;
+      font-size:14px;
+    }
+    .overview-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+      gap:12px;
+      margin-top:18px;
+    }
+    .overview-stat{
+      padding:15px 16px;
+      border-radius:18px;
+      background:rgba(255,255,255,.92);
+      border:1px solid rgba(212,221,213,.9);
+      box-shadow:0 10px 22px rgba(31,42,37,.05);
+    }
+    .overview-stat-value{
+      margin-top:6px;
+      font-size:24px;
+      font-weight:800;
+      color:var(--text);
+    }
+    .overview-stat-note{
+      margin-top:4px;
+      font-size:12px;
+      color:var(--dim);
+    }
+    .card{
+      position:relative;
+      overflow:hidden;
+      background:linear-gradient(180deg, rgba(255,255,255,.99) 0%, rgba(248,251,249,.98) 100%);
+      border:1px solid rgba(212,221,213,.95);
+      border-radius:var(--card-radius);
+      padding:18px;
+      box-shadow:var(--shadow-soft);
+    }
+    .card.enhancement{
+      margin-left:var(--enh-indent,0);
+      border-left:4px solid rgba(28,124,104,.28);
+    }
+    .title{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:center;
+    }
+    .title h3{
+      margin:0;
+      font-size:19px;
+      line-height:1.32;
+      letter-spacing:-.01em;
+    }
+    .meta{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:12px;
+    }
+    .meta .kv,.component-inline-list .kv,.component-link-meta .kv{
+      font-size:12px;
+      color:var(--text);
+      border:1px solid rgba(212,221,213,.95);
+      background:#f7faf8;
+      border-radius:999px;
+      padding:6px 10px;
+      line-height:1.2;
+      display:inline-flex;
+      align-items:center;
+      gap:4px;
+    }
+    .meta .kv code,.component-inline-list .kv code,.component-link-meta .kv code{
+      background:transparent;
+      border:0;
+      padding:0;
+      color:var(--text);
+    }
+    details{
+      background:#f8fbf9;
+      border:1px solid rgba(212,221,213,.92);
+      border-radius:16px;
+      padding:12px;
+      margin-top:12px;
+    }
+    summary{
+      cursor:pointer;
+    }
+    .rel{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+      gap:12px;
+      margin-top:10px;
+    }
+    .rel-group{
+      margin-top:10px;
+      margin-left:0;
+      padding:12px 0 0 14px;
+      border-left:2px solid rgba(212,221,213,.95);
+      border-radius:0;
+      background:transparent;
+    }
+    .rel-label{
+      margin-left:0;
+      font-size:12px;
+      color:var(--dim);
+    }
+    .rel-item{
+      padding:12px;
+      border-radius:16px;
+    }
+    .rel-item.related{
+      background:#24373a;
+      color:#eff9f5;
+      border:1px solid #355054;
+    }
+    .rel-item.required{
+      background:#8b5e20;
+      color:#fff7eb;
+      border:1px solid #a06d26;
+    }
+    .rel-item.related .meta .kv,
+    .rel-item.related .hint,
+    .rel-item.related .note,
+    .rel-item.required .meta .kv,
+    .rel-item.required .hint,
+    .rel-item.required .note{
+      color:#ffffff;
+    }
+    .rel-item.related .meta .kv,
+    .rel-item.required .meta .kv{
+      background:rgba(255,255,255,.12);
+      border-color:rgba(255,255,255,.24);
+    }
+    .rel-item.related .meta .kv code,
+    .rel-item.required .meta .kv code{
+      color:#ffffff;
+    }
+    .badge{
+      padding:4px 8px;
+      border-radius:999px;
+      border:1px solid rgba(212,221,213,.95);
+      font-size:11px;
+      color:var(--dim);
+      background:#f7faf8;
+    }
+    .badge.ok{
+      border-color:rgba(164,102,24,.16);
+      background:var(--warning-soft);
+      color:var(--warning);
+    }
+    .practice-group,.topic-group{
+      border:1px solid rgba(212,221,213,.92);
+      border-radius:20px;
+      background:linear-gradient(180deg, rgba(255,255,255,.98) 0%, rgba(244,248,245,.98) 100%);
+      box-shadow:var(--shadow-soft);
+    }
+    .practice-group{
+      padding:15px 16px;
+      margin-bottom:12px;
+    }
+    .topic-group{
+      padding:12px 14px;
+    }
+    .practice-summary,.topic-summary{
+      position:relative;
+      padding-right:28px;
+    }
+    .practice-summary::after,.topic-summary::after{
+      right:2px;
+      top:1px;
+      color:#809288;
+    }
+    .practice-title,.topic-title{
+      display:flex;
+      gap:8px;
+      align-items:center;
+      font-weight:800;
+      line-height:1.35;
+    }
+    .practice-children,.topic-children{
+      margin-top:14px;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+    .topic-children{
+      margin-left:16px;
+      padding-left:14px;
+      border-left:2px solid rgba(212,221,213,.95);
+    }
+    .topic-count{
+      font-size:12px;
+      color:var(--dim);
+    }
+    .catalog-info-box,.component-link-card{
+      background:#ffffff;
+      border-radius:16px;
+    }
+    .catalog-info-heading,.component-info-heading{
+      margin:2px 0 10px 0;
+      font-size:17px;
+      font-weight:800;
+      color:var(--text);
+    }
+    .component-doc-heading{
+      font-size:20px;
+      letter-spacing:-.01em;
+    }
+    .component-subheading{
+      font-size:16px;
+    }
+    .component-card.capability{border-left-color:#1c7c68}
+    .component-card.requirement{border-left-color:#2f7a55}
+    .component-card.statement{border-left-color:#a46618}
+    .component-link-card{
+      padding:14px;
+      border:1px solid rgba(212,221,213,.95);
+      box-shadow:var(--shadow-soft);
+    }
+    .component-link-title{
+      margin:0 0 8px 0;
+      font-size:15px;
+      font-weight:800;
+      color:var(--text);
+    }
+    .catalog-section-title.emphasis{
+      background:var(--accent-soft);
+      color:var(--accent-strong);
+      padding:7px 10px;
+      border-radius:10px;
+    }
+    .catalog-md blockquote{
+      border-left-color:#9db4aa;
+    }
+    .catalog-md pre,.catalog-md th,.catalog-table th,.catalog-info-box{
+      background:#f8fbf9;
+    }
+    #graph,#sunburst,#bar{
+      height:82vh;
+      min-height:540px;
+      background:linear-gradient(180deg, rgba(250,252,251,.98) 0%, rgba(239,245,241,.98) 100%);
+      border:1px solid rgba(212,221,213,.95);
+      border-radius:24px;
+      position:relative;
+      box-shadow:var(--shadow);
+    }
+    #jsonTab{
+      height:auto;
+    }
+    #jsonView{
+      height:82vh;
+      min-height:540px;
+      background:linear-gradient(180deg, #233234 0%, #1b272a 100%);
+      border:1px solid rgba(31,42,37,.16);
+      border-radius:24px;
+      color:#e7f4ef;
+      padding:16px;
+      overflow:auto;
+      white-space:pre-wrap;
+      word-break:break-word;
+      font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+      font-size:12px;
+      box-shadow:var(--shadow);
+    }
+    .graph-toolbar{
+      position:absolute;
+      top:14px;
+      right:14px;
+      display:flex;
+      gap:8px;
+      z-index:5;
+    }
+    .hidden{
+      display:none !important;
+    }
+    .note{
+      font-size:12px;
+      color:var(--dim);
+      line-height:1.45;
+    }
+    mark{
+      background:#eef7d2;
+      color:#375227;
+      padding:2px 6px;
+      border-radius:6px;
+      font-weight:800;
+    }
+    mark.search-hit{
+      background:#ffe08a;
+      color:#4f3200;
+    }
+    .param{
+      color:#d29a24;
+      font-weight:700;
+    }
+    .param-value{
+      color:#b084ff;
+      font-weight:700;
+    }
+    .highlight{
+      outline:2px solid rgba(28,124,104,.3);
+    }
+    .err{
+      background:#3c1717;
+      border-color:#6d3434;
+    }
+    .modal{
+      position:fixed;
+      inset:0;
+      background:rgba(18,28,24,.48);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      z-index:50;
+      backdrop-filter:blur(8px);
+    }
+    .modal.hidden{
+      display:none;
+    }
+    .modal-card{
+      width:min(980px,92vw);
+      max-height:86vh;
+      background:#f9fcfa;
+      border:1px solid rgba(212,221,213,.95);
+      border-radius:24px;
+      display:flex;
+      flex-direction:column;
+      overflow:hidden;
+      box-shadow:0 24px 60px rgba(18,28,24,.2);
+    }
+    .modal-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:14px 16px;
+      border-bottom:1px solid rgba(212,221,213,.95);
+      color:var(--text);
+      background:#ffffff;
+    }
+    .modal-body{
+      padding:16px;
+      overflow:auto;
+      color:var(--text);
+      background:#f9fcfa;
+    }
+    .json-pre{
+      white-space:pre-wrap;
+      word-break:break-word;
+      font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+      font-size:12px;
+    }
+    .effort-tooltip{
+      position:fixed;
+      z-index:120;
+      max-width:420px;
+      background:#1f2a25;
+      color:#f3faf6;
+      border:1px solid #314139;
+      border-radius:12px;
+      padding:10px 12px;
+      font-size:12px;
+      line-height:1.45;
+      box-shadow:0 18px 36px rgba(18,28,24,.22);
+      pointer-events:none;
+      white-space:normal;
+      display:none;
+    }
+    @media(max-width:1320px){
+      .wrap{
+        grid-template-columns:312px minmax(0,1fr);
+      }
+      .tab{
+        min-width:124px;
+      }
+    }
+    @media(max-width:1160px){
+      header{
+        padding:18px 18px 14px;
+      }
+      .wrap{
+        grid-template-columns:1fr;
+      }
+      aside{
+        position:static;
+        top:auto;
+        max-height:none;
+      }
+    }
+    @media(max-width:760px){
+      header{
+        padding:16px 14px 12px;
+      }
+      .header-brand{
+        flex-direction:column;
+        align-items:flex-start;
+      }
+      .header-brand-mark{
+        width:46px;
+        height:46px;
+        border-radius:14px;
+      }
+      header h1{
+        font-size:26px;
+      }
+      .wrap{
+        gap:16px;
+        padding:14px;
+      }
+      aside{
+        padding:14px;
+        border-radius:18px;
+      }
+      .tabs{
+        padding:6px;
+      }
+      .tab{
+        min-width:118px;
+      }
+      .overview{
+        padding:18px;
+        border-radius:22px;
+      }
+      .overview-top{
+        flex-direction:column;
+      }
+      .overview-grid{
+        grid-template-columns:1fr;
+      }
+      .card{
+        padding:16px;
+      }
+      .card.enhancement{
+        margin-left:calc(var(--enh-indent,0) * .4);
+      }
+      .topic-children,.practice-children{
+        margin-left:0;
+        padding-left:0;
+        border-left:0;
+      }
+      .rel{
+        grid-template-columns:1fr;
+      }
+      #graph,#sunburst,#bar,#jsonView{
+        min-height:440px;
+        border-radius:20px;
+      }
+    }
+
+    /* Art-directed Shell Override: grundlegenderes Redesign auf Basis der Referenzstimmungen. */
+    :root{
+      --bg:#edf3fb;
+      --panel:#f4f8fd;
+      --card:#f9fbff;
+      --muted:#cfd9e8;
+      --accent:#161616;
+      --accent-strong:#0d0d0d;
+      --accent-soft:#e6eefb;
+      --text:#171717;
+      --dim:#6f7c8f;
+      --success:#2c6a54;
+      --success-soft:#e7f1ec;
+      --warning:#94611d;
+      --warning-soft:#eef3fb;
+      --danger:#9d4f41;
+      --shadow:0 20px 42px rgba(22,22,22,.06);
+      --shadow-soft:0 8px 18px rgba(22,22,22,.05);
+      --shell-radius:0;
+      --card-radius:0;
+      --control-radius:0;
+    }
+    body{
+      background:
+        linear-gradient(rgba(118,139,170,.10) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(118,139,170,.10) 1px, transparent 1px),
+        linear-gradient(180deg, #f7faff 0%, #e9f0f9 100%);
+      background-size: 100% 120px, 230px 100%, 100% 100%;
+      color:var(--text);
+      font-family:"Aptos","Helvetica Neue",sans-serif;
+    }
+    header{
+      position:sticky;
+      top:0;
+      z-index:40;
+      display:grid;
+      grid-template-columns:minmax(280px, 1.05fr) minmax(0, 3fr);
+      gap:0;
+      padding:0;
+      background:rgba(244,248,253,.94);
+      border-bottom:1px solid rgba(118,139,170,.18);
+      box-shadow:none;
+      backdrop-filter:blur(10px);
+    }
+    .header-brand{
+      display:grid;
+      grid-template-columns:72px minmax(0,1fr);
+      gap:0;
+      align-items:stretch;
+      min-width:0;
+      min-height:96px;
+      border-right:1px solid rgba(118,139,170,.18);
+    }
+    .header-brand-mark{
+      width:auto;
+      height:auto;
+      border-radius:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:#111111;
+      color:#f4f8fd;
+      font-size:12px;
+      font-weight:800;
+      letter-spacing:.12em;
+      box-shadow:none;
+    }
+    .header-brand > div:last-child{
+      min-width:0;
+      min-height:96px;
+      padding:10px 20px 10px 22px;
+      background:rgba(249,252,255,.78);
+      display:flex;
+      align-items:center;
+    }
+    .eyebrow{
+      display:none !important;
+    }
+    header h1{
+      max-width:none;
+      font-size:30px;
+      line-height:1;
+      letter-spacing:-.05em;
+      margin:0;
+    }
+    .header-subtitle{
+      display:none !important;
+    }
+    .header-nav{
+      min-width:0;
+      display:flex;
+      align-items:stretch;
+      margin-left:0;
+      padding:0;
+      background:rgba(245,249,254,.72);
+    }
+    .tabs{
+      display:grid;
+      grid-template-columns:repeat(6, minmax(120px,1fr));
+      gap:0;
+      width:100%;
+      padding:0;
+      border:0;
+      border-radius:0;
+      background:none;
+      box-shadow:none;
+      overflow:hidden;
+    }
+    .tabs::-webkit-scrollbar{
+      display:none;
+    }
+    .tab{
+      min-width:0;
+      min-height:96px;
+      padding:14px 12px 12px;
+      border:0;
+      border-left:1px solid rgba(118,139,170,.16);
+      border-radius:0;
+      background:transparent;
+      color:#253246;
+      text-align:center;
+      font-size:13px;
+      font-weight:700;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      line-height:1.2;
+      white-space:normal;
+      box-shadow:none;
+    }
+    .tab:first-child{
+      border-left:0;
+    }
+    .tab:hover{
+      background:rgba(17,17,17,.05);
+      color:var(--text);
+    }
+    .tab.active{
+      background:#111111;
+      color:#f4f8fd;
+      box-shadow:none;
+      border-color:#111111;
+    }
+    .tab[data-tab="list"],
+    .tab[data-tab="components"]{
+      background:rgba(17,17,17,.03);
+    }
+    .tab[data-tab="list"].active,
+    .tab[data-tab="components"].active{
+      background:#111111;
+    }
+    .tab[data-tab="components"]{
+      position:relative;
+      margin-right:18px;
+    }
+    .tab[data-tab="components"]::after{
+      content:"";
+      position:absolute;
+      top:16px;
+      right:-10px;
+      width:1px;
+      height:calc(100% - 32px);
+      background:rgba(118,139,170,.32);
+      pointer-events:none;
+    }
+    .wrap{
+      display:grid;
+      grid-template-columns:320px minmax(0,1fr);
+      gap:20px;
+      padding:22px 22px 26px;
+      align-items:start;
+    }
+    aside{
+      position:sticky;
+      top:118px;
+      max-height:calc(100vh - 140px);
+      padding:18px;
+      border:1px solid rgba(118,139,170,.18);
+      border-radius:0;
+      background:rgba(244,248,253,.94);
+      box-shadow:none;
+    }
+    .sidebar-intro{
+      padding:0 0 16px;
+      border:0;
+      border-bottom:1px solid rgba(118,139,170,.16);
+      border-radius:0;
+      background:none;
+      margin-bottom:14px;
+    }
+    .viewer-logo img{
+      border-radius:0;
+      border:0;
+      background:transparent;
+    }
+    .sidebar-intro-copy{
+      margin-top:12px;
+    }
+    .sidebar-copy{
+      color:#617086;
+      font-size:13px;
+      line-height:1.55;
+    }
+    .sidebar-tabs{
+      gap:0;
+      margin:0 0 14px;
+      padding:0;
+      border:1px solid rgba(118,139,170,.18);
+      border-radius:0;
+      background:none;
+    }
+    .sidebar-tab{
+      min-height:46px;
+      border:0;
+      border-right:1px solid rgba(118,139,170,.18);
+      border-radius:0;
+      background:transparent;
+      color:#47586f;
+    }
+    .sidebar-tab:last-child{
+      border-right:0;
+    }
+    .sidebar-tab.active{
+      background:#111111;
+      color:#f4f8fd;
+      border-color:#111111;
+      box-shadow:none;
+    }
+    .panel-intro,.toolbar,.legend,.selection-state,.status{
+      border:1px solid rgba(118,139,170,.16);
+      border-radius:0;
+      background:rgba(255,255,255,.84);
+      box-shadow:none;
+    }
+    .toolbar{
+      padding:0;
+      border:0;
+      background:none;
+    }
+    .panel-intro{
+      padding:14px;
+      background:#f9fbff;
+    }
+    .panel-kicker,.section-caption,.overview-section-title,.overview-stat-label,.selection-title{
+      letter-spacing:.1em;
+      color:#73839a;
+    }
+    .panel-title{
+      font-size:20px;
+      line-height:1.15;
+    }
+    .panel-copy{
+      color:#64758c;
+    }
+    .input,select,button,details.ms{
+      border-radius:0;
+      border-color:rgba(118,139,170,.18);
+      background:#ffffff;
+      box-shadow:none;
+    }
+    details.ms{
+      padding:8px 10px;
+      border-width:1px;
+    }
+    details.ms > summary{
+      padding-right:20px;
+      min-height:24px;
+      display:flex;
+      align-items:center;
+    }
+    details.ms > summary::after{
+      right:0;
+      top:50%;
+      transform:translateY(-50%);
+      font-size:12px;
+      line-height:1;
+    }
+    .input::file-selector-button{
+      border-radius:0;
+      background:#eef4fd;
+    }
+    .dropzone{
+      display:grid;
+      gap:6px;
+      place-items:center;
+      min-height:92px;
+      padding:14px;
+      margin-top:10px;
+      border:1px dashed rgba(118,139,170,.45);
+      background:linear-gradient(180deg, rgba(244,248,253,.9) 0%, rgba(255,255,255,.96) 100%);
+      color:#4c6078;
+      cursor:pointer;
+      text-align:center;
+      transition:border-color .16s ease, background .16s ease, color .16s ease;
+    }
+    .dropzone strong{
+      color:#1e2f46;
+      font-size:13px;
+    }
+    .dropzone span{
+      font-size:12px;
+      line-height:1.45;
+    }
+    .dropzone:hover,
+    .dropzone.is-dragover{
+      border-color:#2d5f9a;
+      background:linear-gradient(180deg, rgba(231,238,251,.96) 0%, rgba(245,249,255,.98) 100%);
+      color:#294d7a;
+    }
+    .source-picker{
+      position:relative;
+    }
+    .source-picker-trigger{
+      position:relative;
+      min-height:44px;
+      padding:10px 36px 10px 12px;
+      text-align:left;
+      font-weight:600;
+      color:#1e2f46;
+    }
+    .source-picker-trigger::after{
+      content:"▾";
+      position:absolute;
+      right:12px;
+      top:50%;
+      transform:translateY(-50%);
+      font-size:12px;
+      color:#6f7f95;
+      pointer-events:none;
+    }
+    .source-picker.open .source-picker-trigger::after{
+      content:"▴";
+    }
+    .source-picker-trigger[disabled]{
+      color:#73839a;
+      cursor:default;
+    }
+    .source-picker-menu{
+      position:absolute;
+      top:calc(100% + 4px);
+      left:0;
+      right:0;
+      z-index:30;
+      display:grid;
+      gap:6px;
+      padding:8px;
+      border:1px solid rgba(118,139,170,.18);
+      background:#ffffff;
+      box-shadow:0 14px 28px rgba(20,36,52,.12);
+      max-height:240px;
+      overflow:auto;
+    }
+    .source-picker-menu.hidden{
+      display:none;
+    }
+    .source-item{
+      display:grid;
+      grid-template-columns:minmax(0,1fr) auto;
+      align-items:center;
+      gap:8px;
+      border:1px solid rgba(118,139,170,.18);
+      background:#ffffff;
+      padding:8px 10px;
+    }
+    .source-item.is-active{
+      border-color:#2d5f9a;
+      background:#eef4fd;
+    }
+    .source-item-button{
+      min-width:0;
+      width:auto;
+      padding:0;
+      border:0;
+      background:transparent;
+      color:#1e2f46;
+      text-align:left;
+      font:inherit;
+      cursor:pointer;
+    }
+    .source-item-button:hover{
+      background:transparent;
+      color:#0f4bb8;
+    }
+    .source-item-label{
+      display:block;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+      font-size:13px;
+      font-weight:600;
+    }
+    .source-item-meta{
+      display:block;
+      margin-top:2px;
+      font-size:11px;
+      color:#73839a;
+    }
+    .source-item-remove{
+      width:24px;
+      min-width:24px;
+      height:24px;
+      padding:0;
+      border:1px solid rgba(118,139,170,.22);
+      background:#f8fbff;
+      color:#6f7f95;
+      font-size:15px;
+      line-height:1;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+    }
+    .source-item-remove:hover{
+      background:#111111;
+      border-color:#111111;
+      color:#ffffff;
+    }
+    .btn{
+      background:#f6f9fe;
+      border-radius:0;
+      box-shadow:none;
+    }
+    .btn:hover{
+      background:#eaf1fb;
+      box-shadow:none;
+    }
+    .pill,.filter-chip,.overview-chip,.meta .kv,.component-inline-list .kv,.component-link-meta .kv,.badge{
+      border-radius:0;
+    }
+    .pill{
+      background:#ffffff;
+      border-color:rgba(118,139,170,.16);
+      font-weight:700;
+    }
+    .filter-chip,.overview-chip{
+      background:#e7eefb;
+      border-color:#c9d8f0;
+      color:#294d7a;
+    }
+    .filter-chip.neutral,.overview-chip.neutral{
+      background:#f2f6fc;
+      color:#6b7c92;
+      border-color:rgba(118,139,170,.16);
+    }
+    main{
+      gap:22px;
+    }
+    .overview{
+      background:#f9fbff;
+      border:1px solid rgba(118,139,170,.18);
+      border-radius:0;
+      padding:22px 24px;
+      box-shadow:none;
+    }
+    .overview::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      background:
+        linear-gradient(90deg, rgba(118,139,170,.10) 0, rgba(118,139,170,.10) 1px, transparent 1px) 0 0 / 240px 100%,
+        linear-gradient(rgba(118,139,170,.10) 0, rgba(118,139,170,.10) 1px, transparent 1px) 0 0 / 100% 100px;
+      opacity:.55;
+    }
+    .overview-top,.selection-header{
+      position:relative;
+      z-index:1;
+    }
+    .overview h2{
+      font-size:40px;
+      line-height:.96;
+      letter-spacing:-.045em;
+    }
+    .overview p{
+      font-size:15px;
+      color:#5f7189;
+      max-width:900px;
+    }
+    .overview-grid{
+      position:relative;
+      z-index:1;
+      grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+      gap:0;
+      margin-top:20px;
+      border-top:1px solid rgba(118,139,170,.16);
+      border-left:1px solid rgba(118,139,170,.16);
+    }
+    .overview-stat{
+      border-top:0;
+      border-left:0;
+      border-right:1px solid rgba(118,139,170,.16);
+      border-bottom:1px solid rgba(118,139,170,.16);
+      border-radius:0;
+      background:rgba(246,250,255,.8);
+      min-height:124px;
+      box-shadow:none;
+    }
+    .overview-stat-value{
+      font-size:34px;
+      line-height:1;
+      letter-spacing:-.04em;
+    }
+    .card{
+      background:#fbfdff;
+      border:1px solid rgba(118,139,170,.18);
+      border-radius:0;
+      box-shadow:none;
+    }
+    .card::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      border-top:1px solid rgba(118,139,170,.08);
+      border-left:1px solid rgba(118,139,170,.08);
+      opacity:.4;
+    }
+    .card.enhancement{
+      border-left:2px solid #181818;
+    }
+    .title h3{
+      font-size:32px;
+      line-height:1;
+      letter-spacing:-.04em;
+      max-width:18ch;
+    }
+    .topic-group .card .title h3,
+    .practice-group .card .title h3,
+    .component-card .title h3{
+      font-size:20px;
+      line-height:1.08;
+      max-width:22ch;
+    }
+    .topic-group .card,
+    .practice-group .card,
+    .component-card{
+      padding:14px 16px;
+    }
+    .topic-group .meta,
+    .practice-group .meta,
+    .component-card .meta{
+      gap:6px;
+      margin-top:10px;
+    }
+    .topic-group .meta .kv,
+    .practice-group .meta .kv,
+    .component-card .meta .kv{
+      font-size:11px;
+      padding:5px 8px;
+    }
+    details{
+      border-radius:0;
+      background:#f5f9ff;
+      border-color:rgba(118,139,170,.16);
+    }
+    .practice-group,.topic-group{
+      border-radius:0;
+      background:#fbfdff;
+      box-shadow:none;
+    }
+    .practice-group{
+      padding:16px 18px;
+    }
+    .practice-title,.topic-title{
+      font-size:16px;
+      letter-spacing:-.01em;
+    }
+    .rel-item,.component-link-card,.catalog-info-box{
+      border-radius:0;
+      box-shadow:none;
+    }
+    .rel-item.related{
+      background:#1d2425;
+      border-color:#1d2425;
+    }
+    .rel-item.required{
+      background:#8d652a;
+      border-color:#8d652a;
+    }
+    .catalog-section-title.emphasis{
+      border-radius:0;
+      background:#111111;
+      color:#f4f8fd;
+    }
+    #graph,#sunburst,#bar{
+      border-radius:0;
+      border-color:rgba(118,139,170,.18);
+      background:#fbfdff;
+      box-shadow:none;
+    }
+    #jsonView{
+      border-radius:0;
+      background:#171a19;
+      color:#eef2ee;
+      box-shadow:none;
+    }
+    .modal{
+      backdrop-filter:blur(6px);
+      background:rgba(17,17,17,.42);
+    }
+    .modal-card{
+      border-radius:0;
+      background:#f9fbff;
+      box-shadow:0 30px 60px rgba(17,17,17,.18);
+    }
+    .modal-header,.modal-body{
+      background:#f9fbff;
+    }
+    mark{
+      border-radius:0;
+      background:#efe29c;
+      color:#3d3216;
+    }
+    .note{
+      color:#6f675b;
+    }
+    @media(max-width:1320px){
+      header{
+        grid-template-columns:1fr;
+      }
+      .header-brand{
+        border-right:0;
+        border-bottom:1px solid rgba(118,139,170,.18);
+      }
+      .tabs{
+        grid-template-columns:repeat(6,minmax(136px,1fr));
+        overflow-x:auto;
+      }
+      .tab{
+        min-height:84px;
+      }
+      aside{
+        top:164px;
+        max-height:calc(100vh - 184px);
+      }
+    }
+    @media(max-width:1160px){
+      .wrap{
+        grid-template-columns:1fr;
+      }
+      aside{
+        position:static;
+        top:auto;
+        max-height:none;
+      }
+    }
+    @media(max-width:760px){
+      header h1{
+        font-size:32px;
+      }
+      .header-brand{
+        grid-template-columns:56px minmax(0,1fr);
+      }
+      .header-brand > div:last-child{
+        padding:18px 16px;
+      }
+      .wrap{
+        padding:14px;
+      }
+      .overview{
+        padding:18px;
+      }
+      .overview h2{
+        font-size:28px;
+      }
+      .title h3{
+        font-size:24px;
+      }
+      .tab{
+        min-width:136px;
+        min-height:72px;
+      }
+      .header-brand,
+      .header-brand > div:last-child{
+        min-height:72px;
+      }
+      header h1{
+        font-size:26px;
+      }
+    }
 
     /* Druckansicht fuer den PDF-Export ueber den Browser-Druckdialog. */
     body.print-mode { 
@@ -913,71 +2201,75 @@
     <div class="header-brand">
       <div class="header-brand-mark">SDT</div>
       <div>
-        <div class="eyebrow">OSCAL Analyseoberfläche</div>
         <h1>Stand der Technik-Viewer</h1>
-        <p id="viewSubtitle" class="header-subtitle">Visuell aufbereitete Lese- und Filterungsmöglichkeit für OSCAL-Inhalte.</p>
+        <p id="viewSubtitle" class="header-subtitle">Ein neu strukturierter Arbeitsbereich für OSCAL-Kataloge, Komponenten und Analyseansichten mit klarer Navigation, ruhiger Leseführung und durchgängiger visueller Hierarchie.</p>
       </div>
     </div>
+    <!-- Hauptnavigation fuer die grossen Viewer-Ansichten: Katalog, Komponenten, Diagramme und JSON. -->
     <div class="header-nav">
       <div class="tabs" role="tablist" aria-label="Ansichten">
-        <div class="tab-group primary" aria-label="Datenmodus">
-          <button class="tab active" data-tab="list" id="tab-list" type="button" role="tab" aria-selected="true" aria-controls="listTab">Katalog</button>
-          <button class="tab" data-tab="components" id="tab-components" type="button" role="tab" aria-selected="false" aria-controls="componentTab">Komponenten</button>
-        </div>
-        <div class="tab-group secondary" aria-label="Analysen und Rohdaten">
-          <button class="tab" data-tab="graph" id="tab-graph" type="button" role="tab" aria-selected="false" aria-controls="graphTab">Graph</button>
-          <button class="tab" data-tab="sunburst" id="tab-sunburst" type="button" role="tab" aria-selected="false" aria-controls="sunburstTab">Sunburst</button>
-          <button class="tab" data-tab="bar" id="tab-bar" type="button" role="tab" aria-selected="false" aria-controls="barTab">Balkendiagramm</button>
-          <button class="tab" data-tab="json" id="tab-json" type="button" role="tab" aria-selected="false" aria-controls="jsonTab">JSON</button>
-        </div>
+        <button class="tab active" data-tab="list" id="tab-list" type="button" role="tab" aria-selected="true" aria-controls="listTab">Katalog</button>
+        <button class="tab" data-tab="components" id="tab-components" type="button" role="tab" aria-selected="false" aria-controls="componentTab">Komponenten</button>
+        <button class="tab" data-tab="graph" id="tab-graph" type="button" role="tab" aria-selected="false" aria-controls="graphTab">Graph</button>
+        <button class="tab" data-tab="sunburst" id="tab-sunburst" type="button" role="tab" aria-selected="false" aria-controls="sunburstTab">Sunburst</button>
+        <button class="tab" data-tab="bar" id="tab-bar" type="button" role="tab" aria-selected="false" aria-controls="barTab">Balkendiagramm</button>
+        <button class="tab" data-tab="json" id="tab-json" type="button" role="tab" aria-selected="false" aria-controls="jsonTab">JSON</button>
       </div>
-    </div>
-    <div class="header-actions">
-      <button id="themeToggle" class="theme-toggle" type="button" aria-label="Zum Dark Mode wechseln" title="Zum Dark Mode wechseln" aria-pressed="false">
-        <span class="theme-toggle-icon" aria-hidden="true">☾</span>
-      </button>
     </div>
   </header>
 
   <div class="wrap">
     <!-- Linke Arbeitsleiste fuer Datenquellen, Filter, Status und Export. -->
     <aside>
+      <!-- Reines Branding-Element fuer Logo und Wiedererkennung des Viewers. -->
       <div class="sidebar-intro">
         <div class="viewer-logo">
           <img src="./viewer_logo.png" alt="Stand der Technik-Viewer – Logo" onerror="this.style.display='none'">
         </div>
-        <div class="sidebar-intro-copy">
-          <div class="eyebrow">Arbeitsbereich</div>
-          <p class="sidebar-copy">Die Seitenleiste bündelt Datenquelle, Suche, aktive Filter und Schnellaktionen.</p>
-        </div>
       </div>
 
+      <!-- Umschalter zwischen den beiden Datenquellen-Bereichen der Sidebar. -->
       <div class="sidebar-tabs" role="tablist" aria-label="Datenquellen">
         <button class="sidebar-tab active" data-panel="catalog" id="side-tab-catalog" type="button" role="tab" aria-selected="true" aria-controls="catalogPanel">Katalog</button>
         <button class="sidebar-tab" data-panel="component" id="side-tab-components" type="button" role="tab" aria-selected="false" aria-controls="componentPanel">Komponenten</button>
       </div>
 
+      <!-- Katalog-Panel: Upload, Quellenwechsel, Filter, Status und Export fuer OSCAL Catalogs. -->
       <div id="catalogPanel" class="side-panel">
         <div class="panel-intro">
-          <div class="panel-kicker">Katalogdaten</div>
+          <div class="panel-kicker">Catalog Input</div>
           <h3 class="panel-title">OSCAL Catalog laden</h3>
-          <p class="panel-copy">Lade einen oder mehrere lokale JSON-Kataloge oder referenziere zusätzliche URLs. Angezeigt wird immer der aktuell ausgewählte Katalog, Sprünge aus der Komponentenansicht funktionieren katalogübergreifend.</p>
+          <p class="panel-copy">Lade eine lokale JSON-Datei oder referenziere eine URL. Die Verarbeitung läuft vollständig im Browser.</p>
         </div>
-        <input id="file" class="input" type="file" accept=".json" multiple />
+        <!-- Versteckter Datei-Input als technischer Trigger fuer Klick- und Drag-and-Drop-Upload. -->
+        <input id="file" class="input" type="file" accept=".json" multiple hidden aria-hidden="true" />
+        <!-- Sichtbare Upload-Zone fuer lokale Catalog-Dateien. -->
+        <div id="catalogDropzone" class="dropzone" role="button" tabindex="0" aria-label="OSCAL Catalog per Drag and Drop laden">
+          <strong>Datei hierher ziehen</strong>
+          <span>oder klicken, um einen oder mehrere OSCAL Catalogs auszuwählen</span>
+        </div>
+        <!-- Alternativer Ladeweg fuer Catalogs per URL. -->
         <div style="margin-top:10px;display:grid;gap:8px">
           <input id="urlInput" class="input" type="url" placeholder="Katalog-URL einfügen (JSON)" autocomplete="off" spellcheck="false" />
           <button id="urlLoadBtn" class="btn" type="button" style="width:100%; justify-content:center;">Von URL laden</button>
           <div class="note">Hinweis: Bei GitHub-Links ggf. auf die Raw-URL umschreiben.</div>
         </div>
-        <div style="margin-top:12px;display:grid;gap:8px">
-          <label class="field-label" for="catalogPicker">Aktiver Katalog in der Katalogansicht</label>
-          <select id="catalogPicker" class="input" disabled>
-            <option value="">Kein Katalog geladen</option>
+        <!-- Quellenumschalter fuer mehrere parallel geladene Catalogs.
+             Der versteckte Select spiegelt den Zustand intern,
+             die sichtbare Custom-Dropdown-Komponente erlaubt Auswahl und Entfernen je Eintrag. -->
+        <div style="margin-top:10px;display:grid;gap:8px">
+          <label class="field-label" for="catalogDatasetSelect">Geladene Kataloge</label>
+          <select id="catalogDatasetSelect" aria-label="Geladenen Katalog auswählen" hidden aria-hidden="true">
+            <option value="">Noch kein Katalog geladen</option>
           </select>
-          <div class="note">Im Dropdown wählst du, welcher der geladenen Kataloge in Katalog-, Graph-, Sunburst-, Balken- und JSON-Ansicht dargestellt wird.</div>
+          <div id="catalogSourcePicker" class="source-picker">
+            <button id="catalogSourceButton" class="input source-picker-trigger" type="button" aria-haspopup="listbox" aria-expanded="false">Noch kein Katalog geladen</button>
+            <div id="catalogSourceMenu" class="source-picker-menu hidden" role="listbox" aria-label="Geladene Kataloge"></div>
+          </div>
         </div>
 
         <hr class="filter-split" />
+        <!-- Volltextsuche und facettierte Filter fuer die aktuell aktive Catalog-Quelle. -->
         <div style="margin-top:12px;display:grid;gap:8px" class="toolbar">
           <label class="field-label" for="q">Suche im Katalog</label>
           <input id="q" class="input" type="text" placeholder="Suchen (ID, Titel, Text, Tags…)" autocomplete="off" autocapitalize="off" spellcheck="false" name="q_oscal_viewer_stable2" />
@@ -999,12 +2291,14 @@
           <span id="graphInfo" class="pill">Graph: 0 Knoten</span>
         </div>
 
+        <!-- Kompakte Anzeige des aktuellen Filter- und Fokuszustands. -->
         <div id="catalogSelectionState" class="selection-state"></div>
 
         <button id="resetBtn" class="btn" type="button" style="width:100%; justify-content:center; margin-top:12px;">
           Filter zurücksetzen
         </button>
 
+        <!-- Legende fuer farbliche und semantische Markierungen im Katalog. -->
         <div class="legend">
           <h4>Legende</h4>
           <div class="legend-item"><span class="chip related"></span> Verwandte Anforderung (related)</div>
@@ -1020,32 +2314,48 @@
         <p class="note" style="margin-top:10px">Alles läuft lokal im Browser. Kein Upload.</p>
       </div>
 
+      <!-- Komponenten-Panel: Upload, Quellenwechsel, Filter, Status und Export fuer Component Definitions. -->
       <div id="componentPanel" class="side-panel hidden">
         <div class="panel-intro">
-          <div class="panel-kicker">Komponentendaten</div>
+          <div class="panel-kicker">Component Input</div>
           <h3 class="panel-title">Component Definition laden</h3>
-          <p class="panel-copy">Wenn die in einer Component-Definition referenzierten Anforderungen verlinkt werden sollen, müssen die passenden Anforderungskataloge im Katalog-Tab parallel geladen sein. Der Viewer springt dann automatisch in den richtigen Katalog.</p>
+          <p class="panel-copy">Wenn die in einer Component-Definition referenzierten Anforderungen aus einem Katalog verlinkt werden sollen, dann muss der entsprechende Anforderungskatalog im Katalog-Tab parallel hochgeladen werden.</p>
         </div>
-        <input id="compFile" class="input" type="file" accept=".json" multiple />
+        <!-- Versteckter Datei-Input als technischer Trigger fuer Klick- und Drag-and-Drop-Upload. -->
+        <input id="compFile" class="input" type="file" accept=".json" multiple hidden aria-hidden="true" />
+        <!-- Sichtbare Upload-Zone fuer lokale Component-Definition-Dateien. -->
+        <div id="componentDropzone" class="dropzone" role="button" tabindex="0" aria-label="OSCAL Component Definition per Drag and Drop laden">
+          <strong>Datei hierher ziehen</strong>
+          <span>oder klicken, um eine oder mehrere Component Definitions auszuwählen</span>
+        </div>
+        <!-- Alternativer Ladeweg fuer Component Definitions per URL. -->
         <div style="margin-top:10px;display:grid;gap:8px">
           <input id="compUrlInput" class="input" type="url" placeholder="Component-Definition-URL einfügen (JSON)" autocomplete="off" spellcheck="false" />
           <button id="compUrlLoadBtn" class="btn" type="button" style="width:100%; justify-content:center;">Von URL laden</button>
           <div class="note">Hinweis: Bei GitHub-Links ggf. auf die Raw-URL umschreiben.</div>
         </div>
-        <div style="margin-top:12px;display:grid;gap:8px">
-          <label class="field-label" for="compPicker">Aktive Component Definition in der Komponentenansicht</label>
-          <select id="compPicker" class="input" disabled>
-            <option value="">Keine Component Definition geladen</option>
+        <!-- Quellenumschalter fuer mehrere parallel geladene Component Definitions.
+             Auch hier bleibt ein versteckter Select als interner Zustandsanker erhalten,
+             waehrend das sichtbare Custom-Dropdown Auswahl und Entfernen uebernimmt. -->
+        <div style="margin-top:10px;display:grid;gap:8px">
+          <label class="field-label" for="componentDatasetSelect">Geladene Component Definitions</label>
+          <select id="componentDatasetSelect" aria-label="Geladene Component Definition auswählen" hidden aria-hidden="true">
+            <option value="">Noch keine Component Definition geladen</option>
           </select>
-          <div class="note">Im Dropdown wählst du, welche der geladenen Component Definitions in Komponenten-, Graph-, Sunburst-, Balken- und JSON-Ansicht dargestellt wird.</div>
+          <div id="componentSourcePicker" class="source-picker">
+            <button id="componentSourceButton" class="input source-picker-trigger" type="button" aria-haspopup="listbox" aria-expanded="false">Noch keine Component Definition geladen</button>
+            <div id="componentSourceMenu" class="source-picker-menu hidden" role="listbox" aria-label="Geladene Component Definitions"></div>
+          </div>
         </div>
 
         <hr class="filter-split" />
+        <!-- Volltextsuche und facettierte Filter fuer Komponenten, Quellen und Capabilities. -->
         <div style="margin-top:12px;display:grid;gap:8px" class="toolbar">
           <label class="field-label" for="compQ">Suche in Komponenten</label>
-          <input id="compQ" class="input" type="text" placeholder="Suchen (Komponente, Control-ID, Beschreibung…)" autocomplete="off" autocapitalize="off" spellcheck="false" name="q_component_viewer" />
+          <input id="compQ" class="input" type="text" placeholder="Suchen (Komponente, Control-ID, Beschreibung, Quelle…)" autocomplete="off" autocapitalize="off" spellcheck="false" name="q_component_viewer" />
           <div class="section-caption">Filter einschränken</div>
           <details class="ms" id="compTypeMS"><summary>Alle Komponententypen</summary><div class="ms-menu" id="compTypeMS_menu"></div></details>
+          <details class="ms" id="compSourceMS"><summary>Alle Quellen</summary><div class="ms-menu" id="compSourceMS_menu"></div></details>
           <details class="ms" id="compNameMS"><summary>Alle Komponenten</summary><div class="ms-menu" id="compNameMS_menu"></div></details>
           <details class="ms" id="compCapabilityMS"><summary>Alle Capabilities</summary><div class="ms-menu" id="compCapabilityMS_menu"></div></details>
         </div>
@@ -1056,6 +2366,7 @@
           <span id="compGraphInfo" class="pill">Graph: 0 Knoten</span>
         </div>
 
+        <!-- Kompakte Anzeige des aktuellen Komponenten-Fokus und der aktiven Einschraenkungen. -->
         <div id="componentSelectionState" class="selection-state"></div>
 
         <button id="compResetBtn" class="btn" type="button" style="width:100%; justify-content:center; margin-top:12px;">
@@ -1066,16 +2377,20 @@
           Als PDF exportieren
         </button>
 
-        <p class="note component-jump-note">Referenzierte Anforderungen können direkt in den jeweils passenden geladenen OSCAL-Katalog springen.</p>
+        <p class="note component-jump-note">Referenzierte Anforderungen können direkt in den Katalog springen, sobald zusätzlich ein passender OSCAL Catalog geladen ist.</p>
       </div>
     </aside>
 
     <!-- Rechter Inhaltsbereich fuer Uebersicht, Listen, Diagramme und JSON. -->
     <main>
+      <!-- Obere Workspace-Zusammenfassung mit Kennzahlen, Fokus und Schnellaktionen. -->
       <section id="viewSummary" class="overview"></section>
+      <!-- Katalogliste mit verschachtelten Praktiken, Themen und Anforderungen. -->
       <section id="listTab" class="grid" role="tabpanel" aria-labelledby="tab-list"></section>
+      <!-- Komponentenliste mit Ownern, Implementierungen, Anforderungen und Statements. -->
       <section id="componentTab" class="grid hidden" role="tabpanel" aria-labelledby="tab-components"></section>
 
+      <!-- Graph-Ansicht fuer Beziehungs- und Abhaengigkeitsdarstellung. -->
       <section id="graphTab" class="hidden" role="tabpanel" aria-labelledby="tab-graph">
         <div id="graph">
           <div class="graph-toolbar">
@@ -1084,18 +2399,22 @@
         </div>
       </section>
 
+      <!-- Sunburst-Ansicht fuer verdichtete Verteilungen und Hierarchien. -->
       <section id="sunburstTab" class="hidden" role="tabpanel" aria-labelledby="tab-sunburst">
         <div id="sunburst"></div>
       </section>
 
+      <!-- Balkendiagramm fuer Mengenvergleiche zwischen Gruppen, Quellen oder Komponenten. -->
       <section id="barTab" class="hidden" role="tabpanel" aria-labelledby="tab-bar">
         <div id="bar"></div>
       </section>
 
+      <!-- JSON-Ansicht fuer die unveraenderte Rohdaten-Inspektion. -->
       <section id="jsonTab" class="hidden" role="tabpanel" aria-labelledby="tab-json">
         <pre id="jsonView" class="card">Kein Dokument geladen.</pre>
       </section>
 
+      <!-- Fehler- und Statusmeldungen werden kontextbezogen in diesem Bereich eingeblendet. -->
       <section id="msg" class="card hidden"></section>
     </main>
   </div>
@@ -1180,11 +2499,7 @@
     var $=function(s){return document.querySelector(s);}; var $$=function(s){return Array.prototype.slice.call(document.querySelectorAll(s));};
 
     // Zentraler Laufzeitstatus fuer Katalogdaten, Komponentendaten und UI-Zustaende.
-    function createCatalogState(){
-      return {controls:[], idMap:new ObjMap(), uuidMap:new ObjMap(), edgesBase:[], q:'', qRaw:'', groups:[], classes:[], secs:[], targets:[], tags:[], efforts:[], modalverbs:[], documentations:[], actionwords:[], topics:[], topicById:new ObjMap(), childrenByTopic:{}, childrenByPractice:{}, groupRoots:[], groupByKey:new ObjMap(), controlsByGroup:{}, ungroupedControls:[], openTopics:{}, practices:[], practiceById:new ObjMap(), topicsByPractice:{}, openPractices:{}, openGroups:{}, jsonText:'', catalogUuid:'', catalogMetadata:null, catalogBackMatter:null, catalogBaseUrl:'', catalogResourcesByUuid:new ObjMap()};
-    }
-    var state=createCatalogState();
-    var catalogLibrary={ items:[], activeKey:'', nextId:1 };
+    var state={controls:[], idMap:new ObjMap(), uuidMap:new ObjMap(), edgesBase:[], q:'', qRaw:'', groups:[], classes:[], secs:[], targets:[], tags:[], efforts:[], modalverbs:[], documentations:[], actionwords:[], topics:[], topicById:new ObjMap(), childrenByTopic:{}, childrenByPractice:{}, groupRoots:[], groupByKey:new ObjMap(), controlsByGroup:{}, ungroupedControls:[], openTopics:{}, practices:[], practiceById:new ObjMap(), topicsByPractice:{}, openPractices:{}, openGroups:{}, jsonText:'', catalogUuid:'', catalogMetadata:null, catalogBackMatter:null, catalogBaseUrl:'', catalogResourcesByUuid:new ObjMap()};
     function createComponentState(){
       return {
         documentUuid:'',
@@ -1217,11 +2532,13 @@
       };
     }
     var componentState=createComponentState();
-    var componentLibrary={ items:[], activeKey:'', nextId:1 };
     var uiState={ dataMode:'catalog', view:'list', componentReturnTarget:null, catalogExpandOverride:null, componentExpandOverride:null };
+    var loadedCatalogSources=[];
+    var loadedComponentSources=[];
+    var activeCatalogSourceIndex=-1;
+    var activeComponentSourceIndex=-1;
     var allGroups=[], allClasses=[], allSecs=[], allTargets=[], allTags=[], allEfforts=[], allModalverbs=[], allDocumentations=[], allActionwords=[];
-    var allComponentTypes=[], allComponentNames=[], allCapabilityNames=[];
-    var THEME_STORAGE_KEY='sdt-viewer-theme';
+    var allComponentTypes=[], allComponentSources=[], allComponentNames=[], allCapabilityNames=[];
     // Aufwand-Definitionen aus stufen.csv (Stufe 0..5)
     var effortDefinitions={
       '0':'Der Aufwand der Anforderung wird nicht bewertet, da ihre Implementierung in jedem Fall zwingend erforderlich ist. Beispiel: Benennung eines Informationssicherheitsbeauftragten.',
@@ -1234,73 +2551,22 @@
 
 
     // Gesammelte DOM-Referenzen fuer schnelle Zugriffe ohne wiederholte Query-Selektoren.
-    var els={ file:$('#file'), urlInput:$('#urlInput'), urlLoadBtn:$('#urlLoadBtn'), catalogPicker:$('#catalogPicker'), q:$('#q'), group:$('#groupMS'), cls:$('#classMS'), sec:$('#secMS'), target:$('#targetMS'), tag:$('#tagMS'), effort:$('#effortMS'), modalverb:$('#modalverbMS'), documentation:$('#documentationMS'), actionword:$('#actionwordMS'), groupMenu:$('#groupMS_menu'), clsMenu:$('#classMS_menu'), secMenu:$('#secMS_menu'), targetMenu:$('#targetMS_menu'), tagMenu:$('#tagMS_menu'), effortMenu:$('#effortMS_menu'), modalverbMenu:$('#modalverbMS_menu'), documentationMenu:$('#documentationMS_menu'), actionwordMenu:$('#actionwordMS_menu'), resetBtn:$('#resetBtn'), exportPdfBtn:$('#exportPdfBtn'),
+    var els={ file:$('#file'), dropzone:$('#catalogDropzone'), sourceSelect:$('#catalogDatasetSelect'), sourcePicker:$('#catalogSourcePicker'), sourceButton:$('#catalogSourceButton'), sourcePickerMenu:$('#catalogSourceMenu'), urlInput:$('#urlInput'), urlLoadBtn:$('#urlLoadBtn'), q:$('#q'), group:$('#groupMS'), cls:$('#classMS'), sec:$('#secMS'), target:$('#targetMS'), tag:$('#tagMS'), effort:$('#effortMS'), modalverb:$('#modalverbMS'), documentation:$('#documentationMS'), actionword:$('#actionwordMS'), groupMenu:$('#groupMS_menu'), clsMenu:$('#classMS_menu'), secMenu:$('#secMS_menu'), targetMenu:$('#targetMS_menu'), tagMenu:$('#tagMS_menu'), effortMenu:$('#effortMS_menu'), modalverbMenu:$('#modalverbMS_menu'), documentationMenu:$('#documentationMS_menu'), actionwordMenu:$('#actionwordMS_menu'), resetBtn:$('#resetBtn'), exportPdfBtn:$('#exportPdfBtn'),
       sideTabCatalog:$('#side-tab-catalog'), sideTabComponents:$('#side-tab-components'), catalogPanel:$('#catalogPanel'), componentPanel:$('#componentPanel'),
       viewSubtitle:$('#viewSubtitle'), viewSummary:$('#viewSummary'), selectionState:$('#catalogSelectionState'),
       fileInfo:$('#fileInfo'), countInfo:$('#countInfo'), graphInfo:$('#graphInfo'),
       listTab:$('#listTab'), componentTab:$('#componentTab'), graphTab:$('#graphTab'), sunburstTab:$('#sunburstTab'), barTab:$('#barTab'), jsonTab:$('#jsonTab'), jsonView:$('#jsonView'), msg:$('#msg'),
-      jsonModal:$('#jsonModal'), jsonModalBody:$('#jsonModalBody'), jsonModalClose:$('#jsonModalClose'),
-      themeToggle:$('#themeToggle') };
+      jsonModal:$('#jsonModal'), jsonModalBody:$('#jsonModalBody'), jsonModalClose:$('#jsonModalClose') };
     var compEls={
-      file:$('#compFile'), urlInput:$('#compUrlInput'), urlLoadBtn:$('#compUrlLoadBtn'), picker:$('#compPicker'), q:$('#compQ'),
-      type:$('#compTypeMS'), name:$('#compNameMS'), capability:$('#compCapabilityMS'),
-      typeMenu:$('#compTypeMS_menu'), nameMenu:$('#compNameMS_menu'), capabilityMenu:$('#compCapabilityMS_menu'),
+      file:$('#compFile'), dropzone:$('#componentDropzone'), sourceSelect:$('#componentDatasetSelect'), sourcePicker:$('#componentSourcePicker'), sourceButton:$('#componentSourceButton'), sourcePickerMenu:$('#componentSourceMenu'), urlInput:$('#compUrlInput'), urlLoadBtn:$('#compUrlLoadBtn'), q:$('#compQ'),
+      type:$('#compTypeMS'), source:$('#compSourceMS'), name:$('#compNameMS'), capability:$('#compCapabilityMS'),
+      typeMenu:$('#compTypeMS_menu'), sourceMenu:$('#compSourceMS_menu'), nameMenu:$('#compNameMS_menu'), capabilityMenu:$('#compCapabilityMS_menu'),
       fileInfo:$('#compFileInfo'), countInfo:$('#compCountInfo'), graphInfo:$('#compGraphInfo'), selectionState:$('#componentSelectionState'),
       resetBtn:$('#compResetBtn'), exportPdfBtn:$('#compExportPdfBtn')
     };
 
-    function getCssVar(name){
-      return getComputedStyle(document.body).getPropertyValue(name).trim();
-    }
-
-    function getChartPalette(){
-      return ['--chart-1','--chart-2','--chart-3','--chart-4','--chart-5','--chart-6','--chart-7','--chart-8','--chart-9','--chart-10'].map(getCssVar);
-    }
-
-    function readStoredTheme(){
-      try{
-        var stored=localStorage.getItem(THEME_STORAGE_KEY);
-        return stored==='dark' ? 'dark' : 'light';
-      }catch(_e){
-        return 'light';
-      }
-    }
-
-    function updateThemeToggle(theme){
-      if(!els.themeToggle) return;
-      var isDark=theme==='dark';
-      var label=isDark ? 'Zum Light Mode wechseln' : 'Zum Dark Mode wechseln';
-      els.themeToggle.setAttribute('aria-label', label);
-      els.themeToggle.setAttribute('title', label);
-      els.themeToggle.setAttribute('aria-pressed', isDark ? 'true' : 'false');
-      var icon=els.themeToggle.querySelector('.theme-toggle-icon');
-      if(icon) icon.textContent=isDark ? '☀' : '☾';
-    }
-
-    function applyTheme(theme, options){
-      options=options || {};
-      var next=theme==='dark' ? 'dark' : 'light';
-      document.body.setAttribute('data-theme', next);
-      updateThemeToggle(next);
-      if(options.persist!==false){
-        try{ localStorage.setItem(THEME_STORAGE_KEY, next); }catch(_e){}
-      }
-      if(options.rerender!==false){
-        refreshChartsIfVisible();
-      }
-    }
-
-    function toggleTheme(){
-      var next=document.body.getAttribute('data-theme')==='dark' ? 'light' : 'dark';
-      applyTheme(next);
-    }
-
-    if(els.themeToggle){
-      els.themeToggle.addEventListener('click', toggleTheme);
-    }
-
     // Aufbau und Synchronisation der facettierten Multi-Select-Dropdowns.
-    function msSetItems(detailsEl, menuEl, allLabel, items, onChange, selectedValues){
+    function msSetItems(detailsEl, menuEl, allLabel, items, onChange){
       onChange = onChange || RefreshViews;
       menuEl.innerHTML = '';
       // "All" item
@@ -1397,20 +2663,9 @@
         onChange();
       });
 
-      // default: all selected, unless a persisted subset should be restored
+      // default: all selected
       const cbs = [...menuEl.querySelectorAll('input[type="checkbox"]')].filter(x=>x.dataset.value!=='__all__');
-      const wanted = Array.isArray(selectedValues) ? selectedValues.filter(Boolean) : null;
-      if(wanted && wanted.length){
-        const selectedSet = makeSetFromArray(wanted);
-        let matchedAny = false;
-        cbs.forEach(x => {
-          x.checked = selectedSet.has(String(x.dataset.value||''));
-          if(x.checked) matchedAny = true;
-        });
-        if(!matchedAny){ cbs.forEach(x=>x.checked=true); }
-      } else {
-        cbs.forEach(x=>x.checked=true);
-      }
+      cbs.forEach(x=>x.checked=true);
       updateAllState();
     }
 
@@ -1435,266 +2690,6 @@
     function msGetSelected(detailsEl, menuEl){
       const cbs = [...menuEl.querySelectorAll('input[type="checkbox"]')].filter(x=>x.dataset.value!=='__all__');
       return cbs.filter(x=>x.checked).map(x=>x.dataset.value);
-    }
-
-    function findCatalogEntryByKey(key){
-      var wanted=String(key||'');
-      for(var i=0;i<catalogLibrary.items.length;i++){
-        if(catalogLibrary.items[i] && catalogLibrary.items[i].key===wanted) return catalogLibrary.items[i];
-      }
-      return null;
-    }
-
-    function getCatalogDisplayName(entry){
-      if(!entry) return 'Unbenannter Katalog';
-      var meta=entry.state && entry.state.catalogMetadata ? entry.state.catalogMetadata : null;
-      return (meta && meta.title) || entry.label || entry.sourceLabel || ('Katalog '+String(entry.key||''));
-    }
-
-    function getCatalogPickerOptionLabel(entry){
-      if(!entry) return '';
-      var name=getCatalogDisplayName(entry);
-      if(entry.label && entry.label!==name) return name+' ['+entry.label+']';
-      return name;
-    }
-
-    function renderCatalogPicker(){
-      if(!els.catalogPicker) return;
-      els.catalogPicker.innerHTML='';
-      if(!catalogLibrary.items.length){
-        els.catalogPicker.disabled=true;
-        els.catalogPicker.innerHTML='<option value="">Kein Katalog geladen</option>';
-        return;
-      }
-      els.catalogPicker.disabled=false;
-      for(var i=0;i<catalogLibrary.items.length;i++){
-        var entry=catalogLibrary.items[i];
-        var opt=document.createElement('option');
-        opt.value=entry.key;
-        opt.textContent=getCatalogPickerOptionLabel(entry);
-        if(entry.key===catalogLibrary.activeKey) opt.selected=true;
-        els.catalogPicker.appendChild(opt);
-      }
-    }
-
-    function createCatalogEntry(meta){
-      return {
-        key:'catalog-'+(catalogLibrary.nextId++),
-        label:meta && meta.label ? meta.label : '',
-        sourceLabel:meta && meta.sourceLabel ? meta.sourceLabel : '',
-        sourceKind:meta && meta.sourceKind ? meta.sourceKind : 'file',
-        state:createCatalogState()
-      };
-    }
-
-    function findComponentEntryByKey(key){
-      var wanted=String(key||'');
-      for(var i=0;i<componentLibrary.items.length;i++){
-        if(componentLibrary.items[i] && componentLibrary.items[i].key===wanted) return componentLibrary.items[i];
-      }
-      return null;
-    }
-
-    function getComponentDisplayName(entry){
-      if(!entry) return 'Unbenannte Component Definition';
-      var meta=entry.state && entry.state.metadata ? entry.state.metadata : null;
-      return (meta && meta.title) || entry.label || entry.sourceLabel || ('Component Definition '+String(entry.key||''));
-    }
-
-    function getComponentPickerOptionLabel(entry){
-      if(!entry) return '';
-      var name=getComponentDisplayName(entry);
-      if(entry.label && entry.label!==name) return name+' ['+entry.label+']';
-      return name;
-    }
-
-    function renderComponentPicker(){
-      if(!compEls.picker) return;
-      compEls.picker.innerHTML='';
-      if(!componentLibrary.items.length){
-        compEls.picker.disabled=true;
-        compEls.picker.innerHTML='<option value="">Keine Component Definition geladen</option>';
-        return;
-      }
-      compEls.picker.disabled=false;
-      for(var i=0;i<componentLibrary.items.length;i++){
-        var entry=componentLibrary.items[i];
-        var opt=document.createElement('option');
-        opt.value=entry.key;
-        opt.textContent=getComponentPickerOptionLabel(entry);
-        if(entry.key===componentLibrary.activeKey) opt.selected=true;
-        compEls.picker.appendChild(opt);
-      }
-    }
-
-    function createComponentEntry(meta){
-      return {
-        key:'component-'+(componentLibrary.nextId++),
-        label:meta && meta.label ? meta.label : '',
-        sourceLabel:meta && meta.sourceLabel ? meta.sourceLabel : '',
-        sourceKind:meta && meta.sourceKind ? meta.sourceKind : 'file',
-        state:createComponentState()
-      };
-    }
-
-    function getComponentCountSummary(entryState){
-      var reqCount=0, stmtCount=0;
-      var comps=(entryState && entryState.components) || [];
-      var caps=(entryState && entryState.capabilities) || [];
-      for(var co=0;co<comps.length;co++){
-        var reqs1=comps[co].controlImplementations || [];
-        for(var ci1=0;ci1<reqs1.length;ci1++){
-          reqCount += reqs1[ci1].requirements.length;
-          for(var rq1=0;rq1<reqs1[ci1].requirements.length;rq1++){ stmtCount += reqs1[ci1].requirements[rq1].statements.length; }
-        }
-      }
-      for(var ca=0;ca<caps.length;ca++){
-        var reqs2=caps[ca].controlImplementations || [];
-        for(var ci2=0;ci2<reqs2.length;ci2++){
-          reqCount += reqs2[ci2].requirements.length;
-          for(var rq2=0;rq2<reqs2[ci2].requirements.length;rq2++){ stmtCount += reqs2[ci2].requirements[rq2].statements.length; }
-        }
-      }
-      return {
-        requirements:reqCount,
-        statements:stmtCount,
-        text:comps.length+' Komponenten / '+caps.length+' Capabilities / '+reqCount+' Anforderungen / '+stmtCount+' Statements'
-      };
-    }
-
-    function syncComponentUiFromState(){
-      renderComponentPicker();
-      if(compEls.q) compEls.q.value=componentState.qRaw || '';
-      if(!componentLibrary.items.length){
-        compEls.fileInfo.textContent='Komponenten: keine Datei';
-        compEls.countInfo.textContent='–';
-        compEls.graphInfo.textContent='Graph: 0 Knoten';
-        return;
-      }
-      var activeEntry=findComponentEntryByKey(componentLibrary.activeKey);
-      compEls.fileInfo.textContent='Komponenten: '+getComponentPickerOptionLabel(activeEntry);
-      compEls.countInfo.textContent=getComponentCountSummary(componentState).text;
-    }
-
-    function activateComponentEntry(key, options){
-      var entry=findComponentEntryByKey(key);
-      if(!entry) return false;
-      componentLibrary.activeKey=entry.key;
-      componentState=entry.state;
-      syncComponentUiFromState();
-      renderComponentFilters();
-      refreshComponentViews();
-      if(uiState.view==='json' && uiState.dataMode==='component'){ renderJsonView(); }
-      if(!options || options.keepMessage!==true) hideMsg();
-      return true;
-    }
-
-    function loadComponentJsonIntoEntry(entry, json, jsonText, baseUrl){
-      var previousState=componentState;
-      componentState=entry.state || createComponentState();
-      componentState.jsonText=jsonText || JSON.stringify(json, null, 2);
-      componentState.baseUrl=baseUrl || '';
-      try{
-        processComponentDefinition(json);
-        entry.state=componentState;
-      } finally {
-        componentState=previousState;
-      }
-    }
-
-    function addComponentEntry(meta, json, jsonText, baseUrl){
-      var entry=createComponentEntry(meta);
-      loadComponentJsonIntoEntry(entry, json, jsonText, baseUrl);
-      componentLibrary.items.push(entry);
-      activateComponentEntry(entry.key);
-      return entry;
-    }
-
-    function syncCatalogUiFromState(){
-      renderCatalogPicker();
-      if(els.q) els.q.value=state.qRaw || '';
-      if(!catalogLibrary.items.length){
-        els.fileInfo.textContent='Katalog: keine Datei';
-        els.countInfo.textContent='–';
-        els.graphInfo.textContent='Graph: 0 Knoten';
-      } else {
-        var activeEntry=findCatalogEntryByKey(catalogLibrary.activeKey);
-        els.fileInfo.textContent='Katalog: '+getCatalogPickerOptionLabel(activeEntry);
-        els.countInfo.textContent=state.controls.length+' Anforderungen';
-        els.graphInfo.textContent='Graph: '+state.controls.length+' Knoten';
-      }
-    }
-
-    function activateCatalogEntry(key, options){
-      var entry=findCatalogEntryByKey(key);
-      if(!entry) return false;
-      catalogLibrary.activeKey=entry.key;
-      state=entry.state;
-      syncComponentParamMaps();
-      syncCatalogUiFromState();
-      renderFilters();
-      RefreshViews();
-      if(uiState.view==='components'){ renderComponentView(); }
-      if(uiState.view==='json' && uiState.dataMode==='catalog'){ renderJsonView(); }
-      if(!options || options.keepMessage!==true) hideMsg();
-      return true;
-    }
-
-    function loadCatalogJsonIntoEntry(entry, json, jsonText, baseUrl){
-      var previousState=state;
-      var targetState=entry.state || createCatalogState();
-      entry.state=targetState;
-      state=targetState;
-      state.jsonText=jsonText || JSON.stringify(json, null, 2);
-      state.catalogBaseUrl=baseUrl || '';
-      try{
-        processCatalog(json);
-      } finally {
-        state=previousState;
-      }
-    }
-
-    function addCatalogEntry(meta, json, jsonText, baseUrl){
-      var entry=createCatalogEntry(meta);
-      loadCatalogJsonIntoEntry(entry, json, jsonText, baseUrl);
-      catalogLibrary.items.push(entry);
-      activateCatalogEntry(entry.key);
-      return entry;
-    }
-
-    function getCatalogControlFromState(catalogState, controlRef){
-      if(!catalogState) return null;
-      var key=String(controlRef||'').trim();
-      if(!key) return null;
-      var uuidKey=normalizeCatalogControlUuid(key);
-      return (uuidKey ? catalogState.uuidMap.get(uuidKey) : null) || catalogState.idMap.get(key) || null;
-    }
-
-    function findLoadedCatalogControl(controlRef){
-      var activeEntry=findCatalogEntryByKey(catalogLibrary.activeKey);
-      var ordered=[];
-      if(activeEntry) ordered.push(activeEntry);
-      for(var i=0;i<catalogLibrary.items.length;i++){
-        var entry=catalogLibrary.items[i];
-        if(!entry || (activeEntry && entry.key===activeEntry.key)) continue;
-        ordered.push(entry);
-      }
-      for(var j=0;j<ordered.length;j++){
-        var control=getCatalogControlFromState(ordered[j].state, controlRef);
-        if(control) return { entry:ordered[j], control:control };
-      }
-      return null;
-    }
-
-    if(els.catalogPicker){
-      els.catalogPicker.addEventListener('change', function(){
-        activateCatalogEntry(els.catalogPicker.value);
-      });
-    }
-    if(compEls.picker){
-      compEls.picker.addEventListener('change', function(){
-        activateComponentEntry(compEls.picker.value);
-      });
     }
 
 
@@ -1796,7 +2791,7 @@
         components:'Komponenten, Capabilities und implementierte Anforderungen strukturiert prüfen.',
         graph:'Beziehungen und Abhängigkeiten als Netz visualisieren und gezielt anspringen.',
         sunburst:'Verteilungen verdichtet lesen, um Schwerpunkte schnell zu erkennen.',
-        bar:'Mengenverhältnisse in der aktuellen Ansicht direkt vergleichen.',
+        bar:'Mengenverhältnisse zwischen Praktiken oder Quellen direkt vergleichen.',
         json:'Rohdaten ohne Transformationsverlust inspizieren.'
       };
       els.viewSubtitle.textContent = map[view] || map.list;
@@ -1842,6 +2837,7 @@
       var chips=[];
       if(componentState.qRaw){ chips.push('Suche: ' + componentState.qRaw); }
       if(allComponentTypes.length && componentState.types.length && componentState.types.length !== allComponentTypes.length){ chips.push('Typen: ' + formatChipValues(componentState.types, 2)); }
+      if(allComponentSources.length && componentState.sources.length && componentState.sources.length !== allComponentSources.length){ chips.push('Quellen: ' + formatChipValues(componentState.sources, 2)); }
       if(allComponentNames.length && componentState.names.length && componentState.names.length !== allComponentNames.length){ chips.push('Komponenten: ' + formatChipValues(componentState.names, 2)); }
       if(allCapabilityNames.length && componentState.capabilityNames.length && componentState.capabilityNames.length !== allCapabilityNames.length){ chips.push('Capabilities: ' + formatChipValues(componentState.capabilityNames, 2)); }
       return chips;
@@ -2043,38 +3039,229 @@
     if(els.sideTabCatalog){ els.sideTabCatalog.addEventListener('click', function(){ switchTab('list'); }); }
     if(els.sideTabComponents){ els.sideTabComponents.addEventListener('click', function(){ switchTab('components'); }); }
 
+    function shortenSourceLabel(label){
+      var text=String(label||'').trim();
+      if(text.length<=96) return text;
+      return text.slice(0, 93)+'...';
+    }
+
+    function rebuildSourceSelect(selectEl, items, activeIndex, emptyLabel){
+      if(!selectEl) return;
+      selectEl.innerHTML='';
+      if(!items.length){
+        var emptyOption=document.createElement('option');
+        emptyOption.value='';
+        emptyOption.textContent=emptyLabel;
+        selectEl.appendChild(emptyOption);
+        selectEl.disabled=true;
+        return;
+      }
+      for(var i=0;i<items.length;i++){
+        var option=document.createElement('option');
+        option.value=String(i);
+        option.textContent=(i+1)+'. '+shortenSourceLabel(items[i].label);
+        option.selected=(i===activeIndex);
+        selectEl.appendChild(option);
+      }
+      selectEl.disabled=false;
+      selectEl.value=String(activeIndex);
+    }
+
+    function setSourcePickerOpen(pickerEl, buttonEl, menuEl, isOpen){
+      if(!pickerEl || !buttonEl || !menuEl) return;
+      pickerEl.classList.toggle('open', !!isOpen);
+      menuEl.classList.toggle('hidden', !isOpen);
+      buttonEl.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    }
+
+    function renderSourcePicker(pickerEl, buttonEl, menuEl, items, activeIndex, emptyLabel, onActivate, onRemove){
+      if(!pickerEl || !buttonEl || !menuEl) return;
+      menuEl.innerHTML='';
+      buttonEl.textContent=(activeIndex>=0 && items[activeIndex]) ? ((activeIndex+1)+'. '+shortenSourceLabel(items[activeIndex].label)) : emptyLabel;
+      buttonEl.disabled=!items.length;
+      if(!items.length){
+        setSourcePickerOpen(pickerEl, buttonEl, menuEl, false);
+        return;
+      }
+      for(var i=0;i<items.length;i++){
+        (function(index, item){
+          var row=document.createElement('div');
+          row.className='source-item'+(index===activeIndex ? ' is-active' : '');
+
+          var activateBtn=document.createElement('button');
+          activateBtn.className='source-item-button';
+          activateBtn.type='button';
+          activateBtn.innerHTML='<span class="source-item-label">'+escapeHtml(shortenSourceLabel(item.label))+'</span><span class="source-item-meta">Eintrag '+(index+1)+(index===activeIndex ? ' • aktiv' : '')+'</span>';
+          activateBtn.addEventListener('click', function(){ onActivate(index); });
+          row.appendChild(activateBtn);
+
+          var removeBtn=document.createElement('button');
+          removeBtn.className='source-item-remove';
+          removeBtn.type='button';
+          removeBtn.setAttribute('aria-label', item.label+' entfernen');
+          removeBtn.textContent='×';
+          removeBtn.addEventListener('click', function(ev){
+            ev.preventDefault();
+            ev.stopPropagation();
+            onRemove(index);
+          });
+          row.appendChild(removeBtn);
+
+          menuEl.appendChild(row);
+        })(i, items[i]);
+      }
+    }
+
+    function refreshCatalogSourceSelect(){
+      rebuildSourceSelect(els.sourceSelect, loadedCatalogSources, activeCatalogSourceIndex, 'Noch kein Katalog geladen');
+      renderSourcePicker(els.sourcePicker, els.sourceButton, els.sourcePickerMenu, loadedCatalogSources, activeCatalogSourceIndex, 'Noch kein Katalog geladen', function(index){
+        activateCatalogSource(index);
+        setSourcePickerOpen(els.sourcePicker, els.sourceButton, els.sourcePickerMenu, false);
+      }, removeCatalogSource);
+    }
+
+    function refreshComponentSourceSelect(){
+      rebuildSourceSelect(compEls.sourceSelect, loadedComponentSources, activeComponentSourceIndex, 'Noch keine Component Definition geladen');
+      renderSourcePicker(compEls.sourcePicker, compEls.sourceButton, compEls.sourcePickerMenu, loadedComponentSources, activeComponentSourceIndex, 'Noch keine Component Definition geladen', function(index){
+        activateComponentSource(index);
+        setSourcePickerOpen(compEls.sourcePicker, compEls.sourceButton, compEls.sourcePickerMenu, false);
+      }, removeComponentSource);
+    }
+
+    function activateCatalogSource(index){
+      if(index<0 || index>=loadedCatalogSources.length) return;
+      var source=loadedCatalogSources[index];
+      activeCatalogSourceIndex=index;
+      refreshCatalogSourceSelect();
+      els.fileInfo.textContent='Katalog: '+source.label;
+      state.jsonText = source.jsonText || '';
+      state.catalogBaseUrl = source.baseUrl || '';
+      processCatalog(source.json);
+      renderFilters();
+      RefreshViews();
+      if(uiState.view==='components'){ renderComponentView(); }
+      hideMsg();
+    }
+
+    function activateComponentSource(index){
+      if(index<0 || index>=loadedComponentSources.length) return;
+      var source=loadedComponentSources[index];
+      activeComponentSourceIndex=index;
+      refreshComponentSourceSelect();
+      compEls.fileInfo.textContent='Komponenten: '+source.label;
+      componentState.jsonText = source.jsonText || '';
+      componentState.baseUrl = source.baseUrl || '';
+      processComponentDefinition(source.json);
+      renderComponentFilters();
+      refreshComponentViews();
+      hideMsg();
+    }
+
+    function addCatalogSource(entry){
+      var meta=buildCatalogSourceMeta(entry.json, entry.label);
+      entry.catalogUuid=meta.catalogUuid;
+      entry.catalogTitle=meta.catalogTitle;
+      entry.controlRefs=meta.controlRefs;
+      loadedCatalogSources.push(entry);
+      activateCatalogSource(loadedCatalogSources.length-1);
+      if(els.file) els.file.value='';
+    }
+
+    function addComponentSource(entry){
+      loadedComponentSources.push(entry);
+      activateComponentSource(loadedComponentSources.length-1);
+      if(compEls.file) compEls.file.value='';
+    }
+
+    function removeCatalogSource(index){
+      if(index<0 || index>=loadedCatalogSources.length) return;
+      loadedCatalogSources.splice(index, 1);
+      if(!loadedCatalogSources.length){
+        activeCatalogSourceIndex=-1;
+        refreshCatalogSourceSelect();
+        clearCatalogUI();
+        return;
+      }
+      if(index<activeCatalogSourceIndex){ activeCatalogSourceIndex--; }
+      else if(index===activeCatalogSourceIndex){ activeCatalogSourceIndex=Math.min(index, loadedCatalogSources.length-1); }
+      activateCatalogSource(activeCatalogSourceIndex);
+    }
+
+    function removeComponentSource(index){
+      if(index<0 || index>=loadedComponentSources.length) return;
+      loadedComponentSources.splice(index, 1);
+      if(!loadedComponentSources.length){
+        activeComponentSourceIndex=-1;
+        refreshComponentSourceSelect();
+        clearComponentUI();
+        return;
+      }
+      if(index<activeComponentSourceIndex){ activeComponentSourceIndex--; }
+      else if(index===activeComponentSourceIndex){ activeComponentSourceIndex=Math.min(index, loadedComponentSources.length-1); }
+      activateComponentSource(activeComponentSourceIndex);
+    }
+
+    if(els.sourceSelect){
+      els.sourceSelect.addEventListener('change', function(){
+        var index=parseInt(els.sourceSelect.value, 10);
+        if(!isNaN(index)) activateCatalogSource(index);
+      });
+    }
+    if(compEls.sourceSelect){
+      compEls.sourceSelect.addEventListener('change', function(){
+        var index=parseInt(compEls.sourceSelect.value, 10);
+        if(!isNaN(index)) activateComponentSource(index);
+      });
+    }
+    if(els.sourceButton){
+      els.sourceButton.addEventListener('click', function(ev){
+        ev.preventDefault();
+        var willOpen=els.sourcePickerMenu.classList.contains('hidden');
+        setSourcePickerOpen(compEls.sourcePicker, compEls.sourceButton, compEls.sourcePickerMenu, false);
+        setSourcePickerOpen(els.sourcePicker, els.sourceButton, els.sourcePickerMenu, willOpen);
+      });
+    }
+    if(compEls.sourceButton){
+      compEls.sourceButton.addEventListener('click', function(ev){
+        ev.preventDefault();
+        var willOpen=compEls.sourcePickerMenu.classList.contains('hidden');
+        setSourcePickerOpen(els.sourcePicker, els.sourceButton, els.sourcePickerMenu, false);
+        setSourcePickerOpen(compEls.sourcePicker, compEls.sourceButton, compEls.sourcePickerMenu, willOpen);
+      });
+    }
+    document.addEventListener('click', function(ev){
+      if(els.sourcePicker && !els.sourcePicker.contains(ev.target)){
+        setSourcePickerOpen(els.sourcePicker, els.sourceButton, els.sourcePickerMenu, false);
+      }
+      if(compEls.sourcePicker && !compEls.sourcePicker.contains(ev.target)){
+        setSourcePickerOpen(compEls.sourcePicker, compEls.sourceButton, compEls.sourcePickerMenu, false);
+      }
+    });
+    document.addEventListener('keydown', function(ev){
+      if(ev.key==='Escape'){
+        setSourcePickerOpen(els.sourcePicker, els.sourceButton, els.sourcePickerMenu, false);
+        setSourcePickerOpen(compEls.sourcePicker, compEls.sourceButton, compEls.sourcePickerMenu, false);
+      }
+    });
+
     // Catalog per Datei laden und anschliessend in Parser, Filter und Renderer geben.
+    function loadCatalogFile(f){
+      if(!f) return;
+      var reader = new FileReader();
+      reader.onload=function(e){
+        try{
+          var jsonText = e.target.result || '';
+          var json=JSON.parse(jsonText);
+          addCatalogSource({ label:f.name, json:json, jsonText:jsonText, baseUrl:'' });
+        }catch(err){ showMsg('<strong>Fehler beim Laden der JSON:</strong><br/><code>'+escapeHtml(String(err.message||err))+'</code>', true); }
+      };
+      reader.onerror=function(){ showMsg('<strong>Fehler beim Lesen der Datei.</strong>', true); };
+      reader.readAsText(f);
+    }
     els.file.addEventListener('change', function(ev){
       var files = ev.target.files ? Array.prototype.slice.call(ev.target.files) : [];
       if(!files.length) return;
-      function readNext(index){
-        if(index>=files.length){
-          ev.target.value='';
-          return;
-        }
-        var f=files[index];
-        els.fileInfo.textContent='Katalog: '+f.name;
-        var reader = new FileReader();
-        reader.onload=function(e){
-          try{
-            var text=e.target.result || '';
-            var json=JSON.parse(text);
-            addCatalogEntry({ label:f.name, sourceLabel:f.name, sourceKind:'file' }, json, text, '');
-            readNext(index+1);
-          }catch(err){
-            showMsg('<strong>Fehler beim Laden der JSON:</strong><br/><code>'+escapeHtml(String(err.message||err))+'</code>', true);
-            if(!catalogLibrary.items.length) clearCatalogUI();
-            ev.target.value='';
-          }
-        };
-        reader.onerror=function(){
-          showMsg('<strong>Fehler beim Lesen der Datei.</strong>', true);
-          if(!catalogLibrary.items.length) clearCatalogUI();
-          ev.target.value='';
-        };
-        reader.readAsText(f);
-      }
-      readNext(0);
+      for(var i=0;i<files.length;i++){ loadCatalogFile(files[i]); }
     });
 
     function normalizeCatalogUrl(input){
@@ -2090,18 +3277,16 @@
     function loadCatalogFromUrl(rawUrl){
       var url = normalizeCatalogUrl(rawUrl);
       if(!url){ return; }
-      els.fileInfo.textContent='Katalog: '+url;
       fetch(url, { credentials:'omit' })
         .then(function(res){
           if(!res.ok){ throw new Error('HTTP '+res.status); }
           return res.json();
         })
         .then(function(json){
-          addCatalogEntry({ label:url, sourceLabel:url, sourceKind:'url' }, json, JSON.stringify(json, null, 2), url);
+          addCatalogSource({ label:url, json:json, jsonText:JSON.stringify(json, null, 2), baseUrl:url });
         })
         .catch(function(err){
           showMsg('<strong>Fehler beim Laden der URL:</strong><br/><code>'+escapeHtml(String(err.message||err))+'</code>', true);
-          if(!catalogLibrary.items.length) clearCatalogUI();
         });
     }
 
@@ -2120,56 +3305,40 @@
       });
     }
 
+    function loadComponentFile(f){
+      if(!f) return;
+      var reader = new FileReader();
+      reader.onload=function(e){
+        try{
+          var jsonText = e.target.result || '';
+          var json=JSON.parse(jsonText);
+          addComponentSource({ label:f.name, json:json, jsonText:jsonText, baseUrl:'' });
+        }catch(err){ showMsg('<strong>Fehler beim Laden der Component Definition:</strong><br/><code>'+escapeHtml(String(err.message||err))+'</code>', true); }
+      };
+      reader.onerror=function(){ showMsg('<strong>Fehler beim Lesen der Datei.</strong>', true); };
+      reader.readAsText(f);
+    }
     if(compEls.file){
       compEls.file.addEventListener('change', function(ev){
         var files = ev.target.files ? Array.prototype.slice.call(ev.target.files) : [];
         if(!files.length) return;
-        function readNext(index){
-          if(index>=files.length){
-            ev.target.value='';
-            return;
-          }
-          var f=files[index];
-          compEls.fileInfo.textContent='Komponenten: '+f.name;
-          var reader = new FileReader();
-          reader.onload=function(e){
-            try{
-              var text=e.target.result || '';
-              var json=JSON.parse(text);
-              addComponentEntry({ label:f.name, sourceLabel:f.name, sourceKind:'file' }, json, text, '');
-              readNext(index+1);
-            }catch(err){
-              showMsg('<strong>Fehler beim Laden der Component Definition:</strong><br/><code>'+escapeHtml(String(err.message||err))+'</code>', true);
-              if(!componentLibrary.items.length) clearComponentUI();
-              ev.target.value='';
-            }
-          };
-          reader.onerror=function(){
-            showMsg('<strong>Fehler beim Lesen der Datei.</strong>', true);
-            if(!componentLibrary.items.length) clearComponentUI();
-            ev.target.value='';
-          };
-          reader.readAsText(f);
-        }
-        readNext(0);
+        for(var i=0;i<files.length;i++){ loadComponentFile(files[i]); }
       });
     }
 
     function loadComponentFromUrl(rawUrl){
       var url = normalizeCatalogUrl(rawUrl);
       if(!url){ return; }
-      compEls.fileInfo.textContent='Komponenten: '+url;
       fetch(url, { credentials:'omit' })
         .then(function(res){
           if(!res.ok){ throw new Error('HTTP '+res.status); }
           return res.json();
         })
         .then(function(json){
-          addComponentEntry({ label:url, sourceLabel:url, sourceKind:'url' }, json, JSON.stringify(json, null, 2), url);
+          addComponentSource({ label:url, json:json, jsonText:JSON.stringify(json, null, 2), baseUrl:url });
         })
         .catch(function(err){
           showMsg('<strong>Fehler beim Laden der Component-URL:</strong><br/><code>'+escapeHtml(String(err.message||err))+'</code>', true);
-          if(!componentLibrary.items.length) clearComponentUI();
         });
     }
 
@@ -2188,41 +3357,123 @@
       });
     }
 
+    function bindDropzone(dropzoneEl, inputEl, onFile){
+      if(!dropzoneEl || !inputEl || !onFile) return;
+      function stop(ev){
+        ev.preventDefault();
+        ev.stopPropagation();
+      }
+      ['dragenter','dragover'].forEach(function(evtName){
+        dropzoneEl.addEventListener(evtName, function(ev){
+          stop(ev);
+          dropzoneEl.classList.add('is-dragover');
+        });
+      });
+      ['dragleave','dragend','drop'].forEach(function(evtName){
+        dropzoneEl.addEventListener(evtName, function(ev){
+          stop(ev);
+          dropzoneEl.classList.remove('is-dragover');
+        });
+      });
+      dropzoneEl.addEventListener('drop', function(ev){
+        var files = ev.dataTransfer && ev.dataTransfer.files ? Array.prototype.slice.call(ev.dataTransfer.files) : [];
+        for(var i=0;i<files.length;i++){ onFile(files[i]); }
+      });
+      dropzoneEl.addEventListener('click', function(){ inputEl.click(); });
+      dropzoneEl.addEventListener('keydown', function(ev){
+        if(ev.key==='Enter' || ev.key===' '){
+          ev.preventDefault();
+          inputEl.click();
+        }
+      });
+    }
+    bindDropzone(els.dropzone, els.file, loadCatalogFile);
+    bindDropzone(compEls.dropzone, compEls.file, loadComponentFile);
+    refreshCatalogSourceSelect();
+    refreshComponentSourceSelect();
+
     // UI-Container und Status nach Fehlern oder beim Leeren der Daten zuruecksetzen.
     function clearCatalogUI(){
-      catalogLibrary.items=[];
-      catalogLibrary.activeKey='';
-      state=createCatalogState();
       els.listTab.innerHTML='';
       var g=document.querySelector('#graph'); if(g) g.innerHTML='<div class="graph-toolbar"><button id="fitBtn" class="btn" title="Alles anzeigen">Alles anzeigen</button></div>';
       var sb=document.querySelector('#sunburst'); if(sb) sb.innerHTML='';
       var bar=document.querySelector('#bar'); if(bar) bar.innerHTML='';
-      renderCatalogPicker();
-      syncCatalogUiFromState();
+      els.fileInfo.textContent='Katalog: keine Datei';
       els.countInfo.textContent='–';
       els.graphInfo.textContent='Graph: 0 Knoten';
       uiState.catalogExpandOverride = null;
+      state.controls=[];
+      state.idMap=new ObjMap();
+      state.uuidMap=new ObjMap();
+      state.edgesBase=[];
+      state.q='';
+      state.qRaw='';
+      state.groups=[];
+      state.classes=[];
+      state.secs=[];
+      state.targets=[];
+      state.tags=[];
+      state.efforts=[];
+      state.modalverbs=[];
+      state.documentations=[];
+      state.actionwords=[];
+      state.topics=[];
+      state.topicById=new ObjMap();
+      state.childrenByTopic={};
+      state.childrenByPractice={};
+      state.groupRoots=[];
+      state.groupByKey=new ObjMap();
+      state.controlsByGroup={};
+      state.ungroupedControls=[];
+      state.openTopics={};
+      state.practices=[];
+      state.practiceById=new ObjMap();
+      state.topicsByPractice={};
+      state.openPractices={};
+      state.openGroups={};
+      state.jsonText='';
+      state.catalogUuid='';
+      state.catalogMetadata=null;
+      state.catalogBackMatter=null;
+      state.catalogBaseUrl='';
+      state.catalogResourcesByUuid=new ObjMap();
+      allGroups=[];
+      allClasses=[];
+      allSecs=[];
+      allTargets=[];
+      allTags=[];
+      allEfforts=[];
+      allModalverbs=[];
+      allDocumentations=[];
+      allActionwords=[];
+      if(els.q) els.q.value='';
       syncComponentParamMaps();
       renderSelectionState(els.selectionState, 'Katalogstatus', 'Kein Datensatz geladen', []);
-      if(uiState.view==='list'){ renderOverviewCard(null); }
+      if(uiState.view==='list'){ renderList(); }
       if(uiState.view==='components'){ renderComponentView(); }
       if(els.jsonView && uiState.dataMode==='catalog') els.jsonView.textContent='Kein Dokument geladen.';
+      if(!loadedCatalogSources.length){
+        activeCatalogSourceIndex=-1;
+        refreshCatalogSourceSelect();
+      }
     }
     function clearComponentUI(){
       els.componentTab.innerHTML='';
       var g=document.querySelector('#graph'); if(g) g.innerHTML='<div class="graph-toolbar"><button id="fitBtn" class="btn" title="Alles anzeigen">Alles anzeigen</button></div>';
       var sb=document.querySelector('#sunburst'); if(sb) sb.innerHTML='';
       var bar=document.querySelector('#bar'); if(bar) bar.innerHTML='';
+      compEls.fileInfo.textContent='Komponenten: keine Datei';
+      compEls.countInfo.textContent='–';
+      compEls.graphInfo.textContent='Graph: 0 Knoten';
       uiState.componentExpandOverride = null;
-      componentLibrary.items=[];
-      componentLibrary.activeKey='';
-      componentLibrary.nextId=1;
       componentState=createComponentState();
-      renderComponentPicker();
-      syncComponentUiFromState();
       renderSelectionState(compEls.selectionState, 'Komponentenstatus', 'Kein Datensatz geladen', []);
-      if(uiState.view==='components'){ renderOverviewCard(null); }
+      if(uiState.view==='components'){ renderComponentView(); }
       if(els.jsonView && uiState.dataMode==='component') els.jsonView.textContent='Kein Dokument geladen.';
+      if(!loadedComponentSources.length){
+        activeComponentSourceIndex=-1;
+        refreshComponentSourceSelect();
+      }
     }
 
     var _searchDebounceTimer = 0;
@@ -2262,6 +3513,7 @@
       componentState.qRaw = (compEls.q && compEls.q.value || '').trim();
       componentState.q = componentState.qRaw.toLowerCase();
       componentState.types = msGetSelected(compEls.type, compEls.typeMenu);
+      componentState.sources = msGetSelected(compEls.source, compEls.sourceMenu);
       componentState.names = msGetSelected(compEls.name, compEls.nameMenu);
       componentState.capabilityNames = msGetSelected(compEls.capability, compEls.capabilityMenu);
       if(!isComponentFilterActive()){
@@ -2301,12 +3553,6 @@
         if(p && String(p.name||'').toLowerCase()===wanted) return p.value||'';
       }
       return '';
-    }
-    function getCatalogControlLabelValue(control){
-      if(control && control.label!=null && String(control.label).trim()){
-        return String(control.label).trim();
-      }
-      return valueOfProp(control && control.props, 'label') || '';
     }
     function detectEffortLabel(props){
       var label='Aufwand';
@@ -2602,7 +3848,7 @@
 
       // Control sammeln und in Anzeige-Objekt transformieren
       function collectControl(c, path, topicId, practiceId, groupKey, parentId, enhDepth){
-        var labelId = getCatalogControlLabelValue(c);
+        var labelId = valueOfProp(c.props,'label') || '';
         var rawId = c.id || '';
         var id = labelId || rawId || c.title || (c.uuid ? ('id-'+String(c.uuid).substring(0,8)) : 'ohne-id');
         // Enhancement controls: remember parent + nesting depth for indented rendering
@@ -2634,7 +3880,7 @@
         if(parts){ for(var pi=0; pi<parts.length; pi++){ if(parts[pi] && parts[pi].prose) allProse += ' ' + parts[pi].prose; } }
         var hay = [id, rawId, labelId, (c.title||''), uuid, cls, secLevel, effortLabel, targetsArr.join(', '), tagsArr.join(', '), modalverbsArr.join(', '), documentationArr.join(', '), actionWordsArr.join(', '), remarks, allProse, topicIdVal, topicTitleVal].join(' \n ').toLowerCase();
 
-        var entry={ id:id, displayId:id, rawId:rawId, labelId:labelId, uuid:uuid, title:(c.title||''), class:cls, cls:cls, sec_level:secLevel, sec:secLevel,
+        var entry={ id:id, rawId:rawId, labelId:labelId, uuid:uuid, title:(c.title||''), class:cls, cls:cls, sec_level:secLevel, sec:secLevel,
                     effort:effort, effortLabel:effortLabel,
                     target:(targetsArr.join(', ')), targetsArr:targetsArr,
                     tags:(tagsArr.join(', ')), tagsArr:tagsArr,
@@ -2650,7 +3896,7 @@
                     searchText: hay,
                     statement:partText(parts,'statement'), guidance:partText(parts,'guidance'),
                     links:(c.links||[]), path:[].concat(path), paramMap:paramMap };
-        state.controls.push(entry); state.idMap.set(id, entry); if(rawId && rawId!==id){ state.idMap.set(rawId, entry); } if(uuid){ state.uuidMap.set(String(uuid).toLowerCase(), entry); }
+        state.controls.push(entry); state.idMap.set(id, entry); if(rawId && rawId!==id){ state.idMap.set(rawId, entry); } if(uuid){ state.uuidMap.set(uuid, entry); }
         if(groupKey){
           if(!state.controlsByGroup[groupKey]) state.controlsByGroup[groupKey]=[];
           state.controlsByGroup[groupKey].push(entry);
@@ -2748,11 +3994,11 @@
       var groupsRaw=[]; for(var i=0;i<state.controls.length;i++){ var g=(state.controls[i].path && state.controls[i].path[0]) || ''; if(g) groupsRaw.push(g); }
       var groups=uniqueList(groupsRaw).sort();
       allGroups = uniqueList(groupsRaw).sort();
-      msSetItems(els.group, els.groupMenu, 'Alle Praktiken', allGroups, RefreshViews, state.groups);
+      msSetItems(els.group, els.groupMenu, 'Alle Praktiken', allGroups);
 var classesRaw=[]; for(var j=0;j<state.controls.length;j++){ var c=state.controls[j].class||''; if(c) classesRaw.push(c); }
       var classes=uniqueList(classesRaw).sort();
       allClasses = uniqueList(classesRaw).sort();
-      msSetItems(els.cls, els.clsMenu, 'Alle Quellkataloge', allClasses, RefreshViews, state.classes);
+      msSetItems(els.cls, els.clsMenu, 'Alle Quellkataloge', allClasses);
 var secRaw=[];
       for(var s=0;s<state.controls.length;s++){
         var v=(state.controls[s].sec_level||'');
@@ -2765,11 +4011,11 @@ var secRaw=[];
         }
       }
       allSecs = uniqueList(secRaw).sort();
-      msSetItems(els.sec, els.secMenu, 'Alle Sicherheitsniveaus', allSecs, RefreshViews, state.secs);
+      msSetItems(els.sec, els.secMenu, 'Alle Sicherheitsniveaus', allSecs);
 var targetsRaw=[]; for(var k=0;k<state.controls.length;k++){ var t=(state.controls[k].target||''); if(t){ var parts=t.split(','); for(var p=0;p<parts.length;p++){ var s=String(parts[p]).trim(); if(s) targetsRaw.push(s); } } }
       var targets=uniqueList(targetsRaw).sort();
       allTargets = uniqueList(targetsRaw).sort();
-      msSetItems(els.target, els.targetMenu, 'Alle Zielobjektkategorien', allTargets, RefreshViews, state.targets);
+      msSetItems(els.target, els.targetMenu, 'Alle Zielobjektkategorien', allTargets);
 
       // Tags (each control may have multiple)
       var tagsRaw=[];
@@ -2781,12 +4027,12 @@ var targetsRaw=[]; for(var k=0;k<state.controls.length;k++){ var t=(state.contro
         }
       }
       allTags = uniqueList(tagsRaw).sort();
-      msSetItems(els.tag, els.tagMenu, 'Alle Tags', allTags, RefreshViews, state.tags);
+      msSetItems(els.tag, els.tagMenu, 'Alle Tags', allTags);
 
       // Aufwaende (0 wird als n/a angezeigt)
       var effortOrder=['n/a','1','2','3','4','5'];
       allEfforts = effortOrder.slice();
-      msSetItems(els.effort, els.effortMenu, 'Alle Aufwände', allEfforts, RefreshViews, state.efforts);
+      msSetItems(els.effort, els.effortMenu, 'Alle Aufwände', allEfforts);
 
       // Modalverben
       var mvRaw=[];
@@ -2807,7 +4053,7 @@ var targetsRaw=[]; for(var k=0;k<state.controls.length;k++){ var t=(state.contro
         if(mvOrdered.indexOf(mvAll[mx])===-1) mvOrdered.push(mvAll[mx]);
       }
       allModalverbs = mvOrdered;
-      msSetItems(els.modalverb, els.modalverbMenu, 'Alle Modalverben', allModalverbs, RefreshViews, state.modalverbs);
+      msSetItems(els.modalverb, els.modalverbMenu, 'Alle Modalverben', allModalverbs);
 
       // Dokumentationsempfehlungen
       var docsRaw=[];
@@ -2819,7 +4065,7 @@ var targetsRaw=[]; for(var k=0;k<state.controls.length;k++){ var t=(state.contro
         }
       }
       allDocumentations = uniqueList(docsRaw).sort();
-      msSetItems(els.documentation, els.documentationMenu, 'Alle Dokumentationsempfehlungen', allDocumentations, RefreshViews, state.documentations);
+      msSetItems(els.documentation, els.documentationMenu, 'Alle Dokumentationsempfehlungen', allDocumentations);
 
       // Handlungswörter
       var awRaw=[];
@@ -2831,11 +4077,11 @@ var targetsRaw=[]; for(var k=0;k<state.controls.length;k++){ var t=(state.contro
         }
       }
       allActionwords = uniqueList(awRaw).sort();
-      msSetItems(els.actionword, els.actionwordMenu, 'Alle Handlungswörter', allActionwords, RefreshViews, state.actionwords);
+      msSetItems(els.actionword, els.actionwordMenu, 'Alle Handlungswörter', allActionwords);
       bindResetButton();
-      bindExportButton();
-    }
-    function baseMatches(c){ return matches(c); }
+    bindExportButton();
+}
+function baseMatches(c){ return matches(c); }
 
 
     // Pruefen, ob Suche/Filter aktiv sind (steuert Auto-Open)
@@ -2987,34 +4233,12 @@ var targetsRaw=[]; for(var k=0;k<state.controls.length;k++){ var t=(state.contro
       return '';
     }
 
-    function getHrefFilenameLabel(rawUrl){
-      var href=String(rawUrl||'').trim();
-      if(!href) return '';
-      var clean=href;
-      try{
-        clean=new URL(href, window.location.href).pathname || href;
-      }catch(_err){}
-      clean=String(clean).replace(/[?#].*$/,'').replace(/\/+$/,'');
-      if(!clean) return '';
-      var idx=Math.max(clean.lastIndexOf('/'), clean.lastIndexOf('\\'));
-      var label=idx>=0 ? clean.slice(idx+1) : clean;
-      if(!label) return '';
-      try{ return decodeURIComponent(label); }catch(_e){ return label; }
-    }
-
     function getBackMatterResourceLabel(resource){
       if(!resource) return '';
       if(resource.title) return resource.title;
       if(resource.citation && resource.citation.text) return resource.citation.text;
-      var hrefLabel=getHrefFilenameLabel(getBackMatterResourceHref(resource));
-      if(hrefLabel) return hrefLabel;
       if(resource.description) return String(resource.description).replace(/\s+/g,' ').trim();
       return resource.uuid || '';
-    }
-
-    function getBackMatterResourceSourceLabel(resource){
-      if(!resource) return '';
-      return getHrefFilenameLabel(getBackMatterResourceHref(resource)) || getBackMatterResourceLabel(resource);
     }
 
     function resolveResourceUrl(rawUrl, resourceMap, baseUrl){
@@ -3709,30 +4933,6 @@ var targetsRaw=[]; for(var k=0;k<state.controls.length;k++){ var t=(state.contro
       parent.appendChild(section);
     }
 
-    function appendComponentBackMatterResourceList(parent, title, items, searchTerm){
-      var section=document.createElement('section');
-      section.className='catalog-section';
-      var heading=document.createElement('h4');
-      heading.className='catalog-section-title';
-      heading.innerHTML=renderHighlightedInline(title, searchTerm);
-      section.appendChild(heading);
-      if(!Array.isArray(items) || !items.length){
-        appendEmptyNotice(section, 'Keine Eintraege vorhanden.');
-        parent.appendChild(section);
-        return;
-      }
-      for(var i=0;i<items.length;i++){
-        var item=document.createElement('div');
-        item.className='catalog-subitem';
-        if(items[i] && items[i].uuid){
-          item.id='component-backmatter-resource-'+cssId(items[i].uuid);
-        }
-        item.appendChild(buildGenericObjectInline(items[i], searchTerm, componentState.resourceByUuid, componentState.baseUrl));
-        section.appendChild(item);
-      }
-      parent.appendChild(section);
-    }
-
     function appendRemainingObjectFields(parent, title, obj, excludedKeys, searchTerm, resourceMap, baseUrl){
       var excluded={};
       for(var i=0;i<(excludedKeys||[]).length;i++){ excluded[excludedKeys[i]]=true; }
@@ -3762,92 +4962,112 @@ var targetsRaw=[]; for(var k=0;k<state.controls.length;k++){ var t=(state.contro
       return entry.kind==='capability' ? (entry.name || entry.title || 'Capability') : (entry.title || entry.name || 'Komponente');
     }
 
-    function normalizeCatalogControlUuid(controlRef){
+    function normalizeSourceMatchValue(value){
+      return String(value||'').trim().toLowerCase();
+    }
+
+    function collectCatalogRefs(node, refMap){
+      if(!node || typeof node!=='object') return;
+      var id=String(node.id||'').trim();
+      var uuid=String(node.uuid||'').trim();
+      var label=valueOfProp(node.props,'label') || '';
+      if(id) refMap[id]=true;
+      if(uuid) refMap[uuid]=true;
+      if(label) refMap[String(label).trim()]=true;
+      var controls=Array.isArray(node.controls) ? node.controls : [];
+      for(var ci=0;ci<controls.length;ci++){ collectCatalogRefs(controls[ci], refMap); }
+      var groups=Array.isArray(node.groups) ? node.groups : [];
+      for(var gi=0;gi<groups.length;gi++){ collectCatalogRefs(groups[gi], refMap); }
+    }
+
+    function buildCatalogSourceMeta(root, fallbackLabel){
+      var cat=root && (root.catalog || root);
+      var refs={};
+      collectCatalogRefs(cat, refs);
+      var title=(cat && cat.metadata && cat.metadata.title) || (cat && cat.title) || fallbackLabel || '';
+      return {
+        catalogUuid:String((cat && cat.uuid) || '').trim(),
+        catalogTitle:String(title || '').trim(),
+        controlRefs:refs
+      };
+    }
+
+    function catalogSourceHasControlRef(source, controlRef){
+      if(!source || !source.controlRefs) return false;
       var key=String(controlRef||'').trim();
-      if(!key) return '';
-      if(key.charAt(0)==='_') key=key.slice(1);
-      return looksUuidLikeId(key) ? key.toLowerCase() : '';
+      return !!(key && source.controlRefs[key]);
+    }
+
+    function catalogSourceMatchesRequirement(source, req){
+      if(!source || !req) return false;
+      var candidates=[
+        req.source,
+        req.sourceLabel,
+        req.catalogControlUuid
+      ];
+      var sourceValues=[
+        source.catalogUuid,
+        source.catalogTitle,
+        source.label
+      ];
+      for(var i=0;i<candidates.length;i++){
+        var candidate=normalizeSourceMatchValue(candidates[i]);
+        if(!candidate) continue;
+        if(candidate.charAt(0)==='#') candidate=candidate.slice(1);
+        for(var j=0;j<sourceValues.length;j++){
+          var sourceValue=normalizeSourceMatchValue(sourceValues[j]);
+          if(!sourceValue) continue;
+          if(candidate===sourceValue) return true;
+          if(sourceValue.indexOf(candidate)!==-1 || candidate.indexOf(sourceValue)!==-1) return true;
+        }
+      }
+      return false;
+    }
+
+    function findCatalogSourceIndexByControlRef(controlRef){
+      for(var i=0;i<loadedCatalogSources.length;i++){
+        if(catalogSourceHasControlRef(loadedCatalogSources[i], controlRef)) return i;
+      }
+      return -1;
+    }
+
+    function findCatalogSourceIndexForRequirement(req){
+      if(!req) return -1;
+      if(getCatalogControlByRef(req.controlId)) return activeCatalogSourceIndex;
+      var fallbackIndex=-1;
+      for(var i=0;i<loadedCatalogSources.length;i++){
+        var source=loadedCatalogSources[i];
+        var matchesSource=catalogSourceMatchesRequirement(source, req);
+        var hasRef=catalogSourceHasControlRef(source, req.controlId);
+        if(matchesSource && hasRef) return i;
+        if(matchesSource && fallbackIndex===-1) fallbackIndex=i;
+        if(hasRef && fallbackIndex===-1) fallbackIndex=i;
+      }
+      return fallbackIndex;
     }
 
     function getCatalogControlByRef(controlRef){
-      var hit=findLoadedCatalogControl(controlRef);
-      return hit ? hit.control : null;
-    }
-
-    function getCatalogControlById(controlId){
-      return getCatalogControlByRef(controlId);
+      var key=String(controlRef||'').trim();
+      if(!key) return null;
+      return state.uuidMap.get(key) || state.idMap.get(key) || null;
     }
 
     function getCatalogControlDisplayId(controlRef){
       var control=getCatalogControlByRef(controlRef);
-      return control ? (control.displayId || control.labelId || control.id || control.rawId || '') : '';
+      return control ? (control.labelId || control.id || control.rawId || '') : '';
     }
 
-    function getComponentBackMatterResourceAnchor(rawUrl){
-      var url=String(rawUrl||'').trim();
-      if(!url || url.charAt(0)!=='#') return '';
-      return 'component-backmatter-resource-'+cssId(url.slice(1));
-    }
-
-    function openComponentBackMatterResource(rawUrl){
-      var anchorId=getComponentBackMatterResourceAnchor(rawUrl);
-      if(!anchorId) return false;
-      var backDetails=document.getElementById('component-backmatter-details');
-      var target=document.getElementById(anchorId);
-      if(!backDetails || !target) return false;
-      backDetails.open=true;
-      target.scrollIntoView({behavior:'smooth',block:'center'});
-      target.classList.add('highlight');
-      setTimeout(function(){ target.classList.remove('highlight'); }, 1500);
-      return true;
-    }
-
-    function appendImplementationSourceMeta(parent, impl, searchTerm){
-      var source=String(impl && impl.source || '').trim();
-      if(!source) return;
-
-      var meta=document.createElement('div');
-      meta.className='component-inline-list';
-
-      var chip=document.createElement('span');
-      chip.className='kv';
-      chip.innerHTML='<strong>Quelle:</strong> ';
-
-      var resource=getBackMatterResource(componentState.resourceByUuid, source);
-      var sourceLabel=(impl && impl.sourceLabel) || (resource ? getBackMatterResourceSourceLabel(resource) : source) || source;
-
-      if(resource && source.charAt(0)==='#'){
-        var link=document.createElement('a');
-        link.className='catalog-link';
-        link.href='#'+getComponentBackMatterResourceAnchor(source);
-        link.innerHTML=renderHighlightedInline(sourceLabel, searchTerm);
-        link.addEventListener('click', function(ev){
-          ev.preventDefault();
-          openComponentBackMatterResource(source);
-        });
-        chip.appendChild(link);
-      } else {
-        var value=document.createElement('span');
-        value.innerHTML=buildActiveLinkHtml(sourceLabel, source, searchTerm);
-        chip.appendChild(value);
-      }
-
-      meta.appendChild(chip);
-      parent.appendChild(meta);
-    }
-
-    function renderImplementationDescriptionHtml(impl, owner, searchTerm){
-      var description=String(impl && impl.description || '');
-      if(owner && owner.kind==='component' && /^control implementation for\b/i.test(description.trim())){
-        return '<p>Anforderungsimplementation fuer die Komponente &quot;'+renderHighlightedInline(componentOwnerName(owner), searchTerm)+'&quot;</p>';
-      }
-      return renderMarkupWithParams(description, impl.paramMap, searchTerm);
+    function getCatalogControlUuid(controlRef){
+      var control=getCatalogControlByRef(controlRef);
+      if(control && control.uuid) return control.uuid;
+      var key=String(controlRef||'').trim();
+      return looksUuidLikeId(key) ? key : '';
     }
 
     function createImplementationEntry(impl, owner){
       var source=String(impl && impl.source || '').trim();
       var sourceResource=getBackMatterResource(componentState.resourceByUuid, source);
-      var sourceLabel=sourceResource ? getBackMatterResourceSourceLabel(sourceResource) : source;
+      var sourceLabel=sourceResource ? getBackMatterResourceLabel(sourceResource) : source;
       var implEntry={
         key:(owner.uuid||owner.id||owner.name||'owner')+'::'+((impl && impl.uuid) || sourceLabel || 'impl'),
         uuid:(impl && impl.uuid) || '',
@@ -3870,11 +5090,13 @@ var targetsRaw=[]; for(var k=0;k<state.controls.length;k++){ var t=(state.contro
       var reqs=(impl && impl['implemented-requirements']) || [];
       for(var i=0;i<reqs.length;i++){
         var req=reqs[i] || {};
-        var reqKey=(owner.uuid||owner.id||owner.name||'owner')+'::'+(implEntry.uuid||implEntry.sourceLabel||'impl')+'::'+((req && req['control-id']) || ('req-'+i));
+        var reqKey=(owner.uuid||owner.id||owner.name||'owner')+'::'+(implEntry.uuid||implEntry.sourceLabel||'impl')+'::'+(req.uuid||req['control-id']||('req-'+i));
         var reqEntry={
           id:reqKey,
+          uuid:req.uuid || '',
           controlId:req['control-id'] || '',
           catalogControlId:'',
+          catalogControlUuid:'',
           description:req.description || '',
           props:req.props || [],
           links:req.links || [],
@@ -3933,6 +5155,8 @@ var targetsRaw=[]; for(var k=0;k<state.controls.length;k++){ var t=(state.contro
         var impl=impls[i];
         parts.push(
           impl.uuid,
+          impl.source,
+          impl.sourceLabel,
           replaceParams(impl.description, impl.paramMap),
           replaceParams(impl.remarks, impl.paramMap)
         );
@@ -3940,9 +5164,12 @@ var targetsRaw=[]; for(var k=0;k<state.controls.length;k++){ var t=(state.contro
         for(var r=0;r<reqs.length;r++){
           var req=reqs[r];
           req.catalogControlId=getCatalogControlDisplayId(req.controlId);
+          req.catalogControlUuid=getCatalogControlUuid(req.controlId);
           parts.push(
             req.controlId,
             req.catalogControlId,
+            req.catalogControlUuid,
+            req.uuid,
             replaceParams(req.description, req.paramMap),
             replaceParams(req.remarks, req.paramMap)
           );
@@ -4118,29 +5345,33 @@ var targetsRaw=[]; for(var k=0;k<state.controls.length;k++){ var t=(state.contro
           for(var rq2=0;rq2<reqs2[ci2].requirements.length;rq2++){ stmtCount += reqs2[ci2].requirements[rq2].statements.length; }
         }
       }
-      compEls.countInfo.textContent=getComponentCountSummary(componentState).text;
+      compEls.countInfo.textContent=componentState.components.length+' Komponenten / '+componentState.capabilities.length+' Capabilities / '+reqCount+' Anforderungen / '+stmtCount+' Statements';
       if(!componentState.components.length && !componentState.capabilities.length){
         showMsg('<strong>Keine Komponenten gefunden.</strong><br/>Erwartet: <code>component-definition.components</code> und/oder <code>component-definition.capabilities</code>.', true);
       }
     }
 
-    // Komponentenfilter aus Typen, Komponenten und Capabilities ableiten.
+    // Komponentenfilter aus Typen, Quellen, Komponenten und Capabilities ableiten.
     function renderComponentFilters(){
-      var typesRaw=[], namesRaw=[], capsRaw=[];
+      var typesRaw=[], sourcesRaw=[], namesRaw=[], capsRaw=[];
       for(var i=0;i<componentState.components.length;i++){
         var comp=componentState.components[i];
         if(comp.type) typesRaw.push(comp.type);
         namesRaw.push(componentOwnerName(comp));
+        for(var s=0;s<comp.sources.length;s++){ if(comp.sources[s]) sourcesRaw.push(comp.sources[s]); }
       }
       for(var c=0;c<componentState.capabilities.length;c++){
         capsRaw.push(componentOwnerName(componentState.capabilities[c]));
+        for(var sc=0;sc<componentState.capabilities[c].sources.length;sc++){ if(componentState.capabilities[c].sources[sc]) sourcesRaw.push(componentState.capabilities[c].sources[sc]); }
       }
       allComponentTypes=uniqueList(typesRaw).sort();
+      allComponentSources=uniqueList(sourcesRaw).sort();
       allComponentNames=uniqueList(namesRaw).sort();
       allCapabilityNames=uniqueList(capsRaw).sort();
-      msSetItems(compEls.type, compEls.typeMenu, 'Alle Komponententypen', allComponentTypes, refreshComponentViews, componentState.types);
-      msSetItems(compEls.name, compEls.nameMenu, 'Alle Komponenten', allComponentNames, refreshComponentViews, componentState.names);
-      msSetItems(compEls.capability, compEls.capabilityMenu, 'Alle Capabilities', allCapabilityNames, refreshComponentViews, componentState.capabilityNames);
+      msSetItems(compEls.type, compEls.typeMenu, 'Alle Komponententypen', allComponentTypes, refreshComponentViews);
+      msSetItems(compEls.source, compEls.sourceMenu, 'Alle Quellen', allComponentSources, refreshComponentViews);
+      msSetItems(compEls.name, compEls.nameMenu, 'Alle Komponenten', allComponentNames, refreshComponentViews);
+      msSetItems(compEls.capability, compEls.capabilityMenu, 'Alle Capabilities', allCapabilityNames, refreshComponentViews);
       bindComponentResetButton();
       bindComponentExportButton();
     }
@@ -4148,6 +5379,7 @@ var targetsRaw=[]; for(var k=0;k<state.controls.length;k++){ var t=(state.contro
     function isComponentFilterActive(){
       if(componentState.q) return true;
       if(allComponentTypes.length && componentState.types.length !== allComponentTypes.length) return true;
+      if(allComponentSources.length && componentState.sources.length !== allComponentSources.length) return true;
       if(allComponentNames.length && componentState.names.length !== allComponentNames.length) return true;
       if(allCapabilityNames.length && componentState.capabilityNames.length !== allCapabilityNames.length) return true;
       return false;
@@ -4171,6 +5403,13 @@ var targetsRaw=[]; for(var k=0;k<state.controls.length;k++){ var t=(state.contro
         }
         if(!okCap) return false;
       }
+      if(allComponentSources.length && componentState.sources.length !== allComponentSources.length){
+        var okSource=false;
+        for(var s=0;s<componentState.sources.length;s++){
+          if(entry.sources.indexOf(componentState.sources[s])!==-1){ okSource=true; break; }
+        }
+        if(!okSource) return false;
+      }
       if(componentState.q && (entry.searchText||'').indexOf(componentState.q)===-1) return false;
       return true;
     }
@@ -4180,16 +5419,21 @@ var targetsRaw=[]; for(var k=0;k<state.controls.length;k++){ var t=(state.contro
       appendGenericObjectList(parent, title, roles, searchTerm, componentState.resourceByUuid, componentState.baseUrl);
     }
 
-    function goToCatalogControl(controlRef){
+    function goToCatalogControl(controlRef, preferredCatalogIndex){
       var ref=String(controlRef||'').trim();
       if(!ref) return;
-      var hit=findLoadedCatalogControl(ref);
-      var target=hit ? hit.control : null;
-      if(!target || !hit || !hit.entry){
+      var target=getCatalogControlByRef(ref);
+      if(!target){
+        var sourceIndex=(typeof preferredCatalogIndex==='number' && preferredCatalogIndex>=0) ? preferredCatalogIndex : findCatalogSourceIndexByControlRef(ref);
+        if(sourceIndex>=0 && sourceIndex!==activeCatalogSourceIndex){
+          activateCatalogSource(sourceIndex);
+          target=getCatalogControlByRef(ref);
+        }
+      }
+      if(!target){
         showMsg('<strong>Die referenzierte Anforderung wurde im geladenen Katalog nicht gefunden:</strong><br/><code>'+escapeHtml(ref)+'</code>', true);
         return;
       }
-      activateCatalogEntry(hit.entry.key, { keepMessage:true });
       switchTab('list');
       if(target.groupKey){ openGroupChain(target.groupKey); }
       if(target.topicId){
@@ -4211,20 +5455,14 @@ var targetsRaw=[]; for(var k=0;k<state.controls.length;k++){ var t=(state.contro
     function goToCatalogControlFromComponent(req){
       if(!req) return;
       var ownerKey=req.ownerUuid || req.ownerName || '';
-      var hit=findLoadedCatalogControl(req.controlId);
-      var target=hit ? hit.control : null;
-      if(!target || !hit || !hit.entry){
-        showMsg('<strong>Die referenzierte Anforderung wurde im geladenen Katalog nicht gefunden:</strong><br/><code>'+escapeHtml(String(req.controlId||''))+'</code>', true);
-        return;
-      }
+      var sourceIndex=findCatalogSourceIndexForRequirement(req);
       uiState.componentReturnTarget={
         ownerKey:ownerKey,
         ownerKind:req.ownerKind || 'component',
         implKey:req.implKey || '',
         anchorId:'component-req-'+cssId(req.id)
       };
-      activateCatalogEntry(hit.entry.key, { keepMessage:true });
-      goToCatalogControl(target.id);
+      goToCatalogControl(req.controlId, sourceIndex);
     }
 
     function appendImplementationSections(container, owner, searchTerm){
@@ -4233,7 +5471,7 @@ var targetsRaw=[]; for(var k=0;k<state.controls.length;k++){ var t=(state.contro
         if(owner && owner.kind==='capability') return;
         var empty=document.createElement('div');
         empty.className='component-empty';
-        empty.textContent='Keine Implementierungsbeschreibungen vorhanden.';
+        empty.textContent='Keine Implementierungsnachweise vorhanden.';
         container.appendChild(empty);
         return;
       }
@@ -4246,16 +5484,16 @@ var targetsRaw=[]; for(var k=0;k<state.controls.length;k++){ var t=(state.contro
         details.addEventListener('toggle', (function(key, el){ return function(){ uiState.componentExpandOverride=null; componentState.openImplementations[key]=el.open; }; })(implKey, details));
         var reqCount=impl.requirements.length;
         var summary=document.createElement('summary');
-        summary.innerHTML='<span class="component-summary"><strong>Implementierungsbeschreibung</strong><span class="badge">'+escapeHtml(reqCount+' Anforderungen')+'</span></span>';
+        summary.innerHTML='<span class="component-summary"><strong>Implementierungsbeschreibung</strong><span class="badge">'+escapeHtml(reqCount+' Anforderungen')+'</span></span>'
+          + '<span class="component-source" style="display:block;margin-top:6px"><strong>Quelle:</strong> '+buildDocumentLinkHtml(impl.sourceLabel, impl.source, searchTerm, componentState.resourceByUuid, componentState.baseUrl)+'</span>';
         details.appendChild(summary);
 
         var body=document.createElement('div');
         body.className='component-children';
-        appendImplementationSourceMeta(body, impl, searchTerm);
         if(impl.description){
           var desc=document.createElement('div');
           desc.className='catalog-md';
-          desc.innerHTML=renderImplementationDescriptionHtml(impl, owner, searchTerm);
+          desc.innerHTML=renderMarkupWithParams(impl.description, impl.paramMap, searchTerm);
           body.appendChild(desc);
         }
         if(impl.remarks){
@@ -4408,9 +5646,15 @@ var targetsRaw=[]; for(var k=0;k<state.controls.length;k++){ var t=(state.contro
       card.className='card component-card requirement';
       card.id='component-req-'+cssId(req.id);
       var catalogControl=getCatalogControlByRef(req.controlId);
-      var jumpAvailable=!!catalogControl;
-      var displayId=req.catalogControlId || getCatalogControlDisplayId(req.controlId) || req.controlId || 'ohne-control-id';
+      var jumpAvailable=!!catalogControl || findCatalogSourceIndexForRequirement(req)!==-1;
+      var displayId=(catalogControl && (catalogControl.labelId || catalogControl.id || catalogControl.rawId)) || req.catalogControlId || req.controlId || 'ohne-control-id';
+      var displayUuid=req.catalogControlUuid || (catalogControl && catalogControl.uuid) || (looksUuidLikeId(req.controlId) ? req.controlId : '') || '–';
+      var meta=document.createElement('div');
+      meta.className='meta';
+      meta.innerHTML='<span class="kv"><strong>UUID:</strong> <code>'+renderHighlightedInline(displayUuid, searchTerm)+'</code></span>'
+        + '<span class="kv"><strong>Quelle:</strong> <code>'+renderHighlightedInline(req.sourceLabel||'–', searchTerm)+'</code></span>';
       card.innerHTML='<div class="title"><h3><mark>'+renderHighlightedInline(displayId, searchTerm)+'</mark> – Implementierte Anforderung</h3></div>';
+      card.appendChild(meta);
       if(req.description){
         var desc=document.createElement('div');
         desc.className='catalog-md';
@@ -4452,12 +5696,11 @@ var targetsRaw=[]; for(var k=0;k<state.controls.length;k++){ var t=(state.contro
         stmtWrap.className='component-children';
         for(var s=0;s<req.statements.length;s++){
           var stmt=req.statements[s];
-          var stmtDisplayId=req.catalogControlId || getCatalogControlDisplayId(req.controlId) || req.controlId || 'ohne-control-id';
           var stmtCard=document.createElement('article');
           stmtCard.className='card component-card statement';
           stmtCard.id='component-stmt-'+cssId(stmt.id);
-          stmtCard.innerHTML='<div class="title"><h3><mark>'+renderHighlightedInline(stmtDisplayId, searchTerm)+'</mark> – Statement</h3></div>'
-            + '<div class="meta"><span class="kv"><strong>Statement-ID:</strong> <code>'+renderHighlightedInline(stmt.statementId||'–', searchTerm)+'</code></span><span class="kv"><strong>UUID:</strong> <code>'+renderHighlightedInline(stmt.uuid||'–', searchTerm)+'</code></span></div>';
+          stmtCard.innerHTML='<div class="title"><h3><mark>'+renderHighlightedInline(stmt.statementId||'statement', searchTerm)+'</mark> – Statement</h3></div>'
+            + '<div class="meta"><span class="kv"><strong>UUID:</strong> <code>'+renderHighlightedInline(stmt.uuid||'–', searchTerm)+'</code></span></div>';
           if(stmt.description){
             var stmtDesc=document.createElement('div');
             stmtDesc.className='catalog-md';
@@ -4543,56 +5786,51 @@ var targetsRaw=[]; for(var k=0;k<state.controls.length;k++){ var t=(state.contro
       var body=document.createElement('div');
       body.className=owner.kind==='capability' ? 'topic-children' : 'practice-children';
       var card=document.createElement('article');
-      card.className='card component-card component-owner-card '+(owner.kind==='capability' ? 'capability' : '');
+      card.className='card component-card '+(owner.kind==='capability' ? 'capability' : '');
       card.id='component-owner-'+cssId(stateKey);
-      var content=document.createElement('div');
-      content.className='component-owner-main';
       if(owner.description){
         var desc=document.createElement('div');
         desc.className='catalog-md';
         desc.innerHTML=renderMarkupWithParams(owner.description, owner.paramMap, searchTerm);
-        content.appendChild(desc);
+        card.appendChild(desc);
       }
       if(owner.purpose){
         var pur=document.createElement('details');
         pur.open=true;
         pur.innerHTML='<summary><strong>Zweck</strong></summary><div class="catalog-md">'+renderMarkupWithParams(owner.purpose, owner.paramMap, searchTerm)+'</div>';
-        content.appendChild(pur);
+        card.appendChild(pur);
       }
       if(owner.remarks){
         var rem=document.createElement('details');
         rem.innerHTML='<summary><strong>Remarks</strong></summary><div class="catalog-md">'+renderMarkupWithParams(owner.remarks, owner.paramMap, searchTerm)+'</div>';
-        content.appendChild(rem);
+        card.appendChild(rem);
       }
       if(owner.kind==='component' && owner.links && owner.links.length){
-        appendDocumentLinksSection(content, owner.links, searchTerm);
+        appendDocumentLinksSection(card, owner.links, searchTerm);
       }
       if(owner.kind==='capability' && !options.childComponents && owner.incorporatesComponents && owner.incorporatesComponents.length){
-        appendCapabilityComponentsSection(content, owner, searchTerm);
+        appendCapabilityComponentsSection(card, owner, searchTerm);
       }
-      if(owner.props && owner.props.length) appendGenericObjectList(content, 'Props', owner.props, searchTerm, componentState.resourceByUuid, componentState.baseUrl);
-      if(owner.kind!=='component' && owner.links && owner.links.length) appendGenericObjectList(content, 'Links', owner.links, searchTerm, componentState.resourceByUuid, componentState.baseUrl);
-      if(owner.protocols && owner.protocols.length) appendGenericObjectList(content, 'Protokolle', owner.protocols, searchTerm, componentState.resourceByUuid, componentState.baseUrl);
-      renderResponsibleRoles(content, 'Verantwortliche Rollen', owner.responsibleRoles, searchTerm);
-      appendRemainingObjectFields(content, 'Weitere Felder', owner.raw, owner.kind==='capability' ? ['uuid','name','title','description','remarks','props','links','protocols','responsible-roles','incorporates-components','control-implementations'] : ['uuid','type','title','name','description','purpose','remarks','props','links','protocols','responsible-roles','control-implementations'], searchTerm, componentState.resourceByUuid, componentState.baseUrl);
-      appendImplementationSections(content, owner, searchTerm);
-
-      var hasVisibleCardContent=content.childElementCount>0;
-      var skipEmptyCapabilityCard=owner.kind==='capability' && options.childComponents && options.childComponents.length && !hasVisibleCardContent;
+      if(owner.props && owner.props.length) appendGenericObjectList(card, 'Props', owner.props, searchTerm, componentState.resourceByUuid, componentState.baseUrl);
+      if(owner.kind!=='component' && owner.links && owner.links.length) appendGenericObjectList(card, 'Links', owner.links, searchTerm, componentState.resourceByUuid, componentState.baseUrl);
+      if(owner.protocols && owner.protocols.length) appendGenericObjectList(card, 'Protokolle', owner.protocols, searchTerm, componentState.resourceByUuid, componentState.baseUrl);
+      renderResponsibleRoles(card, 'Verantwortliche Rollen', owner.responsibleRoles, searchTerm);
+      appendRemainingObjectFields(card, 'Weitere Felder', owner.raw, owner.kind==='capability' ? ['uuid','name','title','description','remarks','props','links','protocols','responsible-roles','incorporates-components','control-implementations'] : ['uuid','type','title','name','description','purpose','remarks','props','links','protocols','responsible-roles','control-implementations'], searchTerm, componentState.resourceByUuid, componentState.baseUrl);
+      appendImplementationSections(card, owner, searchTerm);
 
       var actions=document.createElement('div');
-      actions.className='component-card-actions';
+      actions.style.marginTop='10px';
+      actions.style.display='flex';
+      actions.style.justifyContent='flex-end';
       var jsonBtn=document.createElement('button');
       jsonBtn.className='btn small';
       jsonBtn.type='button';
       jsonBtn.textContent='JSON';
       jsonBtn.addEventListener('click', function(){ openJsonModal(owner.raw); });
       actions.appendChild(jsonBtn);
-      if(!skipEmptyCapabilityCard){
-        card.appendChild(content);
-        card.appendChild(actions);
-        body.appendChild(card);
-      }
+      card.appendChild(actions);
+
+      body.appendChild(card);
       if(owner.kind==='capability' && options.childComponents && options.childComponents.length){
         for(var cc=0;cc<options.childComponents.length;cc++){
           body.appendChild(renderComponentOwner(options.childComponents[cc], searchTerm));
@@ -4653,11 +5891,10 @@ var targetsRaw=[]; for(var k=0;k<state.controls.length;k++){ var t=(state.contro
       if(hasBackMatter){
         var backDetails=document.createElement('details');
         backDetails.className='catalog-info-box';
-        backDetails.id='component-backmatter-details';
         backDetails.innerHTML='<summary><strong>Back Matter</strong></summary>';
         var backBody=document.createElement('div');
         backBody.className='catalog-info-content';
-        appendComponentBackMatterResourceList(backBody, 'Ressourcen', componentState.backMatter.resources, searchTerm);
+        appendGenericObjectList(backBody, 'Ressourcen', componentState.backMatter.resources, searchTerm, componentState.resourceByUuid, componentState.baseUrl);
         appendRemainingObjectFields(backBody, 'Weitere Back-Matter-Felder', componentState.backMatter, ['resources'], searchTerm, componentState.resourceByUuid, componentState.baseUrl);
         backDetails.appendChild(backBody);
         container.appendChild(backDetails);
@@ -4681,7 +5918,7 @@ var targetsRaw=[]; for(var k=0;k<state.controls.length;k++){ var t=(state.contro
               { label:'Komponenten', value:'0', note:'Geladene Einträge' },
               { label:'Capabilities', value:'0', note:'Geladene Einträge' },
               { label:'Treffer', value:'0', note:'Sichtbare Einträge' },
-              { label:'Anforderungen', value:'0', note:'Implementierte Anforderungen' }
+              { label:'Quellen', value:'0', note:'Erkannte Herkunft' }
             ],
             chips:[],
             actions:[]
@@ -4702,23 +5939,8 @@ var targetsRaw=[]; for(var k=0;k<state.controls.length;k++){ var t=(state.contro
         for(var c=0;c<componentState.components.length;c++){
           if(matchesComponentOwner(componentState.components[c])) matchedComponents.push(componentState.components[c]);
         }
-        var totalRequirementCount=0;
-        for(var mcReq=0;mcReq<matchedComponents.length;mcReq++){
-          var componentImpls=matchedComponents[mcReq].controlImplementations || [];
-          for(var ciReq=0;ciReq<componentImpls.length;ciReq++){
-            totalRequirementCount += componentImpls[ciReq].requirements.length;
-          }
-        }
-        for(var maReq=0;maReq<matchedCapabilities.length;maReq++){
-          var capabilityImpls=matchedCapabilities[maReq].controlImplementations || [];
-          for(var caReq=0;caReq<capabilityImpls.length;caReq++){
-            totalRequirementCount += capabilityImpls[caReq].requirements.length;
-          }
-        }
         var activeComponentChips=collectComponentActiveFilterChips();
-        var activeComponentEntry=findComponentEntryByKey(componentLibrary.activeKey);
-        var activeComponentName=getComponentDisplayName(activeComponentEntry);
-        renderSelectionState(compEls.selectionState, 'Komponentenfokus', (matchedCapabilities.length + matchedComponents.length)+' sichtbare Einträge · aktiv: '+activeComponentName+' · geladen: '+componentLibrary.items.length, activeComponentChips);
+        renderSelectionState(compEls.selectionState, 'Komponentenfokus', (matchedCapabilities.length + matchedComponents.length)+' sichtbare Einträge', activeComponentChips);
         renderOverviewCard({
           title:(matchedCapabilities.length || matchedComponents.length) ? 'Komponentenanalyse' : 'Keine Treffer in Komponenten',
           description:(matchedCapabilities.length || matchedComponents.length) ? 'Die Ansicht fokussiert Eigentümer, Implementierungen und referenzierte Anforderungen mit klaren Sprungpunkten zurück in den Katalog.' : 'Die aktuelle Suche oder Filterung blendet alle Komponenten und Capabilities aus. Passe die Einschränkungen an oder setze sie gesammelt zurück.',
@@ -4726,7 +5948,7 @@ var targetsRaw=[]; for(var k=0;k<state.controls.length;k++){ var t=(state.contro
             { label:'Komponenten', value:String(componentState.components.length), note:'Geladene Komponenten' },
             { label:'Capabilities', value:String(componentState.capabilities.length), note:'Geladene Capabilities' },
             { label:'Sichtbar', value:String(matchedCapabilities.length + matchedComponents.length), note:'Aktuelle Treffer' },
-            { label:'Anforderungen', value:String(totalRequirementCount), note:'Implementierte Anforderungen in der Ansicht' }
+            { label:'Quellen', value:String(allComponentSources.length), note:'Erkannte Herkunft' }
           ],
           chips:activeComponentChips,
           actions:[
@@ -4907,16 +6129,7 @@ var targetsRaw=[]; for(var k=0;k<state.controls.length;k++){ var t=(state.contro
           var width=el.clientWidth || 900, height=el.clientHeight || 600;
           var svg=d3.select(el).append('svg').attr('width', width).attr('height', height);
           var g=svg.append('g');
-          var colorMap={
-            capability:getCssVar('--component-node-cap'),
-            component:getCssVar('--component-node-comp'),
-            requirement:getCssVar('--component-node-req')
-          };
-          var componentFallback=getCssVar('--component-node-fallback');
-          var componentLinkInc=getCssVar('--component-link-inc');
-          var componentLinkImpl=getCssVar('--component-link-impl');
-          var chartStroke=getCssVar('--chart-stroke');
-          var graphLabel=getCssVar('--graph-label');
+          var colorMap={ capability:'#175cd3', component:'#24364b', requirement:'#2f7d5b' };
           var sim=d3.forceSimulation(nodes)
             .force('link', d3.forceLink(links).id(function(d){ return d.id; }).distance(120).strength(.35))
             .force('charge', d3.forceManyBody().strength(-250))
@@ -4924,7 +6137,7 @@ var targetsRaw=[]; for(var k=0;k<state.controls.length;k++){ var t=(state.contro
             .force('collide', d3.forceCollide(36));
 
           var link=g.selectAll('.link').data(links).enter().append('line')
-            .attr('stroke', function(d){ return d.rel==='incorporates' ? componentLinkInc : componentLinkImpl; })
+            .attr('stroke', function(d){ return d.rel==='incorporates' ? '#78a5f5' : '#6fab83'; })
             .attr('stroke-width', 1.8)
             .attr('opacity', 0.9);
 
@@ -4935,11 +6148,11 @@ var targetsRaw=[]; for(var k=0;k<state.controls.length;k++){ var t=(state.contro
               .on('end', function(ev,d){ d.fx=null; d.fy=null; })
             );
 
-          node.append('circle').attr('r',10).attr('fill', function(d){ return colorMap[d.nodeType] || componentFallback; }).attr('stroke',chartStroke).attr('stroke-width',1.2);
-          node.append('text').text(function(d){ return d.label; }).attr('x',14).attr('y',4).attr('font-size','12px').attr('fill',graphLabel);
+          node.append('circle').attr('r',10).attr('fill', function(d){ return colorMap[d.nodeType] || '#4a5975'; }).attr('stroke','#ffffff').attr('stroke-width',1.2);
+          node.append('text').text(function(d){ return d.label; }).attr('x',14).attr('y',4).attr('font-size','12px').attr('fill','#162434');
           node.on('click', function(ev,d){
             if(d.nodeType==='requirement'){
-              if(d.requirement && getCatalogControlById(d.requirement.controlId)){ goToCatalogControlFromComponent(d.requirement); }
+              if(d.requirement && getCatalogControlByRef(d.requirement.controlId)){ goToCatalogControlFromComponent(d.requirement); }
               else { openComponentLocation(d.owner, d.requirement); }
             } else {
               openComponentLocation(d.owner);
@@ -4986,25 +6199,47 @@ var targetsRaw=[]; for(var k=0;k<state.controls.length;k++){ var t=(state.contro
         container.innerHTML='';
         if(typeof d3==='undefined'){ container.innerHTML='<div class="card">D3 wurde nicht geladen.</div>'; return; }
         var matched=getMatchedComponentOwners();
-        var counts={};
+        var dataItems=[];
         for(var i=0;i<matched.components.length;i++){
-          var type=matched.components[i].type || 'Ohne Typ';
-          counts[type]=(counts[type]||0)+1;
+          var comp=matched.components[i];
+          var impls=comp.controlImplementations || [];
+          var reqCount=0;
+          for(var ii=0;ii<impls.length;ii++){
+            reqCount += (impls[ii].requirements || []).length;
+          }
+          if(reqCount>0){
+            dataItems.push({ name:componentOwnerName(comp), value:reqCount });
+          }
         }
-        if(matched.capabilities.length){ counts.Capabilities=(counts.Capabilities||0)+matched.capabilities.length; }
-        var keys=Object.keys(counts);
-        if(!keys.length){ container.innerHTML='<div class="card">Keine Daten für die aktuelle Filterung.</div>'; return; }
-        var data={ name:'Komponenten', children:keys.map(function(k){ return { name:k, value:counts[k] }; }) };
-        var w=container.clientWidth || 900, h=container.clientHeight || 600, r=Math.min(w,h)/2 - 10;
+        if(!dataItems.length){ container.innerHTML='<div class="card">Keine Komponenten mit implementierten Anforderungen in der aktuellen Filterung.</div>'; return; }
+        var data={ name:'Komponenten', children:dataItems };
+        var w=container.clientWidth || 900, h=container.clientHeight || 600, r=Math.min(w,h)/2 - 36;
         var root=d3.hierarchy(data).sum(function(d){ return d.value||0; });
         d3.partition().size([2*Math.PI, r])(root);
-        var color=d3.scaleOrdinal(getChartPalette()).domain(keys);
-        var chartStroke=getCssVar('--chart-stroke');
+        var color=d3.scaleOrdinal(d3.schemeTableau10).domain(dataItems.map(function(item){ return item.name; }));
         var svg=d3.select(container).append('svg').attr('width', w).attr('height', h);
         var g=svg.append('g').attr('transform','translate('+(w/2)+','+(h/2)+')');
-        var arc=d3.arc().startAngle(function(d){ return d.x0; }).endAngle(function(d){ return d.x1; }).innerRadius(function(d){ return d.y0; }).outerRadius(function(d){ return d.y1; });
+        var arc=d3.arc().startAngle(function(d){ return d.x0; }).endAngle(function(d){ return d.x1; }).innerRadius(function(d){ return Math.max(d.y0, r*0.48); }).outerRadius(function(d){ return d.y1; });
         var nodes=root.descendants().filter(function(d){ return d.depth; });
-        g.selectAll('path').data(nodes).enter().append('path').attr('d', arc).attr('fill', function(d){ return color(d.data.name); }).attr('stroke',chartStroke).append('title').text(function(d){ return d.data.name+': '+d.value; });
+        g.selectAll('path').data(nodes).enter().append('path').attr('d', arc).attr('fill', function(d){ return color(d.data.name); }).attr('stroke','#ffffff').append('title').text(function(d){ return d.data.name+': '+d.value; });
+        g.selectAll('text')
+          .data(nodes)
+          .enter().append('text')
+          .attr('transform', function(d){
+            var x=(d.x0+d.x1)/2 * 180/Math.PI;
+            var y=(Math.max(d.y0, r*0.48) + d.y1) / 2;
+            return 'rotate(' + (x-90) + ') translate(' + y + ',0) rotate(' + (x>180?180:0) + ')';
+          })
+          .attr('dy','0.35em')
+          .attr('text-anchor','middle')
+          .attr('fill','#ffffff')
+          .style('font-size','11px')
+          .style('font-weight','700')
+          .text(function(d){
+            var name=String(d.data.name || '');
+            return name.length > 22 ? name.slice(0,20) + '…' : name;
+          })
+          .append('title').text(function(d){ return d.data.name; });
       });
     }
 
@@ -5014,40 +6249,98 @@ var targetsRaw=[]; for(var k=0;k<state.controls.length;k++){ var t=(state.contro
         container.innerHTML='';
         if(typeof d3==='undefined'){ container.innerHTML='<div class="card">D3 wurde nicht geladen.</div>'; return; }
         var matched=getMatchedComponentOwners();
-        var counts={};
+        var data=[];
         for(var i=0;i<matched.components.length;i++){
           var comp=matched.components[i];
           var impls=comp.controlImplementations || [];
-          var compKey=componentOwnerName(comp);
+          var reqCount=0;
           for(var ii=0;ii<impls.length;ii++){
-            counts[compKey]=(counts[compKey]||0)+impls[ii].requirements.length;
+            reqCount += (impls[ii].requirements || []).length;
+          }
+          if(reqCount>0){
+            data.push({ group:componentOwnerName(comp), value:reqCount });
           }
         }
-        for(var c=0;c<matched.capabilities.length;c++){
-          var cap=matched.capabilities[c];
-          var capImpls=cap.controlImplementations || [];
-          var capKey=componentOwnerName(cap);
-          for(var ci=0;ci<capImpls.length;ci++){
-            counts[capKey]=(counts[capKey]||0)+capImpls[ci].requirements.length;
+        data.sort(function(a,b){ return b.value-a.value || a.group.localeCompare(b.group); });
+        var keys=data.map(function(item){ return item.group; });
+        if(!keys.length){ container.innerHTML='<div class="card">Keine Komponenten mit implementierten Anforderungen in der aktuellen Filterung.</div>'; return; }
+        var margin={top:30,right:20,bottom:40,left:60};
+        var fullWidth=(container.clientWidth||900);
+        var baseHeight=(container.clientHeight||600);
+        var w=fullWidth-margin.left-margin.right;
+        var tempX=d3.scaleBand().domain(keys).range([0,w]).padding(0.2);
+        function estimateWrappedLines(label, maxWidthPx){
+          var avgCharPx=6.8;
+          var maxChars=Math.max(8, Math.floor(maxWidthPx/avgCharPx));
+          var words=String(label||'').split(/\s+/);
+          var lines=[];
+          var current='';
+          for(var wi=0; wi<words.length; wi++){
+            var word=words[wi];
+            if(!current){
+              current=word;
+              continue;
+            }
+            if((current + ' ' + word).length <= maxChars){
+              current += ' ' + word;
+            }else{
+              lines.push(current);
+              current=word;
+            }
           }
+          if(current){ lines.push(current); }
+          if(!lines.length){ lines=['']; }
+          return lines;
         }
-        var keys=Object.keys(counts).sort(function(a,b){ return (counts[b]||0)-(counts[a]||0) || a.localeCompare(b); });
-        if(!keys.length){ container.innerHTML='<div class="card">Keine Daten für die aktuelle Filterung.</div>'; return; }
-        var data=keys.map(function(k){ return { group:k, value:counts[k] }; });
-        var margin={top:30,right:20,bottom:80,left:60};
-        var w=(container.clientWidth||900)-margin.left-margin.right;
-        var h=(container.clientHeight||600)-margin.top-margin.bottom;
+        var maxLabelLines=1;
+        for(var li=0; li<keys.length; li++){
+          var lineCount=estimateWrappedLines(keys[li], Math.max(80, tempX.bandwidth())).length;
+          if(lineCount>maxLabelLines) maxLabelLines=lineCount;
+        }
+        margin.bottom = Math.max(90, 28 + (maxLabelLines * 16));
+        var h=baseHeight-margin.top-margin.bottom;
         var svg=d3.select(container).append('svg').attr('width', w+margin.left+margin.right).attr('height', h+margin.top+margin.bottom);
         var g=svg.append('g').attr('transform','translate('+margin.left+','+margin.top+')');
         var x=d3.scaleBand().domain(keys).range([0,w]).padding(0.2);
         var y=d3.scaleLinear().domain([0,d3.max(data,function(d){ return d.value; })]).nice().range([h,0]);
-        var color=d3.scaleOrdinal(getChartPalette()).domain(keys);
-        var axisText=getCssVar('--axis-text');
-        var axisLine=getCssVar('--axis-line');
-        g.append('g').attr('transform','translate(0,'+h+')').call(d3.axisBottom(x)).selectAll('text').attr('transform','rotate(-25)').style('text-anchor','end').attr('fill',axisText);
-        g.append('g').call(d3.axisLeft(y)).selectAll('text').attr('fill',axisText);
-        g.selectAll('.domain, .tick line').attr('stroke',axisLine);
+        var color=d3.scaleOrdinal(d3.schemeTableau10).domain(keys);
+        var xAxis=g.append('g').attr('transform','translate(0,'+h+')').call(d3.axisBottom(x).tickFormat(''));
+        g.append('g').call(d3.axisLeft(y)).selectAll('text').attr('fill','#40566f');
+        g.selectAll('.domain, .tick line').attr('stroke','#c3d1e0');
         g.selectAll('.bar').data(data).enter().append('rect').attr('class','bar').attr('x', function(d){ return x(d.group); }).attr('y', function(d){ return y(d.value); }).attr('width', x.bandwidth()).attr('height', function(d){ return h-y(d.value); }).attr('fill', function(d){ return color(d.group); });
+        g.selectAll('.bar').append('title').text(function(d){ return d.group + ': ' + d.value; });
+        g.selectAll('.bar-label')
+          .data(data)
+          .enter().append('text')
+          .attr('class','bar-label')
+          .attr('x', function(d){ return x(d.group) + x.bandwidth()/2; })
+          .attr('y', function(d){ return y(d.value) - 6; })
+          .attr('text-anchor','middle')
+          .attr('fill','#1b3148')
+          .style('font-size','11px')
+          .style('font-weight','700')
+          .text(function(d){ return d.value; });
+        var labelLayer=g.append('g').attr('class','component-bar-axis-labels');
+        labelLayer.selectAll('text')
+          .data(data)
+          .enter().append('text')
+          .attr('x', function(d){ return x(d.group) + x.bandwidth()/2; })
+          .attr('y', h + 18)
+          .attr('text-anchor','middle')
+          .attr('fill','#40566f')
+          .style('font-size','11px')
+          .each(function(d){
+            var text=d3.select(this);
+            var lines=estimateWrappedLines(d.group, Math.max(80, x.bandwidth()));
+            for(var i=0; i<lines.length; i++){
+              text.append('tspan')
+                .attr('x', x(d.group) + x.bandwidth()/2)
+                .attr('dy', i===0 ? 0 : 14)
+                .text(lines[i]);
+            }
+          })
+          .append('title')
+          .text(function(d){ return d.group; });
       });
     }
 
@@ -5059,8 +6352,6 @@ var targetsRaw=[]; for(var k=0;k<state.controls.length;k++){ var t=(state.contro
         renderCatalogInfo();
         var matched=[]; for(var i=0;i<state.controls.length;i++){ var c=state.controls[i]; if(matches(c)) matched.push(c); }
         var activeCatalogChips=collectCatalogActiveFilterChips();
-        var activeCatalogEntry=findCatalogEntryByKey(catalogLibrary.activeKey);
-        var activeCatalogName=getCatalogDisplayName(activeCatalogEntry);
         if(!state.controls.length && !state.catalogMetadata && !state.catalogBackMatter){
           renderSelectionState(els.selectionState, 'Katalogstatus', 'Kein Datensatz geladen', []);
           renderOverviewCard({
@@ -5082,7 +6373,7 @@ var targetsRaw=[]; for(var k=0;k<state.controls.length;k++){ var t=(state.contro
           els.graphInfo.textContent='Graph: 0 Knoten';
           return;
         }
-        renderSelectionState(els.selectionState, 'Katalogfokus', matched.length+' von '+state.controls.length+' Anforderungen sichtbar · aktiv: '+activeCatalogName+' · geladen: '+catalogLibrary.items.length, activeCatalogChips);
+        renderSelectionState(els.selectionState, 'Katalogfokus', matched.length+' von '+state.controls.length+' Anforderungen sichtbar', activeCatalogChips);
         renderOverviewCard({
           title:matched.length ? 'Kataloganalyse' : 'Keine Treffer im Katalog',
           description:matched.length ? 'Die Übersicht priorisiert sichtbare Treffer, aktive Einschränkungen und Schnellaktionen, damit Navigation und Auswertung ohne Suchaufwand funktionieren.' : 'Die aktuelle Suche oder Filterung liefert keine sichtbaren Anforderungen. Passe die Einschränkungen an oder setze sie gesammelt zurück.',
@@ -5522,16 +6813,11 @@ var targetsRaw=[]; for(var k=0;k<state.controls.length;k++){ var t=(state.contro
 
         var width=el.clientWidth || (el.parentElement && el.parentElement.clientWidth) || 900; var height=el.clientHeight || 600;
         var svg=d3.select(el).append('svg').attr('width', width).attr('height', height); var g=svg.append('g');
-        var graphLinkRequired=getCssVar('--graph-link-required');
-        var graphLink=getCssVar('--graph-link');
-        var graphNode=getCssVar('--graph-node');
-        var graphNodeStroke=getCssVar('--graph-node-stroke');
-        var graphLabel=getCssVar('--graph-label');
 
         svg.append('defs').append('marker')
           .attr('id','depArrow').attr('viewBox','0 -5 10 10')
           .attr('refX',20).attr('refY',0).attr('markerWidth',8).attr('markerHeight',8).attr('orient','auto')
-          .append('path').attr('d','M0,-5L10,0L0,5').attr('fill',graphLinkRequired);
+          .append('path').attr('d','M0,-5L10,0L0,5').attr('fill','#c9871f');
 
         var sim=d3.forceSimulation(nodes)
           .force('link', d3.forceLink(links).id(function(d){return d.id;}).distance(120).strength(.25))
@@ -5541,7 +6827,7 @@ var targetsRaw=[]; for(var k=0;k<state.controls.length;k++){ var t=(state.contro
 
         var link=g.selectAll('.link').data(links).enter().append('line')
           .attr('class','link')
-          .attr('stroke', function(d){return d.rel==='required' ? graphLinkRequired : graphLink;})
+          .attr('stroke', function(d){return d.rel==='required' ? '#c9871f' : '#5f8fe6';})
           .attr('stroke-width',1.5)
           .attr('marker-end', function(d){return d.rel==='required'?'url(#depArrow)':null;})
           .attr('opacity',0.9);
@@ -5553,8 +6839,8 @@ var targetsRaw=[]; for(var k=0;k<state.controls.length;k++){ var t=(state.contro
             .on('end', function(ev,d){d.fx=null; d.fy=null;})
           );
 
-        node.append('circle').attr('r',10).attr('fill',graphNode).attr('stroke',graphNodeStroke).attr('stroke-width',1.5);
-        node.append('text').text(function(d){return d.id;}).attr('x',14).attr('y',4).attr('font-size','12px').attr('fill',graphLabel);
+        node.append('circle').attr('r',10).attr('fill','#24364b').attr('stroke','#5f8fe6').attr('stroke-width',1.5);
+        node.append('text').text(function(d){return d.id;}).attr('x',14).attr('y',4).attr('font-size','12px').attr('fill','#162434');
         node.on('click', function(ev,d){
           switchTab('list');
           if(d.groupKey){ openGroupChain(d.groupKey); }
@@ -5653,9 +6939,7 @@ var targetsRaw=[]; for(var k=0;k<state.controls.length;k++){ var t=(state.contro
       var h = container.clientHeight || 600;
       var r = Math.min(w,h)/2 - 10;
 
-      var color = d3.scaleOrdinal(getChartPalette()).domain(keys);
-      var chartStroke=getCssVar('--chart-stroke');
-      var chartText=getCssVar('--chart-text');
+      var color = d3.scaleOrdinal(d3.schemeTableau10).domain(keys);
 
       var root = d3.hierarchy(data).sum(function(d){ return d.value||0; });
       d3.partition().size([2*Math.PI, r])(root);
@@ -5676,7 +6960,7 @@ var targetsRaw=[]; for(var k=0;k<state.controls.length;k++){ var t=(state.contro
         .enter().append('path')
         .attr('d', arc)
         .attr('fill', function(d){ return color(d.data.name); })
-        .attr('stroke', chartStroke)
+        .attr('stroke', '#ffffff')
         .append('title').text(function(d){ return d.data.name+': '+d.value; });
 
       g.selectAll('text')
@@ -5689,7 +6973,7 @@ var targetsRaw=[]; for(var k=0;k<state.controls.length;k++){ var t=(state.contro
         })
         .attr('dy','0.35em')
         .attr('text-anchor','middle')
-        .attr('fill',chartText)
+        .attr('fill','#ffffff')
         .style('font-size','12px')
         .text(function(d){ return d.data.name; });
     }
@@ -5723,15 +7007,12 @@ var targetsRaw=[]; for(var k=0;k<state.controls.length;k++){ var t=(state.contro
       var x = d3.scaleBand().domain(keys).range([0,w]).padding(0.2);
       var y = d3.scaleLinear().domain([0, d3.max(data, function(d){ return d.value; })]).nice().range([h,0]);
 
-      var color = d3.scaleOrdinal(getChartPalette()).domain(keys);
-      var axisText=getCssVar('--axis-text');
-      var axisLine=getCssVar('--axis-line');
-      var chartText=getCssVar('--chart-text');
+      var color = d3.scaleOrdinal(d3.schemeTableau10).domain(keys);
 
       g.append('g').attr('transform','translate(0,'+h+')').call(d3.axisBottom(x))
-        .selectAll('text').attr('transform','rotate(-25)').style('text-anchor','end').attr('fill',axisText);
-      g.append('g').call(d3.axisLeft(y)).selectAll('text').attr('fill',axisText);
-      g.selectAll('.domain, .tick line').attr('stroke',axisLine);
+        .selectAll('text').attr('transform','rotate(-25)').style('text-anchor','end').attr('fill','#40566f');
+      g.append('g').call(d3.axisLeft(y)).selectAll('text').attr('fill','#40566f');
+      g.selectAll('.domain, .tick line').attr('stroke','#c3d1e0');
 
       g.selectAll('.bar')
         .data(data)
@@ -5751,7 +7032,7 @@ var targetsRaw=[]; for(var k=0;k<state.controls.length;k++){ var t=(state.contro
         .attr('x', function(d){return x(d.group) + x.bandwidth()/2;})
         .attr('y', function(d){return y(d.value) - 6;} )
         .attr('text-anchor','middle')
-        .attr('fill',chartText)
+        .attr('fill','#1b3148')
         .style('font-size','12px')
         .text(function(d){return d.value;});
     }
@@ -5760,11 +7041,8 @@ var targetsRaw=[]; for(var k=0;k<state.controls.length;k++){ var t=(state.contro
     function cssId(s){ return String(s).replace(/[^a-z0-9-_]+/gi,'_'); }
 
     // Initiales Rendering (vor Laden einer Datei leer)
-    applyTheme('light', { persist:false, rerender:false });
     updateHeaderSubtitle('list');
     setSidebarMode('catalog');
-    syncCatalogUiFromState();
-    syncComponentUiFromState();
     renderSelectionState(compEls.selectionState, 'Komponentenstatus', 'Kein Datensatz geladen', []);
     renderList();
 
@@ -5845,6 +7123,7 @@ var targetsRaw=[]; for(var k=0;k<state.controls.length;k++){ var t=(state.contro
           msUpdateSummary(detailsEl, allLabel, itemCbs);
         }
         checkAll(compEls.typeMenu, compEls.type, 'Alle Komponententypen');
+        checkAll(compEls.sourceMenu, compEls.source, 'Alle Quellen');
         checkAll(compEls.nameMenu, compEls.name, 'Alle Komponenten');
         checkAll(compEls.capabilityMenu, compEls.capability, 'Alle Capabilities');
         var openDropdowns = document.querySelectorAll('#componentPanel details.ms[open]');
@@ -5989,3 +7268,4 @@ bindComponentExportButton();
   </script>
 </body>
 </html>
+
