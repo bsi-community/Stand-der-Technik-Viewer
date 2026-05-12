@@ -2007,14 +2007,18 @@
       font-size:32px;
       line-height:1;
       letter-spacing:-.04em;
-      max-width:18ch;
+      max-width:none;
+      word-break:normal;
+      overflow-wrap:normal;
     }
     .topic-group .card .title h3,
     .practice-group .card .title h3,
     .component-card .title h3{
       font-size:20px;
       line-height:1.08;
-      max-width:22ch;
+      max-width:none;
+      word-break:normal;
+      overflow-wrap:normal;
     }
     .topic-group .card,
     .practice-group .card,
@@ -2486,6 +2490,15 @@
 
     function looksUuidLikeId(v){
       return /^_?[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(v||''));
+    }
+
+    function normalizeControlRef(ref){
+      var key=String(ref||'').trim();
+      if(key.charAt(0)==='#') key=key.slice(1);
+      if(/^_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(key)){
+        key=key.slice(1);
+      }
+      return key;
     }
 
     // Minimalistische Map/Set-Hilfen fuer schnelle Lookups ohne externe Abhaengigkeiten.
@@ -3162,6 +3175,7 @@
       entry.catalogUuid=meta.catalogUuid;
       entry.catalogTitle=meta.catalogTitle;
       entry.controlRefs=meta.controlRefs;
+      entry.controlLookup=meta.controlLookup;
       loadedCatalogSources.push(entry);
       activateCatalogSource(loadedCatalogSources.length-1);
       if(els.file) els.file.value='';
@@ -3896,7 +3910,7 @@
                     searchText: hay,
                     statement:partText(parts,'statement'), guidance:partText(parts,'guidance'),
                     links:(c.links||[]), path:[].concat(path), paramMap:paramMap };
-        state.controls.push(entry); state.idMap.set(id, entry); if(rawId && rawId!==id){ state.idMap.set(rawId, entry); } if(uuid){ state.uuidMap.set(uuid, entry); }
+        state.controls.push(entry); state.idMap.set(id, entry); if(rawId && rawId!==id){ state.idMap.set(rawId, entry); } if(uuid){ state.uuidMap.set(uuid, entry); state.uuidMap.set(String(uuid).toLowerCase(), entry); }
         if(groupKey){
           if(!state.controlsByGroup[groupKey]) state.controlsByGroup[groupKey]=[];
           state.controlsByGroup[groupKey].push(entry);
@@ -4966,36 +4980,68 @@ function baseMatches(c){ return matches(c); }
       return String(value||'').trim().toLowerCase();
     }
 
-    function collectCatalogRefs(node, refMap){
+    function addCatalogRef(refMap, value){
+      var raw=String(value||'').trim();
+      if(!raw) return;
+      refMap[raw]=true;
+      var normalized=normalizeControlRef(raw);
+      if(normalized) refMap[normalized]=true;
+      if(looksUuidLikeId(normalized)) refMap[normalized.toLowerCase()]=true;
+    }
+
+    function addCatalogControlLookup(controlMap, key, entry){
+      var raw=String(key||'').trim();
+      if(!raw) return;
+      controlMap[raw]=entry;
+      var normalized=normalizeControlRef(raw);
+      if(normalized) controlMap[normalized]=entry;
+      if(looksUuidLikeId(normalized)) controlMap[normalized.toLowerCase()]=entry;
+    }
+
+    function collectCatalogRefs(node, refMap, controlMap, isControl){
       if(!node || typeof node!=='object') return;
       var id=String(node.id||'').trim();
-      var uuid=String(node.uuid||'').trim();
+      var uuid=String(node.uuid || valueOfProp(node.props,'alt-identifier') || '').trim();
       var label=valueOfProp(node.props,'label') || '';
-      if(id) refMap[id]=true;
-      if(uuid) refMap[uuid]=true;
-      if(label) refMap[String(label).trim()]=true;
+      addCatalogRef(refMap, id);
+      addCatalogRef(refMap, uuid);
+      addCatalogRef(refMap, label);
+      if(isControl && controlMap){
+        var entry={
+          id:label || id || '',
+          rawId:id,
+          labelId:String(label||'').trim(),
+          uuid:uuid,
+          raw:node
+        };
+        addCatalogControlLookup(controlMap, id, entry);
+        addCatalogControlLookup(controlMap, uuid, entry);
+        addCatalogControlLookup(controlMap, label, entry);
+      }
       var controls=Array.isArray(node.controls) ? node.controls : [];
-      for(var ci=0;ci<controls.length;ci++){ collectCatalogRefs(controls[ci], refMap); }
+      for(var ci=0;ci<controls.length;ci++){ collectCatalogRefs(controls[ci], refMap, controlMap, true); }
       var groups=Array.isArray(node.groups) ? node.groups : [];
-      for(var gi=0;gi<groups.length;gi++){ collectCatalogRefs(groups[gi], refMap); }
+      for(var gi=0;gi<groups.length;gi++){ collectCatalogRefs(groups[gi], refMap, controlMap, false); }
     }
 
     function buildCatalogSourceMeta(root, fallbackLabel){
       var cat=root && (root.catalog || root);
       var refs={};
-      collectCatalogRefs(cat, refs);
+      var controls={};
+      collectCatalogRefs(cat, refs, controls, false);
       var title=(cat && cat.metadata && cat.metadata.title) || (cat && cat.title) || fallbackLabel || '';
       return {
         catalogUuid:String((cat && cat.uuid) || '').trim(),
         catalogTitle:String(title || '').trim(),
-        controlRefs:refs
+        controlRefs:refs,
+        controlLookup:controls
       };
     }
 
     function catalogSourceHasControlRef(source, controlRef){
       if(!source || !source.controlRefs) return false;
-      var key=String(controlRef||'').trim();
-      return !!(key && source.controlRefs[key]);
+      var key=normalizeControlRef(controlRef);
+      return !!(key && (source.controlRefs[key] || source.controlRefs[key.toLowerCase()]));
     }
 
     function catalogSourceMatchesRequirement(source, req){
@@ -5040,27 +5086,42 @@ function baseMatches(c){ return matches(c); }
         var matchesSource=catalogSourceMatchesRequirement(source, req);
         var hasRef=catalogSourceHasControlRef(source, req.controlId);
         if(matchesSource && hasRef) return i;
-        if(matchesSource && fallbackIndex===-1) fallbackIndex=i;
         if(hasRef && fallbackIndex===-1) fallbackIndex=i;
       }
       return fallbackIndex;
     }
 
     function getCatalogControlByRef(controlRef){
-      var key=String(controlRef||'').trim();
+      var key=normalizeControlRef(controlRef);
       if(!key) return null;
-      return state.uuidMap.get(key) || state.idMap.get(key) || null;
+      return state.uuidMap.get(key) || state.uuidMap.get(key.toLowerCase()) || state.idMap.get(key) || null;
     }
 
+    function getCatalogSourceControlByRef(source, controlRef){
+      if(!source || !source.controlLookup) return null;
+      var key=normalizeControlRef(controlRef);
+      return key ? (source.controlLookup[key] || source.controlLookup[key.toLowerCase()] || null) : null;
+    }
+
+    function getAnyCatalogControlByRef(controlRef){
+      var active=getCatalogControlByRef(controlRef);
+      if(active) return active;
+      for(var i=0;i<loadedCatalogSources.length;i++){
+        var found=getCatalogSourceControlByRef(loadedCatalogSources[i], controlRef);
+        if(found) return found;
+      }
+      return null;
+    }
+	
     function getCatalogControlDisplayId(controlRef){
-      var control=getCatalogControlByRef(controlRef);
+      var control=getAnyCatalogControlByRef(controlRef);
       return control ? (control.labelId || control.id || control.rawId || '') : '';
     }
-
+	
     function getCatalogControlUuid(controlRef){
-      var control=getCatalogControlByRef(controlRef);
+      var control=getAnyCatalogControlByRef(controlRef);
       if(control && control.uuid) return control.uuid;
-      var key=String(controlRef||'').trim();
+      var key=normalizeControlRef(controlRef);
       return looksUuidLikeId(key) ? key : '';
     }
 
@@ -5490,7 +5551,7 @@ function baseMatches(c){ return matches(c); }
 
         var body=document.createElement('div');
         body.className='component-children';
-        if(impl.description){
+        if(String(impl.description||'').trim()){
           var desc=document.createElement('div');
           desc.className='catalog-md';
           desc.innerHTML=renderMarkupWithParams(impl.description, impl.paramMap, searchTerm);
@@ -5645,17 +5706,18 @@ function baseMatches(c){ return matches(c); }
       var card=document.createElement('article');
       card.className='card component-card requirement';
       card.id='component-req-'+cssId(req.id);
-      var catalogControl=getCatalogControlByRef(req.controlId);
+      var normalizedControlId=normalizeControlRef(req.controlId);
+      var catalogControl=getAnyCatalogControlByRef(req.controlId);
       var jumpAvailable=!!catalogControl || findCatalogSourceIndexForRequirement(req)!==-1;
-      var displayId=(catalogControl && (catalogControl.labelId || catalogControl.id || catalogControl.rawId)) || req.catalogControlId || req.controlId || 'ohne-control-id';
-      var displayUuid=req.catalogControlUuid || (catalogControl && catalogControl.uuid) || (looksUuidLikeId(req.controlId) ? req.controlId : '') || '–';
+      var displayId=(catalogControl && (catalogControl.labelId || catalogControl.id || catalogControl.rawId)) || req.catalogControlId || normalizedControlId || req.controlId || 'ohne-control-id';
+      var displayUuid=req.catalogControlUuid || (catalogControl && catalogControl.uuid) || (looksUuidLikeId(normalizedControlId) ? normalizedControlId : '') || '–';
       var meta=document.createElement('div');
       meta.className='meta';
       meta.innerHTML='<span class="kv"><strong>UUID:</strong> <code>'+renderHighlightedInline(displayUuid, searchTerm)+'</code></span>'
         + '<span class="kv"><strong>Quelle:</strong> <code>'+renderHighlightedInline(req.sourceLabel||'–', searchTerm)+'</code></span>';
-      card.innerHTML='<div class="title"><h3><mark>'+renderHighlightedInline(displayId, searchTerm)+'</mark> – Implementierte Anforderung</h3></div>';
+      card.innerHTML='<div class="title"><h3><mark>'+renderHighlightedInline(displayId, searchTerm)+'</mark> – Implementierungsbeschreibung</h3></div>';
       card.appendChild(meta);
-      if(req.description){
+      if(String(req.description||'').trim()){
         var desc=document.createElement('div');
         desc.className='catalog-md';
         desc.style.marginTop='10px';
@@ -5701,7 +5763,7 @@ function baseMatches(c){ return matches(c); }
           stmtCard.id='component-stmt-'+cssId(stmt.id);
           stmtCard.innerHTML='<div class="title"><h3><mark>'+renderHighlightedInline(stmt.statementId||'statement', searchTerm)+'</mark> – Statement</h3></div>'
             + '<div class="meta"><span class="kv"><strong>UUID:</strong> <code>'+renderHighlightedInline(stmt.uuid||'–', searchTerm)+'</code></span></div>';
-          if(stmt.description){
+          if(String(stmt.description||'').trim()){
             var stmtDesc=document.createElement('div');
             stmtDesc.className='catalog-md';
             stmtDesc.style.marginTop='10px';
@@ -5788,7 +5850,7 @@ function baseMatches(c){ return matches(c); }
       var card=document.createElement('article');
       card.className='card component-card '+(owner.kind==='capability' ? 'capability' : '');
       card.id='component-owner-'+cssId(stateKey);
-      if(owner.description){
+      if(String(owner.description||'').trim()){
         var desc=document.createElement('div');
         desc.className='catalog-md';
         desc.innerHTML=renderMarkupWithParams(owner.description, owner.paramMap, searchTerm);
@@ -5818,19 +5880,20 @@ function baseMatches(c){ return matches(c); }
       appendRemainingObjectFields(card, 'Weitere Felder', owner.raw, owner.kind==='capability' ? ['uuid','name','title','description','remarks','props','links','protocols','responsible-roles','incorporates-components','control-implementations'] : ['uuid','type','title','name','description','purpose','remarks','props','links','protocols','responsible-roles','control-implementations'], searchTerm, componentState.resourceByUuid, componentState.baseUrl);
       appendImplementationSections(card, owner, searchTerm);
 
-      var actions=document.createElement('div');
-      actions.style.marginTop='10px';
-      actions.style.display='flex';
-      actions.style.justifyContent='flex-end';
-      var jsonBtn=document.createElement('button');
-      jsonBtn.className='btn small';
-      jsonBtn.type='button';
-      jsonBtn.textContent='JSON';
-      jsonBtn.addEventListener('click', function(){ openJsonModal(owner.raw); });
-      actions.appendChild(jsonBtn);
-      card.appendChild(actions);
-
-      body.appendChild(card);
+      if(card.childElementCount){
+        var actions=document.createElement('div');
+        actions.style.marginTop='10px';
+        actions.style.display='flex';
+        actions.style.justifyContent='flex-end';
+        var jsonBtn=document.createElement('button');
+        jsonBtn.className='btn small';
+        jsonBtn.type='button';
+        jsonBtn.textContent='JSON';
+        jsonBtn.addEventListener('click', function(){ openJsonModal(owner.raw); });
+        actions.appendChild(jsonBtn);
+        card.appendChild(actions);
+        body.appendChild(card);
+      }
       if(owner.kind==='capability' && options.childComponents && options.childComponents.length){
         for(var cc=0;cc<options.childComponents.length;cc++){
           body.appendChild(renderComponentOwner(options.childComponents[cc], searchTerm));
