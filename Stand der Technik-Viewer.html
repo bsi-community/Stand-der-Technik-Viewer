@@ -166,6 +166,13 @@
     .component-card.statement{border-left-color:#7a3e00}
     .component-ref-btn{width:auto;display:inline-flex;align-items:center;justify-content:center}
     .component-ref-btn[disabled]{cursor:not-allowed;opacity:.55}
+    .component-requirement-preview{margin-top:10px;padding:12px;border:1px solid var(--muted);border-radius:10px;background:#f8fbff}
+    .component-requirement-preview-title{margin:0 0 8px 0;font-size:13px;font-weight:700;color:var(--text)}
+    .component-param-table{width:100%;border-collapse:collapse;margin-top:8px;table-layout:auto}
+    .component-param-table th,.component-param-table td{border-bottom:1px solid var(--muted);padding:9px 10px;text-align:left;vertical-align:top}
+    .component-param-table th{font-size:12px;color:var(--dim);font-weight:700;background:#f6f8fb}
+    .component-param-control{display:inline-flex;max-width:100%;align-items:center;border:1px solid var(--muted);border-radius:999px;background:#ffffff;padding:4px 9px;color:var(--text);line-height:1.25}
+    .component-param-values{font-weight:700;color:var(--text)}
     .component-empty{color:var(--dim);font-style:italic}
     .component-source{font-size:12px;color:var(--dim)}
     .component-source a{color:var(--accent)}
@@ -5112,6 +5119,106 @@ function baseMatches(c){ return matches(c); }
       }
       return null;
     }
+
+    function findCatalogControlForRequirement(req){
+      if(!req) return { control:null, sourceIndex:-1 };
+      var sourceIndex=findCatalogSourceIndexForRequirement(req);
+      if(sourceIndex>=0 && sourceIndex<loadedCatalogSources.length){
+        if(sourceIndex===activeCatalogSourceIndex){
+          var activeControl=getCatalogControlByRef(req.controlId);
+          if(activeControl) return { control:activeControl, sourceIndex:sourceIndex };
+        }
+        var sourceControl=getCatalogSourceControlByRef(loadedCatalogSources[sourceIndex], req.controlId);
+        if(sourceControl) return { control:sourceControl, sourceIndex:sourceIndex };
+      }
+      return { control:getAnyCatalogControlByRef(req.controlId), sourceIndex:sourceIndex };
+    }
+
+    function getCatalogStatementProse(control){
+      if(!control) return '';
+      var rawParts=(control.raw && Array.isArray(control.raw.parts)) ? control.raw.parts : null;
+      var rawStatement=partText(rawParts, 'statement');
+      if(rawStatement) return rawStatement;
+      if(control.statement) return control.statement;
+      var parts=Array.isArray(control.parts) ? control.parts : null;
+      return partText(parts, 'statement');
+    }
+
+    function getCatalogPreviewParamMap(control){
+      if(!control) return {};
+      if(control.paramMap) return control.paramMap;
+      return buildParamMap((control.raw && control.raw.params) || []);
+    }
+
+    function getSetParameterId(param){
+      return String((param && (param['param-id'] || param.id)) || '').trim();
+    }
+
+    function getSetParameterValues(param){
+      if(!param) return [];
+      if(Array.isArray(param.values)) return param.values.map(function(v){ return String(v); });
+      if(param.value!=null) return [String(param.value)];
+      return [];
+    }
+
+    function getCatalogControlTitle(control){
+      return String((control && (control.title || (control.raw && control.raw.title))) || '').trim();
+    }
+
+    function getCatalogControlDisplayText(control){
+      if(!control) return '';
+      var id=control.labelId || control.id || control.rawId || '';
+      var title=getCatalogControlTitle(control);
+      if(id && title) return id+' '+title;
+      return id || title;
+    }
+
+    function getCatalogParamFromControl(control, paramId){
+      var key=String(paramId||'').toLowerCase();
+      var params=(control && control.raw && Array.isArray(control.raw.params)) ? control.raw.params : [];
+      for(var i=0;i<params.length;i++){
+        var p=params[i] || {};
+        var pid=String(p.id || p['param-id'] || '').toLowerCase();
+        if(pid && pid===key) return p;
+      }
+      return null;
+    }
+
+    function getCatalogStatementPlainText(control, paramMap){
+      var prose=getCatalogStatementProse(control);
+      if(!prose) return '';
+      return replaceParams(prose, paramMap || getCatalogPreviewParamMap(control))
+        .replace(/\{\{\s*(?:value:|label:)?\s*([^}]+?)\s*\}\}/g, '$1')
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+
+    function findCatalogParamContextForSetParameter(param, requirements){
+      var paramId=getSetParameterId(param);
+      if(!paramId) return { control:null, catalogParam:null, sourceIndex:-1 };
+      var reqs=Array.isArray(requirements) ? requirements : [];
+      for(var r=0;r<reqs.length;r++){
+        var match=findCatalogControlForRequirement(reqs[r]);
+        var catalogParam=getCatalogParamFromControl(match.control, paramId);
+        if(catalogParam) return { control:match.control, catalogParam:catalogParam, sourceIndex:match.sourceIndex };
+      }
+
+      var seen={};
+      for(var i=0;i<loadedCatalogSources.length;i++){
+        var lookup=loadedCatalogSources[i] && loadedCatalogSources[i].controlLookup;
+        if(!lookup) continue;
+        for(var key in lookup){
+          if(!lookup.hasOwnProperty(key)) continue;
+          var control=lookup[key];
+          var rawKey=(control && control.raw && (control.raw.uuid || control.raw.id)) || (control && (control.uuid || control.rawId || control.id)) || key;
+          if(seen[rawKey]) continue;
+          seen[rawKey]=true;
+          var foundParam=getCatalogParamFromControl(control, paramId);
+          if(foundParam) return { control:control, catalogParam:foundParam, sourceIndex:i };
+        }
+      }
+      return { control:null, catalogParam:null, sourceIndex:-1 };
+    }
 	
     function getCatalogControlDisplayId(controlRef){
       var control=getAnyCatalogControlByRef(controlRef);
@@ -5526,6 +5633,74 @@ function baseMatches(c){ return matches(c); }
       goToCatalogControl(req.controlId, sourceIndex);
     }
 
+    function appendImplementationSetParameters(parent, impl, searchTerm){
+      var params=(impl && impl.setParameters) || [];
+      if(!params.length) return;
+
+      var section=document.createElement('section');
+      section.className='catalog-section';
+      var heading=document.createElement('h4');
+      heading.className='catalog-section-title';
+      heading.innerHTML=renderHighlightedInline('Gesetzte Parameter', searchTerm);
+      section.appendChild(heading);
+
+      var wrap=document.createElement('div');
+      wrap.className='catalog-table-scroll';
+      var table=document.createElement('table');
+      table.className='component-param-table';
+      table.innerHTML='<thead><tr><th>Control</th><th>Label</th><th>Param ID</th><th>Values</th></tr></thead>';
+      var tbody=document.createElement('tbody');
+
+      for(var i=0;i<params.length;i++){
+        var param=params[i] || {};
+        var paramId=getSetParameterId(param);
+        var values=getSetParameterValues(param);
+        var ctx=findCatalogParamContextForSetParameter(param, impl.requirements);
+        var catalogParam=ctx.catalogParam || {};
+        var controlText=getCatalogControlDisplayText(ctx.control) || '–';
+        var label=String(param.label || valueOfProp(param.props, 'label') || catalogParam.label || valueOfProp(catalogParam.props, 'label') || '–');
+        var tooltipMap=mergeParamMaps(getCatalogPreviewParamMap(ctx.control), impl.localParamMap);
+        var statementText=getCatalogStatementPlainText(ctx.control, tooltipMap);
+
+        var tr=document.createElement('tr');
+        var controlTd=document.createElement('td');
+        var controlChip=document.createElement('span');
+        controlChip.className='component-param-control';
+        controlChip.innerHTML=renderHighlightedInline(controlText, searchTerm);
+        if(statementText) controlChip.setAttribute('title', statementText);
+        controlTd.appendChild(controlChip);
+
+        var labelTd=document.createElement('td');
+        labelTd.innerHTML=renderHighlightedInline(label, searchTerm);
+
+        var idTd=document.createElement('td');
+        idTd.innerHTML='<code>'+renderHighlightedInline(paramId || '–', searchTerm)+'</code>';
+
+        var valuesTd=document.createElement('td');
+        valuesTd.className='component-param-values';
+        if(values.length){
+          for(var v=0;v<values.length;v++){
+            var valueLine=document.createElement('div');
+            valueLine.innerHTML=renderHighlightedInline(values[v], searchTerm);
+            valuesTd.appendChild(valueLine);
+          }
+        } else {
+          valuesTd.innerHTML=renderHighlightedInline('–', searchTerm);
+        }
+
+        tr.appendChild(controlTd);
+        tr.appendChild(labelTd);
+        tr.appendChild(idTd);
+        tr.appendChild(valuesTd);
+        tbody.appendChild(tr);
+      }
+
+      table.appendChild(tbody);
+      wrap.appendChild(table);
+      section.appendChild(wrap);
+      parent.appendChild(section);
+    }
+
     function appendImplementationSections(container, owner, searchTerm){
       var impls=owner.controlImplementations || [];
       if(!impls.length){
@@ -5564,7 +5739,7 @@ function baseMatches(c){ return matches(c); }
         }
       if(impl.props && impl.props.length) appendGenericObjectList(body, 'Props', impl.props, searchTerm, componentState.resourceByUuid, componentState.baseUrl);
       if(impl.links && impl.links.length) appendDocumentLinksSection(body, impl.links, searchTerm);
-      if(impl.setParameters && impl.setParameters.length) appendGenericObjectList(body, 'Gesetzte Parameter', impl.setParameters, searchTerm, componentState.resourceByUuid, componentState.baseUrl);
+      appendImplementationSetParameters(body, impl, searchTerm);
       renderResponsibleRoles(body, 'Verantwortliche Rollen', impl.responsibleRoles, searchTerm);
       appendRemainingObjectFields(body, 'Weitere Felder', impl.raw, ['uuid','source','description','props','links','set-parameters','responsible-roles','implemented-requirements','remarks'], searchTerm, componentState.resourceByUuid, componentState.baseUrl);
 
@@ -5707,8 +5882,10 @@ function baseMatches(c){ return matches(c); }
       card.className='card component-card requirement';
       card.id='component-req-'+cssId(req.id);
       var normalizedControlId=normalizeControlRef(req.controlId);
-      var catalogControl=getAnyCatalogControlByRef(req.controlId);
-      var jumpAvailable=!!catalogControl || findCatalogSourceIndexForRequirement(req)!==-1;
+      var catalogMatch=findCatalogControlForRequirement(req);
+      var catalogControl=catalogMatch.control;
+      var jumpAvailable=!!catalogControl || catalogMatch.sourceIndex!==-1;
+      var previewAvailable=!!catalogControl;
       var displayId=(catalogControl && (catalogControl.labelId || catalogControl.id || catalogControl.rawId)) || req.catalogControlId || normalizedControlId || req.controlId || 'ohne-control-id';
       var displayUuid=req.catalogControlUuid || (catalogControl && catalogControl.uuid) || (looksUuidLikeId(normalizedControlId) ? normalizedControlId : '') || '–';
       var meta=document.createElement('div');
@@ -5734,6 +5911,13 @@ function baseMatches(c){ return matches(c); }
       if(!jumpAvailable) gotoBtn.disabled=true;
       gotoBtn.addEventListener('click', function(){ goToCatalogControlFromComponent(req); });
       actions.appendChild(gotoBtn);
+      var previewBtn=document.createElement('button');
+      previewBtn.className='btn small component-ref-btn';
+      previewBtn.type='button';
+      previewBtn.textContent='Anforderungs-Preview';
+      previewBtn.setAttribute('aria-expanded', 'false');
+      if(!previewAvailable) previewBtn.disabled=true;
+      actions.appendChild(previewBtn);
       var jsonBtn=document.createElement('button');
       jsonBtn.className='btn small';
       jsonBtn.type='button';
@@ -5741,6 +5925,35 @@ function baseMatches(c){ return matches(c); }
       jsonBtn.addEventListener('click', function(){ openJsonModal(req.raw); });
       actions.appendChild(jsonBtn);
       card.appendChild(actions);
+
+      var previewPanel=document.createElement('div');
+      previewPanel.className='component-requirement-preview hidden';
+      if(previewAvailable){
+        previewBtn.addEventListener('click', function(){
+          var expanded=previewBtn.getAttribute('aria-expanded')==='true';
+          if(expanded){
+            previewBtn.setAttribute('aria-expanded', 'false');
+            previewPanel.classList.add('hidden');
+            return;
+          }
+          var latestMatch=findCatalogControlForRequirement(req);
+          var latestControl=latestMatch.control;
+          var statementProse=getCatalogStatementProse(latestControl);
+          var latestDisplayId=(latestControl && (latestControl.labelId || latestControl.id || latestControl.rawId)) || displayId;
+          var sourceLabel=(latestMatch.sourceIndex>=0 && loadedCatalogSources[latestMatch.sourceIndex]) ? loadedCatalogSources[latestMatch.sourceIndex].label : '';
+          previewPanel.innerHTML=''
+            + '<div class="component-requirement-preview-title">Statement aus dem Katalog'
+            + (latestDisplayId ? ' · <code>'+escapeHtml(latestDisplayId)+'</code>' : '')
+            + (sourceLabel ? ' · '+escapeHtml(sourceLabel) : '')
+            + '</div>'
+            + '<div class="catalog-md">'
+            + (statementProse ? renderMarkupWithParams(statementProse, getCatalogPreviewParamMap(latestControl), searchTerm) : '<div class="component-empty">Keine Statement-Prose in der Kataloganforderung gefunden.</div>')
+            + '</div>';
+          previewBtn.setAttribute('aria-expanded', 'true');
+          previewPanel.classList.remove('hidden');
+        });
+      }
+      card.appendChild(previewPanel);
 
       var extra=document.createElement('div');
       if(req.remarks){
