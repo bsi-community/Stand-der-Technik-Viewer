@@ -406,6 +406,7 @@
       border-radius:14px;
       box-shadow:inset 0 1px 0 rgba(255,255,255,.9)
     }
+    select.repository-select{padding-right:40px}
     .input:focus,select:focus,button:focus,summary:focus,.tab:focus,.sidebar-tab:focus{
       outline:3px solid rgba(23,92,211,.18);
       outline-offset:2px;
@@ -2281,7 +2282,7 @@
         <div class="panel-intro">
           <div class="panel-kicker">Catalog Input</div>
           <h3 class="panel-title">OSCAL Catalog laden</h3>
-          <p class="panel-copy">Lade eine lokale JSON-Datei oder referenziere eine URL. Die Verarbeitung läuft vollständig im Browser.</p>
+          <p class="panel-copy">Lade eine lokale JSON-Datei, referenziere eine URL oder wähle passende Inhalte direkt aus dem BSI Stand der Technik GitHub Repository aus. Die Verarbeitung läuft vollständig im Browser.</p>
         </div>
         <!-- Versteckter Datei-Input als technischer Trigger fuer Klick- und Drag-and-Drop-Upload. -->
         <input id="file" class="input" type="file" accept=".json" multiple hidden aria-hidden="true" />
@@ -2295,6 +2296,11 @@
           <input id="urlInput" class="input" type="url" placeholder="Katalog-URL einfügen (JSON)" autocomplete="off" spellcheck="false" />
           <button id="urlLoadBtn" class="btn" type="button" style="width:100%; justify-content:center;">Von URL laden</button>
           <div class="note">Hinweis: Bei GitHub-Links ggf. auf die Raw-URL umschreiben.</div>
+          <div class="field-label" style="margin-top:4px">Direkt aus dem öffentlichen BSI Stand der Technik GitHub Repository laden</div>
+          <select id="bsiCatalogSelect" class="input repository-select" aria-label="BSI Stand der Technik Katalog auswählen" disabled>
+            <option value="">Repository-Inhalte werden geladen…</option>
+          </select>
+          <div id="bsiCatalogStatus" class="note" aria-live="polite">Aktuelle Katalogliste wird von GitHub abgerufen.</div>
         </div>
         <!-- Quellenumschalter fuer mehrere parallel geladene Catalogs.
              Der versteckte Select spiegelt den Zustand intern,
@@ -2375,18 +2381,23 @@
           <input id="compUrlInput" class="input" type="url" placeholder="Component-Definition-URL einfügen (JSON)" autocomplete="off" spellcheck="false" />
           <button id="compUrlLoadBtn" class="btn" type="button" style="width:100%; justify-content:center;">Von URL laden</button>
           <div class="note">Hinweis: Bei GitHub-Links ggf. auf die Raw-URL umschreiben.</div>
+          <div class="field-label" style="margin-top:4px">Direkt aus dem öffentlichen BSI Stand der Technik GitHub Repository laden</div>
+          <select id="bsiComponentSelect" class="input repository-select" aria-label="BSI Stand der Technik Implementierungsbeschreibung auswählen" disabled>
+            <option value="">Repository-Inhalte werden geladen…</option>
+          </select>
+          <div id="bsiComponentStatus" class="note" aria-live="polite">Aktuelle Liste der Implementierungsbeschreibungen wird von GitHub abgerufen.</div>
         </div>
         <!-- Quellenumschalter fuer mehrere parallel geladene Component Definitions.
              Auch hier bleibt ein versteckter Select als interner Zustandsanker erhalten,
              waehrend das sichtbare Custom-Dropdown Auswahl und Entfernen uebernimmt. -->
         <div style="margin-top:10px;display:grid;gap:8px">
-          <label class="field-label" for="componentDatasetSelect">Geladene Component Definitions</label>
-          <select id="componentDatasetSelect" aria-label="Geladene Component Definition auswählen" hidden aria-hidden="true">
-            <option value="">Noch keine Component Definition geladen</option>
+          <label class="field-label" for="componentDatasetSelect">Geladene Implementierungsbeschreibungen</label>
+          <select id="componentDatasetSelect" aria-label="Geladene Implementierungsbeschreibung auswählen" hidden aria-hidden="true">
+            <option value="">Noch keine Implementierungsbeschreibung geladen</option>
           </select>
           <div id="componentSourcePicker" class="source-picker">
-            <button id="componentSourceButton" class="input source-picker-trigger" type="button" aria-haspopup="listbox" aria-expanded="false">Noch keine Component Definition geladen</button>
-            <div id="componentSourceMenu" class="source-picker-menu hidden" role="listbox" aria-label="Geladene Component Definitions"></div>
+            <button id="componentSourceButton" class="input source-picker-trigger" type="button" aria-haspopup="listbox" aria-expanded="false">Noch keine Implementierungsbeschreibung geladen</button>
+            <div id="componentSourceMenu" class="source-picker-menu hidden" role="listbox" aria-label="Geladene Implementierungsbeschreibungen"></div>
           </div>
         </div>
 
@@ -2602,14 +2613,14 @@
 
 
     // Gesammelte DOM-Referenzen fuer schnelle Zugriffe ohne wiederholte Query-Selektoren.
-    var els={ file:$('#file'), dropzone:$('#catalogDropzone'), sourceSelect:$('#catalogDatasetSelect'), sourcePicker:$('#catalogSourcePicker'), sourceButton:$('#catalogSourceButton'), sourcePickerMenu:$('#catalogSourceMenu'), urlInput:$('#urlInput'), urlLoadBtn:$('#urlLoadBtn'), q:$('#q'), group:$('#groupMS'), cls:$('#classMS'), sec:$('#secMS'), target:$('#targetMS'), tag:$('#tagMS'), effort:$('#effortMS'), modalverb:$('#modalverbMS'), documentation:$('#documentationMS'), actionword:$('#actionwordMS'), groupMenu:$('#groupMS_menu'), clsMenu:$('#classMS_menu'), secMenu:$('#secMS_menu'), targetMenu:$('#targetMS_menu'), tagMenu:$('#tagMS_menu'), effortMenu:$('#effortMS_menu'), modalverbMenu:$('#modalverbMS_menu'), documentationMenu:$('#documentationMS_menu'), actionwordMenu:$('#actionwordMS_menu'), resetBtn:$('#resetBtn'), exportPdfBtn:$('#exportPdfBtn'),
+    var els={ file:$('#file'), dropzone:$('#catalogDropzone'), sourceSelect:$('#catalogDatasetSelect'), sourcePicker:$('#catalogSourcePicker'), sourceButton:$('#catalogSourceButton'), sourcePickerMenu:$('#catalogSourceMenu'), urlInput:$('#urlInput'), urlLoadBtn:$('#urlLoadBtn'), bsiSelect:$('#bsiCatalogSelect'), bsiStatus:$('#bsiCatalogStatus'), q:$('#q'), group:$('#groupMS'), cls:$('#classMS'), sec:$('#secMS'), target:$('#targetMS'), tag:$('#tagMS'), effort:$('#effortMS'), modalverb:$('#modalverbMS'), documentation:$('#documentationMS'), actionword:$('#actionwordMS'), groupMenu:$('#groupMS_menu'), clsMenu:$('#classMS_menu'), secMenu:$('#secMS_menu'), targetMenu:$('#targetMS_menu'), tagMenu:$('#tagMS_menu'), effortMenu:$('#effortMS_menu'), modalverbMenu:$('#modalverbMS_menu'), documentationMenu:$('#documentationMS_menu'), actionwordMenu:$('#actionwordMS_menu'), resetBtn:$('#resetBtn'), exportPdfBtn:$('#exportPdfBtn'),
       sideTabCatalog:$('#side-tab-catalog'), sideTabComponents:$('#side-tab-components'), catalogPanel:$('#catalogPanel'), componentPanel:$('#componentPanel'),
       viewSubtitle:$('#viewSubtitle'), viewSummary:$('#viewSummary'), selectionState:$('#catalogSelectionState'),
       fileInfo:$('#fileInfo'), countInfo:$('#countInfo'), graphInfo:$('#graphInfo'),
       listTab:$('#listTab'), componentTab:$('#componentTab'), graphTab:$('#graphTab'), sunburstTab:$('#sunburstTab'), barTab:$('#barTab'), jsonTab:$('#jsonTab'), jsonView:$('#jsonView'), msg:$('#msg'),
       jsonModal:$('#jsonModal'), jsonModalBody:$('#jsonModalBody'), jsonModalClose:$('#jsonModalClose') };
     var compEls={
-      file:$('#compFile'), dropzone:$('#componentDropzone'), sourceSelect:$('#componentDatasetSelect'), sourcePicker:$('#componentSourcePicker'), sourceButton:$('#componentSourceButton'), sourcePickerMenu:$('#componentSourceMenu'), urlInput:$('#compUrlInput'), urlLoadBtn:$('#compUrlLoadBtn'), q:$('#compQ'),
+      file:$('#compFile'), dropzone:$('#componentDropzone'), sourceSelect:$('#componentDatasetSelect'), sourcePicker:$('#componentSourcePicker'), sourceButton:$('#componentSourceButton'), sourcePickerMenu:$('#componentSourceMenu'), urlInput:$('#compUrlInput'), urlLoadBtn:$('#compUrlLoadBtn'), bsiSelect:$('#bsiComponentSelect'), bsiStatus:$('#bsiComponentStatus'), q:$('#compQ'),
       type:$('#compTypeMS'), source:$('#compSourceMS'), name:$('#compNameMS'), capability:$('#compCapabilityMS'),
       typeMenu:$('#compTypeMS_menu'), sourceMenu:$('#compSourceMS_menu'), nameMenu:$('#compNameMS_menu'), capabilityMenu:$('#compCapabilityMS_menu'),
       fileInfo:$('#compFileInfo'), countInfo:$('#compCountInfo'), graphInfo:$('#compGraphInfo'), selectionState:$('#componentSelectionState'),
@@ -3172,8 +3183,8 @@
     }
 
     function refreshComponentSourceSelect(){
-      rebuildSourceSelect(compEls.sourceSelect, loadedComponentSources, activeComponentSourceIndex, 'Noch keine Component Definition geladen');
-      renderSourcePicker(compEls.sourcePicker, compEls.sourceButton, compEls.sourcePickerMenu, loadedComponentSources, activeComponentSourceIndex, 'Noch keine Component Definition geladen', function(index){
+      rebuildSourceSelect(compEls.sourceSelect, loadedComponentSources, activeComponentSourceIndex, 'Noch keine Implementierungsbeschreibung geladen');
+      renderSourcePicker(compEls.sourcePicker, compEls.sourceButton, compEls.sourcePickerMenu, loadedComponentSources, activeComponentSourceIndex, 'Noch keine Implementierungsbeschreibung geladen', function(index){
         activateComponentSource(index);
         setSourcePickerOpen(compEls.sourcePicker, compEls.sourceButton, compEls.sourcePickerMenu, false);
       }, removeComponentSource);
@@ -3326,16 +3337,16 @@
       return url;
     }
 
-    function loadCatalogFromUrl(rawUrl){
+    function loadCatalogFromUrl(rawUrl, sourceLabel){
       var url = normalizeCatalogUrl(rawUrl);
       if(!url){ return; }
-      fetch(url, { credentials:'omit' })
+      fetch(url, { credentials:'omit', cache:'no-store' })
         .then(function(res){
           if(!res.ok){ throw new Error('HTTP '+res.status); }
           return res.json();
         })
         .then(function(json){
-          addCatalogSource({ label:url, json:json, jsonText:JSON.stringify(json, null, 2), baseUrl:url });
+          addCatalogSource({ label:sourceLabel || url, json:json, jsonText:JSON.stringify(json, null, 2), baseUrl:url });
         })
         .catch(function(err){
           showMsg('<strong>Fehler beim Laden der URL:</strong><br/><code>'+escapeHtml(String(err.message||err))+'</code>', true);
@@ -3378,16 +3389,16 @@
       });
     }
 
-    function loadComponentFromUrl(rawUrl){
+    function loadComponentFromUrl(rawUrl, sourceLabel){
       var url = normalizeCatalogUrl(rawUrl);
       if(!url){ return; }
-      fetch(url, { credentials:'omit' })
+      fetch(url, { credentials:'omit', cache:'no-store' })
         .then(function(res){
           if(!res.ok){ throw new Error('HTTP '+res.status); }
           return res.json();
         })
         .then(function(json){
-          addComponentSource({ label:url, json:json, jsonText:JSON.stringify(json, null, 2), baseUrl:url });
+          addComponentSource({ label:sourceLabel || url, json:json, jsonText:JSON.stringify(json, null, 2), baseUrl:url });
         })
         .catch(function(err){
           showMsg('<strong>Fehler beim Laden der Component-URL:</strong><br/><code>'+escapeHtml(String(err.message||err))+'</code>', true);
@@ -3408,6 +3419,118 @@
         }
       });
     }
+
+    var BSI_REPOSITORY_TREE_URL='https://api.github.com/repos/BSI-Bund/Stand-der-Technik-Bibliothek/git/trees/main?recursive=1';
+    var BSI_REPOSITORY_RAW_ROOT='https://raw.githubusercontent.com/BSI-Bund/Stand-der-Technik-Bibliothek/main/';
+
+    function getRepositoryFileName(path){
+      var parts=String(path||'').split('/');
+      return parts[parts.length-1] || path;
+    }
+
+    function buildRepositoryRawUrl(path){
+      return BSI_REPOSITORY_RAW_ROOT+String(path||'').split('/').map(function(part){
+        return encodeURIComponent(part);
+      }).join('/');
+    }
+
+    function getRepositoryJsonFiles(tree, prefix, catalogOnly){
+      var entries=tree && Array.isArray(tree.tree) ? tree.tree : [];
+      var files=[];
+      for(var i=0;i<entries.length;i++){
+        var entry=entries[i];
+        var path=entry && entry.path ? String(entry.path) : '';
+        if(entry.type!=='blob' || path.indexOf(prefix)!==0 || !/\.json$/i.test(path)) continue;
+        if(catalogOnly && !/catalog\.json$/i.test(path)) continue;
+        files.push({ name:getRepositoryFileName(path), path:path, url:buildRepositoryRawUrl(path) });
+      }
+      files.sort(function(a,b){
+        return a.name.localeCompare(b.name, 'de', { sensitivity:'base' }) || a.path.localeCompare(b.path, 'de', { sensitivity:'base' });
+      });
+      return files;
+    }
+
+    function appendRepositoryOptions(selectEl, label, files){
+      if(!selectEl || !files.length) return;
+      var parent=label ? document.createElement('optgroup') : selectEl;
+      if(label) parent.label=label;
+      for(var i=0;i<files.length;i++){
+        var option=document.createElement('option');
+        option.value=files[i].url;
+        option.textContent=files[i].name;
+        option.dataset.fileName=files[i].name;
+        option.title=files[i].path;
+        parent.appendChild(option);
+      }
+      if(label) selectEl.appendChild(parent);
+    }
+
+    function prepareRepositorySelect(selectEl, placeholder){
+      if(!selectEl) return;
+      selectEl.innerHTML='';
+      var option=document.createElement('option');
+      option.value='';
+      option.textContent=placeholder;
+      option.selected=true;
+      option.disabled=true;
+      option.hidden=true;
+      selectEl.appendChild(option);
+    }
+
+    function showRepositoryLoadError(selectEl, statusEl){
+      prepareRepositorySelect(selectEl, 'Repository-Inhalte konnten nicht geladen werden');
+      if(selectEl) selectEl.disabled=true;
+      if(statusEl) statusEl.textContent='GitHub ist derzeit nicht erreichbar. Lokale Dateien und URL-Uploads funktionieren weiterhin.';
+    }
+
+    function loadBsiRepositoryOptions(){
+      fetch(BSI_REPOSITORY_TREE_URL, { credentials:'omit', cache:'no-store' })
+        .then(function(res){
+          if(!res.ok){ throw new Error('GitHub API HTTP '+res.status); }
+          return res.json();
+        })
+        .then(function(tree){
+          if(tree.truncated){ throw new Error('Die GitHub-Dateiliste ist unvollständig.'); }
+          var sourceCatalogs=getRepositoryJsonFiles(tree, 'Quellkataloge/', true);
+          var userCatalogs=getRepositoryJsonFiles(tree, 'Anwenderkataloge/', true);
+          var componentDefinitions=getRepositoryJsonFiles(tree, 'Implementierungsbeschreibungen/Komponenten/', false);
+
+          prepareRepositorySelect(els.bsiSelect, 'Aus dem Repository auswählen');
+          appendRepositoryOptions(els.bsiSelect, 'Quellkataloge', sourceCatalogs);
+          appendRepositoryOptions(els.bsiSelect, 'Anwenderkataloge', userCatalogs);
+          if(els.bsiSelect) els.bsiSelect.disabled=!(sourceCatalogs.length || userCatalogs.length);
+          if(els.bsiStatus) els.bsiStatus.textContent=(sourceCatalogs.length+userCatalogs.length)+' aktuelle Kataloge verfügbar.';
+
+          prepareRepositorySelect(compEls.bsiSelect, 'Aus dem Repository auswählen');
+          appendRepositoryOptions(compEls.bsiSelect, '', componentDefinitions);
+          if(compEls.bsiSelect) compEls.bsiSelect.disabled=!componentDefinitions.length;
+          if(compEls.bsiStatus) compEls.bsiStatus.textContent=componentDefinitions.length+' aktuelle Implementierungsbeschreibungen verfügbar.';
+        })
+        .catch(function(){
+          showRepositoryLoadError(els.bsiSelect, els.bsiStatus);
+          showRepositoryLoadError(compEls.bsiSelect, compEls.bsiStatus);
+        });
+    }
+
+    if(els.bsiSelect){
+      els.bsiSelect.addEventListener('change', function(){
+        var option=els.bsiSelect.options[els.bsiSelect.selectedIndex];
+        var url=els.bsiSelect.value;
+        if(url) loadCatalogFromUrl(url, option && option.dataset.fileName ? option.dataset.fileName : '');
+        els.bsiSelect.value='';
+      });
+    }
+
+    if(compEls.bsiSelect){
+      compEls.bsiSelect.addEventListener('change', function(){
+        var option=compEls.bsiSelect.options[compEls.bsiSelect.selectedIndex];
+        var url=compEls.bsiSelect.value;
+        if(url) loadComponentFromUrl(url, option && option.dataset.fileName ? option.dataset.fileName : '');
+        compEls.bsiSelect.value='';
+      });
+    }
+
+    loadBsiRepositoryOptions();
 
     function bindDropzone(dropzoneEl, inputEl, onFile){
       if(!dropzoneEl || !inputEl || !onFile) return;
