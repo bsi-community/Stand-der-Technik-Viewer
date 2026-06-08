@@ -4,6 +4,7 @@ Lokaler Browser-Viewer fuer OSCAL-Dokumente mit Fokus auf den Stand der Technik.
 
 - OSCAL Catalogs
 - OSCAL Component Definitions
+- OSCAL Control Mapping Collections
 
 Die gesamte Verarbeitung erfolgt clientseitig im Browser. Es gibt keinen Serveranteil und keinen Upload an einen externen Dienst.
 
@@ -20,29 +21,50 @@ Die gesamte Verarbeitung erfolgt clientseitig im Browser. Es gibt keinen Servera
 
 ### Allgemein
 
-- zwei getrennte Datenmodi in einer Datei
+- drei getrennte Datenmodi in einer Datei
   - `Katalog`
   - `Komponenten`
-- paralleles Laden beider Dokumenttypen
+  - `Mappings`
+- paralleles Laden aller drei Dokumenttypen
   - Catalog per Datei oder URL
   - Component Definition per Datei oder URL
+  - Control Mapping Collection per Datei oder URL
 - automatische Umschaltung des linken Panels passend zum aktiven Haupt-Tab
 - dynamische Summary-Box oberhalb des Inhalts
   - `Kataloganalyse` im Katalogmodus
   - `Komponentenanalyse` im Komponentenmodus
+  - `Mappinganalyse` im Mappingmodus
 - GitHub-`blob`-Links werden automatisch auf `raw` umgeschrieben
+- geladene OSCAL-Dokumente werden in Quellen- und Repository-Auswahlen über `metadata.title` statt über den JSON-Dateinamen bezeichnet
 - vollstaendig lokale Darstellung im Browser
 
 ### Haupt-Tabs
 
 - `Katalog`
 - `Komponenten`
+- `Mappings`
 - `Graph`
 - `Sunburst`
 - `Balkendiagramm`
 - `JSON`
 
-Die Tabs `Graph`, `Sunburst`, `Balkendiagramm` und `JSON` arbeiten immer auf dem aktuell aktiven Datenmodus.
+Der Tab `JSON` zeigt immer den aktuell aktiven Datenmodus. `Graph`, `Sunburst` und `Balkendiagramm` visualisieren Catalogs und Component Definitions; für Control Mappings bleibt die Crosswalk-Tabelle die primäre Ansicht.
+
+## Mappingansicht
+
+- Laden einer OSCAL Control Mapping Collection
+  - per Datei-Upload
+  - per URL-Import via `fetch`
+- strukturierte Anzeige von Metadata, Provenance, Ressourcen und Control-Referenzen
+- sieben Spalten umfassende Crosswalk-Tabelle:
+  - Source: `Prose`, `Titel`, `ID`
+  - Mitte: `Relationship`
+  - Target: `ID`, `Titel`, `Prose`
+- Titel und Statement-Prose werden aus parallel geladenen Catalogs ergänzt
+- Source- und Target-Katalogtitel stehen einmalig in den Tabellen-Gruppenüberschriften
+- Filter nach Volltext, Zielpraktik, Relationship, Source-/Target-Katalog, Matching-Art und Status
+- Unterstützung der OSCAL-Relationship-Typen wie `equivalent-to`, `equal-to`, `subset-of`, `superset-of`, `intersects-with` und `no-relationship`
+- optionale Anzeige von Control-Titeln, wenn die referenzierten Catalogs parallel geladen sind
 
 ## Katalogansicht
 
@@ -169,21 +191,22 @@ Der Button springt direkt zur passenden Komponente in der Komponentenansicht und
 
 Unter Komponenten und optional auch unter Capabilities werden `Control Implementations` mit Quelle und zugeordneten Anforderungen angezeigt.
 
-Darunter werden `Implemented Requirements` und ihre `Statements` dargestellt.
+Das aufklappbare Feld `Implementierungsbeschreibungen` zeigt die zugeordneten Anforderungen unmittelbar in einer Tabelle:
+
+- linke Spalte `Anforderung`: fett hervorgehobene Control-ID, Control-Titel und Prose-Text aus einem parallel geladenen Catalog
+- rechte Spalte `Implementierungsbeschreibung`: Description des `Implemented Requirement` und, falls vorhanden, die Descriptions seiner `Statements`
+
+Die Description der jeweiligen `Control Implementation` steht direkt unter der Quellenangabe und vor der Tabelle. Unterhalb der Tabelle erscheint nur dann ein aufklappbares Feld `Remarks`, wenn mindestens ein `Implemented Requirement` einen Remarks-Text enthaelt.
+
+Ist kein passender Catalog geladen, weist die linke Spalte darauf hin. Die Implementierungsbeschreibungen aus der Component Definition bleiben trotzdem sichtbar.
 
 ### Implemented Requirements und Cross-Navigation
-
-Pro `Implemented Requirement` werden unter anderem angezeigt:
-
-- `control-id`
-- UUID
-- Quelle
-- Description
-- weitere Felder, falls vorhanden
 
 Wenn ein passender Catalog geladen ist, fuehrt der Button `Im Katalog oeffnen` direkt zur referenzierten Anforderung im Katalog-Tab.
 
 Der Viewer merkt sich dabei die exakte Position in der Komponentenansicht. Beim Zurueckwechseln zum Tab `Komponenten` wird wieder zu genau der Requirement in der urspruenglichen Komponente gesprungen.
+
+Der Button `JSON` in jeder Tabellenzeile zeigt weiterhin die vollstaendigen Rohdaten des jeweiligen `Implemented Requirement`.
 
 ### Suche und Filter im Komponenten-Modus
 

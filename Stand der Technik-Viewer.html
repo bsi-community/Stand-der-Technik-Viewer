@@ -97,6 +97,7 @@
     .badge.ok{border-color:#8b4a0a;color:#8b4a0a}
     #graph{height:85vh;background:#0b1019;border:1px solid var(--muted);border-radius:16px;position:relative}
     #sunburst,#bar{height:85vh;background:#0b1019;border:1px solid var(--muted);border-radius:16px;position:relative;display:flex;align-items:center;justify-content:center}
+    .chart-unavailable{display:flex!important;align-items:center;justify-content:center}
     #jsonTab{height:85vh}
     #jsonView{height:85vh;background:#0b1019;border:1px solid var(--muted);border-radius:16px;color:#e7f0ff;padding:12px;overflow:auto;white-space:pre-wrap;word-break:break-word;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px}
     .hidden{display:none!important}
@@ -176,17 +177,33 @@
     .component-inline-list .kv code{background:transparent;border:0;padding:0;color:var(--text);font-size:11px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
     .component-card{border-left:4px solid #9fb3cc}
     .component-card.capability{border-left-color:#2f6fd6}
-    .component-card.requirement{border-left-color:#3b7a57}
-    .component-card.statement{border-left-color:#7a3e00}
+    .component-card.capability-description-only{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:start;min-height:0;height:auto}
+    .capability-description{min-height:0;height:auto}
+    .capability-description p:first-child{margin-top:0}
+    .capability-description p:last-child{margin-bottom:0}
+    .component-card-actions{margin-top:10px;display:flex;justify-content:flex-end}
+    .capability-description-only .component-card-actions{margin-top:0}
     .component-ref-btn{width:auto;display:inline-flex;align-items:center;justify-content:center}
     .component-ref-btn[disabled]{cursor:not-allowed;opacity:.55}
-    .component-requirement-preview{margin-top:10px;padding:12px;border:1px solid var(--muted);border-radius:10px;background:#f8fbff}
-    .component-requirement-preview-title{margin:0 0 8px 0;font-size:13px;font-weight:700;color:var(--text)}
-    .component-param-table{width:100%;border-collapse:collapse;margin-top:8px;table-layout:auto}
-    .component-param-table th,.component-param-table td{border-bottom:1px solid var(--muted);padding:9px 10px;text-align:left;vertical-align:top}
-    .component-param-table th{font-size:12px;color:var(--dim);font-weight:700;background:#f6f8fb}
-    .component-param-control{display:inline-flex;max-width:100%;align-items:center;border:1px solid var(--muted);border-radius:999px;background:#ffffff;padding:4px 9px;color:var(--text);line-height:1.25}
-    .component-param-values{font-weight:700;color:var(--text)}
+    .implementation-table-wrap{overflow-x:auto;border:1px solid var(--muted);border-radius:14px;background:#ffffff}
+    .implementation-table{width:100%;min-width:760px;border-collapse:collapse;table-layout:fixed}
+    .implementation-table th,.implementation-table td{padding:14px;text-align:left;vertical-align:top;border-bottom:1px solid var(--muted)}
+    .implementation-table th{background:#f2f6fb;color:var(--text);font-size:12px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
+    .implementation-table th:first-child{width:42%}
+    .implementation-table tbody tr:last-child td{border-bottom:0}
+    .implementation-table tbody tr:hover{background:#f8fbff}
+    .implementation-requirement-id{display:block;margin-bottom:10px;font-size:13px;color:var(--text)}
+    .implementation-requirement-id strong{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-weight:800}
+    .implementation-overview-description{margin:0 0 12px}
+    .implementation-requirement-prose,.implementation-description{color:var(--text);line-height:1.55}
+    .implementation-requirement-prose p:first-child,.implementation-description p:first-child{margin-top:0}
+    .implementation-requirement-prose p:last-child,.implementation-description p:last-child{margin-bottom:0}
+    .implementation-statement{margin-top:12px;padding-top:12px;border-top:1px dashed var(--muted)}
+    .implementation-statement:first-child{margin-top:0;padding-top:0;border-top:0}
+    .implementation-statement-label{margin-bottom:5px;font-size:11px;font-weight:800;color:var(--dim);text-transform:uppercase;letter-spacing:.04em}
+    .implementation-remarks-list{display:grid;gap:12px;margin-top:10px}
+    .implementation-remark{padding:12px 14px;border:1px solid var(--muted);background:rgba(255,255,255,.55)}
+    .implementation-row-actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
     .component-empty{color:var(--dim);font-style:italic}
     .component-source{font-size:12px;color:var(--dim)}
     .component-source a{color:var(--accent)}
@@ -551,8 +568,6 @@
       color:#ffffff
     }
     .component-card.capability{border-left-color:#175cd3}
-    .component-card.requirement{border-left-color:#2f7d5b}
-    .component-card.statement{border-left-color:#9a6700}
     #graph,#sunburst,#bar,#jsonView{
       height:82vh;
       background:linear-gradient(180deg,#fbfdff 0%,#edf3f9 100%);
@@ -1269,8 +1284,6 @@
       font-size:16px;
     }
     .component-card.capability{border-left-color:#1c7c68}
-    .component-card.requirement{border-left-color:#2f7a55}
-    .component-card.statement{border-left-color:#a46618}
     .component-link-card{
       padding:14px;
       border:1px solid rgba(212,221,213,.95);
@@ -2235,6 +2248,61 @@
       .wrap { grid-template-columns: 1fr !important; }
       .card { break-inside: avoid; page-break-inside: avoid; }
     }
+
+    /* Control-Mapping-Workspace: Crosswalk-Tabelle mit klarer Source-Target-Richtung. */
+    .tabs{grid-template-columns:repeat(7,minmax(96px,1fr))}
+    .tab[data-tab="components"]{margin-right:0}
+    .tab[data-tab="components"]::after{display:none}
+    .tab[data-tab="mappings"]{position:relative;margin-right:18px;background:rgba(17,17,17,.03)}
+    .tab[data-tab="mappings"].active{background:#111111}
+    .tab[data-tab="mappings"]::after{content:"";position:absolute;top:16px;right:-10px;width:1px;height:calc(100% - 32px);background:rgba(118,139,170,.32);pointer-events:none}
+    .sidebar-tabs{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .sidebar-tab{padding-left:6px;padding-right:6px;font-size:12px}
+    .mapping-workspace{display:grid;gap:16px}
+    .mapping-document-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+    .mapping-info-card{padding:16px;border:1px solid var(--muted);border-radius:14px;background:rgba(255,255,255,.98)}
+    .mapping-info-card h3{margin:0 0 10px;font-size:15px}
+    .mapping-info-card p{margin:6px 0;color:var(--dim)}
+    .mapping-info-list{display:grid;grid-template-columns:minmax(110px,auto) 1fr;gap:7px 12px;margin:0}
+    .mapping-info-list dt{font-size:12px;font-weight:800;color:var(--dim)}
+    .mapping-info-list dd{margin:0;min-width:0;word-break:break-word}
+    .mapping-table-wrap{overflow-x:auto;border:1px solid var(--muted);border-radius:16px;background:#fff}
+    .mapping-table{width:100%;min-width:1480px;border-collapse:separate;border-spacing:0;table-layout:fixed}
+    .mapping-table col.mapping-prose-col{width:24%}
+    .mapping-table col.mapping-title-col{width:12%}
+    .mapping-table col.mapping-id-col{width:7%}
+    .mapping-table col.mapping-relation-col{width:10%}
+    .mapping-table th{position:sticky;top:0;z-index:1;padding:12px 14px;background:#edf3f8;color:var(--text);font-size:14px;text-align:left;letter-spacing:.04em;text-transform:uppercase}
+    .mapping-table thead tr:first-child th{background:#e5edf6;text-align:center;font-size:13px;font-weight:400;line-height:1.4}
+    .mapping-table thead tr:first-child th strong{font-weight:800}
+    .mapping-table th.mapping-relation-context{padding:0}
+    .mapping-table th.mapping-relation-heading{text-align:center}
+    .mapping-table td{padding:12px;vertical-align:top;border-top:1px solid var(--muted);border-left:1px solid rgba(200,213,228,.55);overflow:hidden;overflow-wrap:anywhere;word-break:break-word;white-space:normal}
+    .mapping-table td > *{min-width:0;max-width:100%}
+    .mapping-table td:first-child{border-left:0}
+    .mapping-table tbody tr:hover{background:#f8fbfe}
+    .mapping-table tbody tr.mapping-entry-start td{border-top:2px solid #9fb3cc}
+    .mapping-resource{margin-bottom:6px;font-size:10px;color:var(--dim);word-break:break-word}
+    .mapping-id-value{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;font-weight:800;word-break:break-word}
+    .mapping-title-value{font-size:13px;font-weight:700;line-height:1.4;overflow-wrap:anywhere;word-break:break-word;white-space:normal}
+    .mapping-prose-value{font-size:12px;line-height:1.55;color:var(--text);overflow-wrap:anywhere;word-break:break-word;white-space:normal}
+    .mapping-prose-value p:first-child{margin-top:0}
+    .mapping-prose-value p:last-child{margin-bottom:0}
+    .mapping-catalog-missing{font-size:11px;line-height:1.45;color:var(--dim);opacity:.66;font-style:italic}
+    .mapping-empty-cell{color:var(--dim);opacity:.45;text-align:center}
+    .mapping-relation{text-align:center}
+    .mapping-relation-symbol{display:flex;align-items:center;justify-content:center;margin:0 auto 6px;width:42px;height:42px;border-radius:50%;background:#e7f0fb;color:#175cd3;font-size:23px;font-weight:800}
+    .mapping-relation-badge{display:inline-block;padding:5px 8px;border:1px solid #b9cce5;border-radius:999px;background:#f0f6fd;color:#184f91;font-size:11px;font-weight:800;white-space:nowrap}
+    .mapping-relation-badge.equivalent-to,.mapping-relation-badge.equal-to{background:#e9f7ef;border-color:#b9dfc8;color:#21683e}
+    .mapping-relation-badge.intersects-with{background:#fff7e6;border-color:#ead29f;color:#875c00}
+    .mapping-relation-badge.no-relationship{background:#f5f5f5;border-color:#d4d4d4;color:#666}
+    .mapping-row-meta{display:flex;flex-wrap:wrap;justify-content:center;gap:5px;margin-top:7px}
+    .mapping-row-meta span{font-size:10px;color:var(--dim)}
+    .mapping-empty{padding:28px;text-align:center;color:var(--dim)}
+    @media(max-width:760px){
+      .sidebar-tabs{grid-template-columns:1fr}
+      .mapping-table{min-width:1320px}
+    }
     
 </style>
 </head>
@@ -2253,6 +2321,7 @@
       <div class="tabs" role="tablist" aria-label="Ansichten">
         <button class="tab active" data-tab="list" id="tab-list" type="button" role="tab" aria-selected="true" aria-controls="listTab">Katalog</button>
         <button class="tab" data-tab="components" id="tab-components" type="button" role="tab" aria-selected="false" aria-controls="componentTab">Komponenten</button>
+        <button class="tab" data-tab="mappings" id="tab-mappings" type="button" role="tab" aria-selected="false" aria-controls="mappingTab">Mappings</button>
         <button class="tab" data-tab="graph" id="tab-graph" type="button" role="tab" aria-selected="false" aria-controls="graphTab">Graph</button>
         <button class="tab" data-tab="sunburst" id="tab-sunburst" type="button" role="tab" aria-selected="false" aria-controls="sunburstTab">Sunburst</button>
         <button class="tab" data-tab="bar" id="tab-bar" type="button" role="tab" aria-selected="false" aria-controls="barTab">Balkendiagramm</button>
@@ -2275,6 +2344,7 @@
       <div class="sidebar-tabs" role="tablist" aria-label="Datenquellen">
         <button class="sidebar-tab active" data-panel="catalog" id="side-tab-catalog" type="button" role="tab" aria-selected="true" aria-controls="catalogPanel">Katalog</button>
         <button class="sidebar-tab" data-panel="component" id="side-tab-components" type="button" role="tab" aria-selected="false" aria-controls="componentPanel">Komponenten</button>
+        <button class="sidebar-tab" data-panel="mapping" id="side-tab-mappings" type="button" role="tab" aria-selected="false" aria-controls="mappingPanel">Mappings</button>
       </div>
 
       <!-- Katalog-Panel: Upload, Quellenwechsel, Filter, Status und Export fuer OSCAL Catalogs. -->
@@ -2432,6 +2502,54 @@
 
         <p class="note component-jump-note">Referenzierte Anforderungen können direkt in den Katalog springen, sobald zusätzlich ein passender OSCAL Catalog geladen ist.</p>
       </div>
+
+      <!-- Mapping-Panel: Upload, Quellenwechsel und facettierte Filter fuer OSCAL Control Mappings. -->
+      <div id="mappingPanel" class="side-panel hidden">
+        <div class="panel-intro">
+          <div class="panel-kicker">Mapping Input</div>
+          <h3 class="panel-title">Control Mapping laden</h3>
+          <p class="panel-copy">Lade eine OSCAL Mapping Collection lokal oder per URL. Source- und Target-Controls werden als visueller Crosswalk gegenübergestellt.</p>
+        </div>
+        <input id="mappingFile" class="input" type="file" accept=".json" multiple hidden aria-hidden="true" />
+        <div id="mappingDropzone" class="dropzone" role="button" tabindex="0" aria-label="OSCAL Control Mapping per Drag and Drop laden">
+          <strong>Datei hierher ziehen</strong>
+          <span>oder klicken, um eine oder mehrere Mapping Collections auszuwählen</span>
+        </div>
+        <div style="margin-top:10px;display:grid;gap:8px">
+          <input id="mappingUrlInput" class="input" type="url" placeholder="Control-Mapping-URL einfügen (JSON)" autocomplete="off" spellcheck="false" />
+          <button id="mappingUrlLoadBtn" class="btn" type="button" style="width:100%;justify-content:center">Von URL laden</button>
+          <div class="note">Hinweis: GitHub-Blob-Links werden automatisch auf Raw-URLs umgeschrieben.</div>
+        </div>
+        <div style="margin-top:10px;display:grid;gap:8px">
+          <label class="field-label" for="mappingDatasetSelect">Geladene Mappings</label>
+          <select id="mappingDatasetSelect" aria-label="Geladenes Mapping auswählen" hidden aria-hidden="true">
+            <option value="">Noch kein Mapping geladen</option>
+          </select>
+          <div id="mappingSourcePicker" class="source-picker">
+            <button id="mappingSourceButton" class="input source-picker-trigger" type="button" aria-haspopup="listbox" aria-expanded="false">Noch kein Mapping geladen</button>
+            <div id="mappingSourceMenu" class="source-picker-menu hidden" role="listbox" aria-label="Geladene Mappings"></div>
+          </div>
+        </div>
+        <hr class="filter-split" />
+        <div style="margin-top:12px;display:grid;gap:8px" class="toolbar">
+          <label class="field-label" for="mappingQ">Suche im Mapping</label>
+          <input id="mappingQ" class="input" type="text" placeholder="Suchen (Control-ID, Katalog, Relationship…)" autocomplete="off" autocapitalize="off" spellcheck="false" />
+          <div class="section-caption">Filter einschränken</div>
+          <details class="ms" id="mappingPracticeMS"><summary>Alle Praktiken</summary><div class="ms-menu" id="mappingPracticeMS_menu"></div></details>
+          <details class="ms" id="mappingRelationshipMS"><summary>Alle Relationships</summary><div class="ms-menu" id="mappingRelationshipMS_menu"></div></details>
+          <details class="ms" id="mappingSourceCatalogMS"><summary>Alle Source-Kataloge</summary><div class="ms-menu" id="mappingSourceCatalogMS_menu"></div></details>
+          <details class="ms" id="mappingTargetCatalogMS"><summary>Alle Target-Kataloge</summary><div class="ms-menu" id="mappingTargetCatalogMS_menu"></div></details>
+          <details class="ms" id="mappingRationaleMS"><summary>Alle Matching-Arten</summary><div class="ms-menu" id="mappingRationaleMS_menu"></div></details>
+          <details class="ms" id="mappingStatusMS"><summary>Alle Status</summary><div class="ms-menu" id="mappingStatusMS_menu"></div></details>
+        </div>
+        <div class="status" style="margin-top:10px">
+          <span id="mappingFileInfo" class="pill">Mappings: keine Datei</span>
+          <span id="mappingCountInfo" class="pill">–</span>
+        </div>
+        <div id="mappingSelectionState" class="selection-state"></div>
+        <button id="mappingResetBtn" class="btn" type="button" style="width:100%;justify-content:center;margin-top:12px">Filter zurücksetzen</button>
+        <p class="note" style="margin-top:10px">Die Relationship wird aus Sicht der Source-Controls zum Target-Katalog gelesen.</p>
+      </div>
     </aside>
 
     <!-- Rechter Inhaltsbereich fuer Uebersicht, Listen, Diagramme und JSON. -->
@@ -2442,6 +2560,8 @@
       <section id="listTab" class="grid" role="tabpanel" aria-labelledby="tab-list"></section>
       <!-- Komponentenliste mit Ownern, Implementierungen, Anforderungen und Statements. -->
       <section id="componentTab" class="grid hidden" role="tabpanel" aria-labelledby="tab-components"></section>
+      <!-- OSCAL Control Mappings als visueller Crosswalk. -->
+      <section id="mappingTab" class="mapping-workspace hidden" role="tabpanel" aria-labelledby="tab-mappings"></section>
 
       <!-- Graph-Ansicht fuer Beziehungs- und Abhaengigkeitsdarstellung. -->
       <section id="graphTab" class="hidden" role="tabpanel" aria-labelledby="tab-graph">
@@ -2589,18 +2709,40 @@
         capabilityNames:[],
         openComponents:{},
         openCapabilities:{},
-        openImplementations:{},
-        openRequirements:{}
+        openImplementations:{}
+      };
+    }
+    function createMappingState(){
+      return {
+        documentUuid:'',
+        metadata:null,
+        provenance:null,
+        backMatter:null,
+        baseUrl:'',
+        jsonText:'',
+        entries:[],
+        q:'',
+        qRaw:'',
+        practices:[],
+        relationships:[],
+        sourceCatalogs:[],
+        targetCatalogs:[],
+        rationales:[],
+        statuses:[]
       };
     }
     var componentState=createComponentState();
+    var mappingState=createMappingState();
     var uiState={ dataMode:'catalog', view:'list', componentReturnTarget:null, catalogExpandOverride:null, componentExpandOverride:null };
     var loadedCatalogSources=[];
     var loadedComponentSources=[];
+    var loadedMappingSources=[];
     var activeCatalogSourceIndex=-1;
     var activeComponentSourceIndex=-1;
+    var activeMappingSourceIndex=-1;
     var allGroups=[], allClasses=[], allSecs=[], allTargets=[], allTags=[], allEfforts=[], allModalverbs=[], allDocumentations=[], allActionwords=[];
     var allComponentTypes=[], allComponentSources=[], allComponentNames=[], allCapabilityNames=[];
+    var allMappingPractices=[], allMappingRelationships=[], allMappingSourceCatalogs=[], allMappingTargetCatalogs=[], allMappingRationales=[], allMappingStatuses=[];
     // Aufwand-Definitionen aus stufen.csv (Stufe 0..5)
     var effortDefinitions={
       '0':'Der Aufwand der Anforderung wird nicht bewertet, da ihre Implementierung in jedem Fall zwingend erforderlich ist. Beispiel: Benennung eines Informationssicherheitsbeauftragten.',
@@ -2614,10 +2756,10 @@
 
     // Gesammelte DOM-Referenzen fuer schnelle Zugriffe ohne wiederholte Query-Selektoren.
     var els={ file:$('#file'), dropzone:$('#catalogDropzone'), sourceSelect:$('#catalogDatasetSelect'), sourcePicker:$('#catalogSourcePicker'), sourceButton:$('#catalogSourceButton'), sourcePickerMenu:$('#catalogSourceMenu'), urlInput:$('#urlInput'), urlLoadBtn:$('#urlLoadBtn'), bsiSelect:$('#bsiCatalogSelect'), bsiStatus:$('#bsiCatalogStatus'), q:$('#q'), group:$('#groupMS'), cls:$('#classMS'), sec:$('#secMS'), target:$('#targetMS'), tag:$('#tagMS'), effort:$('#effortMS'), modalverb:$('#modalverbMS'), documentation:$('#documentationMS'), actionword:$('#actionwordMS'), groupMenu:$('#groupMS_menu'), clsMenu:$('#classMS_menu'), secMenu:$('#secMS_menu'), targetMenu:$('#targetMS_menu'), tagMenu:$('#tagMS_menu'), effortMenu:$('#effortMS_menu'), modalverbMenu:$('#modalverbMS_menu'), documentationMenu:$('#documentationMS_menu'), actionwordMenu:$('#actionwordMS_menu'), resetBtn:$('#resetBtn'), exportPdfBtn:$('#exportPdfBtn'),
-      sideTabCatalog:$('#side-tab-catalog'), sideTabComponents:$('#side-tab-components'), catalogPanel:$('#catalogPanel'), componentPanel:$('#componentPanel'),
+      sideTabCatalog:$('#side-tab-catalog'), sideTabComponents:$('#side-tab-components'), sideTabMappings:$('#side-tab-mappings'), catalogPanel:$('#catalogPanel'), componentPanel:$('#componentPanel'), mappingPanel:$('#mappingPanel'),
       viewSubtitle:$('#viewSubtitle'), viewSummary:$('#viewSummary'), selectionState:$('#catalogSelectionState'),
       fileInfo:$('#fileInfo'), countInfo:$('#countInfo'), graphInfo:$('#graphInfo'),
-      listTab:$('#listTab'), componentTab:$('#componentTab'), graphTab:$('#graphTab'), sunburstTab:$('#sunburstTab'), barTab:$('#barTab'), jsonTab:$('#jsonTab'), jsonView:$('#jsonView'), msg:$('#msg'),
+      listTab:$('#listTab'), componentTab:$('#componentTab'), mappingTab:$('#mappingTab'), graphTab:$('#graphTab'), sunburstTab:$('#sunburstTab'), barTab:$('#barTab'), jsonTab:$('#jsonTab'), jsonView:$('#jsonView'), msg:$('#msg'),
       jsonModal:$('#jsonModal'), jsonModalBody:$('#jsonModalBody'), jsonModalClose:$('#jsonModalClose') };
     var compEls={
       file:$('#compFile'), dropzone:$('#componentDropzone'), sourceSelect:$('#componentDatasetSelect'), sourcePicker:$('#componentSourcePicker'), sourceButton:$('#componentSourceButton'), sourcePickerMenu:$('#componentSourceMenu'), urlInput:$('#compUrlInput'), urlLoadBtn:$('#compUrlLoadBtn'), bsiSelect:$('#bsiComponentSelect'), bsiStatus:$('#bsiComponentStatus'), q:$('#compQ'),
@@ -2625,6 +2767,12 @@
       typeMenu:$('#compTypeMS_menu'), sourceMenu:$('#compSourceMS_menu'), nameMenu:$('#compNameMS_menu'), capabilityMenu:$('#compCapabilityMS_menu'),
       fileInfo:$('#compFileInfo'), countInfo:$('#compCountInfo'), graphInfo:$('#compGraphInfo'), selectionState:$('#componentSelectionState'),
       resetBtn:$('#compResetBtn'), exportPdfBtn:$('#compExportPdfBtn')
+    };
+    var mappingEls={
+      file:$('#mappingFile'), dropzone:$('#mappingDropzone'), sourceSelect:$('#mappingDatasetSelect'), sourcePicker:$('#mappingSourcePicker'), sourceButton:$('#mappingSourceButton'), sourcePickerMenu:$('#mappingSourceMenu'), urlInput:$('#mappingUrlInput'), urlLoadBtn:$('#mappingUrlLoadBtn'), q:$('#mappingQ'),
+      practice:$('#mappingPracticeMS'), relationship:$('#mappingRelationshipMS'), sourceCatalog:$('#mappingSourceCatalogMS'), targetCatalog:$('#mappingTargetCatalogMS'), rationale:$('#mappingRationaleMS'), status:$('#mappingStatusMS'),
+      practiceMenu:$('#mappingPracticeMS_menu'), relationshipMenu:$('#mappingRelationshipMS_menu'), sourceCatalogMenu:$('#mappingSourceCatalogMS_menu'), targetCatalogMenu:$('#mappingTargetCatalogMS_menu'), rationaleMenu:$('#mappingRationaleMS_menu'), statusMenu:$('#mappingStatusMS_menu'),
+      fileInfo:$('#mappingFileInfo'), countInfo:$('#mappingCountInfo'), selectionState:$('#mappingSelectionState'), resetBtn:$('#mappingResetBtn')
     };
 
     // Aufbau und Synchronisation der facettierten Multi-Select-Dropdowns.
@@ -2706,7 +2854,7 @@
         msUpdateSummary(detailsEl, allLabel, cbs);
       }
 
-      allCb.addEventListener('change', () => {
+      allCb.onchange = () => {
         const cbs = [...menuEl.querySelectorAll('input[type="checkbox"]')].filter(x=>x.dataset.value!=='__all__');
         if(allCb.checked){
           cbs.forEach(x=>x.checked=true);
@@ -2715,15 +2863,15 @@
         }
         updateAllState();
         onChange();
-      });
+      };
 
-      menuEl.addEventListener('change', (ev) => {
+      menuEl.onchange = (ev) => {
         const t = ev.target;
         if(!(t instanceof HTMLInputElement)) return;
         if(t.dataset.value==='__all__') return;
         updateAllState();
         onChange();
-      });
+      };
 
       // default: all selected
       const cbs = [...menuEl.querySelectorAll('input[type="checkbox"]')].filter(x=>x.dataset.value!=='__all__');
@@ -2836,13 +2984,18 @@
 
     // Linke Seitenleiste passend zum aktiven Datenmodus umschalten.
     function setSidebarMode(mode){
-      var isCatalog = mode!=='component';
+      var isCatalog = mode==='catalog';
+      var isComponent = mode==='component';
+      var isMapping = mode==='mapping';
       els.sideTabCatalog.classList.toggle('active', isCatalog);
       els.sideTabCatalog.setAttribute('aria-selected', isCatalog ? 'true' : 'false');
-      els.sideTabComponents.classList.toggle('active', !isCatalog);
-      els.sideTabComponents.setAttribute('aria-selected', isCatalog ? 'false' : 'true');
+      els.sideTabComponents.classList.toggle('active', isComponent);
+      els.sideTabComponents.setAttribute('aria-selected', isComponent ? 'true' : 'false');
+      els.sideTabMappings.classList.toggle('active', isMapping);
+      els.sideTabMappings.setAttribute('aria-selected', isMapping ? 'true' : 'false');
       els.catalogPanel.classList.toggle('hidden', !isCatalog);
-      els.componentPanel.classList.toggle('hidden', isCatalog);
+      els.componentPanel.classList.toggle('hidden', !isComponent);
+      els.mappingPanel.classList.toggle('hidden', !isMapping);
     }
 
     // Unterzeile unter dem Titel passend zur aktiven Hauptansicht aktualisieren.
@@ -2851,6 +3004,7 @@
       var map={
         list:'Visuell aufbereitete Lese- und Filterungsmöglichkeit für OSCAL-Inhalte.',
         components:'Komponenten, Capabilities und implementierte Anforderungen strukturiert prüfen.',
+        mappings:'Control-Beziehungen zwischen Katalogen als filterbaren Crosswalk analysieren.',
         graph:'Beziehungen und Abhängigkeiten als Netz visualisieren und gezielt anspringen.',
         sunburst:'Verteilungen verdichtet lesen, um Schwerpunkte schnell zu erkennen.',
         bar:'Mengenverhältnisse zwischen Praktiken oder Quellen direkt vergleichen.',
@@ -2902,6 +3056,18 @@
       if(allComponentSources.length && componentState.sources.length && componentState.sources.length !== allComponentSources.length){ chips.push('Quellen: ' + formatChipValues(componentState.sources, 2)); }
       if(allComponentNames.length && componentState.names.length && componentState.names.length !== allComponentNames.length){ chips.push('Komponenten: ' + formatChipValues(componentState.names, 2)); }
       if(allCapabilityNames.length && componentState.capabilityNames.length && componentState.capabilityNames.length !== allCapabilityNames.length){ chips.push('Capabilities: ' + formatChipValues(componentState.capabilityNames, 2)); }
+      return chips;
+    }
+
+    function collectMappingActiveFilterChips(){
+      var chips=[];
+      if(mappingState.qRaw){ chips.push('Suche: ' + mappingState.qRaw); }
+      if(allMappingPractices.length && mappingState.practices.length !== allMappingPractices.length){ chips.push('Praktiken: ' + formatChipValues(mappingState.practices, 3)); }
+      if(allMappingRelationships.length && mappingState.relationships.length !== allMappingRelationships.length){ chips.push('Relationships: ' + formatChipValues(mappingState.relationships, 2)); }
+      if(allMappingSourceCatalogs.length && mappingState.sourceCatalogs.length !== allMappingSourceCatalogs.length){ chips.push('Source: ' + formatChipValues(mappingState.sourceCatalogs, 1)); }
+      if(allMappingTargetCatalogs.length && mappingState.targetCatalogs.length !== allMappingTargetCatalogs.length){ chips.push('Target: ' + formatChipValues(mappingState.targetCatalogs, 1)); }
+      if(allMappingRationales.length && mappingState.rationales.length !== allMappingRationales.length){ chips.push('Matching: ' + formatChipValues(mappingState.rationales, 2)); }
+      if(allMappingStatuses.length && mappingState.statuses.length !== allMappingStatuses.length){ chips.push('Status: ' + formatChipValues(mappingState.statuses, 2)); }
       return chips;
     }
 
@@ -3074,6 +3240,7 @@
       hideEffortTooltip();
       if(name==='list'){ uiState.dataMode='catalog'; setSidebarMode('catalog'); }
       if(name==='components'){ uiState.dataMode='component'; setSidebarMode('component'); }
+      if(name==='mappings'){ uiState.dataMode='mapping'; setSidebarMode('mapping'); }
       uiState.view = name;
       updateHeaderSubtitle(name);
       var tabs=$$('.tab');
@@ -3083,10 +3250,11 @@
         b.classList.toggle('active', active);
         b.setAttribute('aria-selected', active ? 'true' : 'false');
       }
-      els.listTab.classList.add('hidden'); els.componentTab.classList.add('hidden'); els.graphTab.classList.add('hidden'); els.sunburstTab.classList.add('hidden'); els.barTab.classList.add('hidden'); els.jsonTab.classList.add('hidden');
-      if(els.viewSummary){ els.viewSummary.classList.toggle('hidden', !(name==='list' || name==='components')); }
+      els.listTab.classList.add('hidden'); els.componentTab.classList.add('hidden'); els.mappingTab.classList.add('hidden'); els.graphTab.classList.add('hidden'); els.sunburstTab.classList.add('hidden'); els.barTab.classList.add('hidden'); els.jsonTab.classList.add('hidden');
+      if(els.viewSummary){ els.viewSummary.classList.toggle('hidden', !(name==='list' || name==='components' || name==='mappings')); }
       if(name==='list'){ els.listTab.classList.remove('hidden'); renderList(); }
       if(name==='components'){ els.componentTab.classList.remove('hidden'); renderComponentView(); restoreComponentReturnTarget(); }
+      if(name==='mappings'){ els.mappingTab.classList.remove('hidden'); renderMappingView(); }
       if(name==='graph'){ els.graphTab.classList.remove('hidden'); drawGraph(); }
       if(name==='sunburst'){ els.sunburstTab.classList.remove('hidden'); drawSunburst(); }
       if(name==='bar'){ els.barTab.classList.remove('hidden'); drawBar(); }
@@ -3094,17 +3262,26 @@
     }
     document.getElementById('tab-list').addEventListener('click', function(){ switchTab('list'); });
     document.getElementById('tab-components').addEventListener('click', function(){ switchTab('components'); });
+    document.getElementById('tab-mappings').addEventListener('click', function(){ switchTab('mappings'); });
     document.getElementById('tab-graph').addEventListener('click', function(){ switchTab('graph'); });
     document.getElementById('tab-sunburst').addEventListener('click', function(){ switchTab('sunburst'); });
     document.getElementById('tab-bar').addEventListener('click', function(){ switchTab('bar'); });
     document.getElementById('tab-json').addEventListener('click', function(){ switchTab('json'); });
     if(els.sideTabCatalog){ els.sideTabCatalog.addEventListener('click', function(){ switchTab('list'); }); }
     if(els.sideTabComponents){ els.sideTabComponents.addEventListener('click', function(){ switchTab('components'); }); }
+    if(els.sideTabMappings){ els.sideTabMappings.addEventListener('click', function(){ switchTab('mappings'); }); }
 
     function shortenSourceLabel(label){
       var text=String(label||'').trim();
       if(text.length<=96) return text;
       return text.slice(0, 93)+'...';
+    }
+
+    function getOscalDocumentTitle(root, fallbackLabel){
+      if(!root || typeof root!=='object') return String(fallbackLabel||'');
+      var doc=root.catalog || root['component-definition'] || root['mapping-collection'] || root.profile || root;
+      var metadata=doc && doc.metadata;
+      return String((metadata && metadata.title) || doc.title || fallbackLabel || '').trim();
     }
 
     function rebuildSourceSelect(selectEl, items, activeIndex, emptyLabel){
@@ -3190,6 +3367,14 @@
       }, removeComponentSource);
     }
 
+    function refreshMappingSourceSelect(){
+      rebuildSourceSelect(mappingEls.sourceSelect, loadedMappingSources, activeMappingSourceIndex, 'Noch kein Mapping geladen');
+      renderSourcePicker(mappingEls.sourcePicker, mappingEls.sourceButton, mappingEls.sourcePickerMenu, loadedMappingSources, activeMappingSourceIndex, 'Noch kein Mapping geladen', function(index){
+        activateMappingSource(index);
+        setSourcePickerOpen(mappingEls.sourcePicker, mappingEls.sourceButton, mappingEls.sourcePickerMenu, false);
+      }, removeMappingSource);
+    }
+
     function activateCatalogSource(index){
       if(index<0 || index>=loadedCatalogSources.length) return;
       var source=loadedCatalogSources[index];
@@ -3202,6 +3387,10 @@
       renderFilters();
       RefreshViews();
       if(uiState.view==='components'){ renderComponentView(); }
+      if(mappingState.entries.length){
+        renderMappingFilters();
+        if(uiState.view==='mappings'){ renderMappingView(); }
+      }
       hideMsg();
     }
 
@@ -3219,10 +3408,26 @@
       hideMsg();
     }
 
+    function activateMappingSource(index){
+      if(index<0 || index>=loadedMappingSources.length) return;
+      var source=loadedMappingSources[index];
+      activeMappingSourceIndex=index;
+      refreshMappingSourceSelect();
+      mappingEls.fileInfo.textContent='Mappings: '+source.label;
+      mappingState.jsonText=source.jsonText || '';
+      mappingState.baseUrl=source.baseUrl || '';
+      processMappingCollection(source.json);
+      renderMappingFilters();
+      refreshMappingViews();
+      hideMsg();
+    }
+
     function addCatalogSource(entry){
       var meta=buildCatalogSourceMeta(entry.json, entry.label);
       entry.catalogUuid=meta.catalogUuid;
       entry.catalogTitle=meta.catalogTitle;
+      entry.originalLabel=entry.label || '';
+      entry.label=meta.catalogTitle || entry.label;
       entry.controlRefs=meta.controlRefs;
       entry.controlLookup=meta.controlLookup;
       loadedCatalogSources.push(entry);
@@ -3231,9 +3436,19 @@
     }
 
     function addComponentSource(entry){
+      entry.originalLabel=entry.label || '';
+      entry.label=getOscalDocumentTitle(entry.json, entry.label);
       loadedComponentSources.push(entry);
       activateComponentSource(loadedComponentSources.length-1);
       if(compEls.file) compEls.file.value='';
+    }
+
+    function addMappingSource(entry){
+      entry.originalLabel=entry.label || '';
+      entry.label=getOscalDocumentTitle(entry.json, entry.label);
+      loadedMappingSources.push(entry);
+      activateMappingSource(loadedMappingSources.length-1);
+      if(mappingEls.file) mappingEls.file.value='';
     }
 
     function removeCatalogSource(index){
@@ -3264,6 +3479,20 @@
       activateComponentSource(activeComponentSourceIndex);
     }
 
+    function removeMappingSource(index){
+      if(index<0 || index>=loadedMappingSources.length) return;
+      loadedMappingSources.splice(index, 1);
+      if(!loadedMappingSources.length){
+        activeMappingSourceIndex=-1;
+        refreshMappingSourceSelect();
+        clearMappingUI();
+        return;
+      }
+      if(index<activeMappingSourceIndex){ activeMappingSourceIndex--; }
+      else if(index===activeMappingSourceIndex){ activeMappingSourceIndex=Math.min(index, loadedMappingSources.length-1); }
+      activateMappingSource(activeMappingSourceIndex);
+    }
+
     if(els.sourceSelect){
       els.sourceSelect.addEventListener('change', function(){
         var index=parseInt(els.sourceSelect.value, 10);
@@ -3276,11 +3505,18 @@
         if(!isNaN(index)) activateComponentSource(index);
       });
     }
+    if(mappingEls.sourceSelect){
+      mappingEls.sourceSelect.addEventListener('change', function(){
+        var index=parseInt(mappingEls.sourceSelect.value, 10);
+        if(!isNaN(index)) activateMappingSource(index);
+      });
+    }
     if(els.sourceButton){
       els.sourceButton.addEventListener('click', function(ev){
         ev.preventDefault();
         var willOpen=els.sourcePickerMenu.classList.contains('hidden');
         setSourcePickerOpen(compEls.sourcePicker, compEls.sourceButton, compEls.sourcePickerMenu, false);
+        setSourcePickerOpen(mappingEls.sourcePicker, mappingEls.sourceButton, mappingEls.sourcePickerMenu, false);
         setSourcePickerOpen(els.sourcePicker, els.sourceButton, els.sourcePickerMenu, willOpen);
       });
     }
@@ -3289,7 +3525,17 @@
         ev.preventDefault();
         var willOpen=compEls.sourcePickerMenu.classList.contains('hidden');
         setSourcePickerOpen(els.sourcePicker, els.sourceButton, els.sourcePickerMenu, false);
+        setSourcePickerOpen(mappingEls.sourcePicker, mappingEls.sourceButton, mappingEls.sourcePickerMenu, false);
         setSourcePickerOpen(compEls.sourcePicker, compEls.sourceButton, compEls.sourcePickerMenu, willOpen);
+      });
+    }
+    if(mappingEls.sourceButton){
+      mappingEls.sourceButton.addEventListener('click', function(ev){
+        ev.preventDefault();
+        var willOpen=mappingEls.sourcePickerMenu.classList.contains('hidden');
+        setSourcePickerOpen(els.sourcePicker, els.sourceButton, els.sourcePickerMenu, false);
+        setSourcePickerOpen(compEls.sourcePicker, compEls.sourceButton, compEls.sourcePickerMenu, false);
+        setSourcePickerOpen(mappingEls.sourcePicker, mappingEls.sourceButton, mappingEls.sourcePickerMenu, willOpen);
       });
     }
     document.addEventListener('click', function(ev){
@@ -3299,11 +3545,15 @@
       if(compEls.sourcePicker && !compEls.sourcePicker.contains(ev.target)){
         setSourcePickerOpen(compEls.sourcePicker, compEls.sourceButton, compEls.sourcePickerMenu, false);
       }
+      if(mappingEls.sourcePicker && !mappingEls.sourcePicker.contains(ev.target)){
+        setSourcePickerOpen(mappingEls.sourcePicker, mappingEls.sourceButton, mappingEls.sourcePickerMenu, false);
+      }
     });
     document.addEventListener('keydown', function(ev){
       if(ev.key==='Escape'){
         setSourcePickerOpen(els.sourcePicker, els.sourceButton, els.sourcePickerMenu, false);
         setSourcePickerOpen(compEls.sourcePicker, compEls.sourceButton, compEls.sourcePickerMenu, false);
+        setSourcePickerOpen(mappingEls.sourcePicker, mappingEls.sourceButton, mappingEls.sourcePickerMenu, false);
       }
     });
 
@@ -3334,23 +3584,79 @@
       if(url.indexOf('github.com/')!==-1 && url.indexOf('/blob/')!==-1){
         url = url.replace('github.com/', 'raw.githubusercontent.com/').replace('/blob/', '/');
       }
-      return url;
+      try{
+        var resolved=new URL(url, window.location.href);
+        if(resolved.protocol!=='http:' && resolved.protocol!=='https:'){
+          throw new Error('Nur HTTP- und HTTPS-URLs werden unterstützt.');
+        }
+        return resolved.href;
+      }catch(err){
+        throw new Error('Ungültige OSCAL-URL: '+url);
+      }
     }
 
-    function loadCatalogFromUrl(rawUrl, sourceLabel){
-      var url = normalizeCatalogUrl(rawUrl);
-      if(!url){ return; }
-      fetch(url, { credentials:'omit', cache:'no-store' })
+    function normalizeOscalKind(value){
+      var kind=String(value||'').trim().toLowerCase().replace(/_/g,'-');
+      if(kind==='catalog' || kind==='catalogue' || kind==='oscal-catalog') return 'catalog';
+      if(kind==='component' || kind==='components' || kind==='component-definition' || kind==='componentdefinition') return 'component';
+      if(kind==='mapping' || kind==='mappings' || kind==='mapping-collection' || kind==='mappingcollection') return 'mapping';
+      return '';
+    }
+
+    function detectOscalKind(json){
+      if(json && json.catalog) return 'catalog';
+      if(json && json['component-definition']) return 'component';
+      if(json && json['mapping-collection']) return 'mapping';
+      return '';
+    }
+
+    function oscalKindLabel(kind){
+      if(kind==='catalog') return 'OSCAL Catalog';
+      if(kind==='component') return 'OSCAL Component Definition';
+      if(kind==='mapping') return 'OSCAL Mapping Collection';
+      return 'OSCAL-Dokument';
+    }
+
+    function addOscalUrlSource(kind, json, url, sourceLabel){
+      var detected=detectOscalKind(json);
+      if(!detected){
+        throw new Error('Die URL enthält keinen unterstützten OSCAL-Root (catalog, component-definition oder mapping-collection).');
+      }
+      if(kind && detected!==kind){
+        throw new Error('Erwartet wurde '+oscalKindLabel(kind)+', geladen wurde jedoch '+oscalKindLabel(detected)+'.');
+      }
+      var entry={ label:sourceLabel || url, json:json, jsonText:JSON.stringify(json, null, 2), baseUrl:url };
+      if(detected==='catalog') addCatalogSource(entry);
+      else if(detected==='component') addComponentSource(entry);
+      else addMappingSource(entry);
+      return detected;
+    }
+
+    function loadOscalFromUrl(rawUrl, expectedKind, sourceLabel, errorPrefix){
+      var url;
+      try{
+        url=normalizeCatalogUrl(rawUrl);
+      }catch(err){
+        showMsg('<strong>'+(errorPrefix || 'Fehler beim Laden der URL:')+'</strong><br/><code>'+escapeHtml(String(err.message||err))+'</code>', true);
+        return Promise.resolve('');
+      }
+      if(!url) return Promise.resolve('');
+      return fetch(url, { credentials:'same-origin', cache:'no-store' })
         .then(function(res){
           if(!res.ok){ throw new Error('HTTP '+res.status); }
           return res.json();
         })
         .then(function(json){
-          addCatalogSource({ label:sourceLabel || url, json:json, jsonText:JSON.stringify(json, null, 2), baseUrl:url });
+          return addOscalUrlSource(expectedKind, json, url, sourceLabel);
         })
         .catch(function(err){
-          showMsg('<strong>Fehler beim Laden der URL:</strong><br/><code>'+escapeHtml(String(err.message||err))+'</code>', true);
+          showMsg('<strong>'+(errorPrefix || 'Fehler beim Laden der URL:')+'</strong><br/><code>'+escapeHtml(String(err.message||err))+'</code>', true);
+          return '';
         });
+    }
+
+    function loadCatalogFromUrl(rawUrl, sourceLabel){
+      return loadOscalFromUrl(rawUrl, 'catalog', sourceLabel, 'Fehler beim Laden der Katalog-URL:');
     }
 
     if(els.urlLoadBtn){
@@ -3390,19 +3696,7 @@
     }
 
     function loadComponentFromUrl(rawUrl, sourceLabel){
-      var url = normalizeCatalogUrl(rawUrl);
-      if(!url){ return; }
-      fetch(url, { credentials:'omit', cache:'no-store' })
-        .then(function(res){
-          if(!res.ok){ throw new Error('HTTP '+res.status); }
-          return res.json();
-        })
-        .then(function(json){
-          addComponentSource({ label:sourceLabel || url, json:json, jsonText:JSON.stringify(json, null, 2), baseUrl:url });
-        })
-        .catch(function(err){
-          showMsg('<strong>Fehler beim Laden der Component-URL:</strong><br/><code>'+escapeHtml(String(err.message||err))+'</code>', true);
-        });
+      return loadOscalFromUrl(rawUrl, 'component', sourceLabel, 'Fehler beim Laden der Component-URL:');
     }
 
     if(compEls.urlLoadBtn){
@@ -3418,6 +3712,104 @@
           loadComponentFromUrl(compEls.urlInput.value);
         }
       });
+    }
+
+    function loadMappingFile(f){
+      if(!f) return;
+      var reader=new FileReader();
+      reader.onload=function(e){
+        try{
+          var jsonText=e.target.result || '';
+          var json=JSON.parse(jsonText);
+          if(!json || !json['mapping-collection']) throw new Error('Kein OSCAL mapping-collection Root gefunden.');
+          addMappingSource({ label:f.name, json:json, jsonText:jsonText, baseUrl:'' });
+        }catch(err){
+          showMsg('<strong>Fehler beim Laden des Control Mappings:</strong><br/><code>'+escapeHtml(String(err.message||err))+'</code>', true);
+        }
+      };
+      reader.onerror=function(){ showMsg('<strong>Fehler beim Lesen der Mapping-Datei.</strong>', true); };
+      reader.readAsText(f);
+    }
+    if(mappingEls.file){
+      mappingEls.file.addEventListener('change', function(ev){
+        var files=ev.target.files ? Array.prototype.slice.call(ev.target.files) : [];
+        for(var i=0;i<files.length;i++){ loadMappingFile(files[i]); }
+      });
+    }
+
+    function loadMappingFromUrl(rawUrl, sourceLabel){
+      return loadOscalFromUrl(rawUrl, 'mapping', sourceLabel, 'Fehler beim Laden der Mapping-URL:');
+    }
+    if(mappingEls.urlLoadBtn){
+      mappingEls.urlLoadBtn.addEventListener('click', function(ev){
+        ev.preventDefault();
+        loadMappingFromUrl(mappingEls.urlInput && mappingEls.urlInput.value);
+      });
+    }
+    if(mappingEls.urlInput){
+      mappingEls.urlInput.addEventListener('keydown', function(ev){
+        if(ev.key==='Enter'){
+          ev.preventDefault();
+          loadMappingFromUrl(mappingEls.urlInput.value);
+        }
+      });
+    }
+
+    function switchToOscalKind(kind){
+      if(kind==='component') switchTab('components');
+      else if(kind==='mapping') switchTab('mappings');
+      else switchTab('list');
+    }
+
+    function getOscalKindUrlInput(kind){
+      if(kind==='component') return compEls.urlInput;
+      if(kind==='mapping') return mappingEls.urlInput;
+      return els.urlInput;
+    }
+
+    function loadOscalDeepLink(){
+      var params;
+      try{
+        params=new URLSearchParams(window.location.search || '');
+      }catch(_err){
+        return Promise.resolve(false);
+      }
+      var urls=params.getAll('url').map(function(url){ return String(url||'').trim(); }).filter(Boolean);
+      if(!urls.length) return Promise.resolve(false);
+
+      var rawKind=params.get('kind') || params.get('type') || '';
+      var expectedKind=normalizeOscalKind(rawKind);
+      if(rawKind && !expectedKind){
+        showMsg('<strong>Deep Link konnte nicht geöffnet werden:</strong><br/>Unbekannter Dokumenttyp <code>'+escapeHtml(rawKind)+'</code>. Unterstützt werden <code>catalog</code>, <code>component-definition</code> und <code>mapping-collection</code>.', true);
+        return Promise.resolve(false);
+      }
+
+      var sourceLabel=params.get('label') || params.get('title') || '';
+      if(expectedKind){
+        switchToOscalKind(expectedKind);
+        var knownInput=getOscalKindUrlInput(expectedKind);
+        if(knownInput) knownInput.value=urls[0];
+      }
+      showMsg('<strong>OSCAL-Dokument wird über den Link geladen:</strong><br/><code>'+escapeHtml(urls[0])+'</code>', false);
+
+      var chain=Promise.resolve(true);
+      urls.forEach(function(url, index){
+        chain=chain.then(function(){
+          return loadOscalFromUrl(
+            url,
+            expectedKind,
+            urls.length===1 ? sourceLabel : '',
+            'Deep Link konnte nicht geladen werden:'
+          ).then(function(detectedKind){
+            if(!detectedKind) return false;
+            switchToOscalKind(detectedKind);
+            var input=getOscalKindUrlInput(detectedKind);
+            if(input && index===0) input.value=url;
+            return true;
+          });
+        });
+      });
+      return chain;
     }
 
     var BSI_REPOSITORY_TREE_URL='https://api.github.com/repos/BSI-Bund/Stand-der-Technik-Bibliothek/git/trees/main?recursive=1';
@@ -3457,12 +3849,51 @@
       for(var i=0;i<files.length;i++){
         var option=document.createElement('option');
         option.value=files[i].url;
-        option.textContent=files[i].name;
+        option.textContent=files[i].title || files[i].fallbackTitle || 'OSCAL-Dokument';
         option.dataset.fileName=files[i].name;
-        option.title=files[i].path;
+        option.dataset.documentTitle=files[i].title || '';
+        option.title=option.textContent;
         parent.appendChild(option);
       }
       if(label) selectEl.appendChild(parent);
+    }
+
+    function repositoryFallbackTitle(file){
+      return String((file && file.name) || 'OSCAL-Dokument')
+        .replace(/\.json$/i,'')
+        .replace(/[-_]+/g,' ')
+        .trim();
+    }
+
+    function enrichRepositoryTitles(files){
+      var list=Array.isArray(files) ? files : [];
+      var nextIndex=0;
+      function worker(){
+        if(nextIndex>=list.length) return Promise.resolve();
+        var file=list[nextIndex++];
+        file.fallbackTitle=repositoryFallbackTitle(file);
+        return fetch(file.url, { credentials:'omit', cache:'no-store' })
+          .then(function(res){
+            if(!res.ok) throw new Error('HTTP '+res.status);
+            return res.json();
+          })
+          .then(function(json){
+            file.title=getOscalDocumentTitle(json, file.fallbackTitle);
+          })
+          .catch(function(){
+            file.title=file.fallbackTitle;
+          })
+          .then(worker);
+      }
+      var workers=[];
+      var count=Math.min(6, list.length);
+      for(var i=0;i<count;i++) workers.push(worker());
+      return Promise.all(workers).then(function(){
+        list.sort(function(a,b){
+          return String(a.title||'').localeCompare(String(b.title||''), 'de', { sensitivity:'base' });
+        });
+        return list;
+      });
     }
 
     function prepareRepositorySelect(selectEl, placeholder){
@@ -3494,10 +3925,21 @@
           var sourceCatalogs=getRepositoryJsonFiles(tree, 'Quellkataloge/', true);
           var userCatalogs=getRepositoryJsonFiles(tree, 'Anwenderkataloge/', true);
           var componentDefinitions=getRepositoryJsonFiles(tree, 'Implementierungsbeschreibungen/Komponenten/', false);
-
+          if(els.bsiStatus) els.bsiStatus.textContent='Katalogtitel werden aus den OSCAL-Metadaten geladen.';
+          if(compEls.bsiStatus) compEls.bsiStatus.textContent='Titel der Implementierungsbeschreibungen werden aus den OSCAL-Metadaten geladen.';
+          return Promise.all([
+            enrichRepositoryTitles(sourceCatalogs),
+            enrichRepositoryTitles(userCatalogs),
+            enrichRepositoryTitles(componentDefinitions)
+          ]);
+        })
+        .then(function(groups){
+          var sourceCatalogs=groups[0];
+          var userCatalogs=groups[1];
+          var componentDefinitions=groups[2];
           prepareRepositorySelect(els.bsiSelect, 'Aus dem Repository auswählen');
-          appendRepositoryOptions(els.bsiSelect, 'Quellkataloge', sourceCatalogs);
           appendRepositoryOptions(els.bsiSelect, 'Anwenderkataloge', userCatalogs);
+          appendRepositoryOptions(els.bsiSelect, 'Quellkataloge', sourceCatalogs);
           if(els.bsiSelect) els.bsiSelect.disabled=!(sourceCatalogs.length || userCatalogs.length);
           if(els.bsiStatus) els.bsiStatus.textContent=(sourceCatalogs.length+userCatalogs.length)+' aktuelle Kataloge verfügbar.';
 
@@ -3516,7 +3958,7 @@
       els.bsiSelect.addEventListener('change', function(){
         var option=els.bsiSelect.options[els.bsiSelect.selectedIndex];
         var url=els.bsiSelect.value;
-        if(url) loadCatalogFromUrl(url, option && option.dataset.fileName ? option.dataset.fileName : '');
+        if(url) loadCatalogFromUrl(url, option && option.dataset.documentTitle ? option.dataset.documentTitle : '');
         els.bsiSelect.value='';
       });
     }
@@ -3525,7 +3967,7 @@
       compEls.bsiSelect.addEventListener('change', function(){
         var option=compEls.bsiSelect.options[compEls.bsiSelect.selectedIndex];
         var url=compEls.bsiSelect.value;
-        if(url) loadComponentFromUrl(url, option && option.dataset.fileName ? option.dataset.fileName : '');
+        if(url) loadComponentFromUrl(url, option && option.dataset.documentTitle ? option.dataset.documentTitle : '');
         compEls.bsiSelect.value='';
       });
     }
@@ -3564,8 +4006,10 @@
     }
     bindDropzone(els.dropzone, els.file, loadCatalogFile);
     bindDropzone(compEls.dropzone, compEls.file, loadComponentFile);
+    bindDropzone(mappingEls.dropzone, mappingEls.file, loadMappingFile);
     refreshCatalogSourceSelect();
     refreshComponentSourceSelect();
+    refreshMappingSourceSelect();
 
     // UI-Container und Status nach Fehlern oder beim Leeren der Daten zuruecksetzen.
     function clearCatalogUI(){
@@ -3626,6 +4070,10 @@
       renderSelectionState(els.selectionState, 'Katalogstatus', 'Kein Datensatz geladen', []);
       if(uiState.view==='list'){ renderList(); }
       if(uiState.view==='components'){ renderComponentView(); }
+      if(mappingState.entries.length){
+        renderMappingFilters();
+        if(uiState.view==='mappings'){ renderMappingView(); }
+      }
       if(els.jsonView && uiState.dataMode==='catalog') els.jsonView.textContent='Kein Dokument geladen.';
       if(!loadedCatalogSources.length){
         activeCatalogSourceIndex=-1;
@@ -3650,6 +4098,26 @@
         refreshComponentSourceSelect();
       }
     }
+    function clearMappingUI(){
+      els.mappingTab.innerHTML='';
+      mappingEls.fileInfo.textContent='Mappings: keine Datei';
+      mappingEls.countInfo.textContent='–';
+      mappingState=createMappingState();
+      allMappingPractices=[];
+      allMappingRelationships=[];
+      allMappingSourceCatalogs=[];
+      allMappingTargetCatalogs=[];
+      allMappingRationales=[];
+      allMappingStatuses=[];
+      if(mappingEls.q) mappingEls.q.value='';
+      renderSelectionState(mappingEls.selectionState, 'Mappingstatus', 'Kein Datensatz geladen', []);
+      if(uiState.view==='mappings') renderMappingView();
+      if(els.jsonView && uiState.dataMode==='mapping') els.jsonView.textContent='Kein Dokument geladen.';
+      if(!loadedMappingSources.length){
+        activeMappingSourceIndex=-1;
+        refreshMappingSourceSelect();
+      }
+    }
 
     var _searchDebounceTimer = 0;
     els.q.addEventListener('input', function(){
@@ -3661,6 +4129,13 @@
       compEls.q.addEventListener('input', function(){
         clearTimeout(_componentSearchDebounceTimer);
         _componentSearchDebounceTimer = setTimeout(function(){ refreshComponentViews(); }, 120);
+      });
+    }
+    var _mappingSearchDebounceTimer=0;
+    if(mappingEls.q){
+      mappingEls.q.addEventListener('input', function(){
+        clearTimeout(_mappingSearchDebounceTimer);
+        _mappingSearchDebounceTimer=setTimeout(function(){ refreshMappingViews(); }, 120);
       });
     }
 
@@ -3695,10 +4170,21 @@
         componentState.openComponents = {};
         componentState.openCapabilities = {};
         componentState.openImplementations = {};
-        componentState.openRequirements = {};
       }
       renderComponentView();
       refreshChartsIfVisible();
+    }
+
+    function refreshMappingViews(){
+      mappingState.qRaw=(mappingEls.q && mappingEls.q.value || '').trim();
+      mappingState.q=mappingState.qRaw.toLowerCase();
+      mappingState.practices=msGetSelected(mappingEls.practice, mappingEls.practiceMenu);
+      mappingState.relationships=msGetSelected(mappingEls.relationship, mappingEls.relationshipMenu);
+      mappingState.sourceCatalogs=msGetSelected(mappingEls.sourceCatalog, mappingEls.sourceCatalogMenu);
+      mappingState.targetCatalogs=msGetSelected(mappingEls.targetCatalog, mappingEls.targetCatalogMenu);
+      mappingState.rationales=msGetSelected(mappingEls.rationale, mappingEls.rationaleMenu);
+      mappingState.statuses=msGetSelected(mappingEls.status, mappingEls.statusMenu);
+      renderMappingView();
     }
 
     // Multi-select dropdowns fire RefreshViews() internally.
@@ -3711,12 +4197,494 @@
 
     function renderJsonView(){
       if(!els.jsonView) return;
-      var text = uiState.dataMode==='component' ? componentState.jsonText : state.jsonText;
+      var text = uiState.dataMode==='component' ? componentState.jsonText : (uiState.dataMode==='mapping' ? mappingState.jsonText : state.jsonText);
       if(text){
         els.jsonView.textContent = text;
       } else {
         els.jsonView.textContent = 'Kein Dokument geladen.';
       }
+    }
+
+    function mappingArray(value){
+      if(Array.isArray(value)) return value;
+      return value ? [value] : [];
+    }
+
+    function mappingRefId(item){
+      return String(item && (item['id-ref'] || item.id || item.uuid) || '').trim();
+    }
+
+    function mappingResourceLabel(resource){
+      if(!resource) return 'Unbekannte Ressource';
+      return String(resource.href || resource.title || resource.uuid || resource.type || 'Unbekannte Ressource');
+    }
+
+    function mappingPracticeFromRef(ref){
+      var id=String(ref||'').trim();
+      if(!id) return '';
+      var first=id.split('.')[0];
+      return first || id;
+    }
+
+    function processMappingCollection(root){
+      var jsonText=mappingState.jsonText;
+      var baseUrl=mappingState.baseUrl;
+      mappingState=createMappingState();
+      mappingState.jsonText=jsonText;
+      mappingState.baseUrl=baseUrl;
+      var doc=root && root['mapping-collection'];
+      if(!doc) throw new Error('Kein OSCAL mapping-collection Root gefunden.');
+      mappingState.documentUuid=doc.uuid || '';
+      mappingState.metadata=doc.metadata || null;
+      mappingState.provenance=doc.provenance || null;
+      mappingState.backMatter=doc['back-matter'] || null;
+
+      var provenance=doc.provenance || {};
+      var mappings=mappingArray(doc.mappings || doc.mapping);
+      for(var mi=0;mi<mappings.length;mi++){
+        var group=mappings[mi] || {};
+        var sourceResource=group['source-resource'] || {};
+        var targetResource=group['target-resource'] || {};
+        var sourceCatalog=mappingResourceLabel(sourceResource);
+        var targetCatalog=mappingResourceLabel(targetResource);
+        var maps=mappingArray(group.maps || group.map);
+        var groupSourceRefs=[];
+        var groupTargetRefs=[];
+        for(var gri=0;gri<maps.length;gri++){
+          var groupMap=maps[gri] || {};
+          groupSourceRefs=groupSourceRefs.concat(mappingArray(groupMap.sources || groupMap.source).map(mappingRefId).filter(Boolean));
+          groupTargetRefs=groupTargetRefs.concat(mappingArray(groupMap.targets || groupMap.target).map(mappingRefId).filter(Boolean));
+        }
+        groupSourceRefs=uniqueList(groupSourceRefs);
+        groupTargetRefs=uniqueList(groupTargetRefs);
+        for(var ri=0;ri<maps.length;ri++){
+          var rawMap=maps[ri] || {};
+          var sources=mappingArray(rawMap.sources || rawMap.source);
+          var targets=mappingArray(rawMap.targets || rawMap.target);
+          var sourceRefs=sources.map(mappingRefId).filter(Boolean);
+          var targetRefs=targets.map(mappingRefId).filter(Boolean);
+          var rationale=rawMap['matching-rationale'] || rawMap['method-rationale'] || group['matching-rationale'] || group['method-rationale'] || provenance['matching-rationale'] || '';
+          var method=rawMap.method || group.method || provenance.method || '';
+          var status=rawMap.status || group.status || provenance.status || '';
+          var relationship=String(rawMap.relationship || 'unspecified').trim();
+          var practices=uniqueList(targetRefs.map(mappingPracticeFromRef).filter(Boolean));
+          var searchText=[
+            sourceCatalog,targetCatalog,relationship,rationale,method,status,
+            sourceRefs.join(' '),targetRefs.join(' '),practices.join(' '),
+            rawMap.remarks || '',group.remarks || ''
+          ].join(' ').toLowerCase();
+          mappingState.entries.push({
+            uuid:rawMap.uuid || '',
+            relationship:relationship,
+            sources:sources,
+            targets:targets,
+            sourceRefs:sourceRefs,
+            targetRefs:targetRefs,
+            sourceCatalogRefs:groupSourceRefs,
+            targetCatalogRefs:groupTargetRefs,
+            sourceResource:sourceResource,
+            targetResource:targetResource,
+            sourceCatalog:sourceCatalog,
+            targetCatalog:targetCatalog,
+            practices:practices,
+            rationale:String(rationale||''),
+            method:String(method||''),
+            status:String(status||''),
+            confidence:rawMap['confidence-score'] || group['confidence-score'] || provenance['confidence-score'] || '',
+            searchText:searchText,
+            raw:rawMap
+          });
+        }
+      }
+      mappingEls.countInfo.textContent=mappingState.entries.length+' Mapping-Beziehungen';
+    }
+
+    function renderMappingFilters(){
+      var practices=[], relationships=[], sources=[], targets=[], rationales=[], statuses=[];
+      for(var i=0;i<mappingState.entries.length;i++){
+        var entry=mappingState.entries[i];
+        entry.sourceCatalogDisplay=getMappingCatalogDisplayTitle(entry.sourceResource, entry.sourceCatalog, entry.sourceCatalogRefs || entry.sourceRefs);
+        entry.targetCatalogDisplay=getMappingCatalogDisplayTitle(entry.targetResource, entry.targetCatalog, entry.targetCatalogRefs || entry.targetRefs);
+        practices=practices.concat(entry.practices);
+        relationships.push(entry.relationship);
+        sources.push(entry.sourceCatalogDisplay);
+        targets.push(entry.targetCatalogDisplay);
+        if(entry.rationale) rationales.push(entry.rationale);
+        if(entry.status) statuses.push(entry.status);
+      }
+      allMappingPractices=uniqueList(practices).sort(function(a,b){return a.localeCompare(b,'de',{numeric:true});});
+      allMappingRelationships=uniqueList(relationships).sort();
+      allMappingSourceCatalogs=uniqueList(sources).sort();
+      allMappingTargetCatalogs=uniqueList(targets).sort();
+      allMappingRationales=uniqueList(rationales).sort();
+      allMappingStatuses=uniqueList(statuses).sort();
+      msSetItems(mappingEls.practice, mappingEls.practiceMenu, 'Alle Praktiken', allMappingPractices, refreshMappingViews);
+      msSetItems(mappingEls.relationship, mappingEls.relationshipMenu, 'Alle Relationships', allMappingRelationships, refreshMappingViews);
+      msSetItems(mappingEls.sourceCatalog, mappingEls.sourceCatalogMenu, 'Alle Source-Kataloge', allMappingSourceCatalogs, refreshMappingViews);
+      msSetItems(mappingEls.targetCatalog, mappingEls.targetCatalogMenu, 'Alle Target-Kataloge', allMappingTargetCatalogs, refreshMappingViews);
+      msSetItems(mappingEls.rationale, mappingEls.rationaleMenu, 'Alle Matching-Arten', allMappingRationales, refreshMappingViews);
+      msSetItems(mappingEls.status, mappingEls.statusMenu, 'Alle Status', allMappingStatuses, refreshMappingViews);
+      mappingState.practices=allMappingPractices.slice();
+      mappingState.relationships=allMappingRelationships.slice();
+      mappingState.sourceCatalogs=allMappingSourceCatalogs.slice();
+      mappingState.targetCatalogs=allMappingTargetCatalogs.slice();
+      mappingState.rationales=allMappingRationales.slice();
+      mappingState.statuses=allMappingStatuses.slice();
+    }
+
+    function mappingEntryMatches(entry){
+      if(mappingState.q && entry.searchText.indexOf(mappingState.q)===-1) return false;
+      if(allMappingPractices.length && mappingState.practices.length!==allMappingPractices.length){
+        var practiceMatch=false;
+        for(var p=0;p<mappingState.practices.length;p++){
+          if(entry.practices.indexOf(mappingState.practices[p])!==-1){ practiceMatch=true; break; }
+        }
+        if(!practiceMatch) return false;
+      }
+      if(allMappingRelationships.length && mappingState.relationships.length!==allMappingRelationships.length && mappingState.relationships.indexOf(entry.relationship)===-1) return false;
+      if(allMappingSourceCatalogs.length && mappingState.sourceCatalogs.length!==allMappingSourceCatalogs.length && mappingState.sourceCatalogs.indexOf(entry.sourceCatalogDisplay)===-1) return false;
+      if(allMappingTargetCatalogs.length && mappingState.targetCatalogs.length!==allMappingTargetCatalogs.length && mappingState.targetCatalogs.indexOf(entry.targetCatalogDisplay)===-1) return false;
+      if(allMappingRationales.length && mappingState.rationales.length!==allMappingRationales.length && mappingState.rationales.indexOf(entry.rationale)===-1) return false;
+      if(allMappingStatuses.length && mappingState.statuses.length!==allMappingStatuses.length && mappingState.statuses.indexOf(entry.status)===-1) return false;
+      return true;
+    }
+
+    function mappingRelationshipSymbol(relationship){
+      var symbols={
+        'equivalent-to':'↔',
+        'equal-to':'=',
+        'subset-of':'⊂',
+        'superset-of':'⊃',
+        'intersects-with':'∩',
+        'no-relationship':'∅'
+      };
+      return symbols[relationship] || '→';
+    }
+
+    function normalizeMappingResourceName(value){
+      var text=String(value||'').trim();
+      try{ text=decodeURIComponent(text); }catch(_e){}
+      text=text.split(/[?#]/)[0].replace(/\\/g,'/');
+      text=text.slice(text.lastIndexOf('/')+1).replace(/\.json$/i,'');
+      return text.toLowerCase().replace(/[^a-z0-9]+/g,'');
+    }
+
+    function mappingCatalogMatchScore(source, resource, catalogLabel){
+      var wanted=normalizeMappingResourceName((resource && resource.href) || catalogLabel);
+      if(!wanted) return 0;
+      var values=[
+        source && source.label,
+        source && source.originalLabel,
+        source && source.baseUrl,
+        source && source.catalogTitle
+      ];
+      var best=0;
+      for(var i=0;i<values.length;i++){
+        var candidate=normalizeMappingResourceName(values[i]);
+        if(!candidate) continue;
+        if(candidate===wanted) best=Math.max(best,100);
+        else if(candidate.indexOf(wanted)!==-1 || wanted.indexOf(candidate)!==-1) best=Math.max(best,60);
+      }
+      return best;
+    }
+
+    function resolveMappingCatalogSource(resource, catalogLabel, refs){
+      var candidates=[];
+      var referenceList=uniqueList((refs || []).map(function(ref){ return String(ref || '').trim(); }).filter(Boolean));
+      for(var i=0;i<loadedCatalogSources.length;i++){
+        var source=loadedCatalogSources[i];
+        var refMatches=0;
+        for(var r=0;r<referenceList.length;r++){
+          if(getCatalogSourceControlByRef(source, referenceList[r])) refMatches++;
+        }
+        candidates.push({
+          source:source,
+          refMatches:refMatches,
+          resourceScore:mappingCatalogMatchScore(source, resource, catalogLabel)
+        });
+      }
+      if(!candidates.length) return null;
+      candidates.sort(function(a,b){
+        if(b.refMatches!==a.refMatches) return b.refMatches-a.refMatches;
+        return b.resourceScore-a.resourceScore;
+      });
+
+      var best=candidates[0];
+      var next=candidates[1] || null;
+      if(best.refMatches>0){
+        if(!next || best.refMatches>next.refMatches || best.resourceScore>next.resourceScore) return best.source;
+        return null;
+      }
+      if(best.resourceScore>0 && (!next || best.resourceScore>next.resourceScore)) return best.source;
+      return null;
+    }
+
+    function resolveMappingControl(ref, resource, catalogLabel){
+      var candidates=[];
+      for(var i=0;i<loadedCatalogSources.length;i++){
+        var source=loadedCatalogSources[i];
+        var control=getCatalogSourceControlByRef(source, ref);
+        if(control){
+          candidates.push({
+            source:source,
+            control:control,
+            score:mappingCatalogMatchScore(source, resource, catalogLabel)
+          });
+        }
+      }
+      if(!candidates.length) return null;
+      candidates.sort(function(a,b){ return b.score-a.score; });
+      if(candidates[0].score>0 || candidates.length===1) return candidates[0];
+      return null;
+    }
+
+    function mappingControlDetails(ref, resource, catalogLabel, preferredSource){
+      var preferredControl=preferredSource ? getCatalogSourceControlByRef(preferredSource, ref) : null;
+      var resolved=preferredControl ? {source:preferredSource,control:preferredControl} : resolveMappingControl(ref, resource, catalogLabel);
+      if(!resolved){
+        return { id:ref, title:'', prose:'', loaded:false, source:null, control:null };
+      }
+      var control=resolved.control;
+      return {
+        id:ref,
+        title:String((control.raw && control.raw.title) || control.title || ''),
+        prose:String(getCatalogStatementProse(control) || ''),
+        loaded:true,
+        source:resolved.source,
+        control:control
+      };
+    }
+
+    function getMappingCatalogDisplayTitle(resource, catalogLabel, refs){
+      var source=resolveMappingCatalogSource(resource, catalogLabel, refs);
+      if(source) return source.catalogTitle || source.label || 'Katalogtitel nicht verfügbar';
+      return 'Kein passender Katalog in Katalogansicht geladen';
+    }
+
+    function collectMappingHeaderTitles(entries, side){
+      var seen={};
+      var titles=[];
+      for(var i=0;i<entries.length;i++){
+        var entry=entries[i];
+        var title=side==='source'
+          ? getMappingCatalogDisplayTitle(entry.sourceResource, entry.sourceCatalog, entry.sourceCatalogRefs || entry.sourceRefs)
+          : getMappingCatalogDisplayTitle(entry.targetResource, entry.targetCatalog, entry.targetCatalogRefs || entry.targetRefs);
+        if(title && !seen[title]){
+          seen[title]=true;
+          titles.push(title);
+        }
+      }
+      return titles.length ? titles.join(' · ') : 'Kein passender Katalog in Katalogansicht geladen';
+    }
+
+    function appendMappingFieldCell(row, field, details, options){
+      options=options || {};
+      var cell=document.createElement('td');
+      cell.className='mapping-'+(options.side || 'control')+'-'+field+'-cell';
+      if(options.rowSpan>1) cell.rowSpan=options.rowSpan;
+      if(!details){
+        cell.className+=' mapping-empty-cell';
+        cell.textContent='–';
+        row.appendChild(cell);
+        return cell;
+      }
+      if(field==='id'){
+        var id=document.createElement('div');
+        id.className='mapping-id-value';
+        id.innerHTML=renderHighlightedInline(details.id || '–', mappingState.qRaw);
+        cell.appendChild(id);
+      } else if(!details.loaded){
+        var missing=document.createElement('div');
+        missing.className='mapping-catalog-missing';
+        missing.textContent='Kein passender Katalog in Katalogansicht geladen';
+        cell.appendChild(missing);
+      } else if(field==='title'){
+        var title=document.createElement('div');
+        title.className='mapping-title-value';
+        title.innerHTML=details.title ? renderHighlightedInline(details.title, mappingState.qRaw) : '<span class="mapping-catalog-missing">Kein Titel in der Control vorhanden</span>';
+        cell.appendChild(title);
+      } else {
+        var prose=document.createElement('div');
+        prose.className='mapping-prose-value catalog-md';
+        prose.innerHTML=details.prose ? renderMarkupWithParams(details.prose, getCatalogPreviewParamMap(details.control), mappingState.qRaw) : '<span class="mapping-catalog-missing">Kein Prose-Text in der Control vorhanden</span>';
+        cell.appendChild(prose);
+      }
+      row.appendChild(cell);
+      return cell;
+    }
+
+    function appendMappingInfoItem(list, label, value){
+      if(value===undefined || value===null || value==='') return;
+      var dt=document.createElement('dt');
+      dt.textContent=label;
+      var dd=document.createElement('dd');
+      dd.textContent=String(value);
+      list.appendChild(dt);
+      list.appendChild(dd);
+    }
+
+    function renderMappingDocumentInfo(container){
+      var grid=document.createElement('div');
+      grid.className='mapping-document-grid';
+      var metadata=mappingState.metadata || {};
+      var metaCard=document.createElement('section');
+      metaCard.className='mapping-info-card';
+      metaCard.innerHTML='<h3>Mapping Collection</h3>';
+      var metaList=document.createElement('dl');
+      metaList.className='mapping-info-list';
+      appendMappingInfoItem(metaList, 'Titel', metadata.title);
+      appendMappingInfoItem(metaList, 'Version', metadata.version);
+      appendMappingInfoItem(metaList, 'OSCAL', metadata['oscal-version']);
+      appendMappingInfoItem(metaList, 'Letzte Änderung', metadata['last-modified']);
+      appendMappingInfoItem(metaList, 'UUID', mappingState.documentUuid);
+      metaCard.appendChild(metaList);
+      grid.appendChild(metaCard);
+
+      var provenance=mappingState.provenance || {};
+      var provCard=document.createElement('section');
+      provCard.className='mapping-info-card';
+      provCard.innerHTML='<h3>Provenance</h3>';
+      var provList=document.createElement('dl');
+      provList.className='mapping-info-list';
+      appendMappingInfoItem(provList, 'Methode', provenance.method);
+      appendMappingInfoItem(provList, 'Matching', provenance['matching-rationale']);
+      appendMappingInfoItem(provList, 'Status', provenance.status);
+      appendMappingInfoItem(provList, 'Confidence', provenance['confidence-score']);
+      provCard.appendChild(provList);
+      if(provenance['mapping-description']){
+        var desc=document.createElement('p');
+        desc.innerHTML=renderMarkupWithParams(provenance['mapping-description'], {}, mappingState.qRaw);
+        provCard.appendChild(desc);
+      }
+      grid.appendChild(provCard);
+      container.appendChild(grid);
+    }
+
+    function renderMappingView(){
+      if(!els.mappingTab) return;
+      els.mappingTab.innerHTML='';
+      if(!mappingState.metadata && !mappingState.entries.length){
+        renderSelectionState(mappingEls.selectionState, 'Mappingstatus', 'Kein Datensatz geladen', []);
+        renderOverviewCard({
+          title:'Mapping-Workspace',
+          description:'Lade eine OSCAL Mapping Collection, um Source- und Target-Controls, Relationship-Typen und Mapping-Metadaten zu analysieren.',
+          stats:[
+            {label:'Mappings',value:'0',note:'Geladene Beziehungen'},
+            {label:'Relationships',value:'0',note:'Unterschiedliche Typen'},
+            {label:'Katalogpaare',value:'0',note:'Source zu Target'}
+          ],
+          chips:[]
+        });
+        var initial=document.createElement('div');
+        initial.className='card mapping-empty';
+        initial.textContent='Noch kein OSCAL Control Mapping geladen.';
+        els.mappingTab.appendChild(initial);
+        return;
+      }
+
+      var visible=mappingState.entries.filter(mappingEntryMatches);
+      var chips=collectMappingActiveFilterChips();
+      var pairKeys={};
+      for(var i=0;i<mappingState.entries.length;i++){
+        pairKeys[mappingState.entries[i].sourceCatalog+' → '+mappingState.entries[i].targetCatalog]=true;
+      }
+      renderSelectionState(mappingEls.selectionState, 'Mappingfokus', visible.length+' von '+mappingState.entries.length+' Beziehungen sichtbar', chips);
+      renderOverviewCard({
+        title:visible.length ? 'Mappinganalyse' : 'Keine Treffer im Mapping',
+        description:visible.length ? 'Source- und Target-Controls werden je Mapping-Beziehung gegenübergestellt. Die mittlere Spalte zeigt die semantische Richtung aus Sicht der Source.' : 'Die aktuelle Suche oder Filterung blendet alle Beziehungen aus.',
+        stats:[
+          {label:'Sichtbar',value:String(visible.length),note:'von '+mappingState.entries.length+' Beziehungen'},
+          {label:'Relationships',value:String(allMappingRelationships.length),note:'Beziehungstypen'},
+          {label:'Katalogpaare',value:String(Object.keys(pairKeys).length),note:'Source zu Target'}
+        ],
+        chips:chips
+      });
+
+      renderMappingDocumentInfo(els.mappingTab);
+      var wrap=document.createElement('div');
+      wrap.className='mapping-table-wrap';
+      var table=document.createElement('table');
+      table.className='mapping-table';
+      var sourceHeaderTitle=collectMappingHeaderTitles(visible.length ? visible : mappingState.entries, 'source');
+      var targetHeaderTitle=collectMappingHeaderTitles(visible.length ? visible : mappingState.entries, 'target');
+      table.innerHTML=''
+        +'<colgroup>'
+        +'<col class="mapping-prose-col"><col class="mapping-title-col"><col class="mapping-id-col">'
+        +'<col class="mapping-relation-col">'
+        +'<col class="mapping-id-col"><col class="mapping-title-col"><col class="mapping-prose-col">'
+        +'</colgroup>'
+        +'<thead>'
+        +'<tr><th colspan="3"><strong>Source-Katalog und Controls:</strong> '+escapeHtml(sourceHeaderTitle)+'</th><th class="mapping-relation-context" aria-hidden="true"></th><th colspan="3"><strong>Target-Katalog und Controls:</strong> '+escapeHtml(targetHeaderTitle)+'</th></tr>'
+        +'<tr><th>Prose</th><th>Titel</th><th>ID</th><th class="mapping-relation-heading">Relationship</th><th>ID</th><th>Titel</th><th>Prose</th></tr>'
+        +'</thead>';
+      var tbody=document.createElement('tbody');
+      if(!visible.length){
+        var emptyRow=document.createElement('tr');
+        emptyRow.innerHTML='<td colspan="7" class="mapping-empty">Keine Mapping-Beziehungen entsprechen den aktiven Filtern.</td>';
+        tbody.appendChild(emptyRow);
+      }
+      for(var v=0;v<visible.length;v++){
+        var entry=visible[v];
+        var sourceCatalogSource=resolveMappingCatalogSource(entry.sourceResource, entry.sourceCatalog, entry.sourceCatalogRefs || entry.sourceRefs);
+        var targetCatalogSource=resolveMappingCatalogSource(entry.targetResource, entry.targetCatalog, entry.targetCatalogRefs || entry.targetRefs);
+        var sourceDetails=entry.sourceRefs.map(function(ref){
+          return mappingControlDetails(ref, entry.sourceResource, entry.sourceCatalog, sourceCatalogSource);
+        });
+        var targetDetails=entry.targetRefs.map(function(ref){
+          return mappingControlDetails(ref, entry.targetResource, entry.targetCatalog, targetCatalogSource);
+        });
+        if(!sourceDetails.length) sourceDetails=[{id:'–',title:'',prose:'',loaded:false}];
+        if(!targetDetails.length) targetDetails=[{id:'–',title:'',prose:'',loaded:false}];
+        var rowCount=Math.max(sourceDetails.length, targetDetails.length, 1);
+
+        for(var ri=0;ri<rowCount;ri++){
+          var row=document.createElement('tr');
+          if(ri===0) row.className='mapping-entry-start';
+
+          var sourceSingle=sourceDetails.length===1;
+          if(!sourceSingle || ri===0){
+            var sourceDetail=sourceSingle ? sourceDetails[0] : (sourceDetails[ri] || null);
+            var sourceSpan=sourceSingle ? rowCount : 1;
+            appendMappingFieldCell(row, 'prose', sourceDetail, {rowSpan:sourceSpan,side:'source'});
+            appendMappingFieldCell(row, 'title', sourceDetail, {rowSpan:sourceSpan,side:'source'});
+            appendMappingFieldCell(row, 'id', sourceDetail, {
+              rowSpan:sourceSpan,
+              side:'source'
+            });
+          }
+
+          if(ri===0){
+            var relationCell=document.createElement('td');
+            relationCell.className='mapping-relation';
+            relationCell.rowSpan=rowCount;
+            relationCell.innerHTML='<div class="mapping-relation-symbol" aria-hidden="true">'+mappingRelationshipSymbol(entry.relationship)+'</div>'
+              +'<span class="mapping-relation-badge '+escapeHtml(entry.relationship)+'">'+escapeHtml(entry.relationship)+'</span>'
+              +'<div class="mapping-row-meta">'
+              +(entry.rationale?'<span>'+escapeHtml(entry.rationale)+'</span>':'')
+              +(entry.method?'<span>· '+escapeHtml(entry.method)+'</span>':'')
+              +(entry.status?'<span>· '+escapeHtml(entry.status)+'</span>':'')
+              +'</div>';
+            relationCell.title='Relationship aus Sicht der Source: '+entry.relationship;
+            row.appendChild(relationCell);
+          }
+
+          var targetSingle=targetDetails.length===1;
+          if(!targetSingle || ri===0){
+            var targetDetail=targetSingle ? targetDetails[0] : (targetDetails[ri] || null);
+            var targetSpan=targetSingle ? rowCount : 1;
+            appendMappingFieldCell(row, 'id', targetDetail, {
+              rowSpan:targetSpan,
+              side:'target'
+            });
+            appendMappingFieldCell(row, 'title', targetDetail, {rowSpan:targetSpan,side:'target'});
+            appendMappingFieldCell(row, 'prose', targetDetail, {rowSpan:targetSpan,side:'target'});
+          }
+          tbody.appendChild(row);
+        }
+      }
+      table.appendChild(tbody);
+      wrap.appendChild(table);
+      els.mappingTab.appendChild(wrap);
     }
 
     // OSCAL-Props normalisieren, damit heterogene Quellkataloge robust ausgelesen werden koennen.
@@ -5431,84 +6399,8 @@ function baseMatches(c){ return matches(c); }
       return buildParamMap((control.raw && control.raw.params) || []);
     }
 
-    function getSetParameterId(param){
-      return String((param && (param['param-id'] || param.id)) || '').trim();
-    }
-
-    function getSetParameterValues(param){
-      if(!param) return [];
-      if(Array.isArray(param.values)) return param.values.map(function(v){ return String(v); });
-      if(param.value!=null) return [String(param.value)];
-      return [];
-    }
-
     function getCatalogControlTitle(control){
       return String((control && (control.title || (control.raw && control.raw.title))) || '').trim();
-    }
-
-    function getCatalogControlDisplayText(control){
-      if(!control) return '';
-      var id=control.labelId || control.id || control.rawId || '';
-      var title=getCatalogControlTitle(control);
-      if(id && title) return id+' '+title;
-      return id || title;
-    }
-
-    function buildImplementedRequirementTitleHtml(req, catalogControl, displayId, displayUuid, searchTerm){
-      var catalogTitle=getCatalogControlTitle(catalogControl);
-      if(catalogControl){
-        var controlHtml=displayId ? '<mark>'+renderHighlightedInline(displayId, searchTerm)+'</mark>' : renderHighlightedInline('Anforderung', searchTerm);
-        return 'Implementierungsbeschreibung für die Anforderung ' + controlHtml
-          + (catalogTitle ? ' - ' + renderHighlightedInline(catalogTitle, searchTerm) : '');
-      }
-      return '<mark>'+renderHighlightedInline(displayUuid || '–', searchTerm)+'</mark> – Implementierungsbeschreibung';
-    }
-
-    function getCatalogParamFromControl(control, paramId){
-      var key=String(paramId||'').toLowerCase();
-      var params=(control && control.raw && Array.isArray(control.raw.params)) ? control.raw.params : [];
-      for(var i=0;i<params.length;i++){
-        var p=params[i] || {};
-        var pid=String(p.id || p['param-id'] || '').toLowerCase();
-        if(pid && pid===key) return p;
-      }
-      return null;
-    }
-
-    function getCatalogStatementPlainText(control, paramMap){
-      var prose=getCatalogStatementProse(control);
-      if(!prose) return '';
-      return replaceParams(prose, paramMap || getCatalogPreviewParamMap(control))
-        .replace(/\{\{\s*(?:value:|label:)?\s*([^}]+?)\s*\}\}/g, '$1')
-        .replace(/\s+/g, ' ')
-        .trim();
-    }
-
-    function findCatalogParamContextForSetParameter(param, requirements){
-      var paramId=getSetParameterId(param);
-      if(!paramId) return { control:null, catalogParam:null, sourceIndex:-1 };
-      var reqs=Array.isArray(requirements) ? requirements : [];
-      for(var r=0;r<reqs.length;r++){
-        var match=findCatalogControlForRequirement(reqs[r]);
-        var catalogParam=getCatalogParamFromControl(match.control, paramId);
-        if(catalogParam) return { control:match.control, catalogParam:catalogParam, sourceIndex:match.sourceIndex };
-      }
-
-      var seen={};
-      for(var i=0;i<loadedCatalogSources.length;i++){
-        var lookup=loadedCatalogSources[i] && loadedCatalogSources[i].controlLookup;
-        if(!lookup) continue;
-        for(var key in lookup){
-          if(!lookup.hasOwnProperty(key)) continue;
-          var control=lookup[key];
-          var rawKey=(control && control.raw && (control.raw.uuid || control.raw.id)) || (control && (control.uuid || control.rawId || control.id)) || key;
-          if(seen[rawKey]) continue;
-          seen[rawKey]=true;
-          var foundParam=getCatalogParamFromControl(control, paramId);
-          if(foundParam) return { control:control, catalogParam:foundParam, sourceIndex:i };
-        }
-      }
-      return { control:null, catalogParam:null, sourceIndex:-1 };
     }
 	
     function getCatalogControlDisplayId(controlRef){
@@ -5924,74 +6816,6 @@ function baseMatches(c){ return matches(c); }
       goToCatalogControl(req.controlId, sourceIndex);
     }
 
-    function appendImplementationSetParameters(parent, impl, searchTerm){
-      var params=(impl && impl.setParameters) || [];
-      if(!params.length) return;
-
-      var section=document.createElement('section');
-      section.className='catalog-section';
-      var heading=document.createElement('h4');
-      heading.className='catalog-section-title';
-      heading.innerHTML=renderHighlightedInline('Gesetzte Parameter', searchTerm);
-      section.appendChild(heading);
-
-      var wrap=document.createElement('div');
-      wrap.className='catalog-table-scroll';
-      var table=document.createElement('table');
-      table.className='component-param-table';
-      table.innerHTML='<thead><tr><th>Control</th><th>Label</th><th>Param ID</th><th>Values</th></tr></thead>';
-      var tbody=document.createElement('tbody');
-
-      for(var i=0;i<params.length;i++){
-        var param=params[i] || {};
-        var paramId=getSetParameterId(param);
-        var values=getSetParameterValues(param);
-        var ctx=findCatalogParamContextForSetParameter(param, impl.requirements);
-        var catalogParam=ctx.catalogParam || {};
-        var controlText=getCatalogControlDisplayText(ctx.control) || '–';
-        var label=String(param.label || valueOfProp(param.props, 'label') || catalogParam.label || valueOfProp(catalogParam.props, 'label') || '–');
-        var tooltipMap=mergeParamMaps(getCatalogPreviewParamMap(ctx.control), impl.localParamMap);
-        var statementText=getCatalogStatementPlainText(ctx.control, tooltipMap);
-
-        var tr=document.createElement('tr');
-        var controlTd=document.createElement('td');
-        var controlChip=document.createElement('span');
-        controlChip.className='component-param-control';
-        controlChip.innerHTML=renderHighlightedInline(controlText, searchTerm);
-        if(statementText) controlChip.setAttribute('title', statementText);
-        controlTd.appendChild(controlChip);
-
-        var labelTd=document.createElement('td');
-        labelTd.innerHTML=renderHighlightedInline(label, searchTerm);
-
-        var idTd=document.createElement('td');
-        idTd.innerHTML='<code>'+renderHighlightedInline(paramId || '–', searchTerm)+'</code>';
-
-        var valuesTd=document.createElement('td');
-        valuesTd.className='component-param-values';
-        if(values.length){
-          for(var v=0;v<values.length;v++){
-            var valueLine=document.createElement('div');
-            valueLine.innerHTML=renderHighlightedInline(values[v], searchTerm);
-            valuesTd.appendChild(valueLine);
-          }
-        } else {
-          valuesTd.innerHTML=renderHighlightedInline('–', searchTerm);
-        }
-
-        tr.appendChild(controlTd);
-        tr.appendChild(labelTd);
-        tr.appendChild(idTd);
-        tr.appendChild(valuesTd);
-        tbody.appendChild(tr);
-      }
-
-      table.appendChild(tbody);
-      wrap.appendChild(table);
-      section.appendChild(wrap);
-      parent.appendChild(section);
-    }
-
     function appendImplementationSections(container, owner, searchTerm){
       var impls=owner.controlImplementations || [];
       if(!impls.length){
@@ -6011,38 +6835,62 @@ function baseMatches(c){ return matches(c); }
         details.addEventListener('toggle', (function(key, el){ return function(){ uiState.componentExpandOverride=null; componentState.openImplementations[key]=el.open; }; })(implKey, details));
         var reqCount=impl.requirements.length;
         var summary=document.createElement('summary');
-        summary.innerHTML='<span class="component-summary"><strong>Implementierungsbeschreibung</strong><span class="badge">'+escapeHtml(reqCount+' Anforderungen')+'</span></span>'
+        summary.innerHTML='<span class="component-summary"><strong>Implementierungsbeschreibungen</strong><span class="badge">'+escapeHtml(reqCount+' Anforderungen')+'</span></span>'
           + '<span class="component-source" style="display:block;margin-top:6px"><strong>Quelle:</strong> '+buildDocumentLinkHtml(impl.sourceLabel, impl.source, searchTerm, componentState.resourceByUuid, componentState.baseUrl)+'</span>';
         details.appendChild(summary);
 
         var body=document.createElement('div');
         body.className='component-children';
         if(String(impl.description||'').trim()){
-          var desc=document.createElement('div');
-          desc.className='catalog-md';
-          desc.innerHTML=renderMarkupWithParams(impl.description, impl.paramMap, searchTerm);
-          body.appendChild(desc);
+          var implDescription=document.createElement('div');
+          implDescription.className='implementation-overview-description catalog-md';
+          implDescription.innerHTML=renderMarkupWithParams(impl.description, impl.paramMap, searchTerm);
+          body.appendChild(implDescription);
         }
-        if(impl.remarks){
-          var remarks=document.createElement('details');
-          remarks.innerHTML='<summary><strong>Remarks</strong></summary><div class="catalog-md">'+renderMarkupWithParams(impl.remarks, impl.paramMap, searchTerm)+'</div>';
-          body.appendChild(remarks);
-        }
-        appendPropertiesSection(body, impl.props, searchTerm, componentState.resourceByUuid, componentState.baseUrl);
-        if(impl.links && impl.links.length) appendDocumentLinksSection(body, impl.links, searchTerm);
-        appendImplementationSetParameters(body, impl, searchTerm);
-        renderResponsibleRoles(body, 'Verantwortliche Rollen', impl.responsibleRoles, searchTerm);
-        appendRemainingObjectFields(body, 'Weitere Felder', impl.raw, ['uuid','source','description','props','links','set-parameters','responsible-roles','implemented-requirements','remarks'], searchTerm, componentState.resourceByUuid, componentState.baseUrl);
+        body.appendChild(renderImplementationRequirementsTable(impl, searchTerm));
+        appendImplementationRequirementRemarks(body, impl, searchTerm);
 
-        var reqWrap=document.createElement('div');
-        reqWrap.className='component-children';
-        for(var r=0;r<impl.requirements.length;r++){
-          reqWrap.appendChild(renderImplementedRequirementCard(impl.requirements[r], searchTerm));
-        }
-        body.appendChild(reqWrap);
         details.appendChild(body);
         container.appendChild(details);
       }
+    }
+
+    function appendImplementationRequirementRemarks(parent, impl, searchTerm){
+      var requirements=(impl && impl.requirements) || [];
+      var remarksRequirements=[];
+      for(var i=0;i<requirements.length;i++){
+        if(String(requirements[i].remarks||'').trim()) remarksRequirements.push(requirements[i]);
+      }
+      if(!remarksRequirements.length) return;
+
+      var details=document.createElement('details');
+      details.innerHTML='<summary><strong>Remarks</strong></summary>';
+      var list=document.createElement('div');
+      list.className='implementation-remarks-list';
+
+      for(var r=0;r<remarksRequirements.length;r++){
+        var req=remarksRequirements[r];
+        var catalogMatch=findCatalogControlForRequirement(req);
+        var catalogControl=catalogMatch.control;
+        var displayId=(catalogControl && (catalogControl.labelId || catalogControl.id || catalogControl.rawId))
+          || req.catalogControlId || normalizeControlRef(req.controlId) || req.controlId || 'ohne-control-id';
+        var displayTitle=getCatalogControlTitle(catalogControl);
+        var item=document.createElement('div');
+        item.className='implementation-remark';
+        var label=document.createElement('div');
+        label.className='implementation-requirement-id';
+        label.innerHTML='<strong>'+renderHighlightedInline(displayId, searchTerm)+'</strong>'
+          +(displayTitle ? ' - '+renderHighlightedInline(displayTitle, searchTerm) : '');
+        item.appendChild(label);
+        var prose=document.createElement('div');
+        prose.className='catalog-md';
+        prose.innerHTML=renderMarkupWithParams(req.remarks, req.paramMap, searchTerm);
+        item.appendChild(prose);
+        list.appendChild(item);
+      }
+
+      details.appendChild(list);
+      parent.appendChild(details);
     }
 
     function appendCapabilityComponentsSection(parent, owner, searchTerm){
@@ -6168,127 +7016,106 @@ function baseMatches(c){ return matches(c); }
       parent.appendChild(details);
     }
 
-    function renderImplementedRequirementCard(req, searchTerm){
-      var card=document.createElement('article');
-      card.className='card component-card requirement';
-      card.id='component-req-'+cssId(req.id);
-      var normalizedControlId=normalizeControlRef(req.controlId);
-      var catalogMatch=findCatalogControlForRequirement(req);
-      var catalogControl=catalogMatch.control;
-      var jumpAvailable=!!catalogControl || catalogMatch.sourceIndex!==-1;
-      var previewAvailable=!!catalogControl;
-      var displayId=(catalogControl && (catalogControl.labelId || catalogControl.id || catalogControl.rawId)) || req.catalogControlId || normalizedControlId || req.controlId || 'ohne-control-id';
-      var displayUuid=req.catalogControlUuid || (catalogControl && catalogControl.uuid) || (looksUuidLikeId(normalizedControlId) ? normalizedControlId : '') || '–';
-      var meta=document.createElement('div');
-      meta.className='meta';
-      meta.innerHTML='<span class="kv"><strong>UUID:</strong> <code>'+renderHighlightedInline(displayUuid, searchTerm)+'</code></span>'
-        + '<span class="kv"><strong>Quelle:</strong> <code>'+renderHighlightedInline(req.sourceLabel||'–', searchTerm)+'</code></span>';
-      card.innerHTML='<div class="title"><h3>'+buildImplementedRequirementTitleHtml(req, catalogControl, displayId, displayUuid, searchTerm)+'</h3></div>';
-      card.appendChild(meta);
-      if(String(req.description||'').trim()){
-        var desc=document.createElement('div');
-        desc.className='catalog-md';
-        desc.style.marginTop='10px';
-        desc.innerHTML=renderMarkupWithParams(req.description, req.paramMap, searchTerm);
-        card.appendChild(desc);
+    function renderImplementationRequirementsTable(impl, searchTerm){
+      var wrap=document.createElement('div');
+      wrap.className='implementation-table-wrap';
+      var table=document.createElement('table');
+      table.className='implementation-table';
+      table.innerHTML='<thead><tr><th>Anforderung</th><th>Implementierungsbeschreibung</th></tr></thead>';
+      var tbody=document.createElement('tbody');
+      var requirements=(impl && impl.requirements) || [];
+
+      if(!requirements.length){
+        var emptyRow=document.createElement('tr');
+        emptyRow.innerHTML='<td colspan="2" class="component-empty">Keine implementierten Anforderungen vorhanden.</td>';
+        tbody.appendChild(emptyRow);
       }
 
-      var actions=document.createElement('div');
-      actions.className='component-inline-list';
-      var gotoBtn=document.createElement('button');
-      gotoBtn.className='btn small component-ref-btn';
-      gotoBtn.type='button';
-      gotoBtn.textContent=jumpAvailable ? 'Im Katalog öffnen' : 'Katalog-Anforderung nicht geladen';
-      if(!jumpAvailable) gotoBtn.disabled=true;
-      gotoBtn.addEventListener('click', function(){ goToCatalogControlFromComponent(req); });
-      actions.appendChild(gotoBtn);
-      var previewBtn=document.createElement('button');
-      previewBtn.className='btn small component-ref-btn';
-      previewBtn.type='button';
-      previewBtn.textContent='Anforderungs-Preview';
-      previewBtn.setAttribute('aria-expanded', 'false');
-      if(!previewAvailable) previewBtn.disabled=true;
-      actions.appendChild(previewBtn);
-      var jsonBtn=document.createElement('button');
-      jsonBtn.className='btn small';
-      jsonBtn.type='button';
-      jsonBtn.textContent='JSON';
-      jsonBtn.addEventListener('click', function(){ openJsonModal(req.raw); });
-      actions.appendChild(jsonBtn);
-      card.appendChild(actions);
+      for(var i=0;i<requirements.length;i++){
+        (function(req){
+          var row=document.createElement('tr');
+          row.id='component-req-'+cssId(req.id);
+          var normalizedControlId=normalizeControlRef(req.controlId);
+          var catalogMatch=findCatalogControlForRequirement(req);
+          var catalogControl=catalogMatch.control;
+          var jumpAvailable=!!catalogControl || catalogMatch.sourceIndex!==-1;
+          var displayId=(catalogControl && (catalogControl.labelId || catalogControl.id || catalogControl.rawId))
+            || req.catalogControlId || normalizedControlId || req.controlId || 'ohne-control-id';
+          var displayTitle=getCatalogControlTitle(catalogControl);
 
-      var previewPanel=document.createElement('div');
-      previewPanel.className='component-requirement-preview hidden';
-      if(previewAvailable){
-        previewBtn.addEventListener('click', function(){
-          var expanded=previewBtn.getAttribute('aria-expanded')==='true';
-          if(expanded){
-            previewBtn.setAttribute('aria-expanded', 'false');
-            previewPanel.classList.add('hidden');
-            return;
-          }
-          var latestMatch=findCatalogControlForRequirement(req);
-          var latestControl=latestMatch.control;
-          var statementProse=getCatalogStatementProse(latestControl);
-          var latestDisplayId=(latestControl && (latestControl.labelId || latestControl.id || latestControl.rawId)) || displayId;
-          var sourceLabel=(latestMatch.sourceIndex>=0 && loadedCatalogSources[latestMatch.sourceIndex]) ? loadedCatalogSources[latestMatch.sourceIndex].label : '';
-          previewPanel.innerHTML=''
-            + '<div class="component-requirement-preview-title">Statement aus dem Katalog'
-            + (latestDisplayId ? ' · <code>'+escapeHtml(latestDisplayId)+'</code>' : '')
-            + (sourceLabel ? ' · '+escapeHtml(sourceLabel) : '')
-            + '</div>'
-            + '<div class="catalog-md">'
-            + (statementProse ? renderMarkupWithParams(statementProse, getCatalogPreviewParamMap(latestControl), searchTerm) : '<div class="component-empty">Keine Statement-Prose in der Kataloganforderung gefunden.</div>')
-            + '</div>';
-          previewBtn.setAttribute('aria-expanded', 'true');
-          previewPanel.classList.remove('hidden');
-        });
-      }
-      card.appendChild(previewPanel);
+          var requirementCell=document.createElement('td');
+          var id=document.createElement('span');
+          id.className='implementation-requirement-id';
+          id.innerHTML='<strong>'+renderHighlightedInline(displayId, searchTerm)+'</strong>'
+            +(displayTitle ? ' - '+renderHighlightedInline(displayTitle, searchTerm) : '');
+          requirementCell.appendChild(id);
 
-      var extra=document.createElement('div');
-      if(req.remarks){
-        var rem=document.createElement('details');
-        rem.innerHTML='<summary><strong>Remarks</strong></summary><div class="catalog-md">'+renderMarkupWithParams(req.remarks, req.paramMap, searchTerm)+'</div>';
-        extra.appendChild(rem);
-      }
-      appendPropertiesSection(extra, req.props, searchTerm, componentState.resourceByUuid, componentState.baseUrl);
-      if(req.links && req.links.length) appendDocumentLinksSection(extra, req.links, searchTerm);
-      if(req.setParameters && req.setParameters.length) appendGenericObjectList(extra, 'Gesetzte Parameter', req.setParameters, searchTerm, componentState.resourceByUuid, componentState.baseUrl);
-      renderResponsibleRoles(extra, 'Verantwortliche Rollen', req.responsibleRoles, searchTerm);
-      appendRemainingObjectFields(extra, 'Weitere Felder', req.raw, ['uuid','control-id','description','props','links','set-parameters','responsible-roles','statements','remarks'], searchTerm, componentState.resourceByUuid, componentState.baseUrl);
-      if(req.statements && req.statements.length){
-        var stmtWrap=document.createElement('div');
-        stmtWrap.className='component-children';
-        for(var s=0;s<req.statements.length;s++){
-          var stmt=req.statements[s];
-          var stmtCard=document.createElement('article');
-          stmtCard.className='card component-card statement';
-          stmtCard.id='component-stmt-'+cssId(stmt.id);
-          stmtCard.innerHTML='<div class="title"><h3><mark>'+renderHighlightedInline(stmt.statementId||'statement', searchTerm)+'</mark> – Statement</h3></div>'
-            + '<div class="meta"><span class="kv"><strong>UUID:</strong> <code>'+renderHighlightedInline(stmt.uuid||'–', searchTerm)+'</code></span></div>';
-          if(String(stmt.description||'').trim()){
-            var stmtDesc=document.createElement('div');
-            stmtDesc.className='catalog-md';
-            stmtDesc.style.marginTop='10px';
-            stmtDesc.innerHTML=renderMarkupWithParams(stmt.description, stmt.paramMap, searchTerm);
-            stmtCard.appendChild(stmtDesc);
+          var prose=document.createElement('div');
+          prose.className='implementation-requirement-prose catalog-md';
+          var statementProse=getCatalogStatementProse(catalogControl);
+          prose.innerHTML=statementProse
+            ? renderMarkupWithParams(statementProse, getCatalogPreviewParamMap(catalogControl), searchTerm)
+            : '<span class="component-empty">Kein passender Katalog in der Katalogansicht geladen.</span>';
+          requirementCell.appendChild(prose);
+
+          var actions=document.createElement('div');
+          actions.className='implementation-row-actions';
+          var gotoBtn=document.createElement('button');
+          gotoBtn.className='btn small component-ref-btn';
+          gotoBtn.type='button';
+          gotoBtn.textContent=jumpAvailable ? 'Im Katalog öffnen' : 'Katalog-Anforderung nicht geladen';
+          gotoBtn.disabled=!jumpAvailable;
+          gotoBtn.addEventListener('click', function(){ goToCatalogControlFromComponent(req); });
+          actions.appendChild(gotoBtn);
+          var jsonBtn=document.createElement('button');
+          jsonBtn.className='btn small';
+          jsonBtn.type='button';
+          jsonBtn.textContent='JSON';
+          jsonBtn.addEventListener('click', function(){ openJsonModal(req.raw); });
+          actions.appendChild(jsonBtn);
+          requirementCell.appendChild(actions);
+
+          var implementationCell=document.createElement('td');
+          var hasDescription=false;
+          if(String(req.description||'').trim()){
+            var reqDescription=document.createElement('div');
+            reqDescription.className='implementation-description catalog-md';
+            reqDescription.innerHTML=renderMarkupWithParams(req.description, req.paramMap, searchTerm);
+            implementationCell.appendChild(reqDescription);
+            hasDescription=true;
           }
-          if(stmt.remarks){
-            var stmtRemarks=document.createElement('details');
-            stmtRemarks.innerHTML='<summary><strong>Remarks</strong></summary><div class="catalog-md">'+renderMarkupWithParams(stmt.remarks, stmt.paramMap, searchTerm)+'</div>';
-            stmtCard.appendChild(stmtRemarks);
+
+          var statements=req.statements || [];
+          for(var s=0;s<statements.length;s++){
+            var stmt=statements[s];
+            if(!String(stmt.description||'').trim()) continue;
+            var statement=document.createElement('div');
+            statement.className='implementation-statement';
+            statement.id='component-stmt-'+cssId(stmt.id);
+            var label=document.createElement('div');
+            label.className='implementation-statement-label';
+            label.innerHTML='Statement'+(stmt.statementId ? ': '+renderHighlightedInline(stmt.statementId, searchTerm) : '');
+            statement.appendChild(label);
+            var statementDescription=document.createElement('div');
+            statementDescription.className='implementation-description catalog-md';
+            statementDescription.innerHTML=renderMarkupWithParams(stmt.description, stmt.paramMap, searchTerm);
+            statement.appendChild(statementDescription);
+            implementationCell.appendChild(statement);
+            hasDescription=true;
           }
-          appendPropertiesSection(stmtCard, stmt.props, searchTerm, componentState.resourceByUuid, componentState.baseUrl);
-          if(stmt.links && stmt.links.length) appendDocumentLinksSection(stmtCard, stmt.links, searchTerm);
-          renderResponsibleRoles(stmtCard, 'Verantwortliche Rollen', stmt.responsibleRoles, searchTerm);
-          appendRemainingObjectFields(stmtCard, 'Weitere Felder', stmt.raw, ['statement-id','uuid','description','props','links','responsible-roles','remarks'], searchTerm, componentState.resourceByUuid, componentState.baseUrl);
-          stmtWrap.appendChild(stmtCard);
-        }
-        extra.appendChild(stmtWrap);
+          if(!hasDescription){
+            implementationCell.innerHTML='<span class="component-empty">Keine Implementierungsbeschreibung vorhanden.</span>';
+          }
+
+          row.appendChild(requirementCell);
+          row.appendChild(implementationCell);
+          tbody.appendChild(row);
+        })(requirements[i]);
       }
-      if(extra.childElementCount) card.appendChild(extra);
-      return card;
+
+      table.appendChild(tbody);
+      wrap.appendChild(table);
+      return wrap;
     }
 
     function getCapabilityComponents(owner){
@@ -6356,7 +7183,7 @@ function baseMatches(c){ return matches(c); }
       card.id='component-owner-'+cssId(stateKey);
       if(String(owner.description||'').trim()){
         var desc=document.createElement('div');
-        desc.className='catalog-md';
+        desc.className='catalog-md'+(owner.kind==='capability' ? ' capability-description' : '');
         desc.innerHTML=renderMarkupWithParams(owner.description, owner.paramMap, searchTerm);
         card.appendChild(desc);
       }
@@ -6385,10 +7212,11 @@ function baseMatches(c){ return matches(c); }
       appendImplementationSections(card, owner, searchTerm);
 
       if(card.childElementCount){
+        if(owner.kind==='capability' && card.childElementCount===1 && card.querySelector('.capability-description')){
+          card.classList.add('capability-description-only');
+        }
         var actions=document.createElement('div');
-        actions.style.marginTop='10px';
-        actions.style.display='flex';
-        actions.style.justifyContent='flex-end';
+        actions.className='component-card-actions';
         var jsonBtn=document.createElement('button');
         jsonBtn.className='btn small';
         jsonBtn.type='button';
@@ -6686,12 +7514,18 @@ function baseMatches(c){ return matches(c); }
       return withDataMode('component', function(){
         try{
           var el=document.getElementById('graph'); if(!el) return;
+          el.classList.remove('chart-unavailable');
           el.innerHTML='<div class="graph-toolbar"><button id="fitBtn" class="btn" title="Alles anzeigen">Alles anzeigen</button></div>';
           if(typeof d3==='undefined'){ el.innerHTML='<div class="card">D3 wurde nicht geladen. Lege <code>d3.v7.min.js</code> in den Ordner.</div>'; compEls.graphInfo.textContent='Graph: 0 Knoten'; return; }
 
           var data=buildComponentGraphData();
           var nodes=data.nodes, links=data.links;
-          if(!nodes.length){ el.innerHTML='<div class="card">Keine Daten für den Graphen in der aktuellen Filterung.</div>'; compEls.graphInfo.textContent='Graph: 0 Knoten / 0 Kanten'; return; }
+          if(!nodes.length){
+            el.classList.add('chart-unavailable');
+            el.innerHTML='<div class="card">Keine Daten für den Graphen in der aktuellen Filterung.</div>';
+            compEls.graphInfo.textContent='Graph: 0 Knoten / 0 Kanten';
+            return;
+          }
 
           var width=el.clientWidth || 900, height=el.clientHeight || 600;
           var svg=d3.select(el).append('svg').attr('width', width).attr('height', height);
@@ -7325,11 +8159,19 @@ function baseMatches(c){ return matches(c); }
     }
 
     /* ---------------- Graph ---------------- */
+    function drawUnavailableChartNotice(containerId, message){
+      var container=document.getElementById(containerId);
+      if(!container) return;
+      container.classList.add('chart-unavailable');
+      container.innerHTML='<div class="card">'+escapeHtml(message)+'</div>';
+    }
     // Katalogbeziehungen als interaktiven D3-Graphen rendern.
     function drawGraph(){
       if(uiState.dataMode==='component'){ drawComponentGraph(); return; }
+      if(uiState.dataMode==='mapping'){ drawUnavailableChartNotice('graph', 'Für Mappings wird kein Graph erstellt.'); return; }
       try{
         var el=document.getElementById('graph'); if(!el) return;
+        el.classList.remove('chart-unavailable');
         el.innerHTML='<div class="graph-toolbar"><button id="fitBtn" class="btn" title="Alles anzeigen">Alles anzeigen</button></div>';
 
         if(typeof d3==='undefined'){ el.innerHTML='<div class="card">D3 wurde nicht geladen. Lege <code>d3.v7.min.js</code> in den Ordner.</div>'; els.graphInfo.textContent='Graph: 0 Knoten'; return; }
@@ -7376,7 +8218,12 @@ function baseMatches(c){ return matches(c); }
         var links=[];
         for(var m=0;m<incidentEdges.length;m++){ links.push({ source:incidentEdges[m].source, target:incidentEdges[m].target, rel:incidentEdges[m].rel }); }
 
-        if(!nodes.length){ el.innerHTML='<div class="card">Keine Daten für den Graphen in der aktuellen Filterung.</div>'; els.graphInfo.textContent='Graph: 0 Knoten / 0 Kanten'; return; }
+        if(!nodes.length){
+          el.classList.add('chart-unavailable');
+          el.innerHTML='<div class="card">Keine Daten für den Graphen in der aktuellen Filterung.</div>';
+          els.graphInfo.textContent='Graph: 0 Knoten / 0 Kanten';
+          return;
+        }
 
         var width=el.clientWidth || (el.parentElement && el.parentElement.clientWidth) || 900; var height=el.clientHeight || 600;
         var svg=d3.select(el).append('svg').attr('width', width).attr('height', height); var g=svg.append('g');
@@ -7485,7 +8332,8 @@ function baseMatches(c){ return matches(c); }
 
     /* ---------------- Sunburst ---------------- */
     function drawSunburst(){
-      if(uiState.dataMode==='component'){ drawComponentSunburst(); return; }
+      if(uiState.dataMode==='component'){ drawUnavailableChartNotice('sunburst', 'Für Komponenten wird kein Sunburst-Diagramm erstellt.'); return; }
+      if(uiState.dataMode==='mapping'){ drawUnavailableChartNotice('sunburst', 'Für Mappings wird kein Sunburst-Diagramm erstellt.'); return; }
       var container = document.getElementById('sunburst');
       container.innerHTML='';
       if(typeof d3==='undefined'){ container.innerHTML='<div class="card">D3 wurde nicht geladen.</div>'; return; }
@@ -7547,7 +8395,8 @@ function baseMatches(c){ return matches(c); }
 
     /* ---------------- Bar chart ---------------- */
     function drawBar(){
-      if(uiState.dataMode==='component'){ drawComponentBar(); return; }
+      if(uiState.dataMode==='component'){ drawUnavailableChartNotice('bar', 'Für Komponenten wird kein Balkendiagramm erstellt.'); return; }
+      if(uiState.dataMode==='mapping'){ drawUnavailableChartNotice('bar', 'Für Mappings wird kein Balkendiagramm erstellt.'); return; }
       var container = document.getElementById('bar');
       container.innerHTML='';
       if(typeof d3==='undefined'){ container.innerHTML='<div class="card">D3 wurde nicht geladen.</div>'; return; }
@@ -7611,6 +8460,7 @@ function baseMatches(c){ return matches(c); }
     updateHeaderSubtitle('list');
     setSidebarMode('catalog');
     renderSelectionState(compEls.selectionState, 'Komponentenstatus', 'Kein Datensatz geladen', []);
+    renderSelectionState(mappingEls.selectionState, 'Mappingstatus', 'Kein Datensatz geladen', []);
     renderList();
 
   
@@ -7709,6 +8559,45 @@ function baseMatches(c){ return matches(c); }
           resetComponentFilters();
         });
         btn._gsppBound = true;
+      }
+    }
+
+    function resetMappingFilters(){
+      try{
+        if(mappingEls.q) mappingEls.q.value='';
+        function checkAll(menuEl, detailsEl, allLabel){
+          if(!menuEl || !detailsEl) return;
+          var itemCbs=Array.from(menuEl.querySelectorAll('input[type="checkbox"]')).filter(function(cb){ return cb.dataset.value!=='__all__'; });
+          itemCbs.forEach(function(cb){ cb.checked=true; });
+          var allCb=menuEl.querySelector('input[type="checkbox"][data-value="__all__"]');
+          if(allCb){
+            allCb.checked=itemCbs.length>0;
+            allCb.indeterminate=false;
+          }
+          msUpdateSummary(detailsEl, allLabel, itemCbs);
+        }
+        checkAll(mappingEls.practiceMenu, mappingEls.practice, 'Alle Praktiken');
+        checkAll(mappingEls.relationshipMenu, mappingEls.relationship, 'Alle Relationships');
+        checkAll(mappingEls.sourceCatalogMenu, mappingEls.sourceCatalog, 'Alle Source-Kataloge');
+        checkAll(mappingEls.targetCatalogMenu, mappingEls.targetCatalog, 'Alle Target-Kataloge');
+        checkAll(mappingEls.rationaleMenu, mappingEls.rationale, 'Alle Matching-Arten');
+        checkAll(mappingEls.statusMenu, mappingEls.status, 'Alle Status');
+        var openDropdowns=document.querySelectorAll('#mappingPanel details.ms[open]');
+        for(var i=0;i<openDropdowns.length;i++){ openDropdowns[i].open=false; }
+        refreshMappingViews();
+      }catch(err){
+        showMsg('<strong>Fehler beim Zurücksetzen der Mapping-Filter:</strong><br/><code>'+escapeHtml(String(err && err.message ? err.message : err))+'</code>', true);
+      }
+    }
+
+    function bindMappingResetButton(){
+      var btn=mappingEls.resetBtn;
+      if(btn && !btn._gsppBound){
+        btn.addEventListener('click', function(ev){
+          ev.preventDefault();
+          resetMappingFilters();
+        });
+        btn._gsppBound=true;
       }
     }
     
@@ -7830,6 +8719,8 @@ bindResetButton();
 bindExportButton();
 bindComponentResetButton();
 bindComponentExportButton();
+bindMappingResetButton();
+loadOscalDeepLink();
 
 })();
   </script>
