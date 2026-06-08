@@ -198,6 +198,35 @@
     .implementation-requirement-prose,.implementation-description{color:var(--text);line-height:1.55}
     .implementation-requirement-prose p:first-child,.implementation-description p:first-child{margin-top:0}
     .implementation-requirement-prose p:last-child,.implementation-description p:last-child{margin-bottom:0}
+    .description-collapse{position:relative;min-width:0}
+    .description-collapse-content{overflow:hidden;max-height:var(--description-clamp-height,6.2em)}
+    .description-collapse-content.catalog-md > :first-child{margin-top:0}
+    .description-collapse-content.catalog-md > :last-child{margin-bottom:0}
+    .description-collapse.has-overflow:not(.is-expanded) .description-collapse-content{
+      -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - var(--description-fade-height,17px)),rgba(0,0,0,.35) calc(100% - var(--description-fade-soft-height,7px)),transparent 100%);
+      mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - var(--description-fade-height,17px)),rgba(0,0,0,.35) calc(100% - var(--description-fade-soft-height,7px)),transparent 100%)
+    }
+    .description-collapse.has-overflow:not(.is-expanded)::after{
+      content:"...";
+      position:absolute;
+      right:3px;
+      top:calc(var(--description-clamp-height,6.2em) - var(--description-line-height,1.55em));
+      z-index:1;
+      padding-left:18px;
+      background:linear-gradient(90deg,transparent,var(--card) 48%);
+      color:var(--text);
+      font-size:var(--description-font-size,1em);
+      font-weight:400;
+      letter-spacing:normal;
+      line-height:var(--description-line-height,1.55em)
+    }
+    .description-collapse.is-expanded .description-collapse-content{max-height:none}
+    .description-collapse-toggle{display:flex;width:42px;height:32px;margin:4px auto 0;padding:0;align-items:center;justify-content:center;border:0;border-radius:9px;background:transparent;color:var(--dim);cursor:pointer}
+    .description-collapse-toggle::before{content:"\25BE";font-size:24px;line-height:1;transition:transform .16s ease}
+    .description-collapse.is-expanded .description-collapse-toggle::before{transform:rotate(180deg)}
+    .description-collapse-toggle:hover{background:#edf3fa;color:var(--accent)}
+    .description-collapse-toggle:focus-visible{outline:3px solid var(--ring);outline-offset:2px}
+    .description-collapse-toggle[hidden]{display:none}
     .implementation-statement{margin-top:12px;padding-top:12px;border-top:1px dashed var(--muted)}
     .implementation-statement:first-child{margin-top:0;padding-top:0;border-top:0}
     .implementation-statement-label{margin-bottom:5px;font-size:11px;font-weight:800;color:var(--dim);text-transform:uppercase;letter-spacing:.04em}
@@ -2243,10 +2272,16 @@
     body.print-mode .pill { display:none !important; }
     body.print-mode .graph-toolbar { display:none !important; }
     body.print-mode .note { display:none !important; }
+    body.print-mode .description-collapse-content { max-height:none !important; overflow:visible !important; -webkit-mask-image:none !important; mask-image:none !important; }
+    body.print-mode .description-collapse::after { display:none !important; }
+    body.print-mode .description-collapse-toggle { display:none !important; }
     @media print{
       header, aside, .overview, .tabs, .graph-toolbar, .note, .pill { display:none !important; }
       .wrap { grid-template-columns: 1fr !important; }
       .card { break-inside: avoid; page-break-inside: avoid; }
+      .description-collapse-content { max-height:none !important; overflow:visible !important; -webkit-mask-image:none !important; mask-image:none !important; }
+      .description-collapse::after { display:none !important; }
+      .description-collapse-toggle { display:none !important; }
     }
 
     /* Control-Mapping-Workspace: Crosswalk-Tabelle mit klarer Source-Target-Richtung. */
@@ -6017,7 +6052,11 @@ function baseMatches(c){ return matches(c); }
           linkWrap.innerHTML=buildDocumentLinkHtml(v, v, searchTerm, resourceMap, baseUrl);
           row.appendChild(linkWrap);
         } else {
-          row.appendChild(buildGenericValueNode(v, searchTerm, resourceMap, baseUrl));
+          var valueNode=buildGenericValueNode(v, searchTerm, resourceMap, baseUrl);
+          if(k==='description' && typeof v==='string'){
+            (valueNode.querySelector('.catalog-md') || valueNode).classList.add('js-collapsible-description');
+          }
+          row.appendChild(valueNode);
         }
         block.appendChild(row);
       }
@@ -6035,7 +6074,11 @@ function baseMatches(c){ return matches(c); }
         var th=document.createElement('th');
         th.innerHTML=renderHighlightedInline(formatCatalogKey(row.name), searchTerm);
         var td=document.createElement('td');
-        td.appendChild(buildGenericValueNode(row.value, searchTerm, resourceMap, baseUrl));
+        var valueNode=buildGenericValueNode(row.value, searchTerm, resourceMap, baseUrl);
+        if(row.name==='description' && typeof row.value==='string'){
+          (valueNode.querySelector('.catalog-md') || valueNode).classList.add('js-collapsible-description');
+        }
+        td.appendChild(valueNode);
         tr.appendChild(th);
         tr.appendChild(td);
         tbody.appendChild(tr);
@@ -6843,7 +6886,7 @@ function baseMatches(c){ return matches(c); }
         body.className='component-children';
         if(String(impl.description||'').trim()){
           var implDescription=document.createElement('div');
-          implDescription.className='implementation-overview-description catalog-md';
+          implDescription.className='implementation-overview-description catalog-md js-collapsible-description';
           implDescription.innerHTML=renderMarkupWithParams(impl.description, impl.paramMap, searchTerm);
           body.appendChild(implDescription);
         }
@@ -6942,7 +6985,7 @@ function baseMatches(c){ return matches(c); }
         td.appendChild(titleDiv);
         if(showDescription){
           var descDiv=document.createElement('div');
-          descDiv.className='catalog-md';
+          descDiv.className='catalog-md js-collapsible-description';
           descDiv.innerHTML=renderMarkupMultiline(refDescription, searchTerm);
           td.appendChild(descDiv);
         }
@@ -7079,7 +7122,7 @@ function baseMatches(c){ return matches(c); }
           var hasDescription=false;
           if(String(req.description||'').trim()){
             var reqDescription=document.createElement('div');
-            reqDescription.className='implementation-description catalog-md';
+            reqDescription.className='implementation-description catalog-md js-collapsible-description';
             reqDescription.innerHTML=renderMarkupWithParams(req.description, req.paramMap, searchTerm);
             implementationCell.appendChild(reqDescription);
             hasDescription=true;
@@ -7097,7 +7140,7 @@ function baseMatches(c){ return matches(c); }
             label.innerHTML='Statement'+(stmt.statementId ? ': '+renderHighlightedInline(stmt.statementId, searchTerm) : '');
             statement.appendChild(label);
             var statementDescription=document.createElement('div');
-            statementDescription.className='implementation-description catalog-md';
+            statementDescription.className='implementation-description catalog-md js-collapsible-description';
             statementDescription.innerHTML=renderMarkupWithParams(stmt.description, stmt.paramMap, searchTerm);
             statement.appendChild(statementDescription);
             implementationCell.appendChild(statement);
@@ -7145,6 +7188,86 @@ function baseMatches(c){ return matches(c); }
       return visible;
     }
 
+    function syncCollapsibleDescription(wrapper){
+      if(!wrapper) return;
+      var content=wrapper.querySelector('.description-collapse-content');
+      var toggle=wrapper.querySelector('.description-collapse-toggle');
+      if(!content || !toggle) return;
+
+      var lineProbe=content.querySelector('p, li, blockquote, pre') || content;
+      var style=window.getComputedStyle(lineProbe);
+      var lineHeight=parseFloat(style.lineHeight);
+      if(!isFinite(lineHeight)){
+        lineHeight=parseFloat(style.fontSize || '16') * 1.55;
+      }
+      var clampHeight=Math.ceil(lineHeight * 4);
+      wrapper.style.setProperty('--description-clamp-height', clampHeight+'px');
+      wrapper.style.setProperty('--description-line-height', lineHeight+'px');
+      wrapper.style.setProperty('--description-font-size', style.fontSize || '1em');
+      wrapper.style.setProperty('--description-fade-height', Math.max(10, Math.ceil(lineHeight * .7))+'px');
+      wrapper.style.setProperty('--description-fade-soft-height', Math.max(4, Math.ceil(lineHeight * .28))+'px');
+
+      var hasOverflow=content.scrollHeight > clampHeight + 1;
+      wrapper.classList.toggle('has-overflow', hasOverflow);
+      toggle.hidden=!hasOverflow;
+      if(!hasOverflow){
+        wrapper.classList.remove('is-expanded');
+        toggle.setAttribute('aria-expanded','false');
+        toggle.setAttribute('aria-label','Gesamten Text anzeigen');
+        toggle.title='Gesamten Text anzeigen';
+      }
+    }
+
+    function enhanceCollapsibleDescriptions(root){
+      if(!root) return;
+      if(!root._descriptionClampBound){
+        root.addEventListener('toggle', function(){
+          window.requestAnimationFrame(syncComponentDescriptions);
+        }, true);
+        window.addEventListener('resize', function(){
+          window.requestAnimationFrame(syncComponentDescriptions);
+        });
+        root._descriptionClampBound=true;
+      }
+      var descriptions=root.querySelectorAll('.js-collapsible-description');
+      for(var i=0;i<descriptions.length;i++){
+        var content=descriptions[i];
+        if(content.parentElement && content.parentElement.classList.contains('description-collapse')){
+          syncCollapsibleDescription(content.parentElement);
+          continue;
+        }
+
+        var wrapper=document.createElement('div');
+        wrapper.className='description-collapse';
+        content.parentNode.insertBefore(wrapper, content);
+        wrapper.appendChild(content);
+        content.classList.add('description-collapse-content');
+
+        var toggle=document.createElement('button');
+        toggle.className='description-collapse-toggle';
+        toggle.type='button';
+        toggle.hidden=true;
+        toggle.setAttribute('aria-expanded','false');
+        toggle.setAttribute('aria-label','Gesamten Text anzeigen');
+        toggle.title='Gesamten Text anzeigen';
+        toggle.addEventListener('click', (function(collapse, button){
+          return function(){
+            var expanded=collapse.classList.toggle('is-expanded');
+            button.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+            button.setAttribute('aria-label', expanded ? 'Text einklappen' : 'Gesamten Text anzeigen');
+            button.title=expanded ? 'Text einklappen' : 'Gesamten Text anzeigen';
+          };
+        })(wrapper, toggle));
+        wrapper.appendChild(toggle);
+        syncCollapsibleDescription(wrapper);
+      }
+    }
+
+    function syncComponentDescriptions(){
+      var wrappers=els.componentTab.querySelectorAll('.description-collapse');
+      for(var i=0;i<wrappers.length;i++) syncCollapsibleDescription(wrappers[i]);
+    }
+
     function renderComponentOwner(owner, searchTerm, options){
       options=options || {};
       var wrapper=document.createElement('details');
@@ -7183,7 +7306,7 @@ function baseMatches(c){ return matches(c); }
       card.id='component-owner-'+cssId(stateKey);
       if(String(owner.description||'').trim()){
         var desc=document.createElement('div');
-        desc.className='catalog-md'+(owner.kind==='capability' ? ' capability-description' : '');
+        desc.className='catalog-md js-collapsible-description'+(owner.kind==='capability' ? ' capability-description' : '');
         desc.innerHTML=renderMarkupWithParams(owner.description, owner.paramMap, searchTerm);
         card.appendChild(desc);
       }
@@ -7397,6 +7520,7 @@ function baseMatches(c){ return matches(c); }
         for(var sc=0;sc<standaloneComponents.length;sc++){
           els.componentTab.appendChild(renderComponentOwner(standaloneComponents[sc], componentState.qRaw));
         }
+        enhanceCollapsibleDescriptions(els.componentTab);
         var graphData=buildComponentGraphData();
         compEls.graphInfo.textContent='Graph: '+graphData.nodes.length+' Knoten / '+graphData.links.length+' Kanten';
       });
