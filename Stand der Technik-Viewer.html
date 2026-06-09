@@ -3351,7 +3351,11 @@
     function renderSourcePicker(pickerEl, buttonEl, menuEl, items, activeIndex, emptyLabel, onActivate, onRemove){
       if(!pickerEl || !buttonEl || !menuEl) return;
       menuEl.innerHTML='';
-      buttonEl.textContent=(activeIndex>=0 && items[activeIndex]) ? ((activeIndex+1)+'. '+shortenSourceLabel(items[activeIndex].label)) : emptyLabel;
+      var activeItem=(activeIndex>=0 && items[activeIndex]) ? items[activeIndex] : null;
+      var activeLabel=activeItem ? String(activeItem.label || '').trim() : '';
+      buttonEl.textContent=activeItem ? ((activeIndex+1)+'. '+shortenSourceLabel(activeLabel)) : emptyLabel;
+      if(activeLabel) buttonEl.title=activeLabel;
+      else buttonEl.removeAttribute('title');
       buttonEl.disabled=!items.length;
       if(!items.length){
         setSourcePickerOpen(pickerEl, buttonEl, menuEl, false);
@@ -3365,7 +3369,9 @@
           var activateBtn=document.createElement('button');
           activateBtn.className='source-item-button';
           activateBtn.type='button';
-          activateBtn.innerHTML='<span class="source-item-label">'+escapeHtml(shortenSourceLabel(item.label))+'</span><span class="source-item-meta">Eintrag '+(index+1)+(index===activeIndex ? ' • aktiv' : '')+'</span>';
+          var fullLabel=String(item.label || '').trim();
+          activateBtn.title=fullLabel;
+          activateBtn.innerHTML='<span class="source-item-label">'+escapeHtml(shortenSourceLabel(fullLabel))+'</span><span class="source-item-meta">Eintrag '+(index+1)+(index===activeIndex ? ' • aktiv' : '')+'</span>';
           activateBtn.addEventListener('click', function(){ onActivate(index); });
           row.appendChild(activateBtn);
 
