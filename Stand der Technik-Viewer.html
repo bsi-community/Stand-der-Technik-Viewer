@@ -2293,16 +2293,25 @@
     .tab[data-tab="mappings"]::after{content:"";position:absolute;top:16px;right:-10px;width:1px;height:calc(100% - 32px);background:rgba(118,139,170,.32);pointer-events:none}
     .sidebar-tabs{grid-template-columns:repeat(3,minmax(0,1fr))}
     .sidebar-tab{padding-left:6px;padding-right:6px;font-size:12px}
-    .mapping-workspace{display:grid;gap:16px}
-    .mapping-document-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
-    .mapping-info-card{padding:16px;border:1px solid var(--muted);border-radius:14px;background:rgba(255,255,255,.98)}
+    .mapping-workspace{display:grid;gap:16px;width:100%;max-width:100%;min-width:0}
+    .mapping-workspace > *{max-width:100%;min-width:0}
+    .mapping-document-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:12px;width:100%;min-width:0}
+    .mapping-info-card{min-width:0;padding:16px;border:1px solid var(--muted);border-radius:14px;background:rgba(255,255,255,.98);overflow-wrap:anywhere}
     .mapping-info-card h3{margin:0 0 10px;font-size:15px}
     .mapping-info-card p{margin:6px 0;color:var(--dim)}
     .mapping-info-list{display:grid;grid-template-columns:minmax(110px,auto) 1fr;gap:7px 12px;margin:0}
     .mapping-info-list dt{font-size:12px;font-weight:800;color:var(--dim)}
     .mapping-info-list dd{margin:0;min-width:0;word-break:break-word}
-    .mapping-table-wrap{overflow-x:auto;border:1px solid var(--muted);border-radius:16px;background:#fff}
-    .mapping-table{width:100%;min-width:1480px;border-collapse:separate;border-spacing:0;table-layout:fixed}
+    .mapping-table-wrap{width:100%;max-width:100%;min-width:0;overflow-x:auto;overflow-y:visible;overscroll-behavior-x:contain;overscroll-behavior-y:auto;border:1px solid var(--muted);border-radius:16px;background:#fff;scrollbar-width:none}
+    .mapping-table-wrap::-webkit-scrollbar{height:0}
+    .mapping-table{width:100%;min-width:1120px;border-collapse:separate;border-spacing:0;table-layout:fixed}
+    .mapping-viewport-scrollbar{position:fixed;z-index:35;bottom:0;display:none;height:20px;overflow-x:auto;overflow-y:hidden;background:#d9e3ef;border:1px solid #879bb5;border-bottom:0;box-shadow:0 -3px 12px rgba(33,52,77,.24);scrollbar-color:#385979 #d9e3ef;scrollbar-width:auto}
+    .mapping-viewport-scrollbar.is-visible{display:block}
+    .mapping-viewport-scrollbar-track{height:1px}
+    .mapping-viewport-scrollbar::-webkit-scrollbar{height:18px}
+    .mapping-viewport-scrollbar::-webkit-scrollbar-track{background:#d9e3ef;border-radius:0}
+    .mapping-viewport-scrollbar::-webkit-scrollbar-thumb{background:#385979;border:3px solid #d9e3ef;border-radius:999px}
+    .mapping-viewport-scrollbar::-webkit-scrollbar-thumb:hover{background:#203f5e}
     .mapping-table col.mapping-prose-col{width:24%}
     .mapping-table col.mapping-title-col{width:12%}
     .mapping-table col.mapping-id-col{width:7%}
@@ -2336,7 +2345,9 @@
     .mapping-empty{padding:28px;text-align:center;color:var(--dim)}
     @media(max-width:760px){
       .sidebar-tabs{grid-template-columns:1fr}
-      .mapping-table{min-width:1320px}
+      .mapping-info-list{grid-template-columns:1fr;gap:3px}
+      .mapping-info-list dd{margin-bottom:8px}
+      .mapping-table{min-width:1040px}
     }
     
 </style>
@@ -4601,8 +4612,101 @@
       container.appendChild(grid);
     }
 
+    var mappingViewportScrollbarCleanup=null;
+    function setupMappingViewportScrollbar(wrap,table){
+      if(mappingViewportScrollbarCleanup){
+        mappingViewportScrollbarCleanup();
+        mappingViewportScrollbarCleanup=null;
+      }
+      var scrollbar=document.createElement('div');
+      scrollbar.className='mapping-viewport-scrollbar';
+      scrollbar.tabIndex=0;
+      scrollbar.setAttribute('role','scrollbar');
+      scrollbar.setAttribute('aria-label','Mapping-Tabelle horizontal scrollen');
+      scrollbar.setAttribute('aria-orientation','horizontal');
+      var track=document.createElement('div');
+      track.className='mapping-viewport-scrollbar-track';
+      scrollbar.appendChild(track);
+      els.mappingTab.appendChild(scrollbar);
+
+      var syncing=false;
+      var frame=0;
+      function updateScrollbar(){
+        frame=0;
+        if(!wrap.isConnected || !scrollbar.isConnected) return;
+        var rect=wrap.getBoundingClientRect();
+        var viewportWidth=document.documentElement.clientWidth;
+        var viewportHeight=document.documentElement.clientHeight;
+        var left=Math.max(0,rect.left);
+        var right=Math.min(viewportWidth,rect.right);
+        var hasOverflow=table.scrollWidth>wrap.clientWidth+1;
+        var intersectsViewport=rect.top<viewportHeight && rect.bottom>0;
+        scrollbar.classList.toggle('is-visible',hasOverflow && intersectsViewport && right>left);
+        scrollbar.style.left=left+'px';
+        scrollbar.style.width=Math.max(0,right-left)+'px';
+        scrollbar.style.bottom=Math.max(0,viewportHeight-rect.bottom)+'px';
+        track.style.width=table.scrollWidth+'px';
+        scrollbar.setAttribute('aria-valuemin','0');
+        scrollbar.setAttribute('aria-valuemax',String(Math.max(0,table.scrollWidth-wrap.clientWidth)));
+        scrollbar.setAttribute('aria-valuenow',String(Math.round(wrap.scrollLeft)));
+        if(Math.abs(scrollbar.scrollLeft-wrap.scrollLeft)>1) scrollbar.scrollLeft=wrap.scrollLeft;
+      }
+      function scheduleUpdate(){
+        if(!frame) frame=requestAnimationFrame(updateScrollbar);
+      }
+      function syncFromTable(){
+        if(syncing) return;
+        syncing=true;
+        scrollbar.scrollLeft=wrap.scrollLeft;
+        scrollbar.setAttribute('aria-valuenow',String(Math.round(wrap.scrollLeft)));
+        syncing=false;
+      }
+      function syncFromScrollbar(){
+        if(syncing) return;
+        syncing=true;
+        wrap.scrollLeft=scrollbar.scrollLeft;
+        scrollbar.setAttribute('aria-valuenow',String(Math.round(scrollbar.scrollLeft)));
+        syncing=false;
+      }
+      function passVerticalWheelToPage(ev){
+        if(ev.shiftKey || Math.abs(ev.deltaX)>=Math.abs(ev.deltaY)) return;
+        var scale=ev.deltaMode===1 ? 16 : (ev.deltaMode===2 ? document.documentElement.clientHeight : 1);
+        window.scrollBy(0,ev.deltaY*scale);
+        ev.preventDefault();
+      }
+
+      wrap.addEventListener('scroll',syncFromTable,{passive:true});
+      wrap.addEventListener('wheel',passVerticalWheelToPage,{passive:false});
+      scrollbar.addEventListener('scroll',syncFromScrollbar,{passive:true});
+      scrollbar.addEventListener('wheel',passVerticalWheelToPage,{passive:false});
+      window.addEventListener('scroll',scheduleUpdate,{passive:true});
+      window.addEventListener('resize',scheduleUpdate,{passive:true});
+      var resizeObserver=typeof ResizeObserver==='function' ? new ResizeObserver(scheduleUpdate) : null;
+      if(resizeObserver){
+        resizeObserver.observe(wrap);
+        resizeObserver.observe(table);
+      }
+      updateScrollbar();
+
+      mappingViewportScrollbarCleanup=function(){
+        if(frame) cancelAnimationFrame(frame);
+        wrap.removeEventListener('scroll',syncFromTable);
+        wrap.removeEventListener('wheel',passVerticalWheelToPage);
+        scrollbar.removeEventListener('scroll',syncFromScrollbar);
+        scrollbar.removeEventListener('wheel',passVerticalWheelToPage);
+        window.removeEventListener('scroll',scheduleUpdate);
+        window.removeEventListener('resize',scheduleUpdate);
+        if(resizeObserver) resizeObserver.disconnect();
+        if(scrollbar.parentNode) scrollbar.parentNode.removeChild(scrollbar);
+      };
+    }
+
     function renderMappingView(){
       if(!els.mappingTab) return;
+      if(mappingViewportScrollbarCleanup){
+        mappingViewportScrollbarCleanup();
+        mappingViewportScrollbarCleanup=null;
+      }
       els.mappingTab.innerHTML='';
       if(!mappingState.metadata && !mappingState.entries.length){
         renderSelectionState(mappingEls.selectionState, 'Mappingstatus', 'Kein Datensatz geladen', []);
@@ -4726,6 +4830,7 @@
       table.appendChild(tbody);
       wrap.appendChild(table);
       els.mappingTab.appendChild(wrap);
+      setupMappingViewportScrollbar(wrap,table);
     }
 
     // OSCAL-Props normalisieren, damit heterogene Quellkataloge robust ausgelesen werden koennen.
