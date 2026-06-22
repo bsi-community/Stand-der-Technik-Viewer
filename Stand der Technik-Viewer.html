@@ -2343,11 +2343,84 @@
     .mapping-row-meta{display:flex;flex-wrap:wrap;justify-content:center;gap:5px;margin-top:7px}
     .mapping-row-meta span{font-size:10px;color:var(--dim)}
     .mapping-empty{padding:28px;text-align:center;color:var(--dim)}
+    .header-home-button{width:100%;height:100%;min-height:0;border:0;border-radius:0;background:#111111;color:#f4f8fd;display:flex;align-items:center;justify-content:center;padding:0;box-shadow:none;cursor:pointer}
+    .header-home-button:hover{background:#1b1b1b;color:#ffffff;transform:none}
+    .header-home-button svg{width:24px;height:24px;display:block;stroke:currentColor;stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+    html{min-height:100%;background:#e9f0f9}
+    body{min-height:100vh}
+    body.home-mode{
+      min-height:100vh;
+      background:
+        linear-gradient(rgba(118,139,170,.10) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(118,139,170,.10) 1px, transparent 1px),
+        #e9f0f9;
+      background-size:100% 120px, 230px 100%, 100% 100%;
+    }
+    body.home-mode .wrap{grid-template-columns:minmax(0,1fr);max-width:none;margin:0;width:100%;padding:28px 22px 56px 94px}
+    body.home-mode aside{display:none}
+    body.home-mode main{width:min(100%,1180px)}
+    .registry-home{display:grid;gap:28px;align-content:start;padding:4px 0 28px}
+    .registry-hero{position:relative;display:grid;gap:18px;max-width:980px;min-height:188px;padding-right:260px}
+    .registry-hero h2{margin:0;color:#001b3d;font-size:30px;line-height:1.05;font-weight:800;letter-spacing:0;overflow-wrap:anywhere}
+    .registry-hero p{margin:0;color:#8b94a8;font-size:16px;line-height:1.6;max-width:680px}
+    .registry-logo-panel{position:absolute;right:0;top:0;width:214px;display:flex;align-items:flex-start;justify-content:center;padding:6px 0}
+    .registry-logo-panel img{display:block;width:100%;height:auto;max-height:168px;object-fit:contain;filter:drop-shadow(0 14px 24px rgba(15,30,55,.10))}
+    .registry-search-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;max-width:600px}
+    .registry-search-row .input{min-height:40px;border-radius:8px;border-color:#cad3e0;background:#ffffff;font-size:14px}
+    .registry-search-row .btn{width:auto;min-width:98px;min-height:40px;border-radius:8px;background:#08afd1;border-color:#08afd1;color:#ffffff;font-weight:800}
+    .registry-count{color:#8b94a8;font-size:14px}
+    .registry-back-button{width:auto;justify-self:start;min-height:36px;padding:8px 14px;border-radius:8px;background:#ffffff;border-color:#cbd4e1;color:#001b3d;font-size:13px;font-weight:800}
+    .registry-back-button:hover{background:#eef4fb;transform:translateY(-1px)}
+    .registry-section-label{margin:4px 0 -8px;color:#8b94a8;font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
+    .registry-model-grid{display:grid;grid-template-columns:repeat(2,minmax(240px,1fr));gap:18px;max-width:880px}
+    .registry-model-card{position:relative;display:grid;gap:10px;min-height:164px;padding:22px 24px;border:1px solid #d9e0eb;border-top:4px solid var(--model-color,#001b3d);border-radius:8px;background:#ffffff;box-shadow:0 3px 12px rgba(15,30,55,.08);text-align:left;cursor:pointer}
+    .registry-model-card:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(15,30,55,.12)}
+    .registry-model-dot{width:10px;height:10px;border-radius:50%;background:var(--model-color,#001b3d)}
+    .registry-model-card h3{margin:4px 0 0;color:var(--model-color,#001b3d);font-size:16px;line-height:1.25;font-weight:800}
+    .registry-model-card p{margin:0;color:#1f2a25;font-size:14px;line-height:1.45}
+    .registry-model-footer{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:auto;color:#8b94a8;font-size:13px}
+    .registry-model-link{color:#00a7d0;font-weight:800}
+    .registry-browser{display:grid;gap:16px}
+    .registry-browser-header{display:grid;grid-template-columns:120px minmax(0,1fr);gap:20px;align-items:center;padding:14px 16px;border:1px solid #d9e0eb;border-radius:8px;background:#ffffff;box-shadow:0 3px 12px rgba(15,30,55,.06)}
+    .registry-total strong{display:block;color:#001b3d;font-size:28px;line-height:1;font-weight:800}
+    .registry-total span{display:block;margin-top:4px;color:#8b94a8;font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+    .registry-model-chips{display:flex;flex-wrap:wrap;gap:8px}
+    .registry-model-chip{width:auto;min-height:28px;padding:5px 12px;border:1px solid #cdd5e2;border-radius:999px;background:#d6dce7;color:#001b3d;font-size:12px;font-weight:700}
+    .registry-model-chip.active{background:#eef3ff;border-color:#001b3d;box-shadow:inset 0 0 0 1px #001b3d}
+    .registry-model-chip::before{content:"";display:inline-block;width:8px;height:8px;margin-right:7px;border-radius:50%;background:var(--model-color,#001b3d)}
+    .registry-list{border-top:1px solid #cbd4e1}
+    .registry-list-head,.registry-document-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(140px,.32fr) minmax(120px,.24fr);gap:20px;align-items:center}
+    .registry-list-head{padding:12px 16px 8px;color:#9aa2b5;font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+    .registry-document-row{width:100%;min-height:58px;padding:12px 16px;border:0;border-bottom:1px solid #cbd4e1;border-left:3px solid transparent;border-radius:0;background:transparent;box-shadow:none;text-align:left;cursor:pointer}
+    .registry-document-row:hover,.registry-document-row:focus{border-left-color:#001b3d;background:#f7faff;transform:none}
+    .registry-document-title{display:block;min-width:0;color:#005fc8;font-size:14px;font-weight:800;line-height:1.35;white-space:normal;overflow-wrap:anywhere}
+    .registry-document-meta{min-width:0;color:#7e879b;font-size:13px;line-height:1.35;overflow-wrap:anywhere}
+    .registry-document-badge{display:inline-flex;width:auto;justify-self:start;align-items:center;min-height:22px;padding:4px 10px;border-radius:999px;background:#001b3d;color:#ffffff;font-size:11px;font-weight:800;white-space:nowrap}
+    .registry-empty{padding:24px 16px;color:#8b94a8;border-top:1px solid #cbd4e1}
     @media(max-width:760px){
+      body.home-mode{overflow-x:hidden}
+      body.home-mode header{max-width:100vw;overflow:hidden}
+      body.home-mode .header-nav{overflow-x:auto}
+      body.home-mode .wrap{padding:18px 14px 44px}
+      body.home-mode main{width:100%}
       .sidebar-tabs{grid-template-columns:1fr}
       .mapping-info-list{grid-template-columns:1fr;gap:3px}
       .mapping-info-list dd{margin-bottom:8px}
       .mapping-table{min-width:1040px}
+      .registry-home{width:100%;max-width:100%;min-width:0;overflow:hidden}
+      .registry-hero,.registry-model-grid,.registry-browser,.registry-list{width:100%;max-width:340px;min-width:0}
+      .registry-hero{min-height:0;padding-right:0}
+      .registry-hero h2{font-size:27px}
+      .registry-logo-panel{position:static;width:160px;justify-content:flex-start;order:-1;padding:0}
+      .registry-model-grid{grid-template-columns:minmax(0,1fr)}
+      .registry-model-card{width:100%;max-width:100%;min-width:0;overflow:hidden}
+      .registry-model-footer{flex-wrap:wrap}
+      .registry-browser-header{grid-template-columns:1fr}
+      .registry-search-row{grid-template-columns:1fr}
+      .registry-search-row .btn{width:100%}
+      .registry-list-head{display:none}
+      .registry-document-row{grid-template-columns:1fr;gap:6px}
+      .registry-document-badge{justify-self:start}
     }
     
 </style>
@@ -2356,7 +2429,13 @@
   <!-- Globaler Kopfbereich mit Branding, Unterzeile und Hauptnavigation. -->
   <header>
     <div class="header-brand">
-      <div class="header-brand-mark">SDT</div>
+      <button id="homeBtn" class="header-brand-mark header-home-button" type="button" aria-label="Zur Startseite">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M3 10.5 12 3l9 7.5"></path>
+          <path d="M5.5 9.5V21h13V9.5"></path>
+          <path d="M9.5 21v-6h5v6"></path>
+        </svg>
+      </button>
       <div>
         <h1>Stand der Technik-Viewer</h1>
         <p id="viewSubtitle" class="header-subtitle">Ein neu strukturierter Arbeitsbereich für OSCAL-Kataloge, Komponenten und Analyseansichten mit klarer Navigation, ruhiger Leseführung und durchgängiger visueller Hierarchie.</p>
@@ -2600,6 +2679,8 @@
 
     <!-- Rechter Inhaltsbereich fuer Uebersicht, Listen, Diagramme und JSON. -->
     <main>
+      <!-- Startseite im Stil einer kompakten Content Registry fuer Repository-Inhalte. -->
+      <section id="homeTab" class="registry-home" aria-labelledby="homeTitle"></section>
       <!-- Obere Workspace-Zusammenfassung mit Kennzahlen, Fokus und Schnellaktionen. -->
       <section id="viewSummary" class="overview"></section>
       <!-- Katalogliste mit verschachtelten Praktiken, Themen und Anforderungen. -->
@@ -2736,6 +2817,8 @@
         baseUrl:'',
         jsonText:'',
         imports:[],
+        importStatuses:[],
+        importedDocumentUuids:{},
         components:[],
         capabilities:[],
         allEntries:[],
@@ -2801,7 +2884,7 @@
 
 
     // Gesammelte DOM-Referenzen fuer schnelle Zugriffe ohne wiederholte Query-Selektoren.
-    var els={ file:$('#file'), dropzone:$('#catalogDropzone'), sourceSelect:$('#catalogDatasetSelect'), sourcePicker:$('#catalogSourcePicker'), sourceButton:$('#catalogSourceButton'), sourcePickerMenu:$('#catalogSourceMenu'), urlInput:$('#urlInput'), urlLoadBtn:$('#urlLoadBtn'), bsiSelect:$('#bsiCatalogSelect'), bsiStatus:$('#bsiCatalogStatus'), q:$('#q'), group:$('#groupMS'), cls:$('#classMS'), sec:$('#secMS'), target:$('#targetMS'), tag:$('#tagMS'), effort:$('#effortMS'), modalverb:$('#modalverbMS'), documentation:$('#documentationMS'), actionword:$('#actionwordMS'), groupMenu:$('#groupMS_menu'), clsMenu:$('#classMS_menu'), secMenu:$('#secMS_menu'), targetMenu:$('#targetMS_menu'), tagMenu:$('#tagMS_menu'), effortMenu:$('#effortMS_menu'), modalverbMenu:$('#modalverbMS_menu'), documentationMenu:$('#documentationMS_menu'), actionwordMenu:$('#actionwordMS_menu'), resetBtn:$('#resetBtn'), exportPdfBtn:$('#exportPdfBtn'),
+    var els={ homeBtn:$('#homeBtn'), homeTab:$('#homeTab'), file:$('#file'), dropzone:$('#catalogDropzone'), sourceSelect:$('#catalogDatasetSelect'), sourcePicker:$('#catalogSourcePicker'), sourceButton:$('#catalogSourceButton'), sourcePickerMenu:$('#catalogSourceMenu'), urlInput:$('#urlInput'), urlLoadBtn:$('#urlLoadBtn'), bsiSelect:$('#bsiCatalogSelect'), bsiStatus:$('#bsiCatalogStatus'), q:$('#q'), group:$('#groupMS'), cls:$('#classMS'), sec:$('#secMS'), target:$('#targetMS'), tag:$('#tagMS'), effort:$('#effortMS'), modalverb:$('#modalverbMS'), documentation:$('#documentationMS'), actionword:$('#actionwordMS'), groupMenu:$('#groupMS_menu'), clsMenu:$('#classMS_menu'), secMenu:$('#secMS_menu'), targetMenu:$('#targetMS_menu'), tagMenu:$('#tagMS_menu'), effortMenu:$('#effortMS_menu'), modalverbMenu:$('#modalverbMS_menu'), documentationMenu:$('#documentationMS_menu'), actionwordMenu:$('#actionwordMS_menu'), resetBtn:$('#resetBtn'), exportPdfBtn:$('#exportPdfBtn'),
       sideTabCatalog:$('#side-tab-catalog'), sideTabComponents:$('#side-tab-components'), sideTabMappings:$('#side-tab-mappings'), catalogPanel:$('#catalogPanel'), componentPanel:$('#componentPanel'), mappingPanel:$('#mappingPanel'),
       viewSubtitle:$('#viewSubtitle'), viewSummary:$('#viewSummary'), selectionState:$('#catalogSelectionState'),
       fileInfo:$('#fileInfo'), countInfo:$('#countInfo'), graphInfo:$('#graphInfo'),
@@ -2820,6 +2903,7 @@
       practiceMenu:$('#mappingPracticeMS_menu'), relationshipMenu:$('#mappingRelationshipMS_menu'), sourceCatalogMenu:$('#mappingSourceCatalogMS_menu'), targetCatalogMenu:$('#mappingTargetCatalogMS_menu'), rationaleMenu:$('#mappingRationaleMS_menu'), statusMenu:$('#mappingStatusMS_menu'),
       fileInfo:$('#mappingFileInfo'), countInfo:$('#mappingCountInfo'), selectionState:$('#mappingSelectionState'), resetBtn:$('#mappingResetBtn')
     };
+    var registryState={ status:'loading', catalogs:[], components:[], selectedModel:'', query:'', error:'' };
 
     // Aufbau und Synchronisation der facettierten Multi-Select-Dropdowns.
     function msSetItems(detailsEl, menuEl, allLabel, items, onChange){
@@ -3048,6 +3132,7 @@
     function updateHeaderSubtitle(view){
       if(!els.viewSubtitle) return;
       var map={
+        home:'Aktuelle Inhalte aus dem öffentlichen Stand der Technik Repository durchsuchen und öffnen.',
         list:'Visuell aufbereitete Lese- und Filterungsmöglichkeit für OSCAL-Inhalte.',
         components:'Komponenten, Capabilities und implementierte Anforderungen strukturiert prüfen.',
         mappings:'Control-Beziehungen zwischen Katalogen als filterbaren Crosswalk analysieren.',
@@ -3257,6 +3342,216 @@
       finally{ uiState.dataMode = prev; }
     }
 
+    function registryModelConfig(kind){
+      if(kind==='component'){
+        return {
+          key:'component',
+          title:'Implementierungsbeschreibungen',
+          shortTitle:'Implementierung',
+          description:'Beschreibt Komponenten, Capabilities und die Umsetzung bzw. Implementierung referenzierter Anforderungen aus Katalogen.',
+          color:'#176b78',
+          badge:'Component Definition'
+        };
+      }
+      return {
+        key:'catalog',
+        title:'Kataloge',
+        shortTitle:'Katalog',
+        description:'Sammlung strukturierter Anforderungen, Vorschriften und Sicherheitskontrollen.',
+        color:'#001b3d',
+        badge:'Catalog'
+      };
+    }
+
+    function registryFilesForModel(model){
+      if(model==='component') return registryState.components || [];
+      if(model==='catalog') return registryState.catalogs || [];
+      return (registryState.catalogs || []).concat(registryState.components || []);
+    }
+
+    function registryFileTitle(file){
+      return String((file && (file.title || file.fallbackTitle || file.name)) || 'OSCAL-Dokument').trim();
+    }
+
+    function registryFileSearchText(file){
+      return [
+        registryFileTitle(file),
+        file && file.name,
+        file && file.path,
+        file && file.category,
+        file && file.kind
+      ].join(' ').toLowerCase();
+    }
+
+    function registryVisibleFiles(){
+      var query=String(registryState.query || '').trim().toLowerCase();
+      var files=registryFilesForModel(registryState.selectedModel);
+      if(!query) return files.slice(0);
+      return files.filter(function(file){ return registryFileSearchText(file).indexOf(query)!==-1; });
+    }
+
+    function renderRegistrySearch(parent, placeholder){
+      var row=document.createElement('div');
+      row.className='registry-search-row';
+      var input=document.createElement('input');
+      input.className='input';
+      input.type='search';
+      input.placeholder=placeholder || 'Dokumente suchen...';
+      input.value=registryState.query || '';
+      input.setAttribute('aria-label','Repository-Dokumente suchen');
+      var button=document.createElement('button');
+      button.className='btn';
+      button.type='button';
+      button.textContent='Suchen';
+      function applySearch(){
+        registryState.query=input.value || '';
+        if(!registryState.selectedModel && registryState.query.trim()) registryState.selectedModel='all';
+        renderRegistryHome();
+      }
+      input.addEventListener('keydown', function(ev){
+        if(ev.key==='Enter'){
+          ev.preventDefault();
+          applySearch();
+        }
+      });
+      button.addEventListener('click', applySearch);
+      row.appendChild(input);
+      row.appendChild(button);
+      parent.appendChild(row);
+    }
+
+    function renderRegistryModelCard(parent, kind, count){
+      var cfg=registryModelConfig(kind);
+      var card=document.createElement('button');
+      card.className='registry-model-card';
+      card.type='button';
+      card.style.setProperty('--model-color', cfg.color);
+      card.innerHTML=''
+        +'<span class="registry-model-dot" aria-hidden="true"></span>'
+        +'<h3>'+escapeHtml(cfg.title)+'</h3>'
+        +'<p>'+escapeHtml(cfg.description)+'</p>'
+        +'<div class="registry-model-footer"><span class="registry-model-link">Durchsuchen →</span><span>'+count+' Dokumente</span></div>';
+      card.addEventListener('click', function(){
+        registryState.selectedModel=kind;
+        registryState.query='';
+        renderRegistryHome();
+      });
+      parent.appendChild(card);
+    }
+
+    function renderRegistryBrowse(){
+      var visible=registryVisibleFiles();
+      var model=registryState.selectedModel || 'all';
+      var selectedTitle=model==='component' ? 'Implementierungsbeschreibungen' : (model==='catalog' ? 'Kataloge' : 'Alle Dokumente');
+      var root=els.homeTab;
+
+      var list=document.createElement('div');
+      list.className='registry-list';
+      list.innerHTML='<div class="registry-list-head"><span>Titel</span><span>Quelle</span><span>Modell</span></div>';
+      if(!visible.length){
+        var empty=document.createElement('div');
+        empty.className='registry-empty';
+        empty.textContent=registryState.status==='loading' ? 'Repository-Inhalte werden geladen.' : 'Keine Dokumente entsprechen der aktuellen Suche.';
+        list.appendChild(empty);
+      }
+      for(var i=0;i<visible.length;i++){
+        (function(file){
+          var cfg=registryModelConfig(file.kind);
+          var row=document.createElement('button');
+          row.className='registry-document-row';
+          row.type='button';
+          row.innerHTML=''
+            +'<span class="registry-document-title">'+escapeHtml(registryFileTitle(file))+'</span>'
+            +'<span class="registry-document-meta">'+escapeHtml(file.category || 'Repository')+'</span>'
+            +'<span class="registry-document-badge">'+escapeHtml(cfg.badge)+'</span>';
+          row.addEventListener('click', function(){ loadRegistryDocument(file); });
+          list.appendChild(row);
+        })(visible[i]);
+      }
+      var label=document.createElement('div');
+      label.className='registry-section-label';
+      label.textContent=selectedTitle;
+      root.appendChild(label);
+      root.appendChild(list);
+    }
+
+    function renderRegistryHome(){
+      if(!els.homeTab) return;
+      els.homeTab.innerHTML='';
+      document.body.classList.add('home-mode');
+      var total=(registryState.catalogs.length + registryState.components.length);
+      var hero=document.createElement('section');
+      hero.className='registry-hero';
+      hero.innerHTML='<h2 id="homeTitle">Einstieg in die Stand der Technik-Bibliothek</h2><p>Durchsuche und öffne aktuelle OSCAL-Kataloge und Implementierungsbeschreibungen direkt aus dem öffentlichen BSI Stand der Technik Repository.</p><div class="registry-logo-panel" aria-hidden="true"><img src="./viewer_logo.png" alt="" onerror="this.parentNode.style.display=&quot;none&quot;"></div>';
+      renderRegistrySearch(hero, 'Dokumente suchen...');
+      var count=document.createElement('div');
+      count.className='registry-count';
+      if(registryState.status==='loading') count.textContent='Repository-Inhalte werden frisch geladen...';
+      else if(registryState.status==='error') count.textContent='Repository-Inhalte konnten nicht geladen werden. Lokale Dateien und URL-Uploads funktionieren weiterhin.';
+      else count.textContent=total+' Dokumente in 2 Modelltypen';
+      hero.appendChild(count);
+      if(registryState.selectedModel || registryState.query){
+        var backBtn=document.createElement('button');
+        backBtn.className='btn registry-back-button';
+        backBtn.type='button';
+        backBtn.textContent='Zurück';
+        backBtn.addEventListener('click', function(){
+          showHomePage(true);
+        });
+        hero.appendChild(backBtn);
+      }
+      els.homeTab.appendChild(hero);
+
+      if(registryState.selectedModel || registryState.query){
+        renderRegistryBrowse();
+        return;
+      }
+
+      var label=document.createElement('div');
+      label.className='registry-section-label';
+      label.textContent='Inhalte der Stand der Technik-Bibliothek durchsuchen';
+      els.homeTab.appendChild(label);
+      var grid=document.createElement('div');
+      grid.className='registry-model-grid';
+      renderRegistryModelCard(grid, 'catalog', registryState.catalogs.length);
+      renderRegistryModelCard(grid, 'component', registryState.components.length);
+      els.homeTab.appendChild(grid);
+    }
+
+    function showHomePage(resetRegistry){
+      if(resetRegistry){
+        registryState.selectedModel='';
+        registryState.query='';
+      }
+      hideEffortTooltip();
+      uiState.view='home';
+      updateHeaderSubtitle('home');
+      var tabs=$$('.tab');
+      for(var i=0;i<tabs.length;i++){
+        tabs[i].classList.remove('active');
+        tabs[i].setAttribute('aria-selected','false');
+      }
+      if(els.homeTab) els.homeTab.classList.remove('hidden');
+      if(els.viewSummary) els.viewSummary.classList.add('hidden');
+      els.listTab.classList.add('hidden'); els.componentTab.classList.add('hidden'); els.mappingTab.classList.add('hidden'); els.graphTab.classList.add('hidden'); els.sunburstTab.classList.add('hidden'); els.barTab.classList.add('hidden'); els.jsonTab.classList.add('hidden');
+      renderRegistryHome();
+      hideMsg();
+    }
+
+    function loadRegistryDocument(file){
+      if(!file || !file.url) return;
+      var title=registryFileTitle(file);
+      if(file.kind==='component'){
+        loadComponentFromUrl(file.url, title).then(function(kind){
+          if(kind) switchTab('components');
+        });
+      } else {
+        loadCatalogFromUrl(file.url, title).then(function(kind){
+          if(kind) switchTab('list');
+        });
+      }
+    }
+
     function restoreComponentReturnTarget(){
       var target=uiState.componentReturnTarget;
       if(!target) return;
@@ -3283,7 +3578,13 @@
 
     // Hauptnavigation: Tabs umschalten und Ansichten nur bei Bedarf rendern.
     function switchTab(name){
+      if(name==='home'){
+        showHomePage(true);
+        return;
+      }
       hideEffortTooltip();
+      document.body.classList.remove('home-mode');
+      if(els.homeTab) els.homeTab.classList.add('hidden');
       if(name==='list'){ uiState.dataMode='catalog'; setSidebarMode('catalog'); }
       if(name==='components'){ uiState.dataMode='component'; setSidebarMode('component'); }
       if(name==='mappings'){ uiState.dataMode='mapping'; setSidebarMode('mapping'); }
@@ -3306,6 +3607,7 @@
       if(name==='bar'){ els.barTab.classList.remove('hidden'); drawBar(); }
       if(name==='json'){ els.jsonTab.classList.remove('hidden'); renderJsonView(); }
     }
+    if(els.homeBtn){ els.homeBtn.addEventListener('click', function(){ switchTab('home'); }); }
     document.getElementById('tab-list').addEventListener('click', function(){ switchTab('list'); });
     document.getElementById('tab-components').addEventListener('click', function(){ switchTab('components'); });
     document.getElementById('tab-mappings').addEventListener('click', function(){ switchTab('mappings'); });
@@ -3490,6 +3792,7 @@
     function addComponentSource(entry){
       entry.originalLabel=entry.label || '';
       entry.label=getOscalDocumentTitle(entry.json, entry.label);
+      entry.componentDefinitionUuid=getComponentDefinitionUuid(entry.json);
       loadedComponentSources.push(entry);
       activateComponentSource(loadedComponentSources.length-1);
       if(compEls.file) compEls.file.value='';
@@ -3966,7 +4269,19 @@
       if(statusEl) statusEl.textContent='GitHub ist derzeit nicht erreichbar. Lokale Dateien und URL-Uploads funktionieren weiterhin.';
     }
 
+    function tagRepositoryFiles(files, kind, category){
+      var list=Array.isArray(files) ? files : [];
+      for(var i=0;i<list.length;i++){
+        list[i].kind=kind;
+        list[i].category=category;
+      }
+      return list;
+    }
+
     function loadBsiRepositoryOptions(){
+      registryState.status='loading';
+      registryState.error='';
+      if(uiState.view==='home') renderRegistryHome();
       fetch(BSI_REPOSITORY_TREE_URL, { credentials:'omit', cache:'no-store' })
         .then(function(res){
           if(!res.ok){ throw new Error('GitHub API HTTP '+res.status); }
@@ -3989,6 +4304,13 @@
           var sourceCatalogs=groups[0];
           var userCatalogs=groups[1];
           var componentDefinitions=groups[2];
+          tagRepositoryFiles(userCatalogs, 'catalog', 'Anwenderkataloge');
+          tagRepositoryFiles(sourceCatalogs, 'catalog', 'Quellkataloge');
+          tagRepositoryFiles(componentDefinitions, 'component', 'Implementierungsbeschreibungen');
+          registryState.catalogs=userCatalogs.concat(sourceCatalogs);
+          registryState.components=componentDefinitions;
+          registryState.status='ready';
+          registryState.error='';
           prepareRepositorySelect(els.bsiSelect, 'Aus dem Repository auswählen');
           appendRepositoryOptions(els.bsiSelect, 'Anwenderkataloge', userCatalogs);
           appendRepositoryOptions(els.bsiSelect, 'Quellkataloge', sourceCatalogs);
@@ -3999,10 +4321,14 @@
           appendRepositoryOptions(compEls.bsiSelect, '', componentDefinitions);
           if(compEls.bsiSelect) compEls.bsiSelect.disabled=!componentDefinitions.length;
           if(compEls.bsiStatus) compEls.bsiStatus.textContent=componentDefinitions.length+' aktuelle Implementierungsbeschreibungen verfügbar.';
+          if(uiState.view==='home') renderRegistryHome();
         })
-        .catch(function(){
+        .catch(function(err){
+          registryState.status='error';
+          registryState.error=String(err && err.message ? err.message : err);
           showRepositoryLoadError(els.bsiSelect, els.bsiStatus);
           showRepositoryLoadError(compEls.bsiSelect, compEls.bsiStatus);
+          if(uiState.view==='home') renderRegistryHome();
         });
     }
 
@@ -5510,7 +5836,8 @@ function baseMatches(c){ return matches(c); }
       var url = String(rawUrl||'').trim();
       if(!url || url.charAt(0)!=='#') return null;
       var key=url.slice(1);
-      return resourceMap && resourceMap.get ? resourceMap.get(key) : null;
+      if(!resourceMap || !resourceMap.get) return null;
+      return resourceMap.get(key) || resourceMap.get(key.toLowerCase());
     }
 
     function getBackMatterResourceHref(resource){
@@ -5537,7 +5864,7 @@ function baseMatches(c){ return matches(c); }
       if(url.charAt(0)==='#'){
         var resource=getBackMatterResource(resourceMap, url);
         var linked=getBackMatterResourceHref(resource);
-        if(linked) return resolveResourceUrl(linked, resourceMap, baseUrl);
+        if(linked) return resolveResourceUrl(linked, resourceMap, resource && resource.__baseUrl ? resource.__baseUrl : baseUrl);
         return '';
       }
       if(/^(https?:)?\/\//i.test(url)){
@@ -6311,13 +6638,14 @@ function baseMatches(c){ return matches(c); }
       parent.appendChild(details);
     }
 
-    function appendImportedComponentDefinitions(parent, items, searchTerm, resourceMap, baseUrl){
+    function appendImportedComponentDefinitions(parent, items, searchTerm, resourceMap, baseUrl, statuses){
       if(!Array.isArray(items) || !items.length){
         appendEmptyNotice(parent, 'Keine Eintraege vorhanden.');
         return;
       }
       for(var i=0;i<items.length;i++){
         var entry=items[i] || {};
+        var status=(Array.isArray(statuses) && statuses[i]) ? statuses[i] : null;
         var item=document.createElement('div');
         item.className='catalog-subitem import-component-definition';
 
@@ -6335,6 +6663,32 @@ function baseMatches(c){ return matches(c); }
           remarksField.innerHTML='<div class="import-field-label">Remarks</div>'
             + '<div class="catalog-md import-remarks">'+renderMarkupMultiline(entry.remarks, searchTerm)+'</div>';
           item.appendChild(remarksField);
+        }
+
+        if(status){
+          if(status.title || status.documentUuid || status.rlink){
+            var targetField=document.createElement('div');
+            targetField.className='import-field';
+            var rows=[];
+            if(status.title) rows.push({ name:'Titel', value:status.title });
+            if(status.documentUuid) rows.push({ name:'Component-Definition-UUID', value:status.documentUuid });
+            if(status.rlink) rows.push({ name:'Relativer Pfad', value:status.rlink });
+            targetField.appendChild(buildGenericTable(rows, searchTerm, resourceMap, baseUrl));
+            item.appendChild(targetField);
+          }
+          var statusField=document.createElement('div');
+          statusField.className='import-field';
+          var statusText='';
+          if(status.loaded && !status.skipped){
+            statusText='Wird angezeigt: '+status.components+' Komponenten / '+status.capabilities+' Capabilities';
+            if(status.sourceLabel) statusText += ' aus "'+status.sourceLabel+'"';
+          } else if(status.loaded && status.skipped){
+            statusText=status.message || 'Bereits enthalten.';
+          } else {
+            statusText=status.message || 'Die importierte Component Definition kann nicht angezeigt werden, da sie zur Zeit im Viewer nicht hochgeladen ist.';
+          }
+          statusField.innerHTML='<div class="import-field-label">Status</div><div>'+renderHighlightedInline(statusText, searchTerm)+'</div>';
+          item.appendChild(statusField);
         }
 
         var remaining={};
@@ -6651,6 +7005,9 @@ function baseMatches(c){ return matches(c); }
         owner.type,
         replaceParams(owner.title, owner.paramMap),
         owner.name,
+        owner.importDocumentTitle,
+        owner.importDocumentUuid,
+        owner.importSourceLabel,
         replaceParams(owner.description, owner.paramMap),
         replaceParams(owner.purpose, owner.paramMap),
         replaceParams(owner.remarks, owner.paramMap)
@@ -6692,6 +7049,204 @@ function baseMatches(c){ return matches(c); }
       return parts.join(' \n ').toLowerCase();
     }
 
+    function getComponentDefinitionDocument(root){
+      return root && (root['component-definition'] || root.componentDefinition || root);
+    }
+
+    function getComponentDefinitionUuid(root){
+      var doc=getComponentDefinitionDocument(root);
+      return doc && doc.uuid ? String(doc.uuid).trim() : '';
+    }
+
+    function normalizeBackMatterReference(ref){
+      var value=String(ref||'').trim();
+      if(value.charAt(0)==='#') value=value.slice(1);
+      return value;
+    }
+
+    function getFirstResourceRlink(resource){
+      var rlinks=resource && Array.isArray(resource.rlinks) ? resource.rlinks : [];
+      for(var i=0;i<rlinks.length;i++){
+        if(rlinks[i] && rlinks[i].href) return rlinks[i].href;
+      }
+      return '';
+    }
+
+    function setResourceBaseUrl(resource, baseUrl){
+      if(!resource) return;
+      try{
+        Object.defineProperty(resource, '__baseUrl', { value:baseUrl || '', configurable:true, writable:true, enumerable:false });
+      }catch(_err){
+        resource.__baseUrl=baseUrl || '';
+      }
+    }
+
+    function getResourceDocumentIdentifier(resource){
+      var ids=resource && Array.isArray(resource['document-ids']) ? resource['document-ids'] : [];
+      for(var i=0;i<ids.length;i++){
+        if(ids[i] && ids[i].identifier) return String(ids[i].identifier).trim();
+      }
+      return '';
+    }
+
+    function getLoadedComponentSourceByDocumentUuid(documentUuid){
+      var target=String(documentUuid||'').trim();
+      if(!target) return null;
+      for(var i=0;i<loadedComponentSources.length;i++){
+        var source=loadedComponentSources[i];
+        var sourceUuid=source.componentDefinitionUuid || getComponentDefinitionUuid(source.json);
+        source.componentDefinitionUuid=sourceUuid;
+        if(sourceUuid && sourceUuid.toLowerCase()===target.toLowerCase()){
+          return { source:source, index:i };
+        }
+      }
+      return null;
+    }
+
+    function appendComponentDefinitionOwners(doc, origin){
+      origin=origin || {};
+      var imported=!!origin.imported;
+      var caps=Array.isArray(doc.capabilities) ? doc.capabilities : [];
+      for(var c=0;c<caps.length;c++){
+        var capRaw=caps[c] || {};
+        var cap={
+          kind:'capability',
+          uuid:capRaw.uuid || '',
+          type:'',
+          name:capRaw.name || capRaw.title || ('Capability '+(c+1)),
+          title:capRaw.title || capRaw.name || '',
+          description:capRaw.description || '',
+          purpose:'',
+          remarks:capRaw.remarks || '',
+          props:capRaw.props || [],
+          links:capRaw.links || [],
+          protocols:capRaw.protocols || [],
+          responsibleRoles:capRaw['responsible-roles'] || [],
+          incorporatesComponents:capRaw['incorporates-components'] || [],
+          imported:imported,
+          importDocumentUuid:origin.documentUuid || '',
+          importDocumentTitle:origin.documentTitle || '',
+          importSourceLabel:origin.sourceLabel || '',
+          paramMap:{},
+          controlImplementations:[],
+          raw:capRaw,
+          sources:[]
+        };
+        var capImpls=capRaw['control-implementations'] || [];
+        for(var ci=0;ci<capImpls.length;ci++){
+          var capImpl=createImplementationEntry(capImpls[ci], cap);
+          cap.controlImplementations.push(capImpl);
+          if(capImpl.sourceLabel && cap.sources.indexOf(capImpl.sourceLabel)===-1) cap.sources.push(capImpl.sourceLabel);
+        }
+        cap.searchText=buildComponentSearchText(cap);
+        componentState.capabilities.push(cap);
+        if(cap.uuid){ componentState.capabilityByUuid.set(cap.uuid, cap); }
+      }
+
+      var comps=Array.isArray(doc.components) ? doc.components : [];
+      for(var i=0;i<comps.length;i++){
+        var raw=comps[i] || {};
+        var comp={
+          kind:'component',
+          uuid:raw.uuid || '',
+          type:raw.type || '',
+          name:raw.title || raw.name || ('Komponente '+(i+1)),
+          title:raw.title || raw.name || '',
+          description:raw.description || '',
+          purpose:raw.purpose || '',
+          remarks:raw.remarks || '',
+          props:raw.props || [],
+          links:raw.links || [],
+          protocols:raw.protocols || [],
+          responsibleRoles:raw['responsible-roles'] || [],
+          imported:imported,
+          importDocumentUuid:origin.documentUuid || '',
+          importDocumentTitle:origin.documentTitle || '',
+          importSourceLabel:origin.sourceLabel || '',
+          paramMap:{},
+          controlImplementations:[],
+          raw:raw,
+          sources:[]
+        };
+        var impls=raw['control-implementations'] || [];
+        for(var ii=0;ii<impls.length;ii++){
+          var implEntry=createImplementationEntry(impls[ii], comp);
+          comp.controlImplementations.push(implEntry);
+          if(implEntry.sourceLabel && comp.sources.indexOf(implEntry.sourceLabel)===-1) comp.sources.push(implEntry.sourceLabel);
+        }
+        comp.searchText=buildComponentSearchText(comp);
+        componentState.components.push(comp);
+        if(comp.uuid){ componentState.componentByUuid.set(comp.uuid, comp); }
+      }
+      return { components:comps.length, capabilities:caps.length };
+    }
+
+    function resolveImportedComponentDefinitions(imports){
+      var statuses=[];
+      var seen={};
+      if(componentState.documentUuid) seen[componentState.documentUuid.toLowerCase()]=true;
+      for(var i=0;i<(imports || []).length;i++){
+        var entry=imports[i] || {};
+        var resourceUuid=normalizeBackMatterReference(entry.href);
+        var resource=resourceUuid ? (componentState.resourceByUuid.get(resourceUuid) || componentState.resourceByUuid.get(resourceUuid.toLowerCase())) : null;
+        var documentUuid=getResourceDocumentIdentifier(resource);
+        var status={
+          entry:entry,
+          resource:resource,
+          resourceUuid:resourceUuid,
+          documentUuid:documentUuid,
+          title:(resource && resource.title) || '',
+          rlink:getFirstResourceRlink(resource),
+          loaded:false,
+          skipped:false,
+          components:0,
+          capabilities:0,
+          sourceLabel:'',
+          message:''
+        };
+        if(!resource){
+          status.message='Die Back-Matter-Ressource wurde nicht gefunden.';
+        } else if(!documentUuid){
+          status.message='Die Back-Matter-Ressource enthält keine document-ids.identifier UUID.';
+        } else {
+          var match=getLoadedComponentSourceByDocumentUuid(documentUuid);
+          if(match && match.source){
+            status.loaded=true;
+            status.sourceLabel=match.source.label || '';
+            var importedDoc=getComponentDefinitionDocument(match.source.json);
+            var seenKey=documentUuid.toLowerCase();
+            if(seen[seenKey]){
+              status.skipped=true;
+              status.message='Die Component Definition ist bereits in der aktuellen Ansicht enthalten.';
+            } else {
+              seen[seenKey]=true;
+              var importedResources=(importedDoc && importedDoc['back-matter'] && importedDoc['back-matter'].resources) || [];
+              for(var ir=0;ir<importedResources.length;ir++){
+                if(importedResources[ir] && importedResources[ir].uuid){
+                  setResourceBaseUrl(importedResources[ir], match.source.baseUrl || '');
+                  componentState.resourceByUuid.set(importedResources[ir].uuid, importedResources[ir]);
+                  componentState.resourceByUuid.set(String(importedResources[ir].uuid).toLowerCase(), importedResources[ir]);
+                }
+              }
+              var counts=appendComponentDefinitionOwners(importedDoc, {
+                imported:true,
+                documentUuid:documentUuid,
+                documentTitle:status.title || status.sourceLabel || documentUuid,
+                sourceLabel:status.sourceLabel
+              });
+              status.components=counts.components;
+              status.capabilities=counts.capabilities;
+              componentState.importedDocumentUuids[documentUuid]=true;
+            }
+          } else {
+            status.message='Die importierte Component Definition kann nicht angezeigt werden, da sie zur Zeit im Viewer nicht hochgeladen ist.';
+          }
+        }
+        statuses.push(status);
+      }
+      componentState.importStatuses=statuses;
+    }
+
     function getCatalogParamMapForControl(controlRef){
       var control=getCatalogControlByRef(controlRef);
       return control && control.paramMap ? control.paramMap : {};
@@ -6731,7 +7286,7 @@ function baseMatches(c){ return matches(c); }
       componentState.jsonText=jsonText;
       componentState.baseUrl=baseUrl;
 
-      var doc=root && (root['component-definition'] || root.componentDefinition || root);
+      var doc=getComponentDefinitionDocument(root);
       if(!doc || (!doc.metadata && !Array.isArray(doc.components) && !Array.isArray(doc.capabilities))){
         throw new Error('Ungültige JSON-Struktur: Erwartet ein "component-definition" Objekt.');
       }
@@ -6742,73 +7297,20 @@ function baseMatches(c){ return matches(c); }
 
       var resources=(componentState.backMatter && componentState.backMatter.resources) || [];
       for(var ri=0;ri<resources.length;ri++){
-        if(resources[ri] && resources[ri].uuid){ componentState.resourceByUuid.set(resources[ri].uuid, resources[ri]); }
+        if(resources[ri] && resources[ri].uuid){
+          setResourceBaseUrl(resources[ri], componentState.baseUrl || '');
+          componentState.resourceByUuid.set(resources[ri].uuid, resources[ri]);
+          componentState.resourceByUuid.set(String(resources[ri].uuid).toLowerCase(), resources[ri]);
+        }
       }
 
-      var caps=Array.isArray(doc.capabilities) ? doc.capabilities : [];
-      for(var c=0;c<caps.length;c++){
-        var capRaw=caps[c] || {};
-        var cap={
-          kind:'capability',
-          uuid:capRaw.uuid || '',
-          type:'',
-          name:capRaw.name || capRaw.title || ('Capability '+(c+1)),
-          title:capRaw.title || capRaw.name || '',
-          description:capRaw.description || '',
-          purpose:'',
-          remarks:capRaw.remarks || '',
-          props:capRaw.props || [],
-          links:capRaw.links || [],
-          protocols:capRaw.protocols || [],
-          responsibleRoles:capRaw['responsible-roles'] || [],
-          incorporatesComponents:capRaw['incorporates-components'] || [],
-          paramMap:{},
-          controlImplementations:[],
-          raw:capRaw,
-          sources:[]
-        };
-        var capImpls=capRaw['control-implementations'] || [];
-        for(var ci=0;ci<capImpls.length;ci++){
-          var capImpl=createImplementationEntry(capImpls[ci], cap);
-          cap.controlImplementations.push(capImpl);
-          if(capImpl.sourceLabel && cap.sources.indexOf(capImpl.sourceLabel)===-1) cap.sources.push(capImpl.sourceLabel);
-        }
-        cap.searchText=buildComponentSearchText(cap);
-        componentState.capabilities.push(cap);
-        if(cap.uuid){ componentState.capabilityByUuid.set(cap.uuid, cap); }
-      }
-
-      var comps=Array.isArray(doc.components) ? doc.components : [];
-      for(var i=0;i<comps.length;i++){
-        var raw=comps[i] || {};
-        var comp={
-          kind:'component',
-          uuid:raw.uuid || '',
-          type:raw.type || '',
-          name:raw.title || raw.name || ('Komponente '+(i+1)),
-          title:raw.title || raw.name || '',
-          description:raw.description || '',
-          purpose:raw.purpose || '',
-          remarks:raw.remarks || '',
-          props:raw.props || [],
-          links:raw.links || [],
-          protocols:raw.protocols || [],
-          responsibleRoles:raw['responsible-roles'] || [],
-          paramMap:{},
-          controlImplementations:[],
-          raw:raw,
-          sources:[]
-        };
-        var impls=raw['control-implementations'] || [];
-        for(var ii=0;ii<impls.length;ii++){
-          var implEntry=createImplementationEntry(impls[ii], comp);
-          comp.controlImplementations.push(implEntry);
-          if(implEntry.sourceLabel && comp.sources.indexOf(implEntry.sourceLabel)===-1) comp.sources.push(implEntry.sourceLabel);
-        }
-        comp.searchText=buildComponentSearchText(comp);
-        componentState.components.push(comp);
-        if(comp.uuid){ componentState.componentByUuid.set(comp.uuid, comp); }
-      }
+      appendComponentDefinitionOwners(doc, {
+        imported:false,
+        documentUuid:componentState.documentUuid,
+        documentTitle:(componentState.metadata && componentState.metadata.title) || '',
+        sourceLabel:(loadedComponentSources[activeComponentSourceIndex] && loadedComponentSources[activeComponentSourceIndex].label) || ''
+      });
+      resolveImportedComponentDefinitions(componentState.imports);
 
       for(var cp=0;cp<componentState.capabilities.length;cp++){
         var capEntry=componentState.capabilities[cp];
@@ -7407,6 +7909,9 @@ function baseMatches(c){ return matches(c); }
       }
       summaryHtml += '</div>'
         + '<div class="meta" style="margin-top:6px"><span class="kv"><strong>UUID:</strong> <code>'+renderHighlightedInline(owner.uuid||'–', searchTerm)+'</code></span></div>';
+      if(owner.imported){
+        summaryHtml += '<div class="meta" style="margin-top:6px"><span class="kv"><strong>Importierte Definition:</strong> '+renderHighlightedInline(owner.importDocumentTitle || owner.importSourceLabel || owner.importDocumentUuid || 'Unbekannt', searchTerm)+'</span></div>';
+      }
       summary.innerHTML=summaryHtml;
       wrapper.appendChild(summary);
 
@@ -7512,7 +8017,7 @@ function baseMatches(c){ return matches(c); }
         importDetails.innerHTML='<summary><strong>Importierte Component Definitions</strong></summary>';
         var importBody=document.createElement('div');
         importBody.className='catalog-info-content';
-        appendImportedComponentDefinitions(importBody, componentState.imports, searchTerm, componentState.resourceByUuid, componentState.baseUrl);
+        appendImportedComponentDefinitions(importBody, componentState.imports, searchTerm, componentState.resourceByUuid, componentState.baseUrl, componentState.importStatuses);
         importDetails.appendChild(importBody);
         container.appendChild(importDetails);
       }
@@ -8691,12 +9196,12 @@ function baseMatches(c){ return matches(c); }
     // Sichere DOM-ID aus beliebigen IDs erzeugen
     function cssId(s){ return String(s).replace(/[^a-z0-9-_]+/gi,'_'); }
 
-    // Initiales Rendering (vor Laden einer Datei leer)
-    updateHeaderSubtitle('list');
+    // Initiales Rendering: zuerst die Repository-Startseite, danach laden die Detailansichten bei Bedarf.
+    updateHeaderSubtitle('home');
     setSidebarMode('catalog');
     renderSelectionState(compEls.selectionState, 'Komponentenstatus', 'Kein Datensatz geladen', []);
     renderSelectionState(mappingEls.selectionState, 'Mappingstatus', 'Kein Datensatz geladen', []);
-    renderList();
+    showHomePage();
 
   
 
