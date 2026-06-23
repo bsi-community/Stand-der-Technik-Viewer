@@ -2356,23 +2356,44 @@
         #e9f0f9;
       background-size:100% 120px, 230px 100%, 100% 100%;
     }
-    body.home-mode .wrap{grid-template-columns:minmax(0,1fr);max-width:none;margin:0;width:100%;padding:28px 22px 56px 94px}
+    body.home-mode .wrap{grid-template-columns:minmax(0,1fr);max-width:none;margin:0;width:100%;padding:28px 0 56px 94px}
     body.home-mode aside{display:none}
-    body.home-mode main{width:min(100%,1180px)}
+    body.home-mode main{width:100%}
     .registry-home{display:grid;gap:28px;align-content:start;padding:4px 0 28px}
+    .registry-home-shell{display:grid;grid-template-columns:minmax(620px,880px) minmax(34px,96px) minmax(680px,1fr) minmax(34px,96px);gap:0;align-items:start;width:100%;max-width:none}
+    .registry-home-main{grid-column:1;display:grid;gap:28px;min-width:0}
+    .registry-help{grid-column:3;display:grid;gap:18px;min-width:0}
+    .registry-help-card{border:1px solid #d8e1ec;border-top:4px solid #08afd1;border-radius:8px;background:rgba(255,255,255,.92);box-shadow:0 6px 18px rgba(15,30,55,.08);overflow:hidden}
+    .registry-help-card.terms{border-top-color:#176b78}
+    .registry-help-header{padding:20px 22px 12px;border-bottom:1px solid #edf1f6}
+    .registry-help-header h3{margin:0;color:#001b3d;font-size:19px;line-height:1.25;font-weight:800}
+    .registry-help-header p{margin:7px 0 0;color:#7e879b;font-size:14px;line-height:1.55}
+    .registry-guide-list{display:grid;gap:12px;margin:0;padding:18px 22px 22px;list-style:none;counter-reset:guideStep}
+    .registry-guide-list li{position:relative;display:grid;gap:4px;padding-left:42px;color:#1f2a25;font-size:14px;line-height:1.45;counter-increment:guideStep}
+    .registry-guide-list li::before{content:counter(guideStep);position:absolute;left:0;top:1px;width:28px;height:28px;border-radius:50%;background:#e8f8fc;color:#007995;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800}
+    .registry-guide-list strong{color:#001b3d;font-size:14px}
+    .registry-guide-list a{color:#005fc8;font-weight:800;text-decoration:underline;text-underline-offset:2px}
+    .registry-guide-list a:hover{color:#003f8a}
+    .registry-terms-list{display:grid;gap:0;margin:0;padding:8px 22px 20px}
+    .registry-terms-list div{display:grid;grid-template-columns:128px minmax(0,1fr);gap:14px;padding:11px 0;border-bottom:1px solid #edf1f6}
+    .registry-terms-list div:last-child{border-bottom:0}
+    .registry-terms-list dt{margin:0;color:#001b3d;font-size:13px;font-weight:800;line-height:1.35}
+    .registry-terms-list dd{margin:0;color:#495668;font-size:13px;line-height:1.45}
+    .registry-terms-list a{color:#005fc8;font-weight:800;text-decoration:underline;text-underline-offset:2px}
+    .registry-terms-list a:hover{color:#003f8a}
     .registry-hero{position:relative;display:grid;gap:18px;max-width:980px;min-height:188px;padding-right:260px}
     .registry-hero h2{margin:0;color:#001b3d;font-size:30px;line-height:1.05;font-weight:800;letter-spacing:0;overflow-wrap:anywhere}
     .registry-hero p{margin:0;color:#8b94a8;font-size:16px;line-height:1.6;max-width:680px}
     .registry-logo-panel{position:absolute;right:0;top:0;width:214px;display:flex;align-items:flex-start;justify-content:center;padding:6px 0}
     .registry-logo-panel img{display:block;width:100%;height:auto;max-height:168px;object-fit:contain;filter:drop-shadow(0 14px 24px rgba(15,30,55,.10))}
-    .registry-search-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;max-width:600px}
+    .registry-search-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;max-width:720px}
     .registry-search-row .input{min-height:40px;border-radius:8px;border-color:#cad3e0;background:#ffffff;font-size:14px}
     .registry-search-row .btn{width:auto;min-width:98px;min-height:40px;border-radius:8px;background:#08afd1;border-color:#08afd1;color:#ffffff;font-weight:800}
     .registry-count{color:#8b94a8;font-size:14px}
     .registry-back-button{width:auto;justify-self:start;min-height:36px;padding:8px 14px;border-radius:8px;background:#ffffff;border-color:#cbd4e1;color:#001b3d;font-size:13px;font-weight:800}
     .registry-back-button:hover{background:#eef4fb;transform:translateY(-1px)}
     .registry-section-label{margin:4px 0 -8px;color:#8b94a8;font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
-    .registry-model-grid{display:grid;grid-template-columns:repeat(2,minmax(240px,1fr));gap:18px;max-width:880px}
+    .registry-model-grid{display:grid;grid-template-columns:repeat(2,minmax(240px,1fr));gap:18px;max-width:1000px}
     .registry-model-card{position:relative;display:grid;gap:10px;min-height:164px;padding:22px 24px;border:1px solid #d9e0eb;border-top:4px solid var(--model-color,#001b3d);border-radius:8px;background:#ffffff;box-shadow:0 3px 12px rgba(15,30,55,.08);text-align:left;cursor:pointer}
     .registry-model-card:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(15,30,55,.12)}
     .registry-model-dot{width:10px;height:10px;border-radius:50%;background:var(--model-color,#001b3d)}
@@ -2397,6 +2418,12 @@
     .registry-document-meta{min-width:0;color:#7e879b;font-size:13px;line-height:1.35;overflow-wrap:anywhere}
     .registry-document-badge{display:inline-flex;width:auto;justify-self:start;align-items:center;min-height:22px;padding:4px 10px;border-radius:999px;background:#001b3d;color:#ffffff;font-size:11px;font-weight:800;white-space:nowrap}
     .registry-empty{padding:24px 16px;color:#8b94a8;border-top:1px solid #cbd4e1}
+    @media(max-width:1480px){
+      body.home-mode .wrap{padding-right:34px}
+      .registry-home-shell{grid-template-columns:1fr;max-width:1000px}
+      .registry-home-main,.registry-help{grid-column:auto}
+      .registry-help{max-width:1000px}
+    }
     @media(max-width:760px){
       body.home-mode{overflow-x:hidden}
       body.home-mode header{max-width:100vw;overflow:hidden}
@@ -2408,6 +2435,13 @@
       .mapping-info-list dd{margin-bottom:8px}
       .mapping-table{min-width:1040px}
       .registry-home{width:100%;max-width:100%;min-width:0;overflow:hidden}
+      .registry-home-shell{grid-template-columns:1fr;gap:24px;max-width:340px}
+      .registry-home-main,.registry-help{width:100%;max-width:340px}
+      .registry-help-card{width:100%;max-width:100%;min-width:0}
+      .registry-help-header{padding:18px 18px 10px}
+      .registry-guide-list{padding:16px 18px 18px}
+      .registry-terms-list{padding:6px 18px 16px}
+      .registry-terms-list div{grid-template-columns:1fr;gap:4px}
       .registry-hero,.registry-model-grid,.registry-browser,.registry-list{width:100%;max-width:340px;min-width:0}
       .registry-hero{min-height:0;padding-right:0}
       .registry-hero h2{font-size:27px}
@@ -3439,11 +3473,48 @@
       parent.appendChild(card);
     }
 
-    function renderRegistryBrowse(){
+    function renderRegistryHomeHelp(parent){
+      var help=document.createElement('div');
+      help.className='registry-help';
+      help.setAttribute('role','complementary');
+      help.setAttribute('aria-label','Hinweise zur Nutzung des Viewers');
+      help.innerHTML=''
+        +'<section class="registry-help-card">'
+          +'<div class="registry-help-header">'
+            +'<h3>Wie nutze ich den Viewer?</h3>'
+            +'<p>Ein kurzer Ablauf für die Arbeit mit Katalogen, Implementierungen und Mappings.</p>'
+          +'</div>'
+          +'<ol class="registry-guide-list">'
+            +'<li><strong>Dokument finden oder laden.</strong><span>Nutze die Suche auf der Startseite, eine Modellkachel, einen lokalen JSON-Upload oder eine URL (die letzten beiden Optionen sind nur in der Katalog- &amp; Komponentenansicht verfügbar). Durch Klick auf die Kacheln &quot;Kataloge&quot; und &quot;Implementierungsbeschreibungen&quot; auf der Startseite werden die entsprechenden Inhalte aus dem <a href="https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek" target="_blank" rel="noopener noreferrer">öffentlichen BSI Stand der Technik GitHub-Repository</a> angezeigt, welche dann wiederum durch erneuten Klick direkt im Viewer geladen und angezeigt werden können.</span></li>'
+            +'<li><strong>Obere Menüleiste verstehen.</strong><span>Die Menüleiste führt zu den Arbeitsbereichen: Katalog, Komponenten und Mappings zeigen die dort hochgeladenen Inhalte an; Graph, Sunburst und Balkendiagramm visualisieren geladene Daten; JSON zeigt die Rohstruktur des aktiven Dokuments.</span></li>'
+            +'<li><strong>Passende Ansicht wählen.</strong><span>Kataloge zeigen Anforderungen, Komponenten zeigen Umsetzungen bzw. Implementierungsbeschreibungen von Anforderungen, Mappings zeigen Beziehungen zwischen Anforderungen (es muss sichergestellt sein, dass die passenden Kataloge in der Katalogansicht hochgeladen sind, um die Inhalte der entsprechenden Kataloge sauber in der Komponenten- und Mappingansicht anzeigen zu können).</span></li>'
+            +'<li><strong>Inhalte eingrenzen.</strong><span>In der Katalog-, Komponenten- &amp; Mappingansicht steht jeweils eine Menüleiste auf der linken Seite zur Verfügung, welche es ermöglicht die angezeigten Inhalte zu filtern (z.B. über ein Volltext-Suchfeld oder andere vorgegebene Filterungsmöglichkeiten). Somit ist man in der Lage gezielt nach Inhalten zu suchen.</span></li>'
+            +'<li><strong>Ergebnisse sichern.</strong><span>Über den PDF-Export können die aktuellen Katalog- und Komponentenansichten druckoptimiert ausgegeben werden (via Browser Print-to-PDF-Funktion).</span></li>'
+          +'</ol>'
+        +'</section>'
+        +'<section class="registry-help-card terms">'
+          +'<div class="registry-help-header">'
+            +'<h3>Begriffserklärungen</h3>'
+            +'<p>Die wichtigsten OSCAL- und Viewer-Begriffe auf einen Blick.</p>'
+          +'</div>'
+          +'<dl class="registry-terms-list">'
+            +'<div><dt>OSCAL</dt><dd>Die <a href="https://pages.nist.gov/OSCAL/" target="_blank" rel="noopener noreferrer">Open Security Controls Assessment Language (OSCAL)</a> ist ein standardisiertes, maschinenlesbares Framework, das von NIST entwickelt wurde, um die Effizienz und Konsistenz von Dokumentationen zur Informationssicherheit zu verbessern. Es ermöglicht eine Automatisierung über den gesamten Compliance-Lebenszyklus hinweg.</dd></div>'
+            +'<div><dt>Katalog</dt><dd>Kataloge sind maschinenlesbare, standardisierte Sammlungen von Sicherheitsanforderungen. Sie dienen als strukturierte Datenbasis, um Kontrollvorgaben (zum Beispiel aus dem Digitalen Kompendium oder Technischen Richtlinien) eindeutig und automatisierbar zu dokumentieren. Mit <a href="https://pages.nist.gov/OSCAL/learn/concepts/layer/control/catalog/" target="_blank" rel="noopener noreferrer">OSCAL-Katalogen</a> wird der traditionelle, oft manuelle Prozess der Sicherheitsdokumentation durch einen datenzentrierten Ansatz ersetzt, was zu einer effizienteren und konsistenteren Verwaltung von Sicherheits- und Compliance-Anforderungen führt.</dd></div>'
+            +'<div><dt>Anforderung</dt><dd>Einzelne Anforderung oder Sicherheitskontrolle innerhalb eines Katalogs.</dd></div>'
+            +'<div><dt>Implementierungs-<br>beschreibung</dt><dd>Eine Implementierungsbeschreibung (in Form einer <a href="https://pages.nist.gov/OSCAL-Reference/models/v1.1.3/component-definition/" target="_blank" rel="noopener noreferrer">OSCAL-Komponentendefinition</a>) enthält eine Sammlung von Komponenten. Jede Komponente in einer Komponentendefinition beschreibt, wie eine bestimmte Implementierung einer Hardware, Software, eines Dienstes, einer Richtlinie, eines Prozesses oder einer Prozedur bestimmte Vorschriften aus einem oder mehreren OSCAL-Katalogen oder -Profilen unterstützen oder implementieren kann.</dd></div>'
+            +'<div><dt>Mappings</dt><dd>Sammlung von Beziehungen zwischen Anforderungen aus verschiedenen Katalogen.</dd></div>'
+            +'<div><dt>Metadata</dt><dd>Titel, Version, Datum, Rollen und weitere Verwaltungsinformationen eines Dokuments.</dd></div>'
+            +'<div><dt>Back Matter</dt><dd>Anhangsbereich für Ressourcen, Links, Dokumente und Referenzen.</dd></div>'
+          +'</dl>'
+        +'</section>';
+      parent.appendChild(help);
+    }
+
+    function renderRegistryBrowse(parent){
       var visible=registryVisibleFiles();
       var model=registryState.selectedModel || 'all';
       var selectedTitle=model==='component' ? 'Implementierungsbeschreibungen' : (model==='catalog' ? 'Kataloge' : 'Alle Dokumente');
-      var root=els.homeTab;
+      var root=parent || els.homeTab;
 
       var list=document.createElement('div');
       list.className='registry-list';
@@ -3480,6 +3551,10 @@
       els.homeTab.innerHTML='';
       document.body.classList.add('home-mode');
       var total=(registryState.catalogs.length + registryState.components.length);
+      var shell=document.createElement('div');
+      shell.className='registry-home-shell';
+      var primary=document.createElement('div');
+      primary.className='registry-home-main';
       var hero=document.createElement('section');
       hero.className='registry-hero';
       hero.innerHTML='<h2 id="homeTitle">Einstieg in die Stand der Technik-Bibliothek</h2><p>Durchsuche und öffne aktuelle OSCAL-Kataloge und Implementierungsbeschreibungen direkt aus dem öffentlichen BSI Stand der Technik Repository.</p><div class="registry-logo-panel" aria-hidden="true"><img src="./viewer_logo.png" alt="" onerror="this.parentNode.style.display=&quot;none&quot;"></div>';
@@ -3500,22 +3575,28 @@
         });
         hero.appendChild(backBtn);
       }
-      els.homeTab.appendChild(hero);
+      primary.appendChild(hero);
 
       if(registryState.selectedModel || registryState.query){
-        renderRegistryBrowse();
+        renderRegistryBrowse(primary);
+        shell.appendChild(primary);
+        renderRegistryHomeHelp(shell);
+        els.homeTab.appendChild(shell);
         return;
       }
 
       var label=document.createElement('div');
       label.className='registry-section-label';
       label.textContent='Inhalte der Stand der Technik-Bibliothek durchsuchen';
-      els.homeTab.appendChild(label);
+      primary.appendChild(label);
       var grid=document.createElement('div');
       grid.className='registry-model-grid';
       renderRegistryModelCard(grid, 'catalog', registryState.catalogs.length);
       renderRegistryModelCard(grid, 'component', registryState.components.length);
-      els.homeTab.appendChild(grid);
+      primary.appendChild(grid);
+      shell.appendChild(primary);
+      renderRegistryHomeHelp(shell);
+      els.homeTab.appendChild(shell);
     }
 
     function showHomePage(resetRegistry){
