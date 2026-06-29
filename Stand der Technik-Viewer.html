@@ -2118,6 +2118,70 @@
       font-size:11px;
       padding:5px 8px;
     }
+    details.control-card{
+      margin:0;
+      padding:0;
+      border:1px solid rgba(118,139,170,.18);
+      border-radius:0;
+      background:#ffffff;
+      box-shadow:none;
+      overflow:visible;
+    }
+    .topic-group details.control-card,
+    .practice-group details.control-card{
+      padding:0;
+    }
+    details.control-card::after{display:none}
+    details.control-card + details.control-card{
+      margin-top:-1px;
+    }
+    .topic-children > details.control-card + details.control-card,
+    .practice-children > details.control-card + details.control-card{
+      margin-top:-13px;
+    }
+    details.control-card.enhancement{
+      margin-left:var(--enh-indent,0);
+      border-left:4px solid rgba(28,124,104,.28);
+    }
+    details.control-card > .control-summary{
+      display:grid;
+      grid-template-columns:minmax(86px,max-content) minmax(0,1fr);
+      gap:12px;
+      align-items:center;
+      min-height:40px;
+      padding:9px 14px;
+      list-style:none;
+      cursor:pointer;
+    }
+    details.control-card > .control-summary::-webkit-details-marker{display:none}
+    details.control-card > .control-summary::marker{content:''}
+    details.control-card > .control-summary:hover{
+      background:#f6f9fd;
+    }
+    details.control-card[open] > .control-summary{
+      border-bottom:1px solid rgba(118,139,170,.16);
+      background:#f8fbff;
+    }
+    .control-summary-id{
+      font-weight:850;
+      color:#002f66;
+      white-space:nowrap;
+    }
+    .control-summary-id mark{
+      background:transparent;
+      border:0;
+      padding:0;
+      color:inherit;
+    }
+    .control-summary-title{
+      color:var(--text);
+      line-height:1.35;
+      min-width:0;
+      overflow-wrap:anywhere;
+    }
+    .control-card-body{
+      padding:14px 16px 16px;
+    }
     details{
       border-radius:0;
       background:#f5f9ff;
@@ -2842,7 +2906,7 @@
     var $=function(s){return document.querySelector(s);}; var $$=function(s){return Array.prototype.slice.call(document.querySelectorAll(s));};
 
     // Zentraler Laufzeitstatus fuer Katalogdaten, Komponentendaten und UI-Zustaende.
-    var state={controls:[], idMap:new ObjMap(), uuidMap:new ObjMap(), edgesBase:[], q:'', qRaw:'', groups:[], classes:[], secs:[], targets:[], tags:[], efforts:[], modalverbs:[], documentations:[], actionwords:[], topics:[], topicById:new ObjMap(), childrenByTopic:{}, childrenByPractice:{}, groupRoots:[], groupByKey:new ObjMap(), controlsByGroup:{}, ungroupedControls:[], openTopics:{}, practices:[], practiceById:new ObjMap(), topicsByPractice:{}, openPractices:{}, openGroups:{}, jsonText:'', catalogUuid:'', catalogMetadata:null, catalogBackMatter:null, catalogBaseUrl:'', catalogResourcesByUuid:new ObjMap()};
+    var state={controls:[], idMap:new ObjMap(), uuidMap:new ObjMap(), edgesBase:[], q:'', qRaw:'', groups:[], classes:[], secs:[], targets:[], tags:[], efforts:[], modalverbs:[], documentations:[], actionwords:[], topics:[], topicById:new ObjMap(), childrenByTopic:{}, childrenByPractice:{}, groupRoots:[], groupByKey:new ObjMap(), controlsByGroup:{}, ungroupedControls:[], openTopics:{}, openControls:{}, practices:[], practiceById:new ObjMap(), topicsByPractice:{}, openPractices:{}, openGroups:{}, jsonText:'', catalogUuid:'', catalogMetadata:null, catalogBackMatter:null, catalogBaseUrl:'', catalogResourcesByUuid:new ObjMap()};
     function createComponentState(){
       return {
         documentUuid:'',
@@ -3260,9 +3324,11 @@
     function setCatalogExpansion(open){
       uiState.catalogExpandOverride = !!open;
       state.openTopics={};
+      state.openControls={};
       state.openPractices={};
       state.openGroups={};
       if(open){
+        for(var ci=0;ci<state.controls.length;ci++){ state.openControls[state.controls[ci].id]=true; }
         for(var ti=0;ti<state.topics.length;ti++){ state.openTopics[state.topics[ti].id]=true; }
         for(var pi=0;pi<state.practices.length;pi++){ state.openPractices[state.practices[pi].id]=true; }
         for(var gi=0;gi<state.groupRoots.length;gi++){
@@ -4504,6 +4570,7 @@
       state.controlsByGroup={};
       state.ungroupedControls=[];
       state.openTopics={};
+      state.openControls={};
       state.practices=[];
       state.practiceById=new ObjMap();
       state.topicsByPractice={};
@@ -5470,6 +5537,19 @@
       return uniqueList(out);
     }
 
+    function extractNamedControlProperty(props, name){
+      var out=[]; if(!props||!props.length) return out;
+      var wanted=String(name||'').toLowerCase();
+      for(var i=0;i<props.length;i++){
+        var p=props[i]; if(!p) continue;
+        if(String(p.name||'').toLowerCase()!==wanted) continue;
+        if(p.value!=null && String(p.value).trim()){
+          out.push(String(p.value).trim());
+        }
+      }
+      return uniqueList(out);
+    }
+
 
     // Parameter-Mapping: {{ insert: param }} -> Label/Value
     function normalizeParamEntry(entry){
@@ -5528,7 +5608,7 @@
 
     // Catalog parsen, Hierarchien aufbauen und Controls in eine renderbare Struktur ueberfuehren.
     function processCatalog(root){
-      state.controls=[]; state.idMap=new ObjMap(); state.uuidMap=new ObjMap(); state.edgesBase=[]; state.topics=[]; state.topicById=new ObjMap(); state.childrenByTopic={}; state.childrenByPractice={}; state.groupRoots=[]; state.groupByKey=new ObjMap(); state.controlsByGroup={}; state.ungroupedControls=[]; state.openTopics={}; state.practices=[]; state.practiceById=new ObjMap(); state.topicsByPractice={}; state.openPractices={}; state.openGroups={}; state.catalogUuid=''; state.catalogMetadata=null; state.catalogBackMatter=null; state.catalogResourcesByUuid=new ObjMap();
+      state.controls=[]; state.idMap=new ObjMap(); state.uuidMap=new ObjMap(); state.edgesBase=[]; state.topics=[]; state.topicById=new ObjMap(); state.childrenByTopic={}; state.childrenByPractice={}; state.groupRoots=[]; state.groupByKey=new ObjMap(); state.controlsByGroup={}; state.ungroupedControls=[]; state.openTopics={}; state.openControls={}; state.practices=[]; state.practiceById=new ObjMap(); state.topicsByPractice={}; state.openPractices={}; state.openGroups={}; state.catalogUuid=''; state.catalogMetadata=null; state.catalogBackMatter=null; state.catalogResourcesByUuid=new ObjMap();
 
       var catCandidate = root && (root.catalog || root.profile || root.component || root);
       if(!catCandidate){ throw new Error('Ungültige JSON-Struktur: Erwartet ein "catalog" / "profile" / "component" Objekt.'); }
@@ -5563,6 +5643,11 @@
         var modalverbsArr=extractModalverbs(c.props, parts);
         var documentationArr=extractDocumentation(c.props, parts);
         var actionWordsArr=extractActionWords(c.props, parts);
+        var threatsArr=extractNamedControlProperty(c.props, 'threats');
+        var confidentialityArr=extractNamedControlProperty(c.props, 'confidentiality');
+        var integrityArr=extractNamedControlProperty(c.props, 'integrity');
+        var availabilityArr=extractNamedControlProperty(c.props, 'availability');
+        var authenticityArr=extractNamedControlProperty(c.props, 'authenticity');
         var paramMap = buildParamMap(c.params);
         var remarks = c.remarks || '';
 
@@ -5574,7 +5659,7 @@
                 // build searchable haystack (for Volltextsuche)
         var allProse='';
         if(parts){ for(var pi=0; pi<parts.length; pi++){ if(parts[pi] && parts[pi].prose) allProse += ' ' + parts[pi].prose; } }
-        var hay = [id, rawId, labelId, (c.title||''), uuid, cls, secLevel, effortLabel, targetsArr.join(', '), tagsArr.join(', '), modalverbsArr.join(', '), documentationArr.join(', '), actionWordsArr.join(', '), remarks, allProse, topicIdVal, topicTitleVal].join(' \n ').toLowerCase();
+        var hay = [id, rawId, labelId, (c.title||''), uuid, cls, secLevel, effortLabel, targetsArr.join(', '), tagsArr.join(', '), modalverbsArr.join(', '), documentationArr.join(', '), actionWordsArr.join(', '), threatsArr.join(', '), confidentialityArr.join(', '), integrityArr.join(', '), availabilityArr.join(', '), authenticityArr.join(', '), remarks, allProse, topicIdVal, topicTitleVal].join(' \n ').toLowerCase();
 
         var entry={ id:id, rawId:rawId, labelId:labelId, uuid:uuid, title:(c.title||''), class:cls, cls:cls, sec_level:secLevel, sec:secLevel,
                     effort:effort, effortLabel:effortLabel,
@@ -5583,6 +5668,11 @@
                     modalverbs:(modalverbsArr.join(', ')), modalverbsArr:modalverbsArr,
                     documentation:(documentationArr.join(', ')), documentationArr:documentationArr,
                     actionwords:(actionWordsArr.join(', ')), actionwordsArr:actionWordsArr,
+                    threats:(threatsArr.join(', ')), threatsArr:threatsArr,
+                    confidentiality:(confidentialityArr.join(', ')), confidentialityArr:confidentialityArr,
+                    integrity:(integrityArr.join(', ')), integrityArr:integrityArr,
+                    availability:(availabilityArr.join(', ')), availabilityArr:availabilityArr,
+                    authenticity:(authenticityArr.join(', ')), authenticityArr:authenticityArr,
                     practiceId:(practiceId||''),
                     groupKey:(groupKey||''),
                     topicId:topicIdVal, topicTitle:topicTitleVal, topicUuid:topicUuidVal,
@@ -7529,6 +7619,7 @@ function baseMatches(c){ return matches(c); }
         var topic = state.topicById && state.topicById.get ? state.topicById.get(target.topicId) : null;
         if(topic && topic.practiceId){ state.openPractices[topic.practiceId]=true; }
       }
+      state.openControls[target.id]=true;
       renderList();
       setTimeout(function(){
         var card=document.getElementById('card-'+cssId(target.id));
@@ -8863,12 +8954,18 @@ function baseMatches(c){ return matches(c); }
 
     // Einzelkarte fuer eine Anforderung inkl. Details und Beziehungen
     function renderCard(c){
-      var div=document.createElement('article'); div.className='card'; div.id='card-'+cssId(c.id);
+      var div=document.createElement('details'); div.className='card control-card'; div.id='card-'+cssId(c.id);
       // Enhancement controls (nested controls) should be displayed indented under their parent
       if(c && c.enhDepth && c.enhDepth>0){
         div.classList.add('enhancement');
         div.style.setProperty('--enh-indent', (c.enhDepth * 1.35) + 'rem');
       }
+      div.open = uiState.catalogExpandOverride===true ? true : (uiState.catalogExpandOverride===false ? false : !!state.openControls[c.id]);
+      div.addEventListener('toggle', function(ev){
+        if(ev.target!==div) return;
+        uiState.catalogExpandOverride=null;
+        state.openControls[c.id]=div.open;
+      });
       var titleHtml = renderTextWithParams(c.title, c.paramMap, state.qRaw);
       var statementHtml = renderMarkupWithParams(c.statement, c.paramMap, state.qRaw);
       var guidanceHtml = renderMarkupWithParams(c.guidance, c.paramMap, state.qRaw);
@@ -8880,8 +8977,16 @@ function baseMatches(c){ return matches(c); }
         effortMetaHtml = '<span class="kv effort-hover" data-effort="'+escapeHtml(rawEffort)+'"><strong>'+renderHighlightedInline(c.effortLabel||'Aufwand', state.qRaw)+':</strong> <code>'+renderHighlightedInline(effortShown, state.qRaw)+'</code></span>';
       }
 
-      div.innerHTML=''
-        + '<div class="title"><h3><mark>'+renderHighlightedInline(c.id, state.qRaw)+'</mark> – '+titleHtml+'</h3></div>'
+      var summary=document.createElement('summary');
+      summary.className='control-summary';
+      summary.innerHTML=''
+        + '<span class="control-summary-id"><mark>'+renderHighlightedInline(c.id, state.qRaw)+'</mark></span>'
+        + '<span class="control-summary-title">'+titleHtml+'</span>';
+      div.appendChild(summary);
+
+      var body=document.createElement('div');
+      body.className='control-card-body';
+      body.innerHTML=''
         + '<div class="meta">'
         +   '<span class="kv"><strong>UUID:</strong> <code>'+renderHighlightedInline(c.uuid||'–', state.qRaw)+'</code></span>'
         +   (c.class? '<span class="kv"><strong>Quellkatalog:</strong> <code>'+renderHighlightedInline(c.class, state.qRaw)+'</code></span>':'')
@@ -8893,8 +8998,13 @@ function baseMatches(c){ return matches(c); }
         +   (c.documentation? '<span class="kv"><strong>Dokumentationsempfehlung:</strong> <code>'+renderHighlightedInline(c.documentation, state.qRaw)+'</code></span>':'')
         +   (c.actionwords? '<span class="kv"><strong>Handlungswörter:</strong> <code>'+renderHighlightedInline(c.actionwords, state.qRaw)+'</code></span>':'')
         +   (c.tags? '<span class="kv"><strong>Tags:</strong> <code>'+renderHighlightedInline(c.tags, state.qRaw)+'</code></span>':'')
+        +   (c.threats? '<span class="kv"><strong>Gefährdungen:</strong> <code>'+renderHighlightedInline(c.threats, state.qRaw)+'</code></span>':'')
+        +   (c.confidentiality? '<span class="kv"><strong>Vertraulichkeit:</strong> <code>'+renderHighlightedInline(c.confidentiality, state.qRaw)+'</code></span>':'')
+        +   (c.integrity? '<span class="kv"><strong>Integrität:</strong> <code>'+renderHighlightedInline(c.integrity, state.qRaw)+'</code></span>':'')
+        +   (c.availability? '<span class="kv"><strong>Verfügbarkeit:</strong> <code>'+renderHighlightedInline(c.availability, state.qRaw)+'</code></span>':'')
+        +   (c.authenticity? '<span class="kv"><strong>Authentizität:</strong> <code>'+renderHighlightedInline(c.authenticity, state.qRaw)+'</code></span>':'')
         + '</div>';
-      bindEffortTooltip(div);
+      bindEffortTooltip(body);
 
       var details=document.createElement('div');
       if(c.statement){ var st=document.createElement('details'); st.open=true; st.innerHTML='<summary><strong>Statement</strong></summary><div class="catalog-md">'+statementHtml+'</div>'; details.appendChild(st); }
@@ -8907,7 +9017,7 @@ function baseMatches(c){ return matches(c); }
           var di=document.createElement('details'); di.innerHTML='<summary><strong>'+escapeHtml(part.name||part.id||'Part')+'</strong></summary><div class="catalog-md">'+proseHtml+'</div>'; details.appendChild(di);
         }
       }
-      if(details.childElementCount) div.appendChild(details);
+      if(details.childElementCount) body.appendChild(details);
 
       var required=[], related=[];
       if(Array.isArray(c.links)){
@@ -8919,7 +9029,7 @@ function baseMatches(c){ return matches(c); }
       var relWrap=document.createElement('div');
       if(required.length){ var b1=document.createElement('div'); b1.style.marginTop='10px'; b1.innerHTML='<div class="rel-label"><span class="badge ok">abhängig von (required)</span></div>'; var g1=document.createElement('div'); g1.className='rel-group'; var l1=document.createElement('div'); l1.className='rel'; for(var a=0;a<required.length;a++){ l1.appendChild(renderRelItem(required[a], 'required')); } g1.appendChild(l1); b1.appendChild(g1); relWrap.appendChild(b1); }
       if(related.length){ var b2=document.createElement('div'); b2.style.marginTop='10px'; b2.innerHTML='<div class="rel-label"><span class="badge">verwandt (related)</span></div>'; var g2=document.createElement('div'); g2.className='rel-group'; var l2=document.createElement('div'); l2.className='rel'; for(var b=0;b<related.length;b++){ l2.appendChild(renderRelItem(related[b], 'related')); } g2.appendChild(l2); b2.appendChild(g2); relWrap.appendChild(b2); }
-      if(relWrap.childElementCount) div.appendChild(relWrap);
+      if(relWrap.childElementCount) body.appendChild(relWrap);
 
       var actions=document.createElement('div');
       actions.style.marginTop='10px';
@@ -8931,7 +9041,8 @@ function baseMatches(c){ return matches(c); }
       jsonBtn.textContent='JSON';
       jsonBtn.addEventListener('click', function(){ if(c.raw){ openJsonModal(c.raw); } });
       actions.appendChild(jsonBtn);
-      div.appendChild(actions);
+      body.appendChild(actions);
+      div.appendChild(body);
 
       return div;
     }
@@ -8966,6 +9077,7 @@ function baseMatches(c){ return matches(c); }
           var topic = state.topicById && state.topicById.get ? state.topicById.get(t.topicId) : null;
           if(topic && topic.practiceId){ state.openPractices[topic.practiceId]=true; }
         }
+        state.openControls[t.id]=true;
         renderList();
         setTimeout(function(){
           var card=document.getElementById('card-'+cssId(t.id));
@@ -9085,6 +9197,7 @@ function baseMatches(c){ return matches(c); }
             var topic = state.topicById && state.topicById.get ? state.topicById.get(topicId) : null;
             if(topic && topic.practiceId){ state.openPractices[topic.practiceId] = true; }
           }
+          state.openControls[d.id]=true;
           renderList();
           setTimeout(function(){
             var card=document.getElementById('card-'+cssId(d.id));
