@@ -2536,14 +2536,14 @@
       </button>
       <div>
         <h1>Stand der Technik-Viewer</h1>
-        <p id="viewSubtitle" class="header-subtitle">Ein neu strukturierter Arbeitsbereich für OSCAL-Kataloge, Komponenten und Analyseansichten mit klarer Navigation, ruhiger Leseführung und durchgängiger visueller Hierarchie.</p>
+        <p id="viewSubtitle" class="header-subtitle">Ein neu strukturierter Arbeitsbereich für OSCAL-Kataloge, Komponentendefinitionen und Analyseansichten mit klarer Navigation, ruhiger Leseführung und durchgängiger visueller Hierarchie.</p>
       </div>
     </div>
-    <!-- Hauptnavigation fuer die grossen Viewer-Ansichten: Katalog, Komponenten, Diagramme und JSON. -->
+    <!-- Hauptnavigation fuer die grossen Viewer-Ansichten: Katalog, Komponentendefinitionen, Diagramme und JSON. -->
     <div class="header-nav">
       <div class="tabs" role="tablist" aria-label="Ansichten">
         <button class="tab active" data-tab="list" id="tab-list" type="button" role="tab" aria-selected="true" aria-controls="listTab">Katalog</button>
-        <button class="tab" data-tab="components" id="tab-components" type="button" role="tab" aria-selected="false" aria-controls="componentTab">Komponenten</button>
+        <button class="tab" data-tab="components" id="tab-components" type="button" role="tab" aria-selected="false" aria-controls="componentTab">Komponentendefinitionen</button>
         <button class="tab" data-tab="mappings" id="tab-mappings" type="button" role="tab" aria-selected="false" aria-controls="mappingTab">Mappings</button>
         <button class="tab" data-tab="graph" id="tab-graph" type="button" role="tab" aria-selected="false" aria-controls="graphTab">Graph</button>
         <button class="tab" data-tab="sunburst" id="tab-sunburst" type="button" role="tab" aria-selected="false" aria-controls="sunburstTab">Sunburst</button>
@@ -2566,7 +2566,7 @@
       <!-- Umschalter zwischen den beiden Datenquellen-Bereichen der Sidebar. -->
       <div class="sidebar-tabs" role="tablist" aria-label="Datenquellen">
         <button class="sidebar-tab active" data-panel="catalog" id="side-tab-catalog" type="button" role="tab" aria-selected="true" aria-controls="catalogPanel">Katalog</button>
-        <button class="sidebar-tab" data-panel="component" id="side-tab-components" type="button" role="tab" aria-selected="false" aria-controls="componentPanel">Komponenten</button>
+        <button class="sidebar-tab" data-panel="component" id="side-tab-components" type="button" role="tab" aria-selected="false" aria-controls="componentPanel">Komponentendefinitionen</button>
         <button class="sidebar-tab" data-panel="mapping" id="side-tab-mappings" type="button" role="tab" aria-selected="false" aria-controls="mappingPanel">Mappings</button>
       </div>
 
@@ -2659,38 +2659,38 @@
       <div id="componentPanel" class="side-panel hidden">
         <div class="panel-intro">
           <div class="panel-kicker">Component Input</div>
-          <h3 class="panel-title">Component Definition laden</h3>
-          <p class="panel-copy">Wenn die in einer Component-Definition referenzierten Anforderungen aus einem Katalog verlinkt werden sollen, dann muss der entsprechende Anforderungskatalog im Katalog-Tab parallel hochgeladen werden.</p>
+          <h3 class="panel-title">Komponentendefinition laden</h3>
+          <p class="panel-copy">Wenn die in einer Komponentendefinition referenzierten Anforderungen aus einem Katalog verlinkt werden sollen, dann muss der entsprechende Anforderungskatalog im Katalog-Tab parallel hochgeladen werden.</p>
         </div>
         <!-- Versteckter Datei-Input als technischer Trigger fuer Klick- und Drag-and-Drop-Upload. -->
         <input id="compFile" class="input" type="file" accept=".json" multiple hidden aria-hidden="true" />
         <!-- Sichtbare Upload-Zone fuer lokale Component-Definition-Dateien. -->
-        <div id="componentDropzone" class="dropzone" role="button" tabindex="0" aria-label="OSCAL Component Definition per Drag and Drop laden">
+        <div id="componentDropzone" class="dropzone" role="button" tabindex="0" aria-label="OSCAL-Komponentendefinition per Drag and Drop laden">
           <strong>Datei hierher ziehen</strong>
-          <span>oder klicken, um eine oder mehrere Component Definitions auszuwählen</span>
+          <span>oder klicken, um eine oder mehrere Komponentendefinitionen auszuwählen</span>
         </div>
         <!-- Alternativer Ladeweg fuer Component Definitions per URL. -->
         <div style="margin-top:10px;display:grid;gap:8px">
-          <input id="compUrlInput" class="input" type="url" placeholder="Component-Definition-URL einfügen (JSON)" autocomplete="off" spellcheck="false" />
+          <input id="compUrlInput" class="input" type="url" placeholder="Komponentendefinition-URL einfügen (JSON)" autocomplete="off" spellcheck="false" />
           <button id="compUrlLoadBtn" class="btn" type="button" style="width:100%; justify-content:center;">Von URL laden</button>
           <div class="note">Hinweis: Bei GitHub-Links ggf. auf die Raw-URL umschreiben.</div>
           <div class="field-label" style="margin-top:4px">Direkt aus dem öffentlichen BSI Stand der Technik GitHub Repository laden</div>
-          <select id="bsiComponentSelect" class="input repository-select" aria-label="BSI Stand der Technik Implementierungsbeschreibung auswählen" disabled>
+          <select id="bsiComponentSelect" class="input repository-select" aria-label="BSI Stand der Technik Komponentendefinition auswählen" disabled>
             <option value="">Repository-Inhalte werden geladen…</option>
           </select>
-          <div id="bsiComponentStatus" class="note" aria-live="polite">Aktuelle Liste der Implementierungsbeschreibungen wird von GitHub abgerufen.</div>
+          <div id="bsiComponentStatus" class="note" aria-live="polite">Aktuelle Liste der Komponentendefinitionen wird von GitHub abgerufen.</div>
         </div>
         <!-- Quellenumschalter fuer mehrere parallel geladene Component Definitions.
              Auch hier bleibt ein versteckter Select als interner Zustandsanker erhalten,
              waehrend das sichtbare Custom-Dropdown Auswahl und Entfernen uebernimmt. -->
         <div style="margin-top:10px;display:grid;gap:8px">
-          <label class="field-label" for="componentDatasetSelect">Geladene Implementierungsbeschreibungen</label>
-          <select id="componentDatasetSelect" aria-label="Geladene Implementierungsbeschreibung auswählen" hidden aria-hidden="true">
-            <option value="">Noch keine Implementierungsbeschreibung geladen</option>
+          <label class="field-label" for="componentDatasetSelect">Geladene Komponentendefinitionen</label>
+          <select id="componentDatasetSelect" aria-label="Geladene Komponentendefinition auswählen" hidden aria-hidden="true">
+            <option value="">Noch keine Komponentendefinition geladen</option>
           </select>
           <div id="componentSourcePicker" class="source-picker">
-            <button id="componentSourceButton" class="input source-picker-trigger" type="button" aria-haspopup="listbox" aria-expanded="false">Noch keine Implementierungsbeschreibung geladen</button>
-            <div id="componentSourceMenu" class="source-picker-menu hidden" role="listbox" aria-label="Geladene Implementierungsbeschreibungen"></div>
+            <button id="componentSourceButton" class="input source-picker-trigger" type="button" aria-haspopup="listbox" aria-expanded="false">Noch keine Komponentendefinition geladen</button>
+            <div id="componentSourceMenu" class="source-picker-menu hidden" role="listbox" aria-label="Geladene Komponentendefinitionen"></div>
           </div>
         </div>
 
@@ -2707,7 +2707,7 @@
         </div>
 
         <div class="status" style="margin-top:10px">
-          <span id="compFileInfo" class="pill">Komponenten: keine Datei</span>
+          <span id="compFileInfo" class="pill">Komponentendefinition: keine Datei</span>
           <span id="compCountInfo" class="pill">–</span>
           <span id="compGraphInfo" class="pill">Graph: 0 Knoten</span>
         </div>
@@ -3232,7 +3232,7 @@
       var map={
         home:'Aktuelle Inhalte aus dem öffentlichen Stand der Technik Repository durchsuchen und öffnen.',
         list:'Visuell aufbereitete Lese- und Filterungsmöglichkeit für OSCAL-Inhalte.',
-        components:'Komponenten, Capabilities und implementierte Anforderungen strukturiert prüfen.',
+        components:'Komponentendefinitionen, Capabilities und implementierte Anforderungen strukturiert prüfen.',
         mappings:'Control-Beziehungen zwischen Katalogen als filterbaren Crosswalk analysieren.',
         graph:'Beziehungen und Abhängigkeiten als Netz visualisieren und gezielt anspringen.',
         sunburst:'Verteilungen verdichtet lesen, um Schwerpunkte schnell zu erkennen.',
@@ -3446,11 +3446,11 @@
       if(kind==='component'){
         return {
           key:'component',
-          title:'Implementierungsbeschreibungen',
-          shortTitle:'Implementierung',
-          description:'Beschreibt Komponenten, Capabilities und die Umsetzung bzw. Implementierung referenzierter Anforderungen aus Katalogen.',
+          title:'Komponentendefinitionen',
+          shortTitle:'Komponentendefinition',
+          description:'Beschreibt Komponenten, Capabilities und die Anforderungserfüllung referenzierter Anforderungen aus Katalogen.',
           color:'#176b78',
-          badge:'Component Definition'
+          badge:'Komponentendefinition'
         };
       }
       return {
@@ -3548,14 +3548,14 @@
         +'<section class="registry-help-card">'
           +'<div class="registry-help-header">'
             +'<h3>Wie nutze ich den Viewer?</h3>'
-            +'<p>Ein kurzer Ablauf für die Arbeit mit Katalogen, Implementierungen und Mappings.</p>'
+            +'<p>Ein kurzer Ablauf für die Arbeit mit Katalogen, Komponentendefinitionen und Mappings.</p>'
           +'</div>'
           +'<ol class="registry-guide-list">'
-            +'<li><strong>Dokument finden oder laden.</strong><span>Nutze die Suche auf der Startseite, eine Modellkachel, einen lokalen JSON-Upload oder eine URL (die letzten beiden Optionen sind nur in der Katalog- &amp; Komponentenansicht verfügbar). Durch Klick auf die Kacheln &quot;Kataloge&quot; und &quot;Implementierungsbeschreibungen&quot; auf der Startseite werden die entsprechenden Inhalte aus dem <a href="https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek" target="_blank" rel="noopener noreferrer">öffentlichen BSI Stand der Technik GitHub-Repository</a> angezeigt, welche dann wiederum durch erneuten Klick direkt im Viewer geladen und angezeigt werden können.</span></li>'
-            +'<li><strong>Obere Menüleiste verstehen.</strong><span>Die Menüleiste führt zu den Arbeitsbereichen: Katalog, Komponenten und Mappings zeigen die dort hochgeladenen Inhalte an; Graph, Sunburst und Balkendiagramm visualisieren geladene Daten; JSON zeigt die Rohstruktur des aktiven Dokuments.</span></li>'
-            +'<li><strong>Passende Ansicht wählen.</strong><span>Kataloge zeigen Anforderungen, Komponenten zeigen Umsetzungen bzw. Implementierungsbeschreibungen von Anforderungen, Mappings zeigen Beziehungen zwischen Anforderungen (es muss sichergestellt sein, dass die passenden Kataloge in der Katalogansicht hochgeladen sind, um die Inhalte der entsprechenden Kataloge sauber in der Komponenten- und Mappingansicht anzeigen zu können).</span></li>'
-            +'<li><strong>Inhalte eingrenzen.</strong><span>In der Katalog-, Komponenten- &amp; Mappingansicht steht jeweils eine Menüleiste auf der linken Seite zur Verfügung, welche es ermöglicht die angezeigten Inhalte zu filtern (z.B. über ein Volltext-Suchfeld oder andere vorgegebene Filterungsmöglichkeiten). Somit ist man in der Lage gezielt nach Inhalten zu suchen.</span></li>'
-            +'<li><strong>Ergebnisse sichern.</strong><span>Über den PDF-Export können die aktuellen Katalog- und Komponentenansichten druckoptimiert ausgegeben werden (via Browser Print-to-PDF-Funktion).</span></li>'
+            +'<li><strong>Dokument finden oder laden.</strong><span>Nutze die Suche auf der Startseite, eine Modellkachel, einen lokalen JSON-Upload oder eine URL (die letzten beiden Optionen sind nur in der Katalogansicht und in der Ansicht für Komponentendefinitionen verfügbar). Durch Klick auf die Kacheln &quot;Kataloge&quot; und &quot;Komponentendefinitionen&quot; auf der Startseite werden die entsprechenden Inhalte aus dem <a href="https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek" target="_blank" rel="noopener noreferrer">öffentlichen BSI Stand der Technik GitHub-Repository</a> angezeigt, welche dann wiederum durch erneuten Klick direkt im Viewer geladen und angezeigt werden können.</span></li>'
+            +'<li><strong>Obere Menüleiste verstehen.</strong><span>Die Menüleiste führt zu den Arbeitsbereichen: Katalog, Komponentendefinitionen und Mappings zeigen die dort hochgeladenen Inhalte an; Graph, Sunburst und Balkendiagramm visualisieren geladene Daten; JSON zeigt die Rohstruktur des aktiven Dokuments.</span></li>'
+            +'<li><strong>Passende Ansicht wählen.</strong><span>Kataloge zeigen Anforderungen, Komponentendefinitionen zeigen die Anforderungserfüllung referenzierter Anforderungen, Mappings zeigen Beziehungen zwischen Anforderungen (es muss sichergestellt sein, dass die passenden Kataloge in der Katalogansicht hochgeladen sind, um die Inhalte der entsprechenden Kataloge sauber in der Ansicht für Komponentendefinitionen und in der Mappingansicht anzeigen zu können).</span></li>'
+            +'<li><strong>Inhalte eingrenzen.</strong><span>In der Katalogansicht, der Ansicht für Komponentendefinitionen und der Mappingansicht steht jeweils eine Menüleiste auf der linken Seite zur Verfügung, welche es ermöglicht die angezeigten Inhalte zu filtern (z.B. über ein Volltext-Suchfeld oder andere vorgegebene Filterungsmöglichkeiten). Somit ist man in der Lage gezielt nach Inhalten zu suchen.</span></li>'
+            +'<li><strong>Ergebnisse sichern.</strong><span>Über den PDF-Export können die aktuellen Ansichten für Kataloge und Komponentendefinitionen druckoptimiert ausgegeben werden (via Browser Print-to-PDF-Funktion).</span></li>'
           +'</ol>'
         +'</section>'
         +'<section class="registry-help-card terms">'
@@ -3567,7 +3567,7 @@
             +'<div><dt>OSCAL</dt><dd>Die <a href="https://pages.nist.gov/OSCAL/" target="_blank" rel="noopener noreferrer">Open Security Controls Assessment Language (OSCAL)</a> ist ein standardisiertes, maschinenlesbares Framework, das von NIST entwickelt wurde, um die Effizienz und Konsistenz von Dokumentationen zur Informationssicherheit zu verbessern. Es ermöglicht eine Automatisierung über den gesamten Compliance-Lebenszyklus hinweg.</dd></div>'
             +'<div><dt>Katalog</dt><dd>Kataloge sind maschinenlesbare, standardisierte Sammlungen von Sicherheitsanforderungen. Sie dienen als strukturierte Datenbasis, um Kontrollvorgaben (zum Beispiel aus dem Digitalen Kompendium oder Technischen Richtlinien) eindeutig und automatisierbar zu dokumentieren. Mit <a href="https://pages.nist.gov/OSCAL/learn/concepts/layer/control/catalog/" target="_blank" rel="noopener noreferrer">OSCAL-Katalogen</a> wird der traditionelle, oft manuelle Prozess der Sicherheitsdokumentation durch einen datenzentrierten Ansatz ersetzt, was zu einer effizienteren und konsistenteren Verwaltung von Sicherheits- und Compliance-Anforderungen führt.</dd></div>'
             +'<div><dt>Anforderung</dt><dd>Einzelne Anforderung oder Sicherheitskontrolle innerhalb eines Katalogs.</dd></div>'
-            +'<div><dt>Implementierungs-<br>beschreibung</dt><dd>Eine Implementierungsbeschreibung (in Form einer <a href="https://pages.nist.gov/OSCAL-Reference/models/v1.1.3/component-definition/" target="_blank" rel="noopener noreferrer">OSCAL-Komponentendefinition</a>) enthält eine Sammlung von Komponenten. Jede Komponente in einer Komponentendefinition beschreibt, wie eine bestimmte Implementierung einer Hardware, Software, eines Dienstes, einer Richtlinie, eines Prozesses oder einer Prozedur bestimmte Vorschriften aus einem oder mehreren OSCAL-Katalogen oder -Profilen unterstützen oder implementieren kann.</dd></div>'
+            +'<div><dt>Komponenten-<br>definition</dt><dd>Eine <a href="https://pages.nist.gov/OSCAL-Reference/models/v1.1.3/component-definition/" target="_blank" rel="noopener noreferrer">OSCAL-Komponentendefinition</a> enthält eine Sammlung von Komponenten. Jede Komponente in einer Komponentendefinition beschreibt, wie eine bestimmte Implementierung einer Hardware, Software, eines Dienstes, einer Richtlinie, eines Prozesses oder einer Prozedur bestimmte Vorschriften aus einem oder mehreren OSCAL-Katalogen oder -Profilen unterstützen oder implementieren kann.</dd></div>'
             +'<div><dt>Mappings</dt><dd>Sammlung von Beziehungen zwischen Anforderungen aus verschiedenen Katalogen.</dd></div>'
             +'<div><dt>Metadata</dt><dd>Titel, Version, Datum, Rollen und weitere Verwaltungsinformationen eines Dokuments.</dd></div>'
             +'<div><dt>Back Matter</dt><dd>Anhangsbereich für Ressourcen, Links, Dokumente und Referenzen.</dd></div>'
@@ -3579,7 +3579,7 @@
     function renderRegistryBrowse(parent){
       var visible=registryVisibleFiles();
       var model=registryState.selectedModel || 'all';
-      var selectedTitle=model==='component' ? 'Implementierungsbeschreibungen' : (model==='catalog' ? 'Kataloge' : 'Alle Dokumente');
+      var selectedTitle=model==='component' ? 'Komponentendefinitionen' : (model==='catalog' ? 'Kataloge' : 'Alle Dokumente');
       var root=parent || els.homeTab;
 
       var list=document.createElement('div');
@@ -3623,7 +3623,7 @@
       primary.className='registry-home-main';
       var hero=document.createElement('section');
       hero.className='registry-hero';
-      hero.innerHTML='<h2 id="homeTitle">Einstieg in die Stand der Technik-Bibliothek</h2><p>Durchsuche und öffne aktuelle OSCAL-Kataloge und Implementierungsbeschreibungen direkt aus dem öffentlichen BSI Stand der Technik Repository.</p><div class="registry-logo-panel" aria-hidden="true"><img src="./viewer_logo.png" alt="" onerror="this.parentNode.style.display=&quot;none&quot;"></div>';
+      hero.innerHTML='<h2 id="homeTitle">Einstieg in die Stand der Technik-Bibliothek</h2><p>Durchsuche und öffne aktuelle OSCAL-Kataloge und Komponentendefinitionen direkt aus dem öffentlichen BSI Stand der Technik Repository.</p><div class="registry-logo-panel" aria-hidden="true"><img src="./viewer_logo.png" alt="" onerror="this.parentNode.style.display=&quot;none&quot;"></div>';
       renderRegistrySearch(hero, 'Dokumente suchen...');
       var count=document.createElement('div');
       count.className='registry-count';
@@ -3861,8 +3861,8 @@
     }
 
     function refreshComponentSourceSelect(){
-      rebuildSourceSelect(compEls.sourceSelect, loadedComponentSources, activeComponentSourceIndex, 'Noch keine Implementierungsbeschreibung geladen');
-      renderSourcePicker(compEls.sourcePicker, compEls.sourceButton, compEls.sourcePickerMenu, loadedComponentSources, activeComponentSourceIndex, 'Noch keine Implementierungsbeschreibung geladen', function(index){
+      rebuildSourceSelect(compEls.sourceSelect, loadedComponentSources, activeComponentSourceIndex, 'Noch keine Komponentendefinition geladen');
+      renderSourcePicker(compEls.sourcePicker, compEls.sourceButton, compEls.sourcePickerMenu, loadedComponentSources, activeComponentSourceIndex, 'Noch keine Komponentendefinition geladen', function(index){
         activateComponentSource(index);
         setSourcePickerOpen(compEls.sourcePicker, compEls.sourceButton, compEls.sourcePickerMenu, false);
       }, removeComponentSource);
@@ -3900,7 +3900,7 @@
       var source=loadedComponentSources[index];
       activeComponentSourceIndex=index;
       refreshComponentSourceSelect();
-      compEls.fileInfo.textContent='Komponenten: '+source.label;
+      compEls.fileInfo.textContent='Komponentendefinition: '+source.label;
       componentState.jsonText = source.jsonText || '';
       componentState.baseUrl = source.baseUrl || '';
       processComponentDefinition(source.json);
@@ -4114,7 +4114,7 @@
 
     function oscalKindLabel(kind){
       if(kind==='catalog') return 'OSCAL Catalog';
-      if(kind==='component') return 'OSCAL Component Definition';
+      if(kind==='component') return 'OSCAL-Komponentendefinition';
       if(kind==='mapping') return 'OSCAL Mapping Collection';
       return 'OSCAL-Dokument';
     }
@@ -4184,7 +4184,7 @@
           var jsonText = e.target.result || '';
           var json=JSON.parse(jsonText);
           addComponentSource({ label:f.name, json:json, jsonText:jsonText, baseUrl:'' });
-        }catch(err){ showMsg('<strong>Fehler beim Laden der Component Definition:</strong><br/><code>'+escapeHtml(String(err.message||err))+'</code>', true); }
+        }catch(err){ showMsg('<strong>Fehler beim Laden der Komponentendefinition:</strong><br/><code>'+escapeHtml(String(err.message||err))+'</code>', true); }
       };
       reader.onerror=function(){ showMsg('<strong>Fehler beim Lesen der Datei.</strong>', true); };
       reader.readAsText(f);
@@ -4440,7 +4440,7 @@
           var userCatalogs=getRepositoryJsonFiles(tree, 'Anwenderkataloge/', true);
           var componentDefinitions=getRepositoryJsonFiles(tree, 'Implementierungsbeschreibungen/Komponenten/', false);
           if(els.bsiStatus) els.bsiStatus.textContent='Katalogtitel werden aus den OSCAL-Metadaten geladen.';
-          if(compEls.bsiStatus) compEls.bsiStatus.textContent='Titel der Implementierungsbeschreibungen werden aus den OSCAL-Metadaten geladen.';
+          if(compEls.bsiStatus) compEls.bsiStatus.textContent='Titel der Komponentendefinitionen werden aus den OSCAL-Metadaten geladen.';
           return Promise.all([
             enrichRepositoryTitles(sourceCatalogs),
             enrichRepositoryTitles(userCatalogs),
@@ -4453,7 +4453,7 @@
           var componentDefinitions=groups[2];
           tagRepositoryFiles(userCatalogs, 'catalog', 'Anwenderkataloge');
           tagRepositoryFiles(sourceCatalogs, 'catalog', 'Quellkataloge');
-          tagRepositoryFiles(componentDefinitions, 'component', 'Implementierungsbeschreibungen');
+          tagRepositoryFiles(componentDefinitions, 'component', 'Komponentendefinitionen');
           registryState.catalogs=userCatalogs.concat(sourceCatalogs);
           registryState.components=componentDefinitions;
           registryState.status='ready';
@@ -4467,7 +4467,7 @@
           prepareRepositorySelect(compEls.bsiSelect, 'Aus dem Repository auswählen');
           appendRepositoryOptions(compEls.bsiSelect, '', componentDefinitions);
           if(compEls.bsiSelect) compEls.bsiSelect.disabled=!componentDefinitions.length;
-          if(compEls.bsiStatus) compEls.bsiStatus.textContent=componentDefinitions.length+' aktuelle Implementierungsbeschreibungen verfügbar.';
+          if(compEls.bsiStatus) compEls.bsiStatus.textContent=componentDefinitions.length+' aktuelle Komponentendefinitionen verfügbar.';
           if(uiState.view==='home') renderRegistryHome();
         })
         .catch(function(err){
@@ -4611,12 +4611,12 @@
       var g=document.querySelector('#graph'); if(g) g.innerHTML='<div class="graph-toolbar"><button id="fitBtn" class="btn" title="Alles anzeigen">Alles anzeigen</button></div>';
       var sb=document.querySelector('#sunburst'); if(sb) sb.innerHTML='';
       var bar=document.querySelector('#bar'); if(bar) bar.innerHTML='';
-      compEls.fileInfo.textContent='Komponenten: keine Datei';
+      compEls.fileInfo.textContent='Komponentendefinition: keine Datei';
       compEls.countInfo.textContent='–';
       compEls.graphInfo.textContent='Graph: 0 Knoten';
       uiState.componentExpandOverride = null;
       componentState=createComponentState();
-      renderSelectionState(compEls.selectionState, 'Komponentenstatus', 'Kein Datensatz geladen', []);
+      renderSelectionState(compEls.selectionState, 'Status Komponentendefinitionen', 'Kein Datensatz geladen', []);
       if(uiState.view==='components'){ renderComponentView(); }
       if(els.jsonView && uiState.dataMode==='component') els.jsonView.textContent='Kein Dokument geladen.';
       if(!loadedComponentSources.length){
@@ -6856,7 +6856,7 @@ function baseMatches(c){ return matches(c); }
           } else if(status.loaded && status.skipped){
             statusText=status.message || 'Bereits enthalten.';
           } else {
-            statusText=status.message || 'Die importierte Component Definition kann nicht angezeigt werden, da sie zur Zeit im Viewer nicht hochgeladen ist.';
+            statusText=status.message || 'Die importierte Komponentendefinition kann nicht angezeigt werden, da sie zur Zeit im Viewer nicht hochgeladen ist.';
           }
           statusField.innerHTML='<div class="import-field-label">Status</div><div>'+renderHighlightedInline(statusText, searchTerm)+'</div>';
           item.appendChild(statusField);
@@ -7388,7 +7388,7 @@ function baseMatches(c){ return matches(c); }
             var seenKey=documentUuid.toLowerCase();
             if(seen[seenKey]){
               status.skipped=true;
-              status.message='Die Component Definition ist bereits in der aktuellen Ansicht enthalten.';
+              status.message='Die Komponentendefinition ist bereits in der aktuellen Ansicht enthalten.';
             } else {
               seen[seenKey]=true;
               var importedResources=(importedDoc && importedDoc['back-matter'] && importedDoc['back-matter'].resources) || [];
@@ -7410,7 +7410,7 @@ function baseMatches(c){ return matches(c); }
               componentState.importedDocumentUuids[documentUuid]=true;
             }
           } else {
-            status.message='Die importierte Component Definition kann nicht angezeigt werden, da sie zur Zeit im Viewer nicht hochgeladen ist.';
+            status.message='Die importierte Komponentendefinition kann nicht angezeigt werden, da sie zur Zeit im Viewer nicht hochgeladen ist.';
           }
         }
         statuses.push(status);
@@ -7663,7 +7663,7 @@ function baseMatches(c){ return matches(c); }
         details.addEventListener('toggle', (function(key, el){ return function(){ uiState.componentExpandOverride=null; componentState.openImplementations[key]=el.open; }; })(implKey, details));
         var reqCount=impl.requirements.length;
         var summary=document.createElement('summary');
-        summary.innerHTML='<span class="component-summary"><strong>Implementierungsbeschreibungen</strong><span class="badge">'+escapeHtml(reqCount+' Anforderungen')+'</span></span>'
+        summary.innerHTML='<span class="component-summary"><strong>Anforderungserfüllung</strong><span class="badge">'+escapeHtml(reqCount+' Anforderungen')+'</span></span>'
           + '<span class="component-source" style="display:block;margin-top:6px"><strong>Quelle:</strong> '+buildDocumentLinkHtml(impl.sourceLabel, impl.source, searchTerm, componentState.resourceByUuid, componentState.baseUrl)+'</span>';
         details.appendChild(summary);
 
@@ -7932,7 +7932,7 @@ function baseMatches(c){ return matches(c); }
             hasDescription=true;
           }
           if(!hasDescription){
-            implementationCell.innerHTML='<span class="component-empty">Keine Implementierungsbeschreibung vorhanden.</span>';
+            implementationCell.innerHTML='<span class="component-empty">Keine Beschreibung vorhanden.</span>';
           }
 
           row.appendChild(requirementCell);
@@ -8186,7 +8186,7 @@ function baseMatches(c){ return matches(c); }
       if(hasImports){
         var importDetails=document.createElement('details');
         importDetails.className='catalog-info-box';
-        importDetails.innerHTML='<summary><strong>Importierte Component Definitions</strong></summary>';
+        importDetails.innerHTML='<summary><strong>Importierte Komponentendefinitionen</strong></summary>';
         var importBody=document.createElement('div');
         importBody.className='catalog-info-content';
         appendImportedComponentDefinitions(importBody, componentState.imports, searchTerm, componentState.resourceByUuid, componentState.baseUrl, componentState.importStatuses);
@@ -8216,10 +8216,10 @@ function baseMatches(c){ return matches(c); }
       return withDataMode('component', function(){
         els.componentTab.innerHTML='';
         if(!componentState.components.length && !componentState.capabilities.length && !componentState.metadata && !componentState.backMatter){
-          renderSelectionState(compEls.selectionState, 'Komponentenstatus', 'Kein Datensatz geladen', []);
+          renderSelectionState(compEls.selectionState, 'Status Komponentendefinitionen', 'Kein Datensatz geladen', []);
           renderOverviewCard({
-            title:'Komponenten-Workspace',
-            description:'Lade eine OSCAL Component Definition, um Implementierungen, Capabilities und Referenzen in derselben Oberfläche zu verfolgen.',
+            title:'Komponentendefinitionen-Workspace',
+            description:'Lade eine OSCAL-Komponentendefinition, um Implementierungen, Capabilities und Referenzen in derselben Oberfläche zu verfolgen.',
             stats:[
               { label:'Komponenten', value:'0', note:'Geladene Einträge' },
               { label:'Capabilities', value:'0', note:'Geladene Einträge' },
@@ -8231,7 +8231,7 @@ function baseMatches(c){ return matches(c); }
           });
           var initial=document.createElement('div');
           initial.className='card';
-          initial.textContent='Keine Component Definition geladen.';
+          initial.textContent='Keine Komponentendefinition geladen.';
           els.componentTab.appendChild(initial);
           compEls.graphInfo.textContent='Graph: 0 Knoten';
           return;
@@ -8246,9 +8246,9 @@ function baseMatches(c){ return matches(c); }
           if(matchesComponentOwner(componentState.components[c])) matchedComponents.push(componentState.components[c]);
         }
         var activeComponentChips=collectComponentActiveFilterChips();
-        renderSelectionState(compEls.selectionState, 'Komponentenfokus', (matchedCapabilities.length + matchedComponents.length)+' sichtbare Einträge', activeComponentChips);
+        renderSelectionState(compEls.selectionState, 'Fokus Komponentendefinitionen', (matchedCapabilities.length + matchedComponents.length)+' sichtbare Einträge', activeComponentChips);
         renderOverviewCard({
-          title:(matchedCapabilities.length || matchedComponents.length) ? 'Komponentenanalyse' : 'Keine Treffer in Komponenten',
+          title:(matchedCapabilities.length || matchedComponents.length) ? 'Analyse der Komponentendefinition' : 'Keine Treffer in Komponenten',
           description:(matchedCapabilities.length || matchedComponents.length) ? 'Die Ansicht fokussiert Eigentümer, Implementierungen und referenzierte Anforderungen mit klaren Sprungpunkten zurück in den Katalog.' : 'Die aktuelle Suche oder Filterung blendet alle Komponenten und Capabilities aus. Passe die Einschränkungen an oder setze sie gesammelt zurück.',
           stats:[
             { label:'Komponenten', value:String(componentState.components.length), note:'Geladene Komponenten' },
@@ -9393,7 +9393,7 @@ function baseMatches(c){ return matches(c); }
     // Initiales Rendering: zuerst die Repository-Startseite, danach laden die Detailansichten bei Bedarf.
     updateHeaderSubtitle('home');
     setSidebarMode('catalog');
-    renderSelectionState(compEls.selectionState, 'Komponentenstatus', 'Kein Datensatz geladen', []);
+    renderSelectionState(compEls.selectionState, 'Status Komponentendefinitionen', 'Kein Datensatz geladen', []);
     renderSelectionState(mappingEls.selectionState, 'Mappingstatus', 'Kein Datensatz geladen', []);
     showHomePage();
 
@@ -9603,7 +9603,7 @@ function baseMatches(c){ return matches(c); }
       try{
         if((!componentState.components || !componentState.components.length) && (!componentState.capabilities || !componentState.capabilities.length)){
           els.msg.className='card err';
-          els.msg.textContent='Bitte zuerst eine OSCAL Component Definition laden, bevor du exportierst.';
+          els.msg.textContent='Bitte zuerst eine OSCAL-Komponentendefinition laden, bevor du exportierst.';
           return;
         }
 
