@@ -1786,6 +1786,117 @@
       border:0;
       background:none;
     }
+    .side-panel{
+      display:grid;
+      gap:12px;
+    }
+    .sidebar-section{
+      margin:0;
+      width:100%;
+      max-width:100%;
+      min-width:0;
+      border:1px solid rgba(118,139,170,.24);
+      background:rgba(255,255,255,.78);
+      box-shadow:0 4px 12px rgba(30,47,70,.04);
+      overflow:visible;
+      transition:border-color .16s ease, box-shadow .16s ease, background .16s ease;
+    }
+    .sidebar-section[open]{
+      border-color:rgba(45,95,154,.38);
+      background:rgba(255,255,255,.94);
+      box-shadow:0 10px 24px rgba(30,47,70,.08);
+    }
+    .sidebar-section > summary{
+      position:relative;
+      display:grid;
+      grid-template-columns:36px minmax(0,1fr) 18px;
+      gap:10px;
+      align-items:center;
+      min-height:58px;
+      padding:10px 12px;
+      color:#1e2f46;
+      cursor:pointer;
+      list-style:none;
+      user-select:none;
+    }
+    .sidebar-section > summary::-webkit-details-marker{display:none}
+    .sidebar-section > summary::marker{content:""}
+    .sidebar-section > summary::after{
+      content:"▾";
+      color:#6f7f95;
+      font-size:13px;
+      line-height:1;
+      text-align:center;
+      transition:transform .16s ease;
+    }
+    .sidebar-section[open] > summary::after{transform:rotate(180deg)}
+    .sidebar-section > summary:hover{background:rgba(238,244,253,.72)}
+    .sidebar-section > summary:focus-visible{
+      outline:2px solid #2d5f9a;
+      outline-offset:-2px;
+    }
+    .sidebar-section-icon{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      width:34px;
+      height:34px;
+      border:1px solid rgba(45,95,154,.20);
+      background:#eef4fd;
+      color:#2d5f9a;
+      font-size:19px;
+      font-weight:800;
+      line-height:1;
+    }
+    .sidebar-section[data-section="filters"] .sidebar-section-icon{
+      border-color:rgba(23,107,120,.22);
+      background:#eaf7f8;
+      color:#176b78;
+    }
+    .sidebar-section-heading{
+      display:grid;
+      gap:2px;
+      min-width:0;
+    }
+    .sidebar-section-heading strong{
+      font-size:14px;
+      line-height:1.2;
+    }
+    .sidebar-section-heading small{
+      color:#73839a;
+      font-size:11px;
+      font-weight:600;
+      line-height:1.35;
+    }
+    .sidebar-section-body{
+      display:grid;
+      width:100%;
+      max-width:100%;
+      min-width:0;
+      padding:14px;
+      border-top:1px solid rgba(118,139,170,.16);
+    }
+    .sidebar-section:not([open]) > .sidebar-section-body{display:none}
+    .sidebar-section-body > *{
+      max-width:100%;
+      min-width:0;
+    }
+    .sidebar-section[data-section="filters"] .toolbar,
+    .sidebar-section[data-section="filters"] .input,
+    .sidebar-section[data-section="filters"] details.ms{
+      width:100%;
+      max-width:100%;
+      min-width:0;
+    }
+    .sidebar-section[data-section="filters"] details.ms > summary{
+      min-width:0;
+      max-width:100%;
+      white-space:normal;
+      overflow-wrap:anywhere;
+      word-break:break-word;
+    }
+    .sidebar-section-body > :first-child{margin-top:0}
+    .sidebar-section-body > :last-child{margin-bottom:0}
     .panel-intro{
       padding:14px;
       background:#f9fbff;
@@ -1795,8 +1906,13 @@
       color:#73839a;
     }
     .panel-title{
-      font-size:20px;
-      line-height:1.15;
+      max-width:100%;
+      min-width:0;
+      font-size:18px;
+      line-height:1.2;
+      overflow-wrap:anywhere;
+      word-break:normal;
+      hyphens:auto;
     }
     .panel-copy{
       color:#64758c;
@@ -1998,6 +2114,195 @@
       border-color:rgba(118,139,170,.16);
       font-weight:700;
     }
+    .status,
+    .status .pill,
+    .selection-state{
+      width:100%;
+      max-width:100%;
+      min-width:0;
+    }
+    .status .pill{
+      cursor:help;
+    }
+    .selection-state{
+      overflow:hidden;
+    }
+    .selection-header{
+      display:grid;
+      grid-template-columns:minmax(0,1fr);
+      justify-content:stretch;
+      align-items:start;
+      gap:4px;
+    }
+    .selection-title,
+    .selection-subtitle{
+      display:block;
+      width:100%;
+      max-width:100%;
+      min-width:0;
+      overflow-wrap:anywhere;
+      word-break:break-word;
+    }
+    .selection-subtitle{
+      line-height:1.45;
+    }
+    .config-command-section{
+      width:100%;
+      max-width:100%;
+      min-width:0;
+      margin-top:14px;
+      border:1px solid #b9cce5;
+      background:#f4f8fd;
+      overflow:hidden;
+    }
+    .config-command-section > summary{
+      display:grid;
+      grid-template-columns:34px minmax(0,1fr) auto 14px;
+      gap:9px;
+      align-items:center;
+      min-width:0;
+      padding:10px 12px;
+      color:#1e3f66;
+      cursor:pointer;
+      list-style:none;
+      user-select:none;
+    }
+    .config-command-section > summary::-webkit-details-marker{display:none}
+    .config-command-section > summary::marker{content:""}
+    .config-command-section > summary::after{
+      content:"▾";
+      font-size:11px;
+      line-height:1;
+      text-align:center;
+      transition:transform .16s ease;
+    }
+    .config-command-section[open] > summary::after{transform:rotate(180deg)}
+    .config-command-section > summary:hover{background:#eaf2fc}
+    .config-command-icon{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      width:32px;
+      height:32px;
+      border:1px solid #9fb8d8;
+      background:#ffffff;
+      color:#175cd3;
+      font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+      font-size:12px;
+      font-weight:800;
+    }
+    .config-command-summary-copy{
+      display:grid;
+      gap:1px;
+      min-width:0;
+    }
+    .config-command-summary-copy strong{
+      font-size:13px;
+      line-height:1.25;
+    }
+    .config-command-summary-copy small{
+      color:#6b7c92;
+      font-size:11px;
+      line-height:1.3;
+    }
+    .config-command-count{
+      min-width:24px;
+      padding:3px 7px;
+      border:1px solid #b9cce5;
+      background:#ffffff;
+      color:#294d7a;
+      font-size:11px;
+      font-weight:800;
+      text-align:center;
+    }
+    .config-command-body{
+      display:grid;
+      gap:12px;
+      min-width:0;
+      padding:12px;
+      border-top:1px solid #c9d8ea;
+      background:#ffffff;
+    }
+    .config-command-item{
+      display:grid;
+      gap:8px;
+      min-width:0;
+    }
+    .config-command-item + .config-command-item{
+      padding-top:12px;
+      border-top:1px dashed #b9cce5;
+    }
+    .config-command-toolbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      min-width:0;
+    }
+    .config-command-label{
+      color:#526984;
+      font-size:11px;
+      font-weight:800;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+    }
+    .config-command-copy.btn.small{
+      flex:0 0 auto;
+      width:auto;
+      min-height:30px;
+      padding:5px 9px;
+      background:#eef4fd;
+      border-color:#b9cce5;
+      color:#294d7a;
+      font-size:11px;
+    }
+    .config-command-copy.is-copied{
+      background:#e7f5ee;
+      border-color:#abd4bd;
+      color:#21683e;
+    }
+    .config-command-code{
+      width:100%;
+      max-width:100%;
+      min-width:0;
+      margin:0;
+      padding:12px 14px;
+      border-left:4px solid #08afd1;
+      background:#172337;
+      color:#edf5ff;
+      overflow-x:auto;
+      white-space:pre-wrap;
+      overflow-wrap:anywhere;
+      word-break:break-word;
+      tab-size:2;
+    }
+    .config-command-code code{
+      padding:0;
+      background:transparent;
+      color:inherit;
+      font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+      font-size:12px;
+      line-height:1.55;
+      white-space:inherit;
+    }
+    .config-command-remarks{
+      padding:9px 11px;
+      border-left:3px solid #b9cce5;
+      background:#f4f8fd;
+      color:#526984;
+      font-size:12px;
+      line-height:1.5;
+    }
+    .config-command-remarks strong{
+      display:block;
+      margin-bottom:3px;
+      color:#294d7a;
+      font-size:11px;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+    }
+    .config-command-remarks .catalog-md > :first-child{margin-top:0}
+    .config-command-remarks .catalog-md > :last-child{margin-bottom:0}
     .filter-chip,.overview-chip{
       background:#e7eefb;
       border-color:#c9d8f0;
@@ -2463,8 +2768,15 @@
     .registry-model-dot{width:10px;height:10px;border-radius:50%;background:var(--model-color,#001b3d)}
     .registry-model-card h3{margin:4px 0 0;color:var(--model-color,#001b3d);font-size:16px;line-height:1.25;font-weight:800}
     .registry-model-card p{margin:0;color:#1f2a25;font-size:14px;line-height:1.45}
-    .registry-model-footer{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:auto;color:#8b94a8;font-size:13px}
+    .registry-model-footer{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-top:auto;color:#8b94a8;font-size:13px}
     .registry-model-link{color:#00a7d0;font-weight:800}
+    .registry-model-status{display:inline-flex;align-items:center;justify-content:flex-end;gap:8px;min-width:0;margin-left:auto;text-align:right;line-height:1.35}
+    .registry-model-loading{max-width:275px;color:#6f7f95;font-size:11px;font-weight:700}
+    .registry-model-loading-text{min-width:0}
+    .registry-model-spinner{flex:0 0 auto;width:17px;height:17px;border:2px solid #cfdae7;border-top-color:var(--model-color,#001b3d);border-radius:50%;animation:registry-model-spin .8s linear infinite}
+    .registry-model-load-error{max-width:250px;color:#9b3d3d;font-size:11px;font-weight:700}
+    @keyframes registry-model-spin{to{transform:rotate(360deg)}}
+    @media(prefers-reduced-motion:reduce){.registry-model-spinner{animation-duration:1.8s}}
     .registry-browser{display:grid;gap:16px}
     .registry-browser-header{display:grid;grid-template-columns:120px minmax(0,1fr);gap:20px;align-items:center;padding:14px 16px;border:1px solid #d9e0eb;border-radius:8px;background:#ffffff;box-shadow:0 3px 12px rgba(15,30,55,.06)}
     .registry-total strong{display:block;color:#001b3d;font-size:28px;line-height:1;font-weight:800}
@@ -2566,12 +2878,18 @@
       <!-- Umschalter zwischen den beiden Datenquellen-Bereichen der Sidebar. -->
       <div class="sidebar-tabs" role="tablist" aria-label="Datenquellen">
         <button class="sidebar-tab active" data-panel="catalog" id="side-tab-catalog" type="button" role="tab" aria-selected="true" aria-controls="catalogPanel">Katalog</button>
-        <button class="sidebar-tab" data-panel="component" id="side-tab-components" type="button" role="tab" aria-selected="false" aria-controls="componentPanel">Komponentendefinitionen</button>
+        <button class="sidebar-tab" data-panel="component" id="side-tab-components" type="button" role="tab" aria-selected="false" aria-controls="componentPanel">Komp. def.</button>
         <button class="sidebar-tab" data-panel="mapping" id="side-tab-mappings" type="button" role="tab" aria-selected="false" aria-controls="mappingPanel">Mappings</button>
       </div>
 
       <!-- Katalog-Panel: Upload, Quellenwechsel, Filter, Status und Export fuer OSCAL Catalogs. -->
       <div id="catalogPanel" class="side-panel">
+        <details class="sidebar-section" data-section="upload" name="catalog-sidebar-sections">
+          <summary>
+            <span class="sidebar-section-icon" aria-hidden="true">⇧</span>
+            <span class="sidebar-section-heading"><strong>Dateiupload</strong><small>Katalog laden und Quellen verwalten</small></span>
+          </summary>
+          <div class="sidebar-section-body">
         <div class="panel-intro">
           <div class="panel-kicker">Catalog Input</div>
           <h3 class="panel-title">OSCAL Catalog laden</h3>
@@ -2608,8 +2926,15 @@
             <div id="catalogSourceMenu" class="source-picker-menu hidden" role="listbox" aria-label="Geladene Kataloge"></div>
           </div>
         </div>
+          </div>
+        </details>
 
-        <hr class="filter-split" />
+        <details class="sidebar-section" data-section="filters" name="catalog-sidebar-sections">
+          <summary>
+            <span class="sidebar-section-icon" aria-hidden="true">⌕</span>
+            <span class="sidebar-section-heading"><strong>Inhalte filtern</strong><small>Suche und 9 Filter</small></span>
+          </summary>
+          <div class="sidebar-section-body">
         <!-- Volltextsuche und facettierte Filter fuer die aktuell aktive Catalog-Quelle. -->
         <div style="margin-top:12px;display:grid;gap:8px" class="toolbar">
           <label class="field-label" for="q">Suche im Katalog</label>
@@ -2653,10 +2978,18 @@
         </button>
 
         <p class="note" style="margin-top:10px">Alles läuft lokal im Browser. Kein Upload.</p>
+          </div>
+        </details>
       </div>
 
       <!-- Komponenten-Panel: Upload, Quellenwechsel, Filter, Status und Export fuer Component Definitions. -->
       <div id="componentPanel" class="side-panel hidden">
+        <details class="sidebar-section" data-section="upload" name="component-sidebar-sections">
+          <summary>
+            <span class="sidebar-section-icon" aria-hidden="true">⇧</span>
+            <span class="sidebar-section-heading"><strong>Dateiupload</strong><small>Definitionen laden und Quellen verwalten</small></span>
+          </summary>
+          <div class="sidebar-section-body">
         <div class="panel-intro">
           <div class="panel-kicker">Component Input</div>
           <h3 class="panel-title">Komponentendefinition laden</h3>
@@ -2693,8 +3026,15 @@
             <div id="componentSourceMenu" class="source-picker-menu hidden" role="listbox" aria-label="Geladene Komponentendefinitionen"></div>
           </div>
         </div>
+          </div>
+        </details>
 
-        <hr class="filter-split" />
+        <details class="sidebar-section" data-section="filters" name="component-sidebar-sections">
+          <summary>
+            <span class="sidebar-section-icon" aria-hidden="true">⌕</span>
+            <span class="sidebar-section-heading"><strong>Inhalte filtern</strong><small>Suche und 4 Filter</small></span>
+          </summary>
+          <div class="sidebar-section-body">
         <!-- Volltextsuche und facettierte Filter fuer Komponenten, Quellen und Capabilities. -->
         <div style="margin-top:12px;display:grid;gap:8px" class="toolbar">
           <label class="field-label" for="compQ">Suche in Komponenten</label>
@@ -2724,10 +3064,18 @@
         </button>
 
         <p class="note component-jump-note">Referenzierte Anforderungen können direkt in den Katalog springen, sobald zusätzlich ein passender OSCAL Catalog geladen ist.</p>
+          </div>
+        </details>
       </div>
 
       <!-- Mapping-Panel: Upload, Quellenwechsel und facettierte Filter fuer OSCAL Control Mappings. -->
       <div id="mappingPanel" class="side-panel hidden">
+        <details class="sidebar-section" data-section="upload" name="mapping-sidebar-sections">
+          <summary>
+            <span class="sidebar-section-icon" aria-hidden="true">⇧</span>
+            <span class="sidebar-section-heading"><strong>Dateiupload</strong><small>Mappings laden und Quellen verwalten</small></span>
+          </summary>
+          <div class="sidebar-section-body">
         <div class="panel-intro">
           <div class="panel-kicker">Mapping Input</div>
           <h3 class="panel-title">Control Mapping laden</h3>
@@ -2753,7 +3101,15 @@
             <div id="mappingSourceMenu" class="source-picker-menu hidden" role="listbox" aria-label="Geladene Mappings"></div>
           </div>
         </div>
-        <hr class="filter-split" />
+          </div>
+        </details>
+
+        <details class="sidebar-section" data-section="filters" name="mapping-sidebar-sections">
+          <summary>
+            <span class="sidebar-section-icon" aria-hidden="true">⌕</span>
+            <span class="sidebar-section-heading"><strong>Inhalte filtern</strong><small>Suche und 6 Filter</small></span>
+          </summary>
+          <div class="sidebar-section-body">
         <div style="margin-top:12px;display:grid;gap:8px" class="toolbar">
           <label class="field-label" for="mappingQ">Suche im Mapping</label>
           <input id="mappingQ" class="input" type="text" placeholder="Suchen (Control-ID, Katalog, Relationship…)" autocomplete="off" autocapitalize="off" spellcheck="false" />
@@ -2772,6 +3128,8 @@
         <div id="mappingSelectionState" class="selection-state"></div>
         <button id="mappingResetBtn" class="btn" type="button" style="width:100%;justify-content:center;margin-top:12px">Filter zurücksetzen</button>
         <p class="note" style="margin-top:10px">Die Relationship wird aus Sicht der Source-Controls zum Target-Katalog gelesen.</p>
+          </div>
+        </details>
       </div>
     </aside>
 
@@ -3001,6 +3359,33 @@
       practiceMenu:$('#mappingPracticeMS_menu'), relationshipMenu:$('#mappingRelationshipMS_menu'), sourceCatalogMenu:$('#mappingSourceCatalogMS_menu'), targetCatalogMenu:$('#mappingTargetCatalogMS_menu'), rationaleMenu:$('#mappingRationaleMS_menu'), statusMenu:$('#mappingStatusMS_menu'),
       fileInfo:$('#mappingFileInfo'), countInfo:$('#mappingCountInfo'), selectionState:$('#mappingSelectionState'), resetBtn:$('#mappingResetBtn')
     };
+    // Vollstaendige dynamische Statusinhalte per Hover/Fokus zugaenglich halten.
+    function syncStatusPillTooltip(pill){
+      if(!pill) return;
+      var fullText=String(pill.textContent||'').trim();
+      if(fullText){
+        pill.setAttribute('title', fullText);
+        pill.setAttribute('aria-label', fullText);
+        pill.setAttribute('tabindex', '0');
+      } else {
+        pill.removeAttribute('title');
+        pill.removeAttribute('aria-label');
+        pill.removeAttribute('tabindex');
+      }
+    }
+    function bindStatusPillTooltips(){
+      var pills=document.querySelectorAll('.status .pill');
+      for(var i=0;i<pills.length;i++){
+        (function(pill){
+          syncStatusPillTooltip(pill);
+          if(typeof MutationObserver!=='undefined'){
+            var observer=new MutationObserver(function(){ syncStatusPillTooltip(pill); });
+            observer.observe(pill, { childList:true, characterData:true, subtree:true });
+          }
+        })(pills[i]);
+      }
+    }
+    bindStatusPillTooltips();
     var registryState={ status:'loading', catalogs:[], components:[], selectedModel:'', query:'', error:'' };
 
     // Aufbau und Synchronisation der facettierten Multi-Select-Dropdowns.
@@ -3526,11 +3911,19 @@
       card.className='registry-model-card';
       card.type='button';
       card.style.setProperty('--model-color', cfg.color);
+      var statusHtml='';
+      if(registryState.status==='loading'){
+        statusHtml='<span class="registry-model-status registry-model-loading" role="status" aria-live="polite"><span class="registry-model-loading-text">Inhalte werden geladen, dies kann einige Sekunden dauern.</span><span class="registry-model-spinner" aria-hidden="true"></span></span>';
+      } else if(registryState.status==='error'){
+        statusHtml='<span class="registry-model-status registry-model-load-error">Inhalte konnten nicht geladen werden.</span>';
+      } else {
+        statusHtml='<span class="registry-model-status">'+count+' Dokumente</span>';
+      }
       card.innerHTML=''
         +'<span class="registry-model-dot" aria-hidden="true"></span>'
         +'<h3>'+escapeHtml(cfg.title)+'</h3>'
         +'<p>'+escapeHtml(cfg.description)+'</p>'
-        +'<div class="registry-model-footer"><span class="registry-model-link">Durchsuchen →</span><span>'+count+' Dokumente</span></div>';
+        +'<div class="registry-model-footer"><span class="registry-model-link">Durchsuchen →</span>'+statusHtml+'</div>';
       card.addEventListener('click', function(){
         registryState.selectedModel=kind;
         registryState.query='';
@@ -5648,6 +6041,10 @@
         var integrityArr=extractNamedControlProperty(c.props, 'integrity');
         var availabilityArr=extractNamedControlProperty(c.props, 'availability');
         var authenticityArr=extractNamedControlProperty(c.props, 'authenticity');
+        var taxonomyL1=valueOfProp(c.props, 'Taxonomy-L1') || '';
+        var taxonomyL2=valueOfProp(c.props, 'Taxonomy-L2') || '';
+        var taxonomyL3=valueOfProp(c.props, 'Taxonomy-L3') || '';
+        var taxonomyL4=valueOfProp(c.props, 'Taxonomy-L4') || '';
         var paramMap = buildParamMap(c.params);
         var remarks = c.remarks || '';
 
@@ -5659,7 +6056,7 @@
                 // build searchable haystack (for Volltextsuche)
         var allProse='';
         if(parts){ for(var pi=0; pi<parts.length; pi++){ if(parts[pi] && parts[pi].prose) allProse += ' ' + parts[pi].prose; } }
-        var hay = [id, rawId, labelId, (c.title||''), uuid, cls, secLevel, effortLabel, targetsArr.join(', '), tagsArr.join(', '), modalverbsArr.join(', '), documentationArr.join(', '), actionWordsArr.join(', '), threatsArr.join(', '), confidentialityArr.join(', '), integrityArr.join(', '), availabilityArr.join(', '), authenticityArr.join(', '), remarks, allProse, topicIdVal, topicTitleVal].join(' \n ').toLowerCase();
+        var hay = [id, rawId, labelId, (c.title||''), uuid, cls, secLevel, effortLabel, targetsArr.join(', '), tagsArr.join(', '), modalverbsArr.join(', '), documentationArr.join(', '), actionWordsArr.join(', '), threatsArr.join(', '), confidentialityArr.join(', '), integrityArr.join(', '), availabilityArr.join(', '), authenticityArr.join(', '), taxonomyL1, taxonomyL2, taxonomyL3, taxonomyL4, remarks, allProse, topicIdVal, topicTitleVal].join(' \n ').toLowerCase();
 
         var entry={ id:id, rawId:rawId, labelId:labelId, uuid:uuid, title:(c.title||''), class:cls, cls:cls, sec_level:secLevel, sec:secLevel,
                     effort:effort, effortLabel:effortLabel,
@@ -5673,6 +6070,7 @@
                     integrity:(integrityArr.join(', ')), integrityArr:integrityArr,
                     availability:(availabilityArr.join(', ')), availabilityArr:availabilityArr,
                     authenticity:(authenticityArr.join(', ')), authenticityArr:authenticityArr,
+                    taxonomyL1:taxonomyL1, taxonomyL2:taxonomyL2, taxonomyL3:taxonomyL3, taxonomyL4:taxonomyL4,
                     practiceId:(practiceId||''),
                     groupKey:(groupKey||''),
                     topicId:topicIdVal, topicTitle:topicTitleVal, topicUuid:topicUuidVal,
@@ -7094,6 +7492,28 @@ function baseMatches(c){ return matches(c); }
       return looksUuidLikeId(key) ? key : '';
     }
 
+    function extractConfigCommands(props){
+      var out=[];
+      var items=Array.isArray(props) ? props : [];
+      for(var i=0;i<items.length;i++){
+        var prop=items[i];
+        if(!prop) continue;
+        var name=String(prop.name||'').trim().toLowerCase();
+        if(name!=='config-commands' && name!=='config-command') continue;
+        var value=prop.value==null ? '' : String(prop.value);
+        var remarks=prop.remarks==null ? '' : String(prop.remarks);
+        if(!value.trim() && !remarks.trim()) continue;
+        out.push({
+          name:prop.name || 'config-commands',
+          value:value,
+          remarks:remarks,
+          ns:prop.ns || '',
+          raw:prop
+        });
+      }
+      return out;
+    }
+
     function createImplementationEntry(impl, owner){
       var source=String(impl && impl.source || '').trim();
       var sourceResource=getBackMatterResource(componentState.resourceByUuid, source);
@@ -7129,6 +7549,7 @@ function baseMatches(c){ return matches(c); }
           catalogControlUuid:'',
           description:req.description || '',
           props:req.props || [],
+          configCommands:extractConfigCommands(req.props),
           links:req.links || [],
           setParameters:req['set-parameters'] || [],
           localParamMap:buildParamMap(req['set-parameters'] || [], 'param-id'),
@@ -7206,6 +7627,10 @@ function baseMatches(c){ return matches(c); }
             replaceParams(req.description, req.paramMap),
             replaceParams(req.remarks, req.paramMap)
           );
+          var configCommands=req.configCommands || [];
+          for(var cc=0;cc<configCommands.length;cc++){
+            parts.push(configCommands[cc].value, configCommands[cc].remarks);
+          }
           var stmts=req.statements || [];
           for(var s=0;s<stmts.length;s++){
             parts.push(
@@ -7523,7 +7948,7 @@ function baseMatches(c){ return matches(c); }
           for(var rq2=0;rq2<reqs2[ci2].requirements.length;rq2++){ stmtCount += reqs2[ci2].requirements[rq2].statements.length; }
         }
       }
-      compEls.countInfo.textContent=componentState.components.length+' Komponenten / '+componentState.capabilities.length+' Capabilities / '+reqCount+' Anforderungen / '+stmtCount+' Statements';
+      compEls.countInfo.textContent=componentState.components.length+' Komponenten / '+componentState.capabilities.length+' Capabilities';
       if(!componentState.components.length && !componentState.capabilities.length){
         showMsg('<strong>Keine Komponenten gefunden.</strong><br/>Erwartet: <code>component-definition.components</code> und/oder <code>component-definition.capabilities</code>.', true);
       }
@@ -7844,6 +8269,145 @@ function baseMatches(c){ return matches(c); }
       parent.appendChild(details);
     }
 
+    function copyConfigCommandFallback(text){
+      return new Promise(function(resolve,reject){
+        var textarea=document.createElement('textarea');
+        textarea.value=String(text||'');
+        textarea.setAttribute('readonly','');
+        textarea.style.position='fixed';
+        textarea.style.left='-9999px';
+        textarea.style.opacity='0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        try{
+          var copied=document.execCommand('copy');
+          document.body.removeChild(textarea);
+          if(copied) resolve(); else reject(new Error('Kopieren wurde vom Browser abgelehnt.'));
+        }catch(err){
+          document.body.removeChild(textarea);
+          reject(err);
+        }
+      });
+    }
+
+    function copyConfigCommandText(text){
+      var value=String(text||'');
+      if(typeof navigator!=='undefined' && navigator.clipboard && typeof navigator.clipboard.writeText==='function'){
+        return navigator.clipboard.writeText(value).catch(function(){ return copyConfigCommandFallback(value); });
+      }
+      return copyConfigCommandFallback(value);
+    }
+
+    function appendConfigCommands(parent, req, searchTerm){
+      var commands=(req && Array.isArray(req.configCommands)) ? req.configCommands : [];
+      if(!commands.length) return false;
+
+      var normalizedSearch=String(searchTerm||'').trim().toLowerCase();
+      var searchMatch=false;
+      if(normalizedSearch){
+        for(var sm=0;sm<commands.length;sm++){
+          var searchableCommand=(String(commands[sm].value||'')+' '+String(commands[sm].remarks||'')).toLowerCase();
+          if(searchableCommand.indexOf(normalizedSearch)!==-1){ searchMatch=true; break; }
+        }
+      }
+
+      var details=document.createElement('details');
+      details.className='config-command-section';
+      details.open=searchMatch;
+
+      var summary=document.createElement('summary');
+      var icon=document.createElement('span');
+      icon.className='config-command-icon';
+      icon.setAttribute('aria-hidden','true');
+      icon.textContent='>_';
+      summary.appendChild(icon);
+
+      var summaryCopy=document.createElement('span');
+      summaryCopy.className='config-command-summary-copy';
+      var summaryTitle=document.createElement('strong');
+      summaryTitle.textContent='Konfiguration / CLI';
+      var summarySubtitle=document.createElement('small');
+      summarySubtitle.textContent=commands.length===1 ? 'Befehl für dieses Requirement' : 'Befehle für dieses Requirement';
+      summaryCopy.appendChild(summaryTitle);
+      summaryCopy.appendChild(summarySubtitle);
+      summary.appendChild(summaryCopy);
+
+      var count=document.createElement('span');
+      count.className='config-command-count';
+      count.textContent=String(commands.length);
+      count.setAttribute('aria-label', commands.length+(commands.length===1 ? ' Konfigurationsbefehl' : ' Konfigurationsbefehle'));
+      summary.appendChild(count);
+      details.appendChild(summary);
+
+      var body=document.createElement('div');
+      body.className='config-command-body';
+      for(var i=0;i<commands.length;i++){
+        var command=commands[i];
+        var item=document.createElement('section');
+        item.className='config-command-item';
+
+        var toolbar=document.createElement('div');
+        toolbar.className='config-command-toolbar';
+        var label=document.createElement('span');
+        label.className='config-command-label';
+        label.textContent=commands.length===1 ? 'CLI / Code' : 'Befehl '+(i+1);
+        toolbar.appendChild(label);
+
+        if(String(command.value||'').trim()){
+          var copyButton=document.createElement('button');
+          copyButton.className='btn small config-command-copy';
+          copyButton.type='button';
+          copyButton.textContent='Kopieren';
+          copyButton.title='Befehl in die Zwischenablage kopieren';
+          (function(button,rawValue){
+            button.addEventListener('click', function(ev){
+              ev.preventDefault();
+              ev.stopPropagation();
+              button.disabled=true;
+              copyConfigCommandText(rawValue).then(function(){
+                button.textContent='Kopiert';
+                button.classList.add('is-copied');
+                setTimeout(function(){ button.textContent='Kopieren'; button.classList.remove('is-copied'); button.disabled=false; }, 1400);
+              }).catch(function(){
+                button.textContent='Nicht kopiert';
+                button.title='Der Browser hat den Zugriff auf die Zwischenablage blockiert.';
+                setTimeout(function(){ button.textContent='Kopieren'; button.disabled=false; }, 1800);
+              });
+            });
+          })(copyButton, command.value);
+          toolbar.appendChild(copyButton);
+        }
+        item.appendChild(toolbar);
+
+        if(String(command.value||'').trim()){
+          var pre=document.createElement('pre');
+          pre.className='config-command-code';
+          var code=document.createElement('code');
+          code.innerHTML=renderHighlightedInline(command.value, searchTerm);
+          pre.appendChild(code);
+          item.appendChild(pre);
+        }
+
+        if(String(command.remarks||'').trim()){
+          var remarks=document.createElement('div');
+          remarks.className='config-command-remarks';
+          var remarksLabel=document.createElement('strong');
+          remarksLabel.textContent='Hinweis';
+          remarks.appendChild(remarksLabel);
+          var remarksText=document.createElement('div');
+          remarksText.className='catalog-md';
+          remarksText.innerHTML=renderMarkupWithParams(command.remarks, req.paramMap, searchTerm);
+          remarks.appendChild(remarksText);
+          item.appendChild(remarks);
+        }
+
+        body.appendChild(item);
+      }
+      details.appendChild(body);
+      parent.appendChild(details);
+      return true;
+    }
+
     function renderImplementationRequirementsTable(impl, searchTerm){
       var wrap=document.createElement('div');
       wrap.className='implementation-table-wrap';
@@ -7910,6 +8474,10 @@ function baseMatches(c){ return matches(c); }
             reqDescription.className='implementation-description catalog-md js-collapsible-description';
             reqDescription.innerHTML=renderMarkupWithParams(req.description, req.paramMap, searchTerm);
             implementationCell.appendChild(reqDescription);
+            hasDescription=true;
+          }
+
+          if(appendConfigCommands(implementationCell, req, searchTerm)){
             hasDescription=true;
           }
 
@@ -8927,8 +9495,9 @@ function baseMatches(c){ return matches(c); }
           anyRendered=true;
         }
 
-        // Render ungrouped controls (if any)
-        if(state.ungroupedControls && state.ungroupedControls.length){
+        // Render top-level controls separately only when the catalog also has a group hierarchy.
+        // Without groups they were already rendered directly above and must not appear twice.
+        if((hasGroups || hasPractices || hasTopics) && state.ungroupedControls && state.ungroupedControls.length){
           var unc=[]; for(var u=0;u<state.ungroupedControls.length;u++){ if(matchedSet[state.ungroupedControls[u].id]) unc.push(state.ungroupedControls[u]); }
           if(unc.length){
             var head=document.createElement('div');
@@ -9003,6 +9572,10 @@ function baseMatches(c){ return matches(c); }
         +   (c.integrity? '<span class="kv"><strong>Integrität:</strong> <code>'+renderHighlightedInline(c.integrity, state.qRaw)+'</code></span>':'')
         +   (c.availability? '<span class="kv"><strong>Verfügbarkeit:</strong> <code>'+renderHighlightedInline(c.availability, state.qRaw)+'</code></span>':'')
         +   (c.authenticity? '<span class="kv"><strong>Authentizität:</strong> <code>'+renderHighlightedInline(c.authenticity, state.qRaw)+'</code></span>':'')
+        +   (c.taxonomyL1? '<span class="kv"><strong>Taxonomy-L1:</strong> <code>'+renderHighlightedInline(c.taxonomyL1, state.qRaw)+'</code></span>':'')
+        +   (c.taxonomyL2? '<span class="kv"><strong>Taxonomy-L2:</strong> <code>'+renderHighlightedInline(c.taxonomyL2, state.qRaw)+'</code></span>':'')
+        +   (c.taxonomyL3? '<span class="kv"><strong>Taxonomy-L3:</strong> <code>'+renderHighlightedInline(c.taxonomyL3, state.qRaw)+'</code></span>':'')
+        +   (c.taxonomyL4? '<span class="kv"><strong>Taxonomy-L4:</strong> <code>'+renderHighlightedInline(c.taxonomyL4, state.qRaw)+'</code></span>':'')
         + '</div>';
       bindEffortTooltip(body);
 
