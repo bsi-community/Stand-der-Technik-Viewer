@@ -4709,6 +4709,7 @@
 
     var BSI_REPOSITORY_TREE_URL='https://api.github.com/repos/BSI-Bund/Stand-der-Technik-Bibliothek/git/trees/main?recursive=1';
     var BSI_REPOSITORY_RAW_ROOT='https://raw.githubusercontent.com/BSI-Bund/Stand-der-Technik-Bibliothek/main/';
+    var BSI_REPOSITORY_TITLE_CACHE_KEY='sdt-viewer:bsi-repository-titles:v1';
 
     function getRepositoryFileName(path){
       var parts=String(path||'').split('/');
@@ -4729,7 +4730,12 @@
         var path=entry && entry.path ? String(entry.path) : '';
         if(entry.type!=='blob' || path.indexOf(prefix)!==0 || !/\.json$/i.test(path)) continue;
         if(catalogOnly && !/catalog\.json$/i.test(path)) continue;
-        files.push({ name:getRepositoryFileName(path), path:path, url:buildRepositoryRawUrl(path) });
+        files.push({
+          name:getRepositoryFileName(path),
+          path:path,
+          sha:String(entry.sha || ''),
+          url:buildRepositoryRawUrl(path)
+        });
       }
       files.sort(function(a,b){
         return a.name.localeCompare(b.name, 'de', { sensitivity:'base' }) || a.path.localeCompare(b.path, 'de', { sensitivity:'base' });
@@ -4760,13 +4766,68 @@
         .trim();
     }
 
-    function enrichRepositoryTitles(files){
+    function readRepositoryTitleCache(){
+      try{
+        var stored=localStorage.getItem(BSI_REPOSITORY_TITLE_CACHE_KEY);
+        var parsed=stored ? JSON.parse(stored) : {};
+        return parsed && typeof parsed==='object' && !Array.isArray(parsed) ? parsed : {};
+      }catch(err){
+        return {};
+      }
+    }
+
+    function applyRepositoryTitleCache(files, cache){
+      var list=Array.isArray(files) ? files : [];
+      var pending=[];
+      for(var i=0;i<list.length;i++){
+        var file=list[i];
+        file.fallbackTitle=repositoryFallbackTitle(file);
+        var cached=cache && cache[file.path];
+        if(file.sha && cached && cached.sha===file.sha && typeof cached.title==='string' && cached.title.trim()){
+          file.title=cached.title.trim();
+        }else{
+          file.title=file.fallbackTitle;
+          pending.push(file);
+        }
+      }
+      return pending;
+    }
+
+    function persistRepositoryTitleCache(cache, currentFiles){
+      var next={};
+      var files=Array.isArray(currentFiles) ? currentFiles : [];
+      for(var i=0;i<files.length;i++){
+        var file=files[i];
+        var cached=cache && cache[file.path];
+        if(file.sha && cached && cached.sha===file.sha && typeof cached.title==='string' && cached.title.trim()){
+          next[file.path]={ sha:file.sha, title:cached.title.trim() };
+        }
+      }
+      try{
+        localStorage.setItem(BSI_REPOSITORY_TITLE_CACHE_KEY, JSON.stringify(next));
+      }catch(err){
+        // Der Viewer bleibt auch ohne verfügbaren Browser-Speicher vollständig nutzbar.
+      }
+    }
+
+    function sortRepositoryFiles(files){
+      var list=Array.isArray(files) ? files : [];
+      list.sort(function(a,b){
+        return String(a.title || a.fallbackTitle || a.name || '').localeCompare(
+          String(b.title || b.fallbackTitle || b.name || ''),
+          'de',
+          { sensitivity:'base' }
+        ) || String(a.path || '').localeCompare(String(b.path || ''), 'de', { sensitivity:'base' });
+      });
+      return list;
+    }
+
+    function enrichRepositoryTitles(files, cache){
       var list=Array.isArray(files) ? files : [];
       var nextIndex=0;
       function worker(){
         if(nextIndex>=list.length) return Promise.resolve();
         var file=list[nextIndex++];
-        file.fallbackTitle=repositoryFallbackTitle(file);
         return fetch(file.url, { credentials:'omit', cache:'no-store' })
           .then(function(res){
             if(!res.ok) throw new Error('HTTP '+res.status);
@@ -4774,6 +4835,7 @@
           })
           .then(function(json){
             file.title=getOscalDocumentTitle(json, file.fallbackTitle);
+            if(file.sha) cache[file.path]={ sha:file.sha, title:file.title };
           })
           .catch(function(){
             file.title=file.fallbackTitle;
@@ -4783,12 +4845,7 @@
       var workers=[];
       var count=Math.min(6, list.length);
       for(var i=0;i<count;i++) workers.push(worker());
-      return Promise.all(workers).then(function(){
-        list.sort(function(a,b){
-          return String(a.title||'').localeCompare(String(b.title||''), 'de', { sensitivity:'base' });
-        });
-        return list;
-      });
+      return Promise.all(workers);
     }
 
     function prepareRepositorySelect(selectEl, placeholder){
@@ -4818,11 +4875,35 @@
       return list;
     }
 
+    function publishRepositoryFiles(sourceCatalogs, userCatalogs, componentDefinitions){
+      sortRepositoryFiles(userCatalogs);
+      sortRepositoryFiles(sourceCatalogs);
+      sortRepositoryFiles(componentDefinitions);
+      registryState.catalogs=userCatalogs.concat(sourceCatalogs);
+      registryState.components=componentDefinitions;
+      registryState.status='ready';
+      registryState.error='';
+
+      prepareRepositorySelect(els.bsiSelect, 'Aus dem Repository auswählen');
+      appendRepositoryOptions(els.bsiSelect, 'Anwenderkataloge', userCatalogs);
+      appendRepositoryOptions(els.bsiSelect, 'Quellkataloge', sourceCatalogs);
+      if(els.bsiSelect) els.bsiSelect.disabled=!(sourceCatalogs.length || userCatalogs.length);
+      if(els.bsiStatus) els.bsiStatus.textContent=(sourceCatalogs.length+userCatalogs.length)+' aktuelle Kataloge verfügbar.';
+
+      prepareRepositorySelect(compEls.bsiSelect, 'Aus dem Repository auswählen');
+      appendRepositoryOptions(compEls.bsiSelect, '', componentDefinitions);
+      if(compEls.bsiSelect) compEls.bsiSelect.disabled=!componentDefinitions.length;
+      if(compEls.bsiStatus) compEls.bsiStatus.textContent=componentDefinitions.length+' aktuelle Komponentendefinitionen verfügbar.';
+      if(uiState.view==='home') renderRegistryHome();
+    }
+
     function loadBsiRepositoryOptions(){
       registryState.status='loading';
+      registryState.catalogs=[];
+      registryState.components=[];
       registryState.error='';
       if(uiState.view==='home') renderRegistryHome();
-      fetch(BSI_REPOSITORY_TREE_URL, { credentials:'omit', cache:'no-store' })
+      return fetch(BSI_REPOSITORY_TREE_URL, { credentials:'omit', cache:'no-store' })
         .then(function(res){
           if(!res.ok){ throw new Error('GitHub API HTTP '+res.status); }
           return res.json();
@@ -4832,36 +4913,23 @@
           var sourceCatalogs=getRepositoryJsonFiles(tree, 'Quellkataloge/', true);
           var userCatalogs=getRepositoryJsonFiles(tree, 'Anwenderkataloge/', true);
           var componentDefinitions=getRepositoryJsonFiles(tree, 'Implementierungsbeschreibungen/Komponenten/', false);
-          if(els.bsiStatus) els.bsiStatus.textContent='Katalogtitel werden aus den OSCAL-Metadaten geladen.';
-          if(compEls.bsiStatus) compEls.bsiStatus.textContent='Titel der Komponentendefinitionen werden aus den OSCAL-Metadaten geladen.';
-          return Promise.all([
-            enrichRepositoryTitles(sourceCatalogs),
-            enrichRepositoryTitles(userCatalogs),
-            enrichRepositoryTitles(componentDefinitions)
-          ]);
-        })
-        .then(function(groups){
-          var sourceCatalogs=groups[0];
-          var userCatalogs=groups[1];
-          var componentDefinitions=groups[2];
           tagRepositoryFiles(userCatalogs, 'catalog', 'Anwenderkataloge');
           tagRepositoryFiles(sourceCatalogs, 'catalog', 'Quellkataloge');
           tagRepositoryFiles(componentDefinitions, 'component', 'Komponentendefinitionen');
-          registryState.catalogs=userCatalogs.concat(sourceCatalogs);
-          registryState.components=componentDefinitions;
-          registryState.status='ready';
-          registryState.error='';
-          prepareRepositorySelect(els.bsiSelect, 'Aus dem Repository auswählen');
-          appendRepositoryOptions(els.bsiSelect, 'Anwenderkataloge', userCatalogs);
-          appendRepositoryOptions(els.bsiSelect, 'Quellkataloge', sourceCatalogs);
-          if(els.bsiSelect) els.bsiSelect.disabled=!(sourceCatalogs.length || userCatalogs.length);
-          if(els.bsiStatus) els.bsiStatus.textContent=(sourceCatalogs.length+userCatalogs.length)+' aktuelle Kataloge verfügbar.';
+          var allFiles=userCatalogs.concat(sourceCatalogs, componentDefinitions);
+          var titleCache=readRepositoryTitleCache();
+          var pendingFiles=applyRepositoryTitleCache(allFiles, titleCache);
 
-          prepareRepositorySelect(compEls.bsiSelect, 'Aus dem Repository auswählen');
-          appendRepositoryOptions(compEls.bsiSelect, '', componentDefinitions);
-          if(compEls.bsiSelect) compEls.bsiSelect.disabled=!componentDefinitions.length;
-          if(compEls.bsiStatus) compEls.bsiStatus.textContent=componentDefinitions.length+' aktuelle Komponentendefinitionen verfügbar.';
-          if(uiState.view==='home') renderRegistryHome();
+          // Ausschließlich die frisch geladene GitHub-Dateiliste bestimmt den sichtbaren Bestand.
+          // Bereits bestätigte Titel beschleunigen die Darstellung, ohne alte Dokumente zu übernehmen.
+          persistRepositoryTitleCache(titleCache, allFiles);
+          publishRepositoryFiles(sourceCatalogs, userCatalogs, componentDefinitions);
+
+          if(!pendingFiles.length) return;
+          return enrichRepositoryTitles(pendingFiles, titleCache).then(function(){
+            persistRepositoryTitleCache(titleCache, allFiles);
+            publishRepositoryFiles(sourceCatalogs, userCatalogs, componentDefinitions);
+          });
         })
         .catch(function(err){
           registryState.status='error';
