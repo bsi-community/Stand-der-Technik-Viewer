@@ -1570,11 +1570,7 @@
       --control-radius:0;
     }
     body{
-      background:
-        linear-gradient(rgba(118,139,170,.10) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(118,139,170,.10) 1px, transparent 1px),
-        linear-gradient(180deg, #f7faff 0%, #e9f0f9 100%);
-      background-size: 100% 120px, 230px 100%, 100% 100%;
+      background:linear-gradient(180deg, #f7faff 0%, #e9f0f9 100%);
       color:var(--text);
       font-family:"Aptos","Helvetica Neue",sans-serif;
     }
@@ -1583,7 +1579,7 @@
       top:0;
       z-index:40;
       display:grid;
-      grid-template-columns:minmax(280px, 1.05fr) minmax(0, 3fr);
+      grid-template-columns:minmax(360px, 1.05fr) minmax(0, 3fr);
       gap:0;
       padding:0;
       background:rgba(244,248,253,.94);
@@ -1627,10 +1623,16 @@
     }
     header h1{
       max-width:none;
-      font-size:30px;
-      line-height:1;
-      letter-spacing:-.05em;
       margin:0;
+      width:100%;
+      line-height:0;
+    }
+    .header-wordmark{
+      display:block;
+      width:min(100%,340px);
+      max-height:70px;
+      object-fit:contain;
+      object-position:left center;
     }
     .header-subtitle{
       display:none !important;
@@ -1645,7 +1647,7 @@
     }
     .tabs{
       display:grid;
-      grid-template-columns:repeat(6, minmax(120px,1fr));
+      grid-template-columns:minmax(120px,.9fr) minmax(210px,1.35fr) minmax(132px,.95fr) repeat(4,minmax(118px,1fr));
       gap:0;
       width:100%;
       padding:0;
@@ -1654,6 +1656,7 @@
       background:none;
       box-shadow:none;
       overflow:hidden;
+      position:relative;
     }
     .tabs::-webkit-scrollbar{
       display:none;
@@ -1661,7 +1664,7 @@
     .tab{
       min-width:0;
       min-height:96px;
-      padding:14px 12px 12px;
+      padding:18px 20px 14px;
       border:0;
       border-left:1px solid rgba(118,139,170,.16);
       border-radius:0;
@@ -1691,26 +1694,44 @@
       border-color:#111111;
     }
     .tab[data-tab="list"],
-    .tab[data-tab="components"]{
+    .tab[data-tab="components"],
+    .tab[data-tab="mappings"]{
       background:rgba(17,17,17,.03);
     }
     .tab[data-tab="list"].active,
-    .tab[data-tab="components"].active{
+    .tab[data-tab="components"].active,
+    .tab[data-tab="mappings"].active{
       background:#111111;
     }
-    .tab[data-tab="components"]{
-      position:relative;
-      margin-right:18px;
+    .tab.context-active:not(.active){
+      background:#e8eef8;
+      color:#001b3d;
+      box-shadow:inset 0 -4px #08afd1;
     }
-    .tab[data-tab="components"]::after{
-      content:"";
+    .tab[data-tab="graph"],
+    .tab[data-tab="sunburst"],
+    .tab[data-tab="bar"],
+    .tab[data-tab="json"]{
+      padding-top:35px;
+    }
+    .visual-context-label{
       position:absolute;
-      top:16px;
-      right:-10px;
-      width:1px;
-      height:calc(100% - 32px);
-      background:rgba(118,139,170,.32);
+      z-index:2;
+      top:10px;
+      left:calc((100% * 3.2) / 7.2);
+      right:8px;
+      color:#617086;
+      font-size:10px;
+      font-weight:800;
+      letter-spacing:.1em;
+      line-height:1.2;
+      text-align:center;
+      text-transform:uppercase;
       pointer-events:none;
+    }
+    .visual-context-label::before{
+      content:"↳ ";
+      color:#08afd1;
     }
     .wrap{
       display:grid;
@@ -1737,14 +1758,7 @@
       background:none;
       margin-bottom:14px;
     }
-    .viewer-logo img{
-      border-radius:0;
-      border:0;
-      background:transparent;
-    }
-    .sidebar-intro-copy{
-      margin-top:12px;
-    }
+    .viewer-logo img{border-radius:0;border:0;background:transparent}
     .sidebar-copy{
       color:#617086;
       font-size:13px;
@@ -2324,14 +2338,7 @@
       box-shadow:none;
     }
     .overview::before{
-      content:"";
-      position:absolute;
-      inset:0;
-      pointer-events:none;
-      background:
-        linear-gradient(90deg, rgba(118,139,170,.10) 0, rgba(118,139,170,.10) 1px, transparent 1px) 0 0 / 240px 100%,
-        linear-gradient(rgba(118,139,170,.10) 0, rgba(118,139,170,.10) 1px, transparent 1px) 0 0 / 100% 100px;
-      opacity:.55;
+      display:none;
     }
     .overview-top,.selection-header{
       position:relative;
@@ -2562,9 +2569,10 @@
         border-bottom:1px solid rgba(118,139,170,.18);
       }
       .tabs{
-        grid-template-columns:repeat(6,minmax(136px,1fr));
+        grid-template-columns:repeat(7,minmax(136px,1fr));
         overflow-x:auto;
       }
+      .visual-context-label{left:calc((100% * 3) / 7)}
       .tab{
         min-height:84px;
       }
@@ -2654,12 +2662,12 @@
     }
 
     /* Control-Mapping-Workspace: Crosswalk-Tabelle mit klarer Source-Target-Richtung. */
-    .tabs{grid-template-columns:repeat(7,minmax(96px,1fr))}
+    .tabs{grid-template-columns:minmax(120px,.9fr) minmax(210px,1.35fr) minmax(132px,.95fr) repeat(4,minmax(118px,1fr))}
     .tab[data-tab="components"]{margin-right:0}
     .tab[data-tab="components"]::after{display:none}
-    .tab[data-tab="mappings"]{position:relative;margin-right:18px;background:rgba(17,17,17,.03)}
+    .tab[data-tab="mappings"]{position:relative;margin-right:0;background:rgba(17,17,17,.03)}
     .tab[data-tab="mappings"].active{background:#111111}
-    .tab[data-tab="mappings"]::after{content:"";position:absolute;top:16px;right:-10px;width:1px;height:calc(100% - 32px);background:rgba(118,139,170,.32);pointer-events:none}
+    .tab[data-tab="mappings"]::after{display:none}
     .sidebar-tabs{grid-template-columns:repeat(3,minmax(0,1fr))}
     .sidebar-tab{padding-left:6px;padding-right:6px;font-size:12px}
     .mapping-workspace{display:grid;gap:16px;width:100%;max-width:100%;min-width:0}
@@ -2719,11 +2727,7 @@
     body{min-height:100vh}
     body.home-mode{
       min-height:100vh;
-      background:
-        linear-gradient(rgba(118,139,170,.10) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(118,139,170,.10) 1px, transparent 1px),
-        #e9f0f9;
-      background-size:100% 120px, 230px 100%, 100% 100%;
+      background:linear-gradient(180deg,#f7faff 0%,#e9f0f9 100%);
     }
     body.home-mode .wrap{grid-template-columns:minmax(0,1fr);max-width:none;margin:0;width:100%;padding:28px 0 56px 94px}
     body.home-mode aside{display:none}
@@ -2731,9 +2735,11 @@
     .registry-home{display:grid;gap:28px;align-content:start;padding:4px 0 28px}
     .registry-home-shell{display:grid;grid-template-columns:minmax(620px,880px) minmax(34px,96px) minmax(680px,1fr) minmax(34px,96px);gap:0;align-items:start;width:100%;max-width:none}
     .registry-home-main{grid-column:1;display:grid;gap:28px;min-width:0}
-    .registry-help{grid-column:3;display:grid;gap:18px;min-width:0}
+    .registry-help{grid-column:3;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;min-width:0}
     .registry-help-card{border:1px solid #d8e1ec;border-top:4px solid #08afd1;border-radius:8px;background:rgba(255,255,255,.92);box-shadow:0 6px 18px rgba(15,30,55,.08);overflow:hidden}
+    .registry-help-card.guide{grid-column:1/-1}
     .registry-help-card.terms{border-top-color:#176b78}
+    .registry-help-card.compatibility{border-top-color:#94611d}
     .registry-help-header{padding:20px 22px 12px;border-bottom:1px solid #edf1f6}
     .registry-help-header h3{margin:0;color:#001b3d;font-size:19px;line-height:1.25;font-weight:800}
     .registry-help-header p{margin:7px 0 0;color:#7e879b;font-size:14px;line-height:1.55}
@@ -2750,11 +2756,27 @@
     .registry-terms-list dd{margin:0;color:#495668;font-size:13px;line-height:1.45}
     .registry-terms-list a{color:#005fc8;font-weight:800;text-decoration:underline;text-underline-offset:2px}
     .registry-terms-list a:hover{color:#003f8a}
-    .registry-hero{position:relative;display:grid;gap:18px;max-width:980px;min-height:188px;padding-right:260px}
+    .registry-compatibility-list{display:grid;gap:0;margin:0;padding:8px 22px 20px}
+    .registry-compatibility-list div{display:grid;gap:4px;padding:11px 0;border-bottom:1px solid #edf1f6}
+    .registry-compatibility-list div:last-child{border-bottom:0}
+    .registry-compatibility-list dt{margin:0;color:#001b3d;font-size:13px;font-weight:800;line-height:1.35}
+    .registry-compatibility-list dd{margin:0;color:#495668;font-size:13px;line-height:1.5}
+    .compatibility-badge{display:inline-flex;width:max-content;margin:18px 22px 0;padding:6px 10px;border-radius:999px;background:#fff4dd;color:#80510f;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
+    .registry-hero{position:relative;display:grid;gap:18px;max-width:980px;min-height:188px;padding-right:0}
     .registry-hero h2{margin:0;color:#001b3d;font-size:30px;line-height:1.05;font-weight:800;letter-spacing:0;overflow-wrap:anywhere}
     .registry-hero p{margin:0;color:#8b94a8;font-size:16px;line-height:1.6;max-width:680px}
-    .registry-logo-panel{position:absolute;right:0;top:0;width:214px;display:flex;align-items:flex-start;justify-content:center;padding:6px 0}
-    .registry-logo-panel img{display:block;width:100%;height:auto;max-height:168px;object-fit:contain;filter:drop-shadow(0 14px 24px rgba(15,30,55,.10))}
+    .workspace-empty-state{min-height:330px;display:flex;align-items:center;justify-content:center;padding:42px 24px;border:1px solid #cbd7e6;background:rgba(255,255,255,.84);text-align:center}
+    .workspace-empty-inner{width:min(720px,100%);display:grid;justify-items:center;gap:14px}
+    .workspace-empty-icon{width:68px;height:68px;display:flex;align-items:center;justify-content:center;border:1px solid #b8cbe3;border-radius:50%;background:#eef5ff;color:#245b99;font-size:34px;font-weight:300}
+    .workspace-empty-kicker{color:#6f7f95;font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase}
+    .workspace-empty-state h3{margin:0;color:#001b3d;font-size:25px;line-height:1.2}
+    .workspace-empty-state > .workspace-empty-inner > p{max-width:620px;margin:0;color:#58677b;font-size:15px;line-height:1.6}
+    .workspace-empty-routes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;width:100%;margin-top:8px;text-align:left}
+    .workspace-empty-route{padding:14px 16px;border:1px solid #d4deeb;background:#f8fbff;color:#495668;font-size:13px;line-height:1.45}
+    .workspace-empty-route strong{display:block;margin-bottom:4px;color:#001b3d;font-size:13px}
+    .workspace-empty-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:8px}
+    .workspace-empty-actions .btn{width:auto;min-width:170px;justify-content:center}
+    .workspace-empty-actions .btn.primary{background:#111;color:#fff;border-color:#111}
     .registry-search-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;max-width:720px}
     .registry-search-row .input{min-height:40px;border-radius:8px;border-color:#cad3e0;background:#ffffff;font-size:14px}
     .registry-search-row .btn{width:auto;min-width:98px;min-height:40px;border-radius:8px;background:#08afd1;border-color:#08afd1;color:#ffffff;font-weight:800}
@@ -2762,7 +2784,8 @@
     .registry-back-button{width:auto;justify-self:start;min-height:36px;padding:8px 14px;border-radius:8px;background:#ffffff;border-color:#cbd4e1;color:#001b3d;font-size:13px;font-weight:800}
     .registry-back-button:hover{background:#eef4fb;transform:translateY(-1px)}
     .registry-section-label{margin:4px 0 -8px;color:#8b94a8;font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
-    .registry-model-grid{display:grid;grid-template-columns:repeat(2,minmax(240px,1fr));gap:18px;max-width:1000px}
+    .registry-help-intro{margin:0;color:#58677b;font-size:15px;line-height:1.6}
+    .registry-model-grid{display:grid;grid-template-columns:repeat(3,minmax(220px,1fr));gap:18px;max-width:1000px}
     .registry-model-card{position:relative;display:grid;gap:10px;min-height:164px;padding:22px 24px;border:1px solid #d9e0eb;border-top:4px solid var(--model-color,#001b3d);border-radius:8px;background:#ffffff;box-shadow:0 3px 12px rgba(15,30,55,.08);text-align:left;cursor:pointer}
     .registry-model-card:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(15,30,55,.12)}
     .registry-model-dot{width:10px;height:10px;border-radius:50%;background:var(--model-color,#001b3d)}
@@ -2821,7 +2844,8 @@
       .registry-hero,.registry-model-grid,.registry-browser,.registry-list{width:100%;max-width:340px;min-width:0}
       .registry-hero{min-height:0;padding-right:0}
       .registry-hero h2{font-size:27px}
-      .registry-logo-panel{position:static;width:160px;justify-content:flex-start;order:-1;padding:0}
+      .registry-help{grid-template-columns:1fr}
+      .registry-help-card.guide{grid-column:auto}
       .registry-model-grid{grid-template-columns:minmax(0,1fr)}
       .registry-model-card{width:100%;max-width:100%;min-width:0;overflow:hidden}
       .registry-model-footer{flex-wrap:wrap}
@@ -2831,6 +2855,162 @@
       .registry-list-head{display:none}
       .registry-document-row{grid-template-columns:1fr;gap:6px}
       .registry-document-badge{justify-self:start}
+      .workspace-empty-routes{grid-template-columns:1fr}
+    }
+
+    /* UX-Feinschliff: klar getrennte Navigation und vollbreite Startseitenbereiche. */
+    .tabs{
+      display:grid;
+      grid-template-columns:minmax(520px,3fr) minmax(600px,4fr);
+      gap:10px;
+      overflow:visible;
+    }
+    .workspace-tab-group,.visualization-tab-group{
+      position:relative;
+      display:grid;
+      min-width:0;
+      min-height:96px;
+      padding-top:28px;
+      background:rgba(245,249,254,.78);
+    }
+    .workspace-tab-group{
+      grid-template-columns:minmax(120px,.85fr) minmax(240px,1.5fr) minmax(132px,.9fr);
+    }
+    .visualization-tab-group{
+      grid-template-columns:repeat(4,minmax(120px,1fr));
+      border-left:5px solid #08afd1;
+      box-shadow:-10px 0 0 rgba(8,175,209,.07);
+    }
+    .nav-group-label{
+      position:absolute;
+      inset:0 0 auto;
+      z-index:2;
+      height:28px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:0 14px;
+      background:#e9eef5;
+      color:#5f6f84;
+      font-size:10px;
+      font-weight:800;
+      letter-spacing:.13em;
+      line-height:1;
+      text-align:center;
+      text-transform:uppercase;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      pointer-events:none;
+    }
+    .visualization-tab-group .nav-group-label{
+      background:#dff5fa;
+      color:#006c82;
+    }
+    .nav-group-label[hidden]{display:none!important}
+    .visual-context-label{
+      position:absolute;
+      inset:0 0 auto;
+    }
+    .visual-context-label::before{content:""}
+    .workspace-tab-group .tab,.visualization-tab-group .tab{
+      min-width:0;
+      min-height:68px;
+      padding:13px 18px;
+      border-top:1px solid rgba(118,139,170,.16);
+    }
+    .workspace-tab-group .tab:first-of-type,.visualization-tab-group .tab:first-of-type{border-left:0}
+    .tab[data-tab="graph"],.tab[data-tab="sunburst"],.tab[data-tab="bar"],.tab[data-tab="json"]{padding-top:13px}
+    .visualization-tab-group.is-disabled{border-left-color:#cbd4e1;box-shadow:-10px 0 0 rgba(118,139,170,.05)}
+    .visualization-tab-group.is-disabled .tab{opacity:.42;background:#f1f4f8;color:#758398;cursor:not-allowed}
+    .visualization-tab-group.is-disabled .tab:hover{transform:none;background:#f1f4f8;color:#758398}
+
+    .registry-home-shell{
+      grid-template-columns:minmax(0,1fr);
+      gap:28px;
+      width:min(1640px,calc(100% - 68px));
+      max-width:1640px;
+    }
+    .registry-home-main,.registry-help{grid-column:1;width:100%;max-width:none}
+    .registry-help{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}
+    .registry-help-card.guide{grid-column:1/-1}
+    .registry-hero{max-width:1120px}
+    .registry-hero p{max-width:920px}
+    .registry-model-grid{grid-template-columns:repeat(2,minmax(0,1fr));max-width:none}
+    .registry-model-card{
+      min-height:250px;
+      align-content:center;
+      justify-items:center;
+      padding:28px clamp(24px,4vw,54px);
+      text-align:center;
+      overflow:hidden;
+    }
+    .registry-model-card h3{
+      width:100%;
+      margin:6px 0 0;
+      font-size:clamp(18px,1.45vw,24px);
+      line-height:1.25;
+      overflow-wrap:anywhere;
+      hyphens:auto;
+    }
+    .registry-model-card p{max-width:560px;font-size:15px;line-height:1.55;text-align:center}
+    .registry-model-footer{justify-content:center;align-items:center;flex-wrap:wrap;margin-top:12px;text-align:center}
+    .registry-model-status{justify-content:center;margin-left:0;text-align:center}
+    .workspace-empty-routes.single{grid-template-columns:minmax(0,620px);justify-content:center}
+
+    @media(max-width:1480px){
+      .registry-home-shell{width:100%;max-width:none}
+      .registry-home-main,.registry-help{max-width:none}
+    }
+    @media(max-width:1320px){
+      .header-nav{overflow-x:auto}
+      .tabs{grid-template-columns:minmax(520px,3fr) minmax(600px,4fr);min-width:1130px;overflow:visible}
+    }
+    @media(max-width:900px){
+      .registry-model-grid,.registry-help{grid-template-columns:minmax(0,1fr)}
+      .registry-help-card.guide{grid-column:auto}
+      .registry-model-card{min-height:220px}
+    }
+    @media(max-width:760px){
+      .registry-home-shell,.registry-home-main,.registry-help{width:100%;max-width:100%}
+      .registry-hero,.registry-model-grid,.registry-browser,.registry-list{max-width:100%}
+    }
+
+    /* Erklaerungen und Achsentitel fuer die drei kontextabhaengigen Visualisierungen. */
+    .chart-legend{
+      position:absolute;
+      z-index:4;
+      top:14px;
+      left:14px;
+      width:min(310px,calc(100% - 110px));
+      max-height:calc(100% - 28px);
+      overflow:auto;
+      padding:12px 14px;
+      border:1px solid #c9d6e6;
+      background:rgba(255,255,255,.94);
+      color:#26384d;
+      box-shadow:0 8px 22px rgba(21,42,67,.10);
+      backdrop-filter:blur(6px);
+    }
+    .chart-legend h4{margin:0 0 8px;color:#001b3d;font-size:12px;line-height:1.3;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
+    .chart-legend-note{margin:0 0 9px;color:#69788c;font-size:11px;line-height:1.4}
+    .chart-legend-list{display:grid;gap:7px;margin:0;padding:0;list-style:none}
+    .chart-legend-item{display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:8px;align-items:center;color:#405168;font-size:11px;line-height:1.35}
+    .chart-legend-symbol{position:relative;display:block;justify-self:center;color:var(--legend-color,#51677f)}
+    .chart-legend-symbol.node{width:12px;height:12px;border:2px solid #fff;border-radius:50%;background:var(--legend-color,#51677f);box-shadow:0 0 0 1px rgba(35,54,75,.28)}
+    .chart-legend-symbol.swatch{width:16px;height:12px;border:1px solid rgba(35,54,75,.18);background:var(--legend-color,#51677f)}
+    .chart-legend-symbol.line{width:27px;height:0;border-top:3px solid var(--legend-color,#51677f)}
+    .chart-legend-symbol.line.dashed{border-top-style:dashed}
+    .chart-legend-symbol.line.arrow::after{content:"›";position:absolute;right:-1px;top:-11px;color:var(--legend-color,#51677f);font-size:20px;font-weight:900;line-height:1}
+    .chart-legend-value{color:#6f7d90;font-weight:800;white-space:nowrap}
+    .sunburst-legend{left:auto;right:14px;width:min(300px,32%)}
+    .sunburst-segment-label{pointer-events:none;paint-order:stroke;stroke:rgba(0,0,0,.42);stroke-width:3px;stroke-linejoin:round}
+    .sunburst-center-title{fill:#24364b;font-size:13px;font-weight:800;text-anchor:middle}
+    .sunburst-center-value{fill:#637389;font-size:11px;font-weight:700;text-anchor:middle}
+    .chart-axis-title{fill:#24364b;font-size:12px;font-weight:800;letter-spacing:.02em}
+    @media(max-width:1100px){
+      .chart-legend{width:min(270px,42%);padding:10px 12px}
+      .sunburst-legend{width:min(260px,38%)}
     }
     
 </style>
@@ -2847,20 +3027,26 @@
         </svg>
       </button>
       <div>
-        <h1>Stand der Technik-Viewer</h1>
+        <h1><img class="header-wordmark" src="./viewer_logo.png" alt="Stand der Technik – Viewer" onerror="this.replaceWith(document.createTextNode('Stand der Technik – Viewer'))"></h1>
         <p id="viewSubtitle" class="header-subtitle">Ein neu strukturierter Arbeitsbereich für OSCAL-Kataloge, Komponentendefinitionen und Analyseansichten mit klarer Navigation, ruhiger Leseführung und durchgängiger visueller Hierarchie.</p>
       </div>
     </div>
     <!-- Hauptnavigation fuer die grossen Viewer-Ansichten: Katalog, Komponentendefinitionen, Diagramme und JSON. -->
     <div class="header-nav">
-      <div class="tabs" role="tablist" aria-label="Ansichten">
-        <button class="tab active" data-tab="list" id="tab-list" type="button" role="tab" aria-selected="true" aria-controls="listTab">Katalog</button>
-        <button class="tab" data-tab="components" id="tab-components" type="button" role="tab" aria-selected="false" aria-controls="componentTab">Komponentendefinitionen</button>
-        <button class="tab" data-tab="mappings" id="tab-mappings" type="button" role="tab" aria-selected="false" aria-controls="mappingTab">Mappings</button>
-        <button class="tab" data-tab="graph" id="tab-graph" type="button" role="tab" aria-selected="false" aria-controls="graphTab">Graph</button>
-        <button class="tab" data-tab="sunburst" id="tab-sunburst" type="button" role="tab" aria-selected="false" aria-controls="sunburstTab">Sunburst</button>
-        <button class="tab" data-tab="bar" id="tab-bar" type="button" role="tab" aria-selected="false" aria-controls="barTab">Balkendiagramm</button>
-        <button class="tab" data-tab="json" id="tab-json" type="button" role="tab" aria-selected="false" aria-controls="jsonTab">JSON</button>
+      <div class="tabs" aria-label="Ansichten">
+        <div class="workspace-tab-group" role="tablist" aria-label="Arbeitsbereiche">
+          <span class="nav-group-label">Arbeitsbereiche</span>
+          <button class="tab active" data-tab="list" id="tab-list" type="button" role="tab" aria-selected="true" aria-controls="listTab">Kataloge</button>
+          <button class="tab" data-tab="components" id="tab-components" type="button" role="tab" aria-selected="false" aria-controls="componentTab">Komponentendefinitionen</button>
+          <button class="tab" data-tab="mappings" id="tab-mappings" type="button" role="tab" aria-selected="false" aria-controls="mappingTab">Mappings</button>
+        </div>
+        <div id="visualizationTabGroup" class="visualization-tab-group is-disabled" role="tablist" aria-labelledby="visualContextLabel" aria-disabled="true">
+          <span id="visualContextLabel" class="nav-group-label visual-context-label" hidden>Auswertung von: Kataloge</span>
+          <button class="tab" data-tab="graph" id="tab-graph" type="button" role="tab" aria-selected="false" aria-controls="graphTab" aria-disabled="true" disabled>Graph</button>
+          <button class="tab" data-tab="sunburst" id="tab-sunburst" type="button" role="tab" aria-selected="false" aria-controls="sunburstTab" aria-disabled="true" disabled>Sunburst</button>
+          <button class="tab" data-tab="bar" id="tab-bar" type="button" role="tab" aria-selected="false" aria-controls="barTab" aria-disabled="true" disabled>Balkendiagramm</button>
+          <button class="tab" data-tab="json" id="tab-json" type="button" role="tab" aria-selected="false" aria-controls="jsonTab" aria-disabled="true" disabled>JSON</button>
+        </div>
       </div>
     </div>
   </header>
@@ -2868,20 +3054,6 @@
   <div class="wrap">
     <!-- Linke Arbeitsleiste fuer Datenquellen, Filter, Status und Export. -->
     <aside>
-      <!-- Reines Branding-Element fuer Logo und Wiedererkennung des Viewers. -->
-      <div class="sidebar-intro">
-        <div class="viewer-logo">
-          <img src="./viewer_logo.png" alt="Stand der Technik-Viewer – Logo" onerror="this.style.display='none'">
-        </div>
-      </div>
-
-      <!-- Umschalter zwischen den beiden Datenquellen-Bereichen der Sidebar. -->
-      <div class="sidebar-tabs" role="tablist" aria-label="Datenquellen">
-        <button class="sidebar-tab active" data-panel="catalog" id="side-tab-catalog" type="button" role="tab" aria-selected="true" aria-controls="catalogPanel">Katalog</button>
-        <button class="sidebar-tab" data-panel="component" id="side-tab-components" type="button" role="tab" aria-selected="false" aria-controls="componentPanel">Komp. def.</button>
-        <button class="sidebar-tab" data-panel="mapping" id="side-tab-mappings" type="button" role="tab" aria-selected="false" aria-controls="mappingPanel">Mappings</button>
-      </div>
-
       <!-- Katalog-Panel: Upload, Quellenwechsel, Filter, Status und Export fuer OSCAL Catalogs. -->
       <div id="catalogPanel" class="side-panel">
         <details class="sidebar-section" data-section="upload" name="catalog-sidebar-sections">
@@ -3341,8 +3513,8 @@
 
     // Gesammelte DOM-Referenzen fuer schnelle Zugriffe ohne wiederholte Query-Selektoren.
     var els={ homeBtn:$('#homeBtn'), homeTab:$('#homeTab'), file:$('#file'), dropzone:$('#catalogDropzone'), sourceSelect:$('#catalogDatasetSelect'), sourcePicker:$('#catalogSourcePicker'), sourceButton:$('#catalogSourceButton'), sourcePickerMenu:$('#catalogSourceMenu'), urlInput:$('#urlInput'), urlLoadBtn:$('#urlLoadBtn'), bsiSelect:$('#bsiCatalogSelect'), bsiStatus:$('#bsiCatalogStatus'), q:$('#q'), group:$('#groupMS'), cls:$('#classMS'), sec:$('#secMS'), target:$('#targetMS'), tag:$('#tagMS'), effort:$('#effortMS'), modalverb:$('#modalverbMS'), documentation:$('#documentationMS'), actionword:$('#actionwordMS'), groupMenu:$('#groupMS_menu'), clsMenu:$('#classMS_menu'), secMenu:$('#secMS_menu'), targetMenu:$('#targetMS_menu'), tagMenu:$('#tagMS_menu'), effortMenu:$('#effortMS_menu'), modalverbMenu:$('#modalverbMS_menu'), documentationMenu:$('#documentationMS_menu'), actionwordMenu:$('#actionwordMS_menu'), resetBtn:$('#resetBtn'), exportPdfBtn:$('#exportPdfBtn'),
-      sideTabCatalog:$('#side-tab-catalog'), sideTabComponents:$('#side-tab-components'), sideTabMappings:$('#side-tab-mappings'), catalogPanel:$('#catalogPanel'), componentPanel:$('#componentPanel'), mappingPanel:$('#mappingPanel'),
-      viewSubtitle:$('#viewSubtitle'), viewSummary:$('#viewSummary'), selectionState:$('#catalogSelectionState'),
+      catalogPanel:$('#catalogPanel'), componentPanel:$('#componentPanel'), mappingPanel:$('#mappingPanel'),
+      viewSubtitle:$('#viewSubtitle'), visualContextLabel:$('#visualContextLabel'), visualizationTabGroup:$('#visualizationTabGroup'), viewSummary:$('#viewSummary'), selectionState:$('#catalogSelectionState'),
       fileInfo:$('#fileInfo'), countInfo:$('#countInfo'), graphInfo:$('#graphInfo'),
       listTab:$('#listTab'), componentTab:$('#componentTab'), mappingTab:$('#mappingTab'), graphTab:$('#graphTab'), sunburstTab:$('#sunburstTab'), barTab:$('#barTab'), jsonTab:$('#jsonTab'), jsonView:$('#jsonView'), msg:$('#msg'),
       jsonModal:$('#jsonModal'), jsonModalBody:$('#jsonModalBody'), jsonModalClose:$('#jsonModalClose') };
@@ -3600,15 +3772,94 @@
       var isCatalog = mode==='catalog';
       var isComponent = mode==='component';
       var isMapping = mode==='mapping';
-      els.sideTabCatalog.classList.toggle('active', isCatalog);
-      els.sideTabCatalog.setAttribute('aria-selected', isCatalog ? 'true' : 'false');
-      els.sideTabComponents.classList.toggle('active', isComponent);
-      els.sideTabComponents.setAttribute('aria-selected', isComponent ? 'true' : 'false');
-      els.sideTabMappings.classList.toggle('active', isMapping);
-      els.sideTabMappings.setAttribute('aria-selected', isMapping ? 'true' : 'false');
       els.catalogPanel.classList.toggle('hidden', !isCatalog);
       els.componentPanel.classList.toggle('hidden', !isComponent);
       els.mappingPanel.classList.toggle('hidden', !isMapping);
+    }
+
+    // Kennzeichnet klar, auf welchen Datenbereich sich Graph, Sunburst, Balken und JSON beziehen.
+    function updateVisualizationContext(){
+      var labels={catalog:'Kataloge',component:'Komponentendefinitionen',mapping:'Mappings'};
+      var label=labels[uiState.dataMode] || labels.catalog;
+      var isHome=uiState.view==='home';
+      if(els.visualContextLabel){
+        els.visualContextLabel.hidden=isHome;
+        els.visualContextLabel.textContent='Auswertung von: '+label;
+        els.visualContextLabel.title='Graph, Sunburst, Balkendiagramm und JSON verwenden die Daten des Arbeitsbereichs „'+label+'“.';
+      }
+      if(els.visualizationTabGroup){
+        els.visualizationTabGroup.classList.toggle('is-disabled',isHome);
+        els.visualizationTabGroup.setAttribute('aria-disabled',isHome ? 'true' : 'false');
+        var visualTabs=els.visualizationTabGroup.querySelectorAll('.tab');
+        for(var vt=0;vt<visualTabs.length;vt++){
+          visualTabs[vt].disabled=isHome;
+          visualTabs[vt].setAttribute('aria-disabled',isHome ? 'true' : 'false');
+        }
+      }
+      var modeTab=uiState.dataMode==='component' ? 'components' : (uiState.dataMode==='mapping' ? 'mappings' : 'list');
+      var tabs=$$('.tab');
+      var isVisual=uiState.view==='graph' || uiState.view==='sunburst' || uiState.view==='bar' || uiState.view==='json';
+      for(var i=0;i<tabs.length;i++){
+        tabs[i].classList.toggle('context-active', isVisual && tabs[i].getAttribute('data-tab')===modeTab);
+      }
+    }
+
+    // Handlungsorientierter Leerzustand fuer Nutzer ohne bereits geladene OSCAL-Datei.
+    function renderWorkspaceEmptyState(container, mode){
+      var configs={
+        catalog:{title:'Noch kein OSCAL-Katalog geladen',noun:'einen Katalog',panel:els.catalogPanel,supportsHome:true},
+        component:{title:'Noch keine OSCAL-Komponentendefinition geladen',noun:'eine Komponentendefinition',panel:els.componentPanel,supportsHome:true},
+        mapping:{title:'Noch kein OSCAL Control Mapping geladen',noun:'ein Mapping',panel:els.mappingPanel,supportsHome:false}
+      };
+      var cfg=configs[mode] || configs.catalog;
+      var empty=document.createElement('section');
+      empty.className='workspace-empty-state';
+      empty.setAttribute('role','status');
+      var inner=document.createElement('div');
+      inner.className='workspace-empty-inner';
+      var directRoute=cfg.supportsHome
+        ? '<div class="workspace-empty-route"><strong>1 · Direkt hier laden</strong>Öffne links den Punkt „Dateiupload“. Dort kannst du eine lokale Datei hineinziehen, auswählen oder eine URL einfügen.</div>'
+        : '<div class="workspace-empty-route"><strong>Dateiupload im linken Menü</strong>Öffne links den Punkt „Dateiupload“. Dort kannst du eine lokale Mapping-Datei hineinziehen, auswählen oder eine URL einfügen.</div>';
+      var homeRoute=cfg.supportsHome
+        ? '<div class="workspace-empty-route"><strong>2 · Über die Startseite</strong>Wähle den Home-Button oben links. Dort kannst du Kataloge und Komponentendefinitionen aus dem öffentlichen BSI Repository suchen und öffnen.</div>'
+        : '';
+      inner.innerHTML=''
+        +'<div class="workspace-empty-icon" aria-hidden="true">⇧</div>'
+        +'<div class="workspace-empty-kicker">Bereit zum Start</div>'
+        +'<h3>'+escapeHtml(cfg.title)+'</h3>'
+        +'<p>Um Inhalte in diesem Arbeitsbereich anzuzeigen, lade zuerst '+escapeHtml(cfg.noun)+' als JSON-Datei oder über eine URL.</p>'
+        +'<div class="workspace-empty-routes'+(cfg.supportsHome?'':' single')+'">'
+          +directRoute
+          +homeRoute
+        +'</div>';
+      var actions=document.createElement('div');
+      actions.className='workspace-empty-actions';
+      var uploadBtn=document.createElement('button');
+      uploadBtn.className='btn primary';
+      uploadBtn.type='button';
+      uploadBtn.textContent='Dateiupload öffnen';
+      uploadBtn.addEventListener('click', function(){
+        var upload=cfg.panel && cfg.panel.querySelector('details[data-section="upload"]');
+        if(upload){
+          upload.open=true;
+          upload.scrollIntoView({behavior:'smooth',block:'start'});
+          var summary=upload.querySelector('summary');
+          if(summary) summary.focus({preventScroll:true});
+        }
+      });
+      actions.appendChild(uploadBtn);
+      if(cfg.supportsHome){
+        var homeBtn=document.createElement('button');
+        homeBtn.className='btn';
+        homeBtn.type='button';
+        homeBtn.textContent='Zur Startseite';
+        homeBtn.addEventListener('click', function(){ switchTab('home'); });
+        actions.appendChild(homeBtn);
+      }
+      inner.appendChild(actions);
+      empty.appendChild(inner);
+      container.appendChild(empty);
+      return empty;
     }
 
     // Unterzeile unter dem Titel passend zur aktiven Hauptansicht aktualisieren.
@@ -3938,14 +4189,14 @@
       help.setAttribute('role','complementary');
       help.setAttribute('aria-label','Hinweise zur Nutzung des Viewers');
       help.innerHTML=''
-        +'<section class="registry-help-card">'
+        +'<section class="registry-help-card guide">'
           +'<div class="registry-help-header">'
             +'<h3>Wie nutze ich den Viewer?</h3>'
             +'<p>Ein kurzer Ablauf für die Arbeit mit Katalogen, Komponentendefinitionen und Mappings.</p>'
           +'</div>'
           +'<ol class="registry-guide-list">'
-            +'<li><strong>Dokument finden oder laden.</strong><span>Nutze die Suche auf der Startseite, eine Modellkachel, einen lokalen JSON-Upload oder eine URL (die letzten beiden Optionen sind nur in der Katalogansicht und in der Ansicht für Komponentendefinitionen verfügbar). Durch Klick auf die Kacheln &quot;Kataloge&quot; und &quot;Komponentendefinitionen&quot; auf der Startseite werden die entsprechenden Inhalte aus dem <a href="https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek" target="_blank" rel="noopener noreferrer">öffentlichen BSI Stand der Technik GitHub-Repository</a> angezeigt, welche dann wiederum durch erneuten Klick direkt im Viewer geladen und angezeigt werden können.</span></li>'
-            +'<li><strong>Obere Menüleiste verstehen.</strong><span>Die Menüleiste führt zu den Arbeitsbereichen: Katalog, Komponentendefinitionen und Mappings zeigen die dort hochgeladenen Inhalte an; Graph, Sunburst und Balkendiagramm visualisieren geladene Daten; JSON zeigt die Rohstruktur des aktiven Dokuments.</span></li>'
+            +'<li><strong>Dokument finden oder laden.</strong><span>Nutze die Suche auf der Startseite, eine Modellkachel, einen lokalen JSON-Upload oder eine URL. Upload und URL-Abruf stehen im jeweiligen Arbeitsbereich unter &quot;Dateiupload&quot; bereit. Die Kacheln &quot;Kataloge&quot; und &quot;Komponentendefinitionen&quot; zeigen Inhalte aus dem <a href="https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek" target="_blank" rel="noopener noreferrer">öffentlichen BSI Stand der Technik GitHub-Repository</a>, die sich direkt im Viewer öffnen lassen.</span></li>'
+            +'<li><strong>Obere Menüleiste verstehen.</strong><span>Kataloge, Komponentendefinitionen und Mappings sind die drei Arbeitsbereiche. Die rechts daneben angezeigte Kontextzeile nennt jederzeit den aktiven Datenbereich. Graph, Sunburst, Balkendiagramm und JSON passen ihren Inhalt automatisch an diesen Bereich an.</span></li>'
             +'<li><strong>Passende Ansicht wählen.</strong><span>Kataloge zeigen Anforderungen, Komponentendefinitionen zeigen die Anforderungserfüllung referenzierter Anforderungen, Mappings zeigen Beziehungen zwischen Anforderungen (es muss sichergestellt sein, dass die passenden Kataloge in der Katalogansicht hochgeladen sind, um die Inhalte der entsprechenden Kataloge sauber in der Ansicht für Komponentendefinitionen und in der Mappingansicht anzeigen zu können).</span></li>'
             +'<li><strong>Inhalte eingrenzen.</strong><span>In der Katalogansicht, der Ansicht für Komponentendefinitionen und der Mappingansicht steht jeweils eine Menüleiste auf der linken Seite zur Verfügung, welche es ermöglicht die angezeigten Inhalte zu filtern (z.B. über ein Volltext-Suchfeld oder andere vorgegebene Filterungsmöglichkeiten). Somit ist man in der Lage gezielt nach Inhalten zu suchen.</span></li>'
             +'<li><strong>Ergebnisse sichern.</strong><span>Über den PDF-Export können die aktuellen Ansichten für Kataloge und Komponentendefinitionen druckoptimiert ausgegeben werden (via Browser Print-to-PDF-Funktion).</span></li>'
@@ -3964,6 +4215,21 @@
             +'<div><dt>Mappings</dt><dd>Sammlung von Beziehungen zwischen Anforderungen aus verschiedenen Katalogen.</dd></div>'
             +'<div><dt>Metadata</dt><dd>Titel, Version, Datum, Rollen und weitere Verwaltungsinformationen eines Dokuments.</dd></div>'
             +'<div><dt>Back Matter</dt><dd>Anhangsbereich für Ressourcen, Links, Dokumente und Referenzen.</dd></div>'
+          +'</dl>'
+        +'</section>'
+        +'<section class="registry-help-card compatibility">'
+          +'<div class="registry-help-header">'
+            +'<h3>Kompatibilität</h3>'
+            +'<p>Unterstützte Desktop-Umgebungen und technische Voraussetzungen.</p>'
+          +'</div>'
+          +'<span class="compatibility-badge">Desktop-Version</span>'
+          +'<dl class="registry-compatibility-list">'
+            +'<div><dt>Bildschirm</dt><dd>Für Desktop und Notebook ab 1280 × 720 Pixeln ausgelegt; empfohlen sind mindestens 1440 Pixel Breite. Smartphones und Tablets werden nicht unterstützt.</dd></div>'
+            +'<div><dt>Browser</dt><dd>Aktuelle stabile Versionen von Google Chrome, Microsoft Edge, Mozilla Firefox und Apple Safari. JavaScript muss aktiviert sein. Internet Explorer, veraltete Browser und eingebettete WebViews werden nicht unterstützt.</dd></div>'
+            +'<div><dt>Betriebssysteme</dt><dd>Windows 10/11, macOS 12 oder neuer sowie aktuelle 64-Bit-Linux-Desktopdistributionen, sofern dort einer der genannten Browser unterstützt wird.</dd></div>'
+            +'<div><dt>Lokale Nutzung</dt><dd>Lokale JSON-Dateien werden ausschließlich im Browser verarbeitet. Für lokale Uploads und bereits mitgelieferte Viewer-Dateien ist keine Internetverbindung erforderlich.</dd></div>'
+            +'<div><dt>Online-Funktionen</dt><dd>Repository-Inhalte und URLs benötigen Internetzugriff. Externe Server müssen Browserabrufe per HTTPS und CORS erlauben.</dd></div>'
+            +'<div><dt>PDF-Export</dt><dd>Erfolgt über den Druckdialog des Browsers. Pop-ups beziehungsweise Druckdialoge dürfen nicht durch Richtlinien blockiert sein.</dd></div>'
           +'</dl>'
         +'</section>';
       parent.appendChild(help);
@@ -4016,7 +4282,7 @@
       primary.className='registry-home-main';
       var hero=document.createElement('section');
       hero.className='registry-hero';
-      hero.innerHTML='<h2 id="homeTitle">Einstieg in die Stand der Technik-Bibliothek</h2><p>Durchsuche und öffne aktuelle OSCAL-Kataloge und Komponentendefinitionen direkt aus dem öffentlichen BSI Stand der Technik Repository.</p><div class="registry-logo-panel" aria-hidden="true"><img src="./viewer_logo.png" alt="" onerror="this.parentNode.style.display=&quot;none&quot;"></div>';
+      hero.innerHTML='<h2 id="homeTitle">Einstieg in die Stand der Technik-Bibliothek</h2><p>Die Stand der Technik-Bibliothek des BSI bündelt maschinenlesbare Sicherheitsanforderungen und produktspezifische Umsetzungsbeschreibungen im OSCAL-Format. Sie schafft eine gemeinsame, versionierbare Datenbasis, um den Stand der Technik strukturiert zu recherchieren, zu vergleichen und in Sicherheits- und Compliance-Prozessen weiterzuverwenden.</p><p>Durchsuche und öffne aktuelle OSCAL-Kataloge und Komponentendefinitionen direkt aus dem öffentlichen BSI Stand der Technik Repository oder lasse dir die Inhalte aus dem öffentlichen Repository direkt über die unten stehenden Kacheln „Kataloge“ und „Komponentendefinitionen“ anzeigen.</p>';
       renderRegistrySearch(hero, 'Dokumente suchen...');
       var count=document.createElement('div');
       count.className='registry-count';
@@ -4053,6 +4319,10 @@
       renderRegistryModelCard(grid, 'catalog', registryState.catalogs.length);
       renderRegistryModelCard(grid, 'component', registryState.components.length);
       primary.appendChild(grid);
+      var helpIntro=document.createElement('p');
+      helpIntro.className='registry-help-intro';
+      helpIntro.textContent='Im Folgenden werden die Nutzung des Viewers, verwendete Begriffe und die Kompatibilität näher erläutert.';
+      primary.appendChild(helpIntro);
       shell.appendChild(primary);
       renderRegistryHomeHelp(shell);
       els.homeTab.appendChild(shell);
@@ -4071,6 +4341,7 @@
         tabs[i].classList.remove('active');
         tabs[i].setAttribute('aria-selected','false');
       }
+      updateVisualizationContext();
       if(els.homeTab) els.homeTab.classList.remove('hidden');
       if(els.viewSummary) els.viewSummary.classList.add('hidden');
       els.listTab.classList.add('hidden'); els.componentTab.classList.add('hidden'); els.mappingTab.classList.add('hidden'); els.graphTab.classList.add('hidden'); els.sunburstTab.classList.add('hidden'); els.barTab.classList.add('hidden'); els.jsonTab.classList.add('hidden');
@@ -4137,6 +4408,7 @@
         b.classList.toggle('active', active);
         b.setAttribute('aria-selected', active ? 'true' : 'false');
       }
+      updateVisualizationContext();
       els.listTab.classList.add('hidden'); els.componentTab.classList.add('hidden'); els.mappingTab.classList.add('hidden'); els.graphTab.classList.add('hidden'); els.sunburstTab.classList.add('hidden'); els.barTab.classList.add('hidden'); els.jsonTab.classList.add('hidden');
       if(els.viewSummary){ els.viewSummary.classList.toggle('hidden', !(name==='list' || name==='components' || name==='mappings')); }
       if(name==='list'){ els.listTab.classList.remove('hidden'); renderList(); }
@@ -4155,9 +4427,6 @@
     document.getElementById('tab-sunburst').addEventListener('click', function(){ switchTab('sunburst'); });
     document.getElementById('tab-bar').addEventListener('click', function(){ switchTab('bar'); });
     document.getElementById('tab-json').addEventListener('click', function(){ switchTab('json'); });
-    if(els.sideTabCatalog){ els.sideTabCatalog.addEventListener('click', function(){ switchTab('list'); }); }
-    if(els.sideTabComponents){ els.sideTabComponents.addEventListener('click', function(){ switchTab('components'); }); }
-    if(els.sideTabMappings){ els.sideTabMappings.addEventListener('click', function(){ switchTab('mappings'); }); }
 
     function shortenSourceLabel(label){
       var text=String(label||'').trim();
@@ -5172,6 +5441,7 @@
       mappingState.rationales=msGetSelected(mappingEls.rationale, mappingEls.rationaleMenu);
       mappingState.statuses=msGetSelected(mappingEls.status, mappingEls.statusMenu);
       renderMappingView();
+      refreshChartsIfVisible();
     }
 
     // Multi-select dropdowns fire RefreshViews() internally.
@@ -5655,10 +5925,7 @@
           ],
           chips:[]
         });
-        var initial=document.createElement('div');
-        initial.className='card mapping-empty';
-        initial.textContent='Noch kein OSCAL Control Mapping geladen.';
-        els.mappingTab.appendChild(initial);
+        renderWorkspaceEmptyState(els.mappingTab, 'mapping');
         return;
       }
 
@@ -8865,10 +9132,7 @@ function baseMatches(c){ return matches(c); }
             chips:[],
             actions:[]
           });
-          var initial=document.createElement('div');
-          initial.className='card';
-          initial.textContent='Keine Komponentendefinition geladen.';
-          els.componentTab.appendChild(initial);
+          renderWorkspaceEmptyState(els.componentTab, 'component');
           compEls.graphInfo.textContent='Graph: 0 Knoten';
           return;
         }
@@ -9057,6 +9321,119 @@ function baseMatches(c){ return matches(c); }
       return { nodes:nodes, links:links };
     }
 
+    function renderChartLegend(container, title, items, extraClass, note){
+      if(!container || !items || !items.length) return null;
+      var legend=document.createElement('aside');
+      legend.className='chart-legend'+(extraClass ? ' '+extraClass : '');
+      legend.setAttribute('aria-label',title || 'Legende');
+      var heading=document.createElement('h4');
+      heading.textContent=title || 'Legende';
+      legend.appendChild(heading);
+      if(note){
+        var description=document.createElement('p');
+        description.className='chart-legend-note';
+        description.textContent=note;
+        legend.appendChild(description);
+      }
+      var list=document.createElement('ul');
+      list.className='chart-legend-list';
+      for(var i=0;i<items.length;i++){
+        var item=items[i] || {};
+        var row=document.createElement('li');
+        row.className='chart-legend-item';
+        var symbol=document.createElement('span');
+        symbol.className='chart-legend-symbol '+(item.type || 'swatch')+(item.arrow ? ' arrow' : '')+(item.dashed ? ' dashed' : '');
+        symbol.setAttribute('aria-hidden','true');
+        symbol.style.setProperty('--legend-color',item.color || '#51677f');
+        var label=document.createElement('span');
+        label.textContent=String(item.label || '');
+        row.appendChild(symbol);
+        row.appendChild(label);
+        if(item.value!==undefined && item.value!==null && item.value!==''){
+          var value=document.createElement('span');
+          value.className='chart-legend-value';
+          value.textContent=String(item.value);
+          row.appendChild(value);
+        }
+        list.appendChild(row);
+      }
+      legend.appendChild(list);
+      container.appendChild(legend);
+      return legend;
+    }
+
+    function renderSunburstLegend(container, title, items){
+      return renderChartLegend(container,title,items,'sunburst-legend','Farben kennzeichnen die Hauptsegmente. Vollständige Bezeichnungen und Werte werden beim Überfahren eines Segments angezeigt.');
+    }
+
+    function addBarAxisTitles(g, width, height, margin, xLabel, yLabel){
+      if(xLabel){
+        g.append('text')
+          .attr('class','chart-axis-title')
+          .attr('x',width/2)
+          .attr('y',height+margin.bottom-8)
+          .attr('text-anchor','middle')
+          .text(xLabel);
+      }
+      if(yLabel){
+        g.append('text')
+          .attr('class','chart-axis-title')
+          .attr('transform','rotate(-90)')
+          .attr('x',-height/2)
+          .attr('y',-margin.left+16)
+          .attr('text-anchor','middle')
+          .text(yLabel);
+      }
+    }
+
+    function sunburstInnerRadius(d, radius, innerRatio){
+      return Math.max(d.y0, radius*(innerRatio || 0));
+    }
+
+    function sunburstChartCenterX(width, radius){
+      var legendWidth=Math.min(300,width*.32);
+      var availableWidth=width-legendWidth-42;
+      return Math.max(radius+18,availableWidth/2);
+    }
+
+    function addSunburstSegmentLabels(group, nodes, radius, innerRatio, labelFn){
+      var visible=(nodes || []).filter(function(d){
+        var inner=sunburstInnerRadius(d,radius,innerRatio);
+        var middle=(inner+d.y1)/2;
+        var arcLength=(d.x1-d.x0)*middle;
+        return arcLength>=46 && (d.y1-inner)>=24;
+      });
+      group.append('g').attr('class','sunburst-label-layer')
+        .selectAll('text')
+        .data(visible)
+        .enter().append('text')
+        .attr('class','sunburst-segment-label')
+        .attr('transform',function(d){
+          var angle=(d.x0+d.x1)/2*180/Math.PI;
+          var inner=sunburstInnerRadius(d,radius,innerRatio);
+          var middle=(inner+d.y1)/2;
+          return 'rotate('+(angle-90)+') translate('+middle+',0) rotate('+(angle>180?180:0)+')';
+        })
+        .attr('dy','0.35em')
+        .attr('text-anchor','middle')
+        .attr('fill','#ffffff')
+        .style('font-size','11px')
+        .style('font-weight','800')
+        .text(function(d){
+          var full=String(labelFn ? labelFn(d) : (d.data && d.data.name) || '');
+          var inner=sunburstInnerRadius(d,radius,innerRatio);
+          var maxChars=Math.max(5,Math.floor(((d.x1-d.x0)*((inner+d.y1)/2))/6.5));
+          return full.length>maxChars ? full.slice(0,Math.max(4,maxChars-1))+'…' : full;
+        })
+        .append('title')
+        .text(function(d){ return String(labelFn ? labelFn(d) : (d.data && d.data.name) || ''); });
+    }
+
+    function addSunburstCenterLabel(group, title, value, unit){
+      group.append('text').attr('class','sunburst-center-title').attr('y',-4).text(title || '');
+      group.append('text').attr('class','sunburst-center-value').attr('y',14).text(String(value || 0)+(unit ? ' '+unit : ''));
+    }
+
     // Komponentenbeziehungen als interaktiven D3-Graphen rendern.
     function drawComponentGraph(){
       return withDataMode('component', function(){
@@ -9075,6 +9452,14 @@ function baseMatches(c){ return matches(c); }
             return;
           }
 
+          renderChartLegend(el,'Legende – Komponentendefinitionen',[
+            {type:'node',color:'#175cd3',label:'Capability'},
+            {type:'node',color:'#24364b',label:'Komponente'},
+            {type:'node',color:'#2f7d5b',label:'Implementierte Anforderung'},
+            {type:'line',color:'#78a5f5',label:'Capability integriert Komponente'},
+            {type:'line',color:'#6fab83',label:'Komponente bzw. Capability implementiert Anforderung'}
+          ],'graph-legend','Knoten können angeklickt werden, um zum zugehörigen Eintrag zu wechseln.');
+
           var width=el.clientWidth || 900, height=el.clientHeight || 600;
           var svg=d3.select(el).append('svg').attr('width', width).attr('height', height);
           var g=svg.append('g');
@@ -9089,6 +9474,7 @@ function baseMatches(c){ return matches(c); }
             .attr('stroke', function(d){ return d.rel==='incorporates' ? '#78a5f5' : '#6fab83'; })
             .attr('stroke-width', 1.8)
             .attr('opacity', 0.9);
+          link.append('title').text(function(d){ return d.rel==='incorporates' ? 'Capability integriert Komponente' : 'Implementiert Anforderung'; });
 
           var node=g.selectAll('.node').data(nodes).enter().append('g').attr('class','node')
             .call(d3.drag()
@@ -9161,34 +9547,20 @@ function baseMatches(c){ return matches(c); }
           }
         }
         if(!dataItems.length){ container.innerHTML='<div class="card">Keine Komponenten mit implementierten Anforderungen in der aktuellen Filterung.</div>'; return; }
+        dataItems.sort(function(a,b){ return b.value-a.value || a.name.localeCompare(b.name,'de'); });
         var data={ name:'Komponenten', children:dataItems };
         var w=container.clientWidth || 900, h=container.clientHeight || 600, r=Math.min(w,h)/2 - 36;
         var root=d3.hierarchy(data).sum(function(d){ return d.value||0; });
         d3.partition().size([2*Math.PI, r])(root);
         var color=d3.scaleOrdinal(d3.schemeTableau10).domain(dataItems.map(function(item){ return item.name; }));
+        renderSunburstLegend(container,'Komponenten',dataItems.map(function(item){ return {type:'swatch',color:color(item.name),label:item.name,value:item.value}; }));
         var svg=d3.select(container).append('svg').attr('width', w).attr('height', h);
-        var g=svg.append('g').attr('transform','translate('+(w/2)+','+(h/2)+')');
+        var g=svg.append('g').attr('transform','translate('+sunburstChartCenterX(w,r)+','+(h/2)+')');
         var arc=d3.arc().startAngle(function(d){ return d.x0; }).endAngle(function(d){ return d.x1; }).innerRadius(function(d){ return Math.max(d.y0, r*0.48); }).outerRadius(function(d){ return d.y1; });
         var nodes=root.descendants().filter(function(d){ return d.depth; });
         g.selectAll('path').data(nodes).enter().append('path').attr('d', arc).attr('fill', function(d){ return color(d.data.name); }).attr('stroke','#ffffff').append('title').text(function(d){ return d.data.name+': '+d.value; });
-        g.selectAll('text')
-          .data(nodes)
-          .enter().append('text')
-          .attr('transform', function(d){
-            var x=(d.x0+d.x1)/2 * 180/Math.PI;
-            var y=(Math.max(d.y0, r*0.48) + d.y1) / 2;
-            return 'rotate(' + (x-90) + ') translate(' + y + ',0) rotate(' + (x>180?180:0) + ')';
-          })
-          .attr('dy','0.35em')
-          .attr('text-anchor','middle')
-          .attr('fill','#ffffff')
-          .style('font-size','11px')
-          .style('font-weight','700')
-          .text(function(d){
-            var name=String(d.data.name || '');
-            return name.length > 22 ? name.slice(0,20) + '…' : name;
-          })
-          .append('title').text(function(d){ return d.data.name; });
+        addSunburstSegmentLabels(g,nodes,r,.48,function(d){ return d.data.name; });
+        addSunburstCenterLabel(g,'Komponenten',root.value,'Anforderungen');
       });
     }
 
@@ -9213,7 +9585,7 @@ function baseMatches(c){ return matches(c); }
         data.sort(function(a,b){ return b.value-a.value || a.group.localeCompare(b.group); });
         var keys=data.map(function(item){ return item.group; });
         if(!keys.length){ container.innerHTML='<div class="card">Keine Komponenten mit implementierten Anforderungen in der aktuellen Filterung.</div>'; return; }
-        var margin={top:30,right:20,bottom:40,left:60};
+        var margin={top:30,right:20,bottom:40,left:76};
         var fullWidth=(container.clientWidth||900);
         var baseHeight=(container.clientHeight||600);
         var w=fullWidth-margin.left-margin.right;
@@ -9246,7 +9618,7 @@ function baseMatches(c){ return matches(c); }
           var lineCount=estimateWrappedLines(keys[li], Math.max(80, tempX.bandwidth())).length;
           if(lineCount>maxLabelLines) maxLabelLines=lineCount;
         }
-        margin.bottom = Math.max(90, 28 + (maxLabelLines * 16));
+        margin.bottom = Math.max(116, 52 + (maxLabelLines * 16));
         var h=baseHeight-margin.top-margin.bottom;
         var svg=d3.select(container).append('svg').attr('width', w+margin.left+margin.right).attr('height', h+margin.top+margin.bottom);
         var g=svg.append('g').attr('transform','translate('+margin.left+','+margin.top+')');
@@ -9254,7 +9626,7 @@ function baseMatches(c){ return matches(c); }
         var y=d3.scaleLinear().domain([0,d3.max(data,function(d){ return d.value; })]).nice().range([h,0]);
         var color=d3.scaleOrdinal(d3.schemeTableau10).domain(keys);
         var xAxis=g.append('g').attr('transform','translate(0,'+h+')').call(d3.axisBottom(x).tickFormat(''));
-        g.append('g').call(d3.axisLeft(y)).selectAll('text').attr('fill','#40566f');
+        g.append('g').call(d3.axisLeft(y).ticks(6).tickFormat(d3.format('d'))).selectAll('text').attr('fill','#40566f');
         g.selectAll('.domain, .tick line').attr('stroke','#c3d1e0');
         g.selectAll('.bar').data(data).enter().append('rect').attr('class','bar').attr('x', function(d){ return x(d.group); }).attr('y', function(d){ return y(d.value); }).attr('width', x.bandwidth()).attr('height', function(d){ return h-y(d.value); }).attr('fill', function(d){ return color(d.group); });
         g.selectAll('.bar').append('title').text(function(d){ return d.group + ': ' + d.value; });
@@ -9290,6 +9662,7 @@ function baseMatches(c){ return matches(c); }
           })
           .append('title')
           .text(function(d){ return d.group; });
+        addBarAxisTitles(g,w,h,margin,'Komponente','Anzahl implementierter Anforderungen');
       });
     }
 
@@ -9315,10 +9688,7 @@ function baseMatches(c){ return matches(c); }
             chips:[],
             actions:[]
           });
-          var initialCard=document.createElement('div');
-          initialCard.className='card';
-          initialCard.textContent='Noch kein OSCAL Catalog geladen.';
-          els.listTab.appendChild(initialCard);
+          renderWorkspaceEmptyState(els.listTab, 'catalog');
           els.graphInfo.textContent='Graph: 0 Knoten';
           return;
         }
@@ -9739,10 +10109,157 @@ function baseMatches(c){ return matches(c); }
       container.classList.add('chart-unavailable');
       container.innerHTML='<div class="card">'+escapeHtml(message)+'</div>';
     }
+
+    function visibleMappingEntries(){
+      return mappingState.entries.filter(mappingEntryMatches);
+    }
+
+    // Mapping-Beziehungen als Source-Target-Netz darstellen.
+    function drawMappingGraph(){
+      var el=document.getElementById('graph');
+      if(!el) return;
+      el.classList.remove('chart-unavailable');
+      el.innerHTML='<div class="graph-toolbar"><button id="fitBtn" class="btn" title="Alles anzeigen">Alles anzeigen</button></div>';
+      if(typeof d3==='undefined'){ el.innerHTML='<div class="card">D3 wurde nicht geladen.</div>'; return; }
+      var entries=visibleMappingEntries();
+      var nodeMap={};
+      var nodes=[];
+      var links=[];
+      function addNode(id,label,catalog,side){
+        if(nodeMap[id]) return nodeMap[id];
+        var node={id:id,label:label,catalog:catalog,side:side};
+        nodeMap[id]=node;
+        nodes.push(node);
+        return node;
+      }
+      for(var i=0;i<entries.length;i++){
+        var entry=entries[i];
+        for(var s=0;s<entry.sourceRefs.length;s++){
+          var sourceId='source|'+entry.sourceCatalog+'|'+entry.sourceRefs[s];
+          addNode(sourceId,entry.sourceRefs[s],entry.sourceCatalogDisplay || entry.sourceCatalog || 'Source','source');
+          for(var t=0;t<entry.targetRefs.length;t++){
+            var targetId='target|'+entry.targetCatalog+'|'+entry.targetRefs[t];
+            addNode(targetId,entry.targetRefs[t],entry.targetCatalogDisplay || entry.targetCatalog || 'Target','target');
+            links.push({source:sourceId,target:targetId,relationship:entry.relationship || 'unspecified'});
+          }
+        }
+      }
+      if(!nodes.length){
+        el.classList.add('chart-unavailable');
+        el.innerHTML='<div class="card">Keine Mapping-Daten für den Graphen vorhanden. Lade ein Mapping oder passe die aktiven Filter an.</div>';
+        return;
+      }
+      renderChartLegend(el,'Legende – Mappings',[
+        {type:'node',color:'#175cd3',label:'Source-Control'},
+        {type:'node',color:'#94611d',label:'Target-Control'},
+        {type:'line',color:'#5d7898',label:'Mapping-Richtung: Source → Target',arrow:true}
+      ],'graph-legend','Der genaue Relationship-Typ einer Verbindung wird beim Überfahren der Linie angezeigt.');
+      var width=el.clientWidth || 900;
+      var height=el.clientHeight || 600;
+      var svg=d3.select(el).append('svg').attr('width',width).attr('height',height);
+      var g=svg.append('g');
+      svg.append('defs').append('marker').attr('id','mappingArrow').attr('viewBox','0 -5 10 10').attr('refX',22).attr('refY',0).attr('markerWidth',7).attr('markerHeight',7).attr('orient','auto').append('path').attr('d','M0,-5L10,0L0,5').attr('fill','#5d7898');
+      var sim=d3.forceSimulation(nodes)
+        .force('link',d3.forceLink(links).id(function(d){return d.id;}).distance(150).strength(.35))
+        .force('charge',d3.forceManyBody().strength(-310))
+        .force('center',d3.forceCenter(width/2,height/2))
+        .force('collide',d3.forceCollide(42));
+      var link=g.selectAll('.mapping-graph-link').data(links).enter().append('line').attr('class','mapping-graph-link').attr('stroke','#5d7898').attr('stroke-width',1.6).attr('marker-end','url(#mappingArrow)').attr('opacity',.78);
+      link.append('title').text(function(d){return d.relationship;});
+      var node=g.selectAll('.mapping-graph-node').data(nodes).enter().append('g').attr('class','mapping-graph-node').call(d3.drag().on('start',function(ev,d){d.fx=d.x;d.fy=d.y;}).on('drag',function(ev,d){d.fx=ev.x;d.fy=ev.y;}).on('end',function(ev,d){d.fx=null;d.fy=null;}));
+      node.append('circle').attr('r',11).attr('fill',function(d){return d.side==='source' ? '#175cd3' : '#94611d';}).attr('stroke','#fff').attr('stroke-width',1.5);
+      node.append('text').attr('x',16).attr('y',4).attr('fill','#162434').attr('font-size','12px').attr('font-weight','700').text(function(d){return d.label;});
+      node.append('title').text(function(d){return (d.side==='source'?'Source: ':'Target: ')+d.catalog+' · '+d.label;});
+      var zoom=d3.zoom().scaleExtent([.05,8]).on('zoom',function(ev){g.attr('transform',ev.transform);});
+      svg.call(zoom);
+      function fit(){
+        var bounds=g.node().getBBox();
+        if(!bounds.width || !bounds.height) return;
+        var scale=Math.min(.95,Math.min(width/(bounds.width+80),height/(bounds.height+80)));
+        var tx=width/2-scale*(bounds.x+bounds.width/2);
+        var ty=height/2-scale*(bounds.y+bounds.height/2);
+        svg.transition().duration(350).call(zoom.transform,d3.zoomIdentity.translate(tx,ty).scale(scale));
+      }
+      var fitBtn=document.getElementById('fitBtn');
+      if(fitBtn) fitBtn.addEventListener('click',fit);
+      sim.on('tick',function(){
+        link.attr('x1',function(d){return d.source.x;}).attr('y1',function(d){return d.source.y;}).attr('x2',function(d){return d.target.x;}).attr('y2',function(d){return d.target.y;});
+        node.attr('transform',function(d){return 'translate('+d.x+','+d.y+')';});
+      });
+      sim.on('end',fit);
+    }
+
+    // Hierarchische Verteilung: Source-Kataloge und darin verwendete Relationship-Typen.
+    function drawMappingSunburst(){
+      var container=document.getElementById('sunburst');
+      container.classList.remove('chart-unavailable');
+      container.innerHTML='';
+      if(typeof d3==='undefined'){ container.innerHTML='<div class="card">D3 wurde nicht geladen.</div>'; return; }
+      var entries=visibleMappingEntries();
+      var grouped={};
+      for(var i=0;i<entries.length;i++){
+        var catalog=entries[i].sourceCatalog || 'Source-Katalog';
+        var relationship=entries[i].relationship || 'unspecified';
+        if(!grouped[catalog]) grouped[catalog]={};
+        grouped[catalog][relationship]=(grouped[catalog][relationship]||0)+1;
+      }
+      var catalogs=Object.keys(grouped);
+      if(!catalogs.length){ container.innerHTML='<div class="card">Keine Mapping-Daten für das Sunburst-Diagramm vorhanden.</div>'; return; }
+      var data={name:'Mappings',children:catalogs.map(function(catalog){return {name:catalog,children:Object.keys(grouped[catalog]).map(function(rel){return {name:rel,value:grouped[catalog][rel]};})};})};
+      var w=container.clientWidth||900,h=container.clientHeight||600,r=Math.min(w,h)/2-24;
+      var root=d3.hierarchy(data).sum(function(d){return d.value||0;});
+      d3.partition().size([2*Math.PI,r])(root);
+      var color=d3.scaleOrdinal(d3.schemeTableau10).domain(catalogs);
+      renderSunburstLegend(container,'Source-Kataloge',catalogs.map(function(catalog){
+        var total=Object.keys(grouped[catalog]).reduce(function(sum,rel){ return sum+grouped[catalog][rel]; },0);
+        return {type:'swatch',color:color(catalog),label:catalog,value:total};
+      }));
+      var svg=d3.select(container).append('svg').attr('width',w).attr('height',h);
+      var g=svg.append('g').attr('transform','translate('+sunburstChartCenterX(w,r)+','+(h/2)+')');
+      var arc=d3.arc().startAngle(function(d){return d.x0;}).endAngle(function(d){return d.x1;}).innerRadius(function(d){return sunburstInnerRadius(d,r,.28);}).outerRadius(function(d){return d.y1;});
+      var nodes=root.descendants().filter(function(d){return d.depth;});
+      g.selectAll('path').data(nodes).enter().append('path').attr('d',arc).attr('fill',function(d){
+        var top=d;
+        while(top.depth>1) top=top.parent;
+        var base=d3.color(color(top.data.name));
+        return d.depth>1 ? base.brighter(.35) : base;
+      }).attr('stroke','#fff').append('title').text(function(d){return d.ancestors().reverse().slice(1).map(function(item){return item.data.name;}).join(' › ')+': '+d.value;});
+      addSunburstSegmentLabels(g,nodes,r,.28,function(d){ return d.data.name; });
+      addSunburstCenterLabel(g,'Mappings',root.value,'Beziehungen');
+    }
+
+    // Mengenvergleich der im Mapping vorkommenden Relationship-Typen.
+    function drawMappingBar(){
+      var container=document.getElementById('bar');
+      container.classList.remove('chart-unavailable');
+      container.innerHTML='';
+      if(typeof d3==='undefined'){ container.innerHTML='<div class="card">D3 wurde nicht geladen.</div>'; return; }
+      var counts={};
+      var entries=visibleMappingEntries();
+      for(var i=0;i<entries.length;i++){
+        var rel=entries[i].relationship || 'unspecified';
+        counts[rel]=(counts[rel]||0)+1;
+      }
+      var keys=Object.keys(counts).sort(function(a,b){return counts[b]-counts[a] || a.localeCompare(b);});
+      if(!keys.length){ container.innerHTML='<div class="card">Keine Mapping-Daten für das Balkendiagramm vorhanden.</div>'; return; }
+      var margin={top:36,right:24,bottom:108,left:76};
+      var w=(container.clientWidth||900)-margin.left-margin.right;
+      var h=(container.clientHeight||600)-margin.top-margin.bottom;
+      var x=d3.scaleBand().domain(keys).range([0,w]).padding(.28);
+      var y=d3.scaleLinear().domain([0,d3.max(keys,function(k){return counts[k];})]).nice().range([h,0]);
+      var svg=d3.select(container).append('svg').attr('width',w+margin.left+margin.right).attr('height',h+margin.top+margin.bottom);
+      var g=svg.append('g').attr('transform','translate('+margin.left+','+margin.top+')');
+      g.append('g').attr('transform','translate(0,'+h+')').call(d3.axisBottom(x)).selectAll('text').attr('transform','rotate(-24)').style('text-anchor','end').attr('fill','#40566f');
+      g.append('g').call(d3.axisLeft(y).ticks(6).tickFormat(d3.format('d'))).selectAll('text').attr('fill','#40566f');
+      g.selectAll('.mapping-bar').data(keys).enter().append('rect').attr('class','mapping-bar').attr('x',function(k){return x(k);}).attr('y',function(k){return y(counts[k]);}).attr('width',x.bandwidth()).attr('height',function(k){return h-y(counts[k]);}).attr('fill','#175cd3').append('title').text(function(k){return k+': '+counts[k];});
+      g.selectAll('.mapping-bar-label').data(keys).enter().append('text').attr('x',function(k){return x(k)+x.bandwidth()/2;}).attr('y',function(k){return y(counts[k])-7;}).attr('text-anchor','middle').attr('fill','#1b3148').attr('font-size','12px').attr('font-weight','700').text(function(k){return counts[k];});
+      addBarAxisTitles(g,w,h,margin,'Relationship-Typ','Anzahl Mapping-Beziehungen');
+    }
+
     // Katalogbeziehungen als interaktiven D3-Graphen rendern.
     function drawGraph(){
       if(uiState.dataMode==='component'){ drawComponentGraph(); return; }
-      if(uiState.dataMode==='mapping'){ drawUnavailableChartNotice('graph', 'Für Mappings wird kein Graph erstellt.'); return; }
+      if(uiState.dataMode==='mapping'){ drawMappingGraph(); return; }
       try{
         var el=document.getElementById('graph'); if(!el) return;
         el.classList.remove('chart-unavailable');
@@ -9799,6 +10316,12 @@ function baseMatches(c){ return matches(c); }
           return;
         }
 
+        renderChartLegend(el,'Legende – Kataloge',[
+          {type:'node',color:'#24364b',label:'Anforderung'},
+          {type:'line',color:'#5f8fe6',label:'Verwandte Anforderung (related)'},
+          {type:'line',color:'#c9871f',label:'Voraussetzung → abhängige Anforderung (required)',arrow:true}
+        ],'graph-legend','Knoten können angeklickt werden, um direkt zur Anforderung zu wechseln.');
+
         var width=el.clientWidth || (el.parentElement && el.parentElement.clientWidth) || 900; var height=el.clientHeight || 600;
         var svg=d3.select(el).append('svg').attr('width', width).attr('height', height); var g=svg.append('g');
 
@@ -9819,6 +10342,7 @@ function baseMatches(c){ return matches(c); }
           .attr('stroke-width',1.5)
           .attr('marker-end', function(d){return d.rel==='required'?'url(#depArrow)':null;})
           .attr('opacity',0.9);
+        link.append('title').text(function(d){ return d.rel==='required' ? 'required: Voraussetzung → abhängige Anforderung' : 'related: verwandte Anforderungen'; });
 
         var node=g.selectAll('.node').data(nodes).enter().append('g').attr('class','node')
           .call(d3.drag()
@@ -9907,8 +10431,8 @@ function baseMatches(c){ return matches(c); }
 
     /* ---------------- Sunburst ---------------- */
     function drawSunburst(){
-      if(uiState.dataMode==='component'){ drawUnavailableChartNotice('sunburst', 'Für Komponenten wird kein Sunburst-Diagramm erstellt.'); return; }
-      if(uiState.dataMode==='mapping'){ drawUnavailableChartNotice('sunburst', 'Für Mappings wird kein Sunburst-Diagramm erstellt.'); return; }
+      if(uiState.dataMode==='component'){ drawComponentSunburst(); return; }
+      if(uiState.dataMode==='mapping'){ drawMappingSunburst(); return; }
       var container = document.getElementById('sunburst');
       container.innerHTML='';
       if(typeof d3==='undefined'){ container.innerHTML='<div class="card">D3 wurde nicht geladen.</div>'; return; }
@@ -9920,27 +10444,29 @@ function baseMatches(c){ return matches(c); }
         var g = (c.path && c.path[0]) || 'Unbekannt';
         counts[g] = (counts[g]||0) + 1;
       }
-      var keys = Object.keys(counts);
+      var keys = Object.keys(counts).sort(function(a,b){ return counts[b]-counts[a] || a.localeCompare(b,'de'); });
       if(!keys.length){ container.innerHTML='<div class="card">Keine Daten für die aktuelle Filterung.</div>'; return; }
 
       var data = { name:'Praktiken', children: keys.map(function(k){ return { name:k, value:counts[k] }; }) };
 
       var w = container.clientWidth || 900;
       var h = container.clientHeight || 600;
-      var r = Math.min(w,h)/2 - 10;
+      var r = Math.min(w,h)/2 - 30;
 
       var color = d3.scaleOrdinal(d3.schemeTableau10).domain(keys);
 
       var root = d3.hierarchy(data).sum(function(d){ return d.value||0; });
       d3.partition().size([2*Math.PI, r])(root);
 
+      renderSunburstLegend(container,'Praktiken und Gruppen',keys.map(function(key){ return {type:'swatch',color:color(key),label:key,value:counts[key]}; }));
+
       var svg = d3.select(container).append('svg').attr('width', w).attr('height', h);
-      var g = svg.append('g').attr('transform','translate('+ (w/2) +','+ (h/2) +')');
+      var g = svg.append('g').attr('transform','translate('+sunburstChartCenterX(w,r)+','+ (h/2) +')');
 
       var arc = d3.arc()
         .startAngle(function(d){ return d.x0; })
         .endAngle(function(d){ return d.x1; })
-        .innerRadius(function(d){ return d.y0; })
+        .innerRadius(function(d){ return sunburstInnerRadius(d,r,.38); })
         .outerRadius(function(d){ return d.y1; });
 
       var nodes = root.descendants().filter(function(d){ return d.depth; });
@@ -9952,26 +10478,14 @@ function baseMatches(c){ return matches(c); }
         .attr('fill', function(d){ return color(d.data.name); })
         .attr('stroke', '#ffffff')
         .append('title').text(function(d){ return d.data.name+': '+d.value; });
-
-      g.selectAll('text')
-        .data(nodes)
-        .enter().append('text')
-        .attr('transform', function(d){
-          var x = (d.x0 + d.x1)/2 * 180/Math.PI;
-          var y = (d.y0 + d.y1)/2;
-          return 'rotate(' + (x-90) + ') translate(' + y + ',0) rotate(' + (x>180?180:0) + ')';
-        })
-        .attr('dy','0.35em')
-        .attr('text-anchor','middle')
-        .attr('fill','#ffffff')
-        .style('font-size','12px')
-        .text(function(d){ return d.data.name; });
+      addSunburstSegmentLabels(g,nodes,r,.38,function(d){ return d.data.name; });
+      addSunburstCenterLabel(g,'Katalog',root.value,'Anforderungen');
     }
 
     /* ---------------- Bar chart ---------------- */
     function drawBar(){
-      if(uiState.dataMode==='component'){ drawUnavailableChartNotice('bar', 'Für Komponenten wird kein Balkendiagramm erstellt.'); return; }
-      if(uiState.dataMode==='mapping'){ drawUnavailableChartNotice('bar', 'Für Mappings wird kein Balkendiagramm erstellt.'); return; }
+      if(uiState.dataMode==='component'){ drawComponentBar(); return; }
+      if(uiState.dataMode==='mapping'){ drawMappingBar(); return; }
       var container = document.getElementById('bar');
       container.innerHTML='';
       if(typeof d3==='undefined'){ container.innerHTML='<div class="card">D3 wurde nicht geladen.</div>'; return; }
@@ -9988,7 +10502,7 @@ function baseMatches(c){ return matches(c); }
 
       var data = keys.map(function(k){ return { group:k, value:counts[k] }; });
 
-      var margin = {top: 30, right: 20, bottom: 60, left: 60};
+      var margin = {top: 30, right: 20, bottom: 108, left: 76};
       var w = (container.clientWidth || 900) - margin.left - margin.right;
       var h = (container.clientHeight || 600) - margin.top - margin.bottom;
 
@@ -10002,7 +10516,7 @@ function baseMatches(c){ return matches(c); }
 
       g.append('g').attr('transform','translate(0,'+h+')').call(d3.axisBottom(x))
         .selectAll('text').attr('transform','rotate(-25)').style('text-anchor','end').attr('fill','#40566f');
-      g.append('g').call(d3.axisLeft(y)).selectAll('text').attr('fill','#40566f');
+      g.append('g').call(d3.axisLeft(y).ticks(6).tickFormat(d3.format('d'))).selectAll('text').attr('fill','#40566f');
       g.selectAll('.domain, .tick line').attr('stroke','#c3d1e0');
 
       g.selectAll('.bar')
@@ -10026,6 +10540,7 @@ function baseMatches(c){ return matches(c); }
         .attr('fill','#1b3148')
         .style('font-size','12px')
         .text(function(d){return d.value;});
+      addBarAxisTitles(g,w,h,margin,'Praktik oder Gruppe','Anzahl Anforderungen');
     }
 
     // Sichere DOM-ID aus beliebigen IDs erzeugen
