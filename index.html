@@ -3104,7 +3104,7 @@
         <details class="sidebar-section" data-section="filters" name="catalog-sidebar-sections">
           <summary>
             <span class="sidebar-section-icon" aria-hidden="true">⌕</span>
-            <span class="sidebar-section-heading"><strong>Inhalte filtern</strong><small>Suche und 9 Filter</small></span>
+            <span class="sidebar-section-heading"><strong>Inhalte filtern</strong><small id="catalogFilterCount">Suche und 8 Filter</small></span>
           </summary>
           <div class="sidebar-section-body">
         <!-- Volltextsuche und facettierte Filter fuer die aktuell aktive Catalog-Quelle. -->
@@ -3112,7 +3112,8 @@
           <label class="field-label" for="q">Suche im Katalog</label>
           <input id="q" class="input" type="text" placeholder="Suchen (ID, Titel, Text, Tags…)" autocomplete="off" autocapitalize="off" spellcheck="false" name="q_oscal_viewer_stable2" />
           <div class="section-caption">Filter einschränken</div>
-          <details class="ms" id="groupMS"><summary>Alle Praktiken</summary><div class="ms-menu" id="groupMS_menu"></div></details>
+          <details class="ms hidden" id="groupMS"><summary>Alle Gruppen/Themen</summary><div class="ms-menu" id="groupMS_menu"></div></details>
+          <details class="ms hidden" id="subgroupMS"><summary>Alle Untergruppen/Unterthemen</summary><div class="ms-menu" id="subgroupMS_menu"></div></details>
           <details class="ms" id="classMS"><summary>Alle Quellkataloge</summary><div class="ms-menu" id="classMS_menu"></div></details>
           <details class="ms" id="secMS"><summary>Alle Sicherheitsniveaus</summary><div class="ms-menu" id="secMS_menu"></div></details>
           <details class="ms" id="targetMS"><summary>Alle Zielobjektkategorien</summary><div class="ms-menu" id="targetMS_menu"></div></details>
@@ -3433,10 +3434,65 @@
     function uniqueList(arr){ var seen={}, out=[]; for(var i=0;i<arr.length;i++){ var v=arr[i]; if(v && !seen[v]){ seen[v]=1; out.push(v); } } return out; }
     function splitMulti(s){ if(!s) return []; var parts = String(s).split(/[,;|\\/]/); var out=[]; for(var i=0;i<parts.length;i++){ var t=String(parts[i]).trim(); if(t) out.push(t); } return out; }
 
+    // Abgleichbasis aus practices.csv: Nur diese Gruppen der ersten OSCAL-Gruppenebene gelten als Praktiken.
+    var SDT_PRACTICES=[
+      {id:'GC',title:'Governance und Compliance',uuid:'b843af63-e2a3-4dcd-ab8e-fe66dde9b138'},
+      {id:'STM',title:'Strukturmodellierung',uuid:'deba3c17-15a1-450e-84a9-129ac73b0b84'},
+      {id:'UMS',title:'Umsetzung',uuid:'af61e9e7-80ee-4630-b603-c615c6a966ec'},
+      {id:'VRB',title:'Verbesserung',uuid:'662fb453-caf1-4e01-8152-b88027b71438'},
+      {id:'PERF',title:'Monitoring-Evaluation',uuid:'929c7c4f-efe1-4092-907e-ba1e767a1ac3'},
+      {id:'RISK',title:'Risikomanagement',uuid:'906e6304-5a16-4251-b225-324d4945100a'},
+      {id:'ASST',title:'Informationen und Assets',uuid:'02088622-573d-4225-883c-9afe0c7dc69b'},
+      {id:'PERS',title:'Personal',uuid:'8c802b3e-567c-4dd2-a7d0-c915659deb57'},
+      {id:'BES',title:'Beschaffungsmanagement',uuid:'cf85fe4e-56dc-4942-9564-aa80aa13a626'},
+      {id:'DLS',title:'Dienstleistersteuerung',uuid:'1291637b-aa0e-4b80-a309-5aca40e1c01b'},
+      {id:'TEST',title:'Änderungen und Tests',uuid:'554ba2da-7317-4792-8548-141250039260'},
+      {id:'GEB',title:'Gebäudemanagement',uuid:'17b37cff-5445-4487-acec-ef18d91cfec2'},
+      {id:'SENS',title:'Sensibilisierung',uuid:'66da6dfc-8bb3-4dcb-9809-72f3be19845e'},
+      {id:'ARCH',title:'Architektur',uuid:'6710c63e-bb40-4742-9bae-1779ba21f2a9'},
+      {id:'BER',title:'Berechtigung',uuid:'389cd5ad-fb81-4a95-8f7a-8f1fe1881709'},
+      {id:'NOT',title:'Notfallplanung',uuid:'723219b0-d58a-432d-bce2-2bf16c5874ae'},
+      {id:'DET',title:'Detektion',uuid:'f479aa5a-6dd9-4b9b-973e-8c4f85b074ed'},
+      {id:'REA',title:'Sicherheitsvorfallsbehandlung',uuid:'28b2c88b-1a2a-4f9f-81c0-5d46b50c8f04'},
+      {id:'KONF',title:'Konfiguration',uuid:'8e46d34c-5145-44f8-882e-790e2dcffa09'},
+      {id:'DEV',title:'Entwicklung',uuid:'108b65aa-5964-49d7-b9eb-dc8946a923ca'},
+      {id:'EXMP',title:'Beispielpraktik',uuid:'9d330062-5c39-4bb0-bef2-62ab66414aa5'}
+    ];
+    function normalizePracticeKey(value){
+      var text=String(value||'').trim().toLowerCase();
+      if(text.normalize){ text=text.normalize('NFD').replace(/[\u0300-\u036f]/g,''); }
+      return text.replace(/[^a-z0-9]+/g,'');
+    }
+    function groupAltIdentifier(group){
+      var props=group && Array.isArray(group.props) ? group.props : [];
+      for(var i=0;i<props.length;i++){
+        if(props[i] && String(props[i].name||'').toLowerCase()==='alt-identifier') return String(props[i].value||'').trim();
+      }
+      return '';
+    }
+    function isKnownPracticeGroup(group){
+      if(!group) return false;
+      var id=String(group.id||'').trim().toUpperCase();
+      var title=normalizePracticeKey(group.title||'');
+      var uuid=String(group.uuid || groupAltIdentifier(group) || '').trim().toLowerCase();
+      for(var i=0;i<SDT_PRACTICES.length;i++){
+        var practice=SDT_PRACTICES[i];
+        if(uuid && uuid===practice.uuid) return true;
+        if(id===practice.id && (!title || title===normalizePracticeKey(practice.title))) return true;
+      }
+      return false;
+    }
+    function detectCatalogGroupMode(groups){
+      var top=Array.isArray(groups) ? groups.filter(function(group){ return !!group; }) : [];
+      if(!top.length) return 'none';
+      for(var i=0;i<top.length;i++){ if(!isKnownPracticeGroup(top[i])) return 'groups'; }
+      return 'practices';
+    }
+
     var $=function(s){return document.querySelector(s);}; var $$=function(s){return Array.prototype.slice.call(document.querySelectorAll(s));};
 
     // Zentraler Laufzeitstatus fuer Katalogdaten, Komponentendaten und UI-Zustaende.
-    var state={controls:[], idMap:new ObjMap(), uuidMap:new ObjMap(), edgesBase:[], q:'', qRaw:'', groups:[], classes:[], secs:[], targets:[], tags:[], efforts:[], modalverbs:[], documentations:[], actionwords:[], topics:[], topicById:new ObjMap(), childrenByTopic:{}, childrenByPractice:{}, groupRoots:[], groupByKey:new ObjMap(), controlsByGroup:{}, ungroupedControls:[], openTopics:{}, openControls:{}, practices:[], practiceById:new ObjMap(), topicsByPractice:{}, openPractices:{}, openGroups:{}, jsonText:'', catalogUuid:'', catalogMetadata:null, catalogBackMatter:null, catalogBaseUrl:'', catalogResourcesByUuid:new ObjMap()};
+    var state={controls:[], idMap:new ObjMap(), uuidMap:new ObjMap(), edgesBase:[], q:'', qRaw:'', groups:[], subgroups:[], classes:[], secs:[], targets:[], tags:[], efforts:[], modalverbs:[], documentations:[], actionwords:[], topics:[], topicById:new ObjMap(), childrenByTopic:{}, childrenByPractice:{}, groupRoots:[], groupByKey:new ObjMap(), groupLabelsByLevel:[{},{}], controlsByGroup:{}, ungroupedControls:[], openTopics:{}, openControls:{}, practices:[], practiceById:new ObjMap(), topicsByPractice:{}, openPractices:{}, openGroups:{}, catalogGroupMode:'none', jsonText:'', catalogUuid:'', catalogMetadata:null, catalogBackMatter:null, catalogBaseUrl:'', catalogResourcesByUuid:new ObjMap()};
     function createComponentState(){
       return {
         documentUuid:'',
@@ -3497,7 +3553,7 @@
     var activeCatalogSourceIndex=-1;
     var activeComponentSourceIndex=-1;
     var activeMappingSourceIndex=-1;
-    var allGroups=[], allClasses=[], allSecs=[], allTargets=[], allTags=[], allEfforts=[], allModalverbs=[], allDocumentations=[], allActionwords=[];
+    var allGroups=[], allSubgroups=[], allClasses=[], allSecs=[], allTargets=[], allTags=[], allEfforts=[], allModalverbs=[], allDocumentations=[], allActionwords=[];
     var allComponentTypes=[], allComponentSources=[], allComponentNames=[], allCapabilityNames=[];
     var allMappingPractices=[], allMappingRelationships=[], allMappingSourceCatalogs=[], allMappingTargetCatalogs=[], allMappingRationales=[], allMappingStatuses=[];
     // Aufwand-Definitionen aus stufen.csv (Stufe 0..5)
@@ -3512,7 +3568,7 @@
 
 
     // Gesammelte DOM-Referenzen fuer schnelle Zugriffe ohne wiederholte Query-Selektoren.
-    var els={ homeBtn:$('#homeBtn'), homeTab:$('#homeTab'), file:$('#file'), dropzone:$('#catalogDropzone'), sourceSelect:$('#catalogDatasetSelect'), sourcePicker:$('#catalogSourcePicker'), sourceButton:$('#catalogSourceButton'), sourcePickerMenu:$('#catalogSourceMenu'), urlInput:$('#urlInput'), urlLoadBtn:$('#urlLoadBtn'), bsiSelect:$('#bsiCatalogSelect'), bsiStatus:$('#bsiCatalogStatus'), q:$('#q'), group:$('#groupMS'), cls:$('#classMS'), sec:$('#secMS'), target:$('#targetMS'), tag:$('#tagMS'), effort:$('#effortMS'), modalverb:$('#modalverbMS'), documentation:$('#documentationMS'), actionword:$('#actionwordMS'), groupMenu:$('#groupMS_menu'), clsMenu:$('#classMS_menu'), secMenu:$('#secMS_menu'), targetMenu:$('#targetMS_menu'), tagMenu:$('#tagMS_menu'), effortMenu:$('#effortMS_menu'), modalverbMenu:$('#modalverbMS_menu'), documentationMenu:$('#documentationMS_menu'), actionwordMenu:$('#actionwordMS_menu'), resetBtn:$('#resetBtn'), exportPdfBtn:$('#exportPdfBtn'),
+    var els={ homeBtn:$('#homeBtn'), homeTab:$('#homeTab'), file:$('#file'), dropzone:$('#catalogDropzone'), sourceSelect:$('#catalogDatasetSelect'), sourcePicker:$('#catalogSourcePicker'), sourceButton:$('#catalogSourceButton'), sourcePickerMenu:$('#catalogSourceMenu'), urlInput:$('#urlInput'), urlLoadBtn:$('#urlLoadBtn'), bsiSelect:$('#bsiCatalogSelect'), bsiStatus:$('#bsiCatalogStatus'), q:$('#q'), group:$('#groupMS'), subgroup:$('#subgroupMS'), cls:$('#classMS'), sec:$('#secMS'), target:$('#targetMS'), tag:$('#tagMS'), effort:$('#effortMS'), modalverb:$('#modalverbMS'), documentation:$('#documentationMS'), actionword:$('#actionwordMS'), groupMenu:$('#groupMS_menu'), subgroupMenu:$('#subgroupMS_menu'), clsMenu:$('#classMS_menu'), secMenu:$('#secMS_menu'), targetMenu:$('#targetMS_menu'), tagMenu:$('#tagMS_menu'), effortMenu:$('#effortMS_menu'), modalverbMenu:$('#modalverbMS_menu'), documentationMenu:$('#documentationMS_menu'), actionwordMenu:$('#actionwordMS_menu'), filterCount:$('#catalogFilterCount'), resetBtn:$('#resetBtn'), exportPdfBtn:$('#exportPdfBtn'),
       catalogPanel:$('#catalogPanel'), componentPanel:$('#componentPanel'), mappingPanel:$('#mappingPanel'),
       viewSubtitle:$('#viewSubtitle'), visualContextLabel:$('#visualContextLabel'), visualizationTabGroup:$('#visualizationTabGroup'), viewSummary:$('#viewSummary'), selectionState:$('#catalogSelectionState'),
       fileInfo:$('#fileInfo'), countInfo:$('#countInfo'), graphInfo:$('#graphInfo'),
@@ -3531,6 +3587,32 @@
       practiceMenu:$('#mappingPracticeMS_menu'), relationshipMenu:$('#mappingRelationshipMS_menu'), sourceCatalogMenu:$('#mappingSourceCatalogMS_menu'), targetCatalogMenu:$('#mappingTargetCatalogMS_menu'), rationaleMenu:$('#mappingRationaleMS_menu'), statusMenu:$('#mappingStatusMS_menu'),
       fileInfo:$('#mappingFileInfo'), countInfo:$('#mappingCountInfo'), selectionState:$('#mappingSelectionState'), resetBtn:$('#mappingResetBtn')
     };
+    function catalogPrimaryGroupAllLabel(){ return state.catalogGroupMode==='practices' ? 'Alle Praktiken' : 'Alle Gruppen/Themen'; }
+    function catalogSecondaryGroupAllLabel(){ return state.catalogGroupMode==='practices' ? 'Alle Themen' : 'Alle Untergruppen/Unterthemen'; }
+    function catalogPrimaryGroupFacetLabel(){
+      if(state.catalogGroupMode==='practices') return 'Praktiken';
+      if(state.catalogGroupMode==='groups') return 'Gruppen/Themen';
+      return 'Katalogbereich';
+    }
+    function catalogSecondaryGroupFacetLabel(){ return state.catalogGroupMode==='practices' ? 'Themen' : 'Untergruppen/Unterthemen'; }
+    function formatCatalogGroupOptionLabel(identifier,title){
+      var id=String(identifier||'').trim();
+      var name=String(title||'').trim();
+      if(!name || normalizePracticeKey(id)===normalizePracticeKey(name)) return id || name;
+      return id ? id+' - '+name : name;
+    }
+    function catalogHierarchyOptionLabel(level,value){
+      var maps=state.groupLabelsByLevel || [];
+      var labels=maps[level] || {};
+      return labels[value] || value;
+    }
+    function syncCatalogHierarchyFilterVisibility(){
+      var showPrimary=allGroups.length>0;
+      var showSecondary=allSubgroups.length>0;
+      if(els.group){ els.group.classList.toggle('hidden',!showPrimary); if(!showPrimary) els.group.open=false; }
+      if(els.subgroup){ els.subgroup.classList.toggle('hidden',!showSecondary); if(!showSecondary) els.subgroup.open=false; }
+      if(els.filterCount){ els.filterCount.textContent='Suche und '+(8+(showPrimary?1:0)+(showSecondary?1:0))+' Filter'; }
+    }
     // Vollstaendige dynamische Statusinhalte per Hover/Fokus zugaenglich halten.
     function syncStatusPillTooltip(pill){
       if(!pill) return;
@@ -3590,6 +3672,7 @@
         const cbN = document.createElement('input');
         cbN.type = 'checkbox';
         cbN.dataset.value = '__none__';
+        cbN.dataset.label = 'Ohne Zielobjektkategorie';
         cbN.id = detailsEl.id + '_none';
         const textN = document.createElement('span');
         textN.className = 'ms-label';
@@ -3606,6 +3689,7 @@
         const cbT = document.createElement('input');
         cbT.type = 'checkbox';
         cbT.dataset.value = '__notags__';
+        cbT.dataset.label = 'Ohne Tags';
         cbT.id = detailsEl.id + '_notags';
         const textT = document.createElement('span');
         textT.className = 'ms-label';
@@ -3617,15 +3701,19 @@
 
       // normal items
       items.forEach((v, idx) => {
+        const option = v && typeof v==='object' ? v : { value:v, label:v };
+        const optionValue = String(option.value===undefined || option.value===null ? '' : option.value);
+        const optionLabel = String(option.label===undefined || option.label===null || option.label==='' ? optionValue : option.label);
         const row = document.createElement('label');
         row.className = 'ms-item';
         const cb = document.createElement('input');
         cb.type = 'checkbox';
-        cb.dataset.value = v;
+        cb.dataset.value = optionValue;
+        cb.dataset.label = optionLabel;
         cb.id = detailsEl.id + '_opt_' + idx;
         const text = document.createElement('span');
         text.className = 'ms-label';
-        text.textContent = v;
+        text.textContent = optionLabel;
         row.appendChild(cb);
         row.appendChild(text);
         menuEl.appendChild(row);
@@ -3665,7 +3753,7 @@
     }
 
     function msUpdateSummary(detailsEl, allLabel, itemCbs){
-      const checked = itemCbs.filter(x=>x.checked).map(x=>x.dataset.value);
+      const checked = itemCbs.filter(x=>x.checked).map(x=>x.dataset.label || x.dataset.value);
       const sum = detailsEl.querySelector('summary');
       if(itemCbs.length===0){
         sum.textContent = allLabel;
@@ -3872,7 +3960,7 @@
         mappings:'Control-Beziehungen zwischen Katalogen als filterbaren Crosswalk analysieren.',
         graph:'Beziehungen und Abhängigkeiten als Netz visualisieren und gezielt anspringen.',
         sunburst:'Verteilungen verdichtet lesen, um Schwerpunkte schnell zu erkennen.',
-        bar:'Mengenverhältnisse zwischen Praktiken oder Quellen direkt vergleichen.',
+        bar:'Mengenverhältnisse zwischen Gruppen, Themen oder Quellen direkt vergleichen.',
         json:'Rohdaten ohne Transformationsverlust inspizieren.'
       };
       els.viewSubtitle.textContent = map[view] || map.list;
@@ -3896,7 +3984,8 @@
     function collectCatalogActiveFilterChips(){
       var chips=[];
       if(state.qRaw){ chips.push('Suche: ' + state.qRaw); }
-      if(allGroups.length && state.groups.length && state.groups.length !== allGroups.length){ chips.push('Praktiken: ' + formatChipValues(state.groups, 2)); }
+      if(allGroups.length && state.groups.length && state.groups.length !== allGroups.length){ chips.push(catalogPrimaryGroupFacetLabel()+': ' + formatChipValues(state.groups.map(function(value){ return catalogHierarchyOptionLabel(0,value); }), 2)); }
+      if(allSubgroups.length && state.subgroups.length && state.subgroups.length !== allSubgroups.length){ chips.push(catalogSecondaryGroupFacetLabel()+': ' + formatChipValues(state.subgroups.map(function(value){ return catalogHierarchyOptionLabel(1,value); }), 2)); }
       if(allClasses.length && state.classes.length && state.classes.length !== allClasses.length){ chips.push('Quellkataloge: ' + formatChipValues(state.classes, 2)); }
       if(allSecs.length && state.secs.length && state.secs.length !== allSecs.length){ chips.push('Sicherheitsniveaus: ' + formatChipValues(state.secs, 2)); }
       if(allTargets.length){
@@ -5283,6 +5372,7 @@
       state.q='';
       state.qRaw='';
       state.groups=[];
+      state.subgroups=[];
       state.classes=[];
       state.secs=[];
       state.targets=[];
@@ -5297,6 +5387,7 @@
       state.childrenByPractice={};
       state.groupRoots=[];
       state.groupByKey=new ObjMap();
+      state.groupLabelsByLevel=[{},{}];
       state.controlsByGroup={};
       state.ungroupedControls=[];
       state.openTopics={};
@@ -5306,6 +5397,7 @@
       state.topicsByPractice={};
       state.openPractices={};
       state.openGroups={};
+      state.catalogGroupMode='none';
       state.jsonText='';
       state.catalogUuid='';
       state.catalogMetadata=null;
@@ -5313,6 +5405,7 @@
       state.catalogBaseUrl='';
       state.catalogResourcesByUuid=new ObjMap();
       allGroups=[];
+      allSubgroups=[];
       allClasses=[];
       allSecs=[];
       allTargets=[];
@@ -5321,6 +5414,7 @@
       allModalverbs=[];
       allDocumentations=[];
       allActionwords=[];
+      syncCatalogHierarchyFilterVisibility();
       if(els.q) els.q.value='';
       syncComponentParamMaps();
       renderSelectionState(els.selectionState, 'Katalogstatus', 'Kein Datensatz geladen', []);
@@ -5401,6 +5495,7 @@
       state.qRaw = (els.q.value||'').trim();
       state.q = state.qRaw.toLowerCase();
       state.groups = msGetSelected(els.group, els.groupMenu);
+      state.subgroups = msGetSelected(els.subgroup, els.subgroupMenu);
       state.classes = msGetSelected(els.cls, els.clsMenu);
       state.secs = msGetSelected(els.sec, els.secMenu);
       state.targets = msGetSelected(els.target, els.targetMenu);
@@ -6336,11 +6431,12 @@
 
     // Catalog parsen, Hierarchien aufbauen und Controls in eine renderbare Struktur ueberfuehren.
     function processCatalog(root){
-      state.controls=[]; state.idMap=new ObjMap(); state.uuidMap=new ObjMap(); state.edgesBase=[]; state.topics=[]; state.topicById=new ObjMap(); state.childrenByTopic={}; state.childrenByPractice={}; state.groupRoots=[]; state.groupByKey=new ObjMap(); state.controlsByGroup={}; state.ungroupedControls=[]; state.openTopics={}; state.openControls={}; state.practices=[]; state.practiceById=new ObjMap(); state.topicsByPractice={}; state.openPractices={}; state.openGroups={}; state.catalogUuid=''; state.catalogMetadata=null; state.catalogBackMatter=null; state.catalogResourcesByUuid=new ObjMap();
+      state.controls=[]; state.idMap=new ObjMap(); state.uuidMap=new ObjMap(); state.edgesBase=[]; state.groups=[]; state.subgroups=[]; state.topics=[]; state.topicById=new ObjMap(); state.childrenByTopic={}; state.childrenByPractice={}; state.groupRoots=[]; state.groupByKey=new ObjMap(); state.groupLabelsByLevel=[{},{}]; state.controlsByGroup={}; state.ungroupedControls=[]; state.openTopics={}; state.openControls={}; state.practices=[]; state.practiceById=new ObjMap(); state.topicsByPractice={}; state.openPractices={}; state.openGroups={}; state.catalogGroupMode='none'; state.catalogUuid=''; state.catalogMetadata=null; state.catalogBackMatter=null; state.catalogResourcesByUuid=new ObjMap();
 
       var catCandidate = root && (root.catalog || root.profile || root.component || root);
       if(!catCandidate){ throw new Error('Ungültige JSON-Struktur: Erwartet ein "catalog" / "profile" / "component" Objekt.'); }
       var cat = catCandidate;
+      state.catalogGroupMode=detectCatalogGroupMode(cat.groups);
       var fallbackGroupName=(cat.metadata && (cat.metadata.title || cat.title)) || cat.title || 'Katalog';
       state.catalogUuid = cat.uuid || '';
       state.catalogMetadata = cat.metadata || null;
@@ -6414,7 +6510,7 @@
                     remarks:remarks,
                     searchText: hay,
                     statement:partText(parts,'statement'), guidance:partText(parts,'guidance'),
-                    links:(c.links||[]), path:[].concat(path), paramMap:paramMap };
+                    links:(c.links||[]), path:[].concat(path), groupPath:groupKey ? [].concat(path) : [], paramMap:paramMap };
         state.controls.push(entry); state.idMap.set(id, entry); if(rawId && rawId!==id){ state.idMap.set(rawId, entry); } if(uuid){ state.uuidMap.set(uuid, entry); state.uuidMap.set(String(uuid).toLowerCase(), entry); }
         if(groupKey){
           if(!state.controlsByGroup[groupKey]) state.controlsByGroup[groupKey]=[];
@@ -6431,17 +6527,14 @@
         }
         if(Array.isArray(c.controls)){ for(var i=0;i<c.controls.length;i++){ collectControl(c.controls[i], path, topicId, practiceId, groupKey, id, enhDepthVal+1); } }
       }
-      // Themen-ID erkennen (z.B. "GC.1"), Praktiken haben keinen Punkt
-      function isTopicId(id){
-        var parts=String(id||'').split('.');
-        if(parts.length!==2) return false;
-        return /^[0-9]+$/.test(parts[1]);
-      }
-
       // Walk in the same order as in the JSON: if groups exist, traverse them; otherwise traverse top-level controls.
-      // Gruppen rekursiv durchlaufen: Praktik -> Thema -> Controls
+      // Gruppen rekursiv durchlaufen. Semantisch als Praktik/Thema werden nur Treffer aus practices.csv behandelt.
       function walkGroup(grp,gpath,currentTopicId,currentPracticeId,parentKey,groupKey){
-        var label=grp.id || grp.title || fallbackGroupName; var path=(gpath||[]).concat([label]);
+        var groupTitle=String(grp.title||'').trim();
+        var label=grp.id || valueOfProp(grp.props,'label') || groupTitle || fallbackGroupName;
+        var path=(gpath||[]).concat([label]);
+        var depth=(gpath||[]).length;
+        if(depth<2){ state.groupLabelsByLevel[depth][label]=formatCatalogGroupOptionLabel(label,groupTitle); }
         var topicId=currentTopicId || '';
         var practiceId=currentPracticeId || '';
         var gid = String(grp.id||'');
@@ -6464,8 +6557,8 @@
             state.groupRoots.push(gkey);
           }
         }
-        // Practice: group id without dot (e.g., GC, KONF)
-        if(gid && gid.indexOf('.')===-1){
+        // Eine Praktik ist ausschließlich eine erkannte Gruppe der ersten Ebene.
+        if(state.catalogGroupMode==='practices' && depth===0 && isKnownPracticeGroup(grp)){
           practiceId = gid;
           if(practiceId && !state.practiceById.has(practiceId)){
             var puuid = valueOfProp(grp.props,'alt-identifier') || '';
@@ -6476,7 +6569,8 @@
             if(!state.topicsByPractice[practiceId]) state.topicsByPractice[practiceId]=[];
           }
         }
-        if(isTopicId(grp.id)){
+        // In einem Praktiken-Katalog entspricht nur die direkt darunterliegende Gruppenebene den Themen.
+        if(state.catalogGroupMode==='practices' && depth===1){
           topicId=String(grp.id||'');
           if(topicId && !state.topicById.has(topicId)){
             var tuuid=valueOfProp(grp.props,'alt-identifier') || '';
@@ -6510,10 +6604,19 @@
     }
     // Filteroptionen dynamisch aus dem geladenen Catalog ableiten.
     function renderFilters(){
-      var groupsRaw=[]; for(var i=0;i<state.controls.length;i++){ var g=(state.controls[i].path && state.controls[i].path[0]) || ''; if(g) groupsRaw.push(g); }
-      var groups=uniqueList(groupsRaw).sort();
-      allGroups = uniqueList(groupsRaw).sort();
-      msSetItems(els.group, els.groupMenu, 'Alle Praktiken', allGroups);
+      var groupsRaw=[], subgroupsRaw=[];
+      for(var i=0;i<state.controls.length;i++){
+        var hierarchy=state.controls[i].groupPath || [];
+        if(hierarchy[0]) groupsRaw.push(hierarchy[0]);
+        if(hierarchy[1]) subgroupsRaw.push(hierarchy[1]);
+      }
+      allGroups=uniqueList(groupsRaw).sort(function(a,b){ return a.localeCompare(b,'de',{numeric:true}); });
+      allSubgroups=uniqueList(subgroupsRaw).sort(function(a,b){ return a.localeCompare(b,'de',{numeric:true}); });
+      var primaryOptions=allGroups.map(function(value){ return {value:value,label:catalogHierarchyOptionLabel(0,value)}; });
+      var secondaryOptions=allSubgroups.map(function(value){ return {value:value,label:catalogHierarchyOptionLabel(1,value)}; });
+      msSetItems(els.group, els.groupMenu, catalogPrimaryGroupAllLabel(), primaryOptions);
+      msSetItems(els.subgroup, els.subgroupMenu, catalogSecondaryGroupAllLabel(), secondaryOptions);
+      syncCatalogHierarchyFilterVisibility();
 var classesRaw=[]; for(var j=0;j<state.controls.length;j++){ var c=state.controls[j].class||''; if(c) classesRaw.push(c); }
       var classes=uniqueList(classesRaw).sort();
       allClasses = uniqueList(classesRaw).sort();
@@ -6607,6 +6710,7 @@ function baseMatches(c){ return matches(c); }
     function isFilterActive(){
       if(state.q) return true;
       if(allGroups.length && state.groups.length !== allGroups.length) return true;
+      if(allSubgroups.length && state.subgroups.length !== allSubgroups.length) return true;
       if(allClasses.length && state.classes.length !== allClasses.length) return true;
       if(allSecs.length && state.secs.length !== allSecs.length) return true;
       var baseTargetsLen = allTargets.length + 1; // + '__none__'
@@ -6624,6 +6728,7 @@ function baseMatches(c){ return matches(c); }
     function matches(c){
       // read current selections (already set by RefreshViews)
       if(allGroups.length && state.groups.length===0) return false;
+      if(allSubgroups.length && state.subgroups.length===0) return false;
       if(allClasses.length && state.classes.length===0) return false;
       if(allSecs.length && state.secs.length===0) return false;
       if(allTargets.length && state.targets.length===0) return false;
@@ -6632,10 +6737,16 @@ function baseMatches(c){ return matches(c); }
       if(allModalverbs.length && state.modalverbs.length===0) return false;
       if(allDocumentations.length && state.documentations.length===0) return false;
 
-      // Praktiken
+      // Erste OSCAL-Gruppenebene: je nach erkanntem Katalog entweder Praktiken oder allgemeine Gruppen/Themen.
       if(allGroups.length && state.groups.length !== allGroups.length){
-        var g=((c.path && c.path[0]) || '');
+        var g=((c.groupPath && c.groupPath[0]) || '');
         if(state.groups.indexOf(g)===-1) return false;
+      }
+
+      // Zweite OSCAL-Gruppenebene; tiefere Verschachtelungen erzeugen bewusst keine weiteren Filterfelder.
+      if(allSubgroups.length && state.subgroups.length !== allSubgroups.length){
+        var subgroup=((c.groupPath && c.groupPath[1]) || '');
+        if(state.subgroups.indexOf(subgroup)===-1) return false;
       }
 
       // Quellkatalog / Herkunft
@@ -9678,12 +9789,12 @@ function baseMatches(c){ return matches(c); }
           renderSelectionState(els.selectionState, 'Katalogstatus', 'Kein Datensatz geladen', []);
           renderOverviewCard({
             title:'Katalog-Workspace',
-            description:'Lade einen OSCAL Catalog, um Anforderungen, Themen, Praktiken und Beziehungen in einer strukturierten Oberfläche zu analysieren.',
+            description:'Lade einen OSCAL Catalog, um Anforderungen, optionale Gruppenstrukturen und Beziehungen in einer strukturierten Oberfläche zu analysieren.',
             stats:[
               { label:'Geladen', value:'0', note:'Anforderungen' },
               { label:'Sichtbar', value:'0', note:'Treffer' },
-              { label:'Praktiken', value:'0', note:'Erkannte Gruppen' },
-              { label:'Themen', value:'0', note:'Erkannte Cluster' }
+              { label:'Gruppen/Themen', value:'0', note:'Erste Gruppenebene' },
+              { label:'Untergruppen/Unterthemen', value:'0', note:'Zweite Gruppenebene' }
             ],
             chips:[],
             actions:[]
@@ -9699,8 +9810,8 @@ function baseMatches(c){ return matches(c); }
           stats:[
             { label:'Geladen', value:String(state.controls.length), note:'Anforderungen insgesamt' },
             { label:'Sichtbar', value:String(matched.length), note:'Treffer in der aktuellen Ansicht' },
-            { label:'Praktiken', value:String(state.practices.length || state.groupRoots.length), note:'Gruppenstruktur' },
-            { label:'Themen', value:String(state.topics.length), note:'Erkannte Themen' }
+            { label:state.catalogGroupMode==='practices' ? 'Praktiken' : 'Gruppen/Themen', value:String(allGroups.length), note:state.catalogGroupMode==='practices' ? 'Erkannte Praktiken' : 'Erste Gruppenebene' },
+            { label:state.catalogGroupMode==='practices' ? 'Themen' : 'Untergruppen/Unterthemen', value:String(allSubgroups.length), note:'Zweite Gruppenebene' }
           ],
           chips:activeCatalogChips,
           actions:[
@@ -10441,13 +10552,13 @@ function baseMatches(c){ return matches(c); }
       for(var i=0;i<state.controls.length;i++){
         var c = state.controls[i];
         if(!matches(c)) continue;
-        var g = (c.path && c.path[0]) || 'Unbekannt';
+        var g = (c.groupPath && c.groupPath[0]) || 'Ohne Gruppe';
         counts[g] = (counts[g]||0) + 1;
       }
       var keys = Object.keys(counts).sort(function(a,b){ return counts[b]-counts[a] || a.localeCompare(b,'de'); });
       if(!keys.length){ container.innerHTML='<div class="card">Keine Daten für die aktuelle Filterung.</div>'; return; }
 
-      var data = { name:'Praktiken', children: keys.map(function(k){ return { name:k, value:counts[k] }; }) };
+      var data = { name:catalogPrimaryGroupFacetLabel(), children: keys.map(function(k){ return { name:k, value:counts[k] }; }) };
 
       var w = container.clientWidth || 900;
       var h = container.clientHeight || 600;
@@ -10458,7 +10569,7 @@ function baseMatches(c){ return matches(c); }
       var root = d3.hierarchy(data).sum(function(d){ return d.value||0; });
       d3.partition().size([2*Math.PI, r])(root);
 
-      renderSunburstLegend(container,'Praktiken und Gruppen',keys.map(function(key){ return {type:'swatch',color:color(key),label:key,value:counts[key]}; }));
+      renderSunburstLegend(container,catalogPrimaryGroupFacetLabel(),keys.map(function(key){ return {type:'swatch',color:color(key),label:key,value:counts[key]}; }));
 
       var svg = d3.select(container).append('svg').attr('width', w).attr('height', h);
       var g = svg.append('g').attr('transform','translate('+sunburstChartCenterX(w,r)+','+ (h/2) +')');
@@ -10494,7 +10605,7 @@ function baseMatches(c){ return matches(c); }
       for(var i=0;i<state.controls.length;i++){
         var c = state.controls[i];
         if(!matches(c)) continue;
-        var g = (c.path && c.path[0]) || 'Unbekannt';
+        var g = (c.groupPath && c.groupPath[0]) || 'Ohne Gruppe';
         counts[g] = (counts[g]||0) + 1;
       }
       var keys = Object.keys(counts).sort();
@@ -10540,7 +10651,7 @@ function baseMatches(c){ return matches(c); }
         .attr('fill','#1b3148')
         .style('font-size','12px')
         .text(function(d){return d.value;});
-      addBarAxisTitles(g,w,h,margin,'Praktik oder Gruppe','Anzahl Anforderungen');
+      addBarAxisTitles(g,w,h,margin,catalogPrimaryGroupFacetLabel(),'Anzahl Anforderungen');
     }
 
     // Sichere DOM-ID aus beliebigen IDs erzeugen
@@ -10580,7 +10691,8 @@ function baseMatches(c){ return matches(c); }
           msUpdateSummary(detailsEl, allLabel, itemCbs);
         }
 
-        checkAll(els.groupMenu,  els.group,  'Alle Praktiken');
+        checkAll(els.groupMenu,  els.group,  catalogPrimaryGroupAllLabel());
+        checkAll(els.subgroupMenu, els.subgroup, catalogSecondaryGroupAllLabel());
         checkAll(els.clsMenu,    els.cls,    'Alle Quellkataloge');
         checkAll(els.secMenu,    els.sec,    'Alle Sicherheitsniveaus');
         checkAll(els.targetMenu, els.target, 'Alle Zielobjektkategorien');
