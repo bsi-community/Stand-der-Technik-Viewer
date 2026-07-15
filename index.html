@@ -6522,7 +6522,7 @@
         } else if(practiceId){
           if(!state.childrenByPractice[practiceId]) state.childrenByPractice[practiceId]=[];
           state.childrenByPractice[practiceId].push(entry);
-        } else {
+        } else if(!groupKey) {
           state.ungroupedControls.push(entry);
         }
         if(Array.isArray(c.controls)){ for(var i=0;i<c.controls.length;i++){ collectControl(c.controls[i], path, topicId, practiceId, groupKey, id, enhDepthVal+1); } }
@@ -8463,11 +8463,6 @@ function baseMatches(c){ return matches(c); }
       return true;
     }
 
-    function renderResponsibleRoles(parent, title, roles, searchTerm){
-      if(!roles || !roles.length) return;
-      appendGenericObjectList(parent, title, roles, searchTerm, componentState.resourceByUuid, componentState.baseUrl);
-    }
-
     function goToCatalogControl(controlRef, preferredCatalogIndex){
       var ref=String(controlRef||'').trim();
       if(!ref) return;
@@ -9132,7 +9127,6 @@ function baseMatches(c){ return matches(c); }
       appendPropertiesSection(card, owner.props, searchTerm, componentState.resourceByUuid, componentState.baseUrl);
       if(owner.kind!=='component' && owner.links && owner.links.length) appendGenericObjectList(card, 'Links', owner.links, searchTerm, componentState.resourceByUuid, componentState.baseUrl);
       if(owner.protocols && owner.protocols.length) appendGenericObjectList(card, 'Protokolle', owner.protocols, searchTerm, componentState.resourceByUuid, componentState.baseUrl);
-      renderResponsibleRoles(card, 'Verantwortliche Rollen', owner.responsibleRoles, searchTerm);
       appendRemainingObjectFields(card, 'Weitere Felder', owner.raw, owner.kind==='capability' ? ['uuid','name','title','description','remarks','props','links','protocols','responsible-roles','incorporates-components','control-implementations'] : ['uuid','type','title','name','description','purpose','remarks','props','links','protocols','responsible-roles','control-implementations'], searchTerm, componentState.resourceByUuid, componentState.baseUrl);
       appendImplementationSections(card, owner, searchTerm);
 
