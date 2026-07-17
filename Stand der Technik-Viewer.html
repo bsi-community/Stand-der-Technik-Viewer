@@ -9458,8 +9458,10 @@ function baseMatches(c){ return matches(c); }
           var value=document.createElement('span');
           value.className='chart-legend-value';
           value.textContent=String(item.value);
+          
           row.appendChild(value);
         }
+        row.appendChild(document.createElement("div"));
         list.appendChild(row);
       }
       legend.appendChild(list);
@@ -9651,7 +9653,7 @@ function baseMatches(c){ return matches(c); }
             dataItems.push({ name:componentOwnerName(comp), value:reqCount });
           }
         }
-        if(!dataItems.length){ container.innerHTML='<div class="card">Keine Komponenten mit implementierten Anforderungen in der aktuellen Filterung.</div>'; return; }
+        if(!dataItems.length){ container.innerHTML='<div class="card">Keine Komponenten mit implementierten Anforderungen in der aktuellen Filterung.</div>'; console.log("l"); return; }
         dataItems.sort(function(a,b){ return b.value-a.value || a.name.localeCompare(b.name,'de'); });
         var data={ name:'Komponenten', children:dataItems };
         var w=container.clientWidth || 900, h=container.clientHeight || 600, r=Math.min(w,h)/2 - 36;
@@ -10543,17 +10545,25 @@ function baseMatches(c){ return matches(c); }
       if(typeof d3==='undefined'){ container.innerHTML='<div class="card">D3 wurde nicht geladen.</div>'; return; }
 
       var counts = {};
+      var modalverbs = {};
       for(var i=0;i<state.controls.length;i++){
         var c = state.controls[i];
         if(!matches(c)) continue;
         var g = (c.groupPath && c.groupPath[0]) || 'Ohne Gruppe';
         counts[g] = (counts[g]||0) + 1;
+        //Erstellt und zählt Modalverben pro Praktika
+        var m = c.modalverbs || 'Ohne Modalverb';
+        if (!modalverbs[g]) modalverbs[g] = {};
+        if (modalverbs[g].hasOwnProperty(m)) {
+          modalverbs[g][m]++;
+        } else {
+          modalverbs[g][m] = 1;
+        }
       }
       var keys = Object.keys(counts).sort(function(a,b){ return counts[b]-counts[a] || a.localeCompare(b,'de'); });
       if(!keys.length){ container.innerHTML='<div class="card">Keine Daten für die aktuelle Filterung.</div>'; return; }
 
       var data = { name:catalogPrimaryGroupFacetLabel(), children: keys.map(function(k){ return { name:k, value:counts[k] }; }) };
-
       var w = container.clientWidth || 900;
       var h = container.clientHeight || 600;
       var r = Math.min(w,h)/2 - 30;
@@ -10575,14 +10585,20 @@ function baseMatches(c){ return matches(c); }
         .outerRadius(function(d){ return d.y1; });
 
       var nodes = root.descendants().filter(function(d){ return d.depth; });
-
       g.selectAll('path')
         .data(nodes)
         .enter().append('path')
         .attr('d', arc)
         .attr('fill', function(d){ return color(d.data.name); })
         .attr('stroke', '#ffffff')
-        .append('title').text(function(d){ return d.data.name+': '+d.value; });
+        .append('title').text(d => {
+          var tooltip = [d.data.name+': '+d.value, "Enthaltene Modalverben:"];
+          for(var i = 0; i < Object.keys(modalverbs[d.data.name]).length; i++){
+            //fügt die heruntergebrochene Modalverbanzahl in den tooltip ein
+            tooltip.push(Object.keys(modalverbs[d.data.name])[i]+': '+modalverbs[d.data.name][Object.keys(modalverbs[d.data.name])[i]]);
+          }
+          return tooltip.join("\n");
+        });
       addSunburstSegmentLabels(g,nodes,r,.38,function(d){ return d.data.name; });
       addSunburstCenterLabel(g,'Katalog',root.value,'Anforderungen');
     }
@@ -10594,13 +10610,22 @@ function baseMatches(c){ return matches(c); }
       var container = document.getElementById('bar');
       container.innerHTML='';
       if(typeof d3==='undefined'){ container.innerHTML='<div class="card">D3 wurde nicht geladen.</div>'; return; }
-
+      
       var counts = {};
+      var modalverbs = {};
       for(var i=0;i<state.controls.length;i++){
         var c = state.controls[i];
         if(!matches(c)) continue;
         var g = (c.groupPath && c.groupPath[0]) || 'Ohne Gruppe';
         counts[g] = (counts[g]||0) + 1;
+        //Erstellt und zählt Modalverben pro Praktika
+        var m = c.modalverbs || 'Ohne Modalverb';
+        if (!modalverbs[g]) modalverbs[g] = {};
+        if (modalverbs[g].hasOwnProperty(m)) {
+          modalverbs[g][m]++;
+        } else {
+          modalverbs[g][m] = 1;
+        }
       }
       var keys = Object.keys(counts).sort();
       if(!keys.length){ container.innerHTML='<div class="card">Keine Daten für die aktuelle Filterung.</div>'; return; }
@@ -10633,7 +10658,14 @@ function baseMatches(c){ return matches(c); }
         .attr('width', x.bandwidth())
         .attr('height', function(d){return h - y(d.value);})
         .attr('fill', function(d){return color(d.group);})
-        .append('title').text(function(d){ return d.group + ': ' + d.value; });
+        .append('title').text(d => {
+          var tooltip = [d.group+': '+d.value, "Enthaltene Modalverben:"];
+          for(var i = 0; i < Object.keys(modalverbs[d.group]).length; i++){
+            //fügt die heruntergebrochene Modalverbanzahl in den tooltip ein
+            tooltip.push(Object.keys(modalverbs[d.group])[i]+': '+modalverbs[d.group][Object.keys(modalverbs[d.group])[i]]);
+          }
+          return tooltip.join("\n");
+        });
 
       g.selectAll('.bar-label')
         .data(data)
@@ -10922,4 +10954,3 @@ loadOscalDeepLink();
   </script>
 </body>
 </html>
-
