@@ -4478,6 +4478,8 @@
 
     // Hauptnavigation: Tabs umschalten und Ansichten nur bei Bedarf rendern.
     function switchTab(name){
+      if(name == 'list' || name == 'components' || name == 'mappings' || name == 'home') { appendToQueryPath('primary_tab', name); deleteFromQueryPath('secondary_tab'); }
+      else appendToQueryPath('secondary_tab', name);
       if(name==='home'){
         showHomePage(true);
         return;
@@ -4886,6 +4888,7 @@
     }
 
     function loadOscalFromUrl(rawUrl, expectedKind, sourceLabel, errorPrefix){
+      
       var url;
       try{
         url=normalizeCatalogUrl(rawUrl);
@@ -4909,6 +4912,7 @@
     }
 
     function loadCatalogFromUrl(rawUrl, sourceLabel){
+      appendToQueryPath('url', `${rawUrl}_catalog_${sourceLabel}`);
       return loadOscalFromUrl(rawUrl, 'catalog', sourceLabel, 'Fehler beim Laden der Katalog-URL:');
     }
 
@@ -4949,6 +4953,7 @@
     }
 
     function loadComponentFromUrl(rawUrl, sourceLabel){
+      appendToQueryPath('url', `${rawUrl}_component_${sourceLabel}`);
       return loadOscalFromUrl(rawUrl, 'component', sourceLabel, 'Fehler beim Laden der Component-URL:');
     }
 
@@ -4991,6 +4996,7 @@
     }
 
     function loadMappingFromUrl(rawUrl, sourceLabel){
+      appendToQueryPath('url', `${rawUrl}_mapping_${sourceLabel}`);
       return loadOscalFromUrl(rawUrl, 'mapping', sourceLabel, 'Fehler beim Laden der Mapping-URL:');
     }
     if(mappingEls.urlLoadBtn){
@@ -5065,9 +5071,9 @@
       return chain;
     }
 
-    var BSI_REPOSITORY_TREE_URL='https://api.github.com/repos/BSI-Bund/Stand-der-Technik-Bibliothek/git/trees/main?recursive=1';
-    var BSI_REPOSITORY_RAW_ROOT='https://raw.githubusercontent.com/BSI-Bund/Stand-der-Technik-Bibliothek/main/';
-    var BSI_REPOSITORY_TITLE_CACHE_KEY='sdt-viewer:bsi-repository-titles:v1';
+    const BSI_REPOSITORY_TREE_URL='https://api.github.com/repos/BSI-Bund/Stand-der-Technik-Bibliothek/git/trees/main?recursive=1';
+    const BSI_REPOSITORY_RAW_ROOT='https://raw.githubusercontent.com/BSI-Bund/Stand-der-Technik-Bibliothek/main/';
+    const BSI_REPOSITORY_TITLE_CACHE_KEY='sdt-viewer:bsi-repository-titles:v1';
 
     function getRepositoryFileName(path){
       var parts=String(path||'').split('/');
@@ -9653,7 +9659,7 @@ function baseMatches(c){ return matches(c); }
             dataItems.push({ name:componentOwnerName(comp), value:reqCount });
           }
         }
-        if(!dataItems.length){ container.innerHTML='<div class="card">Keine Komponenten mit implementierten Anforderungen in der aktuellen Filterung.</div>'; console.log("l"); return; }
+        if(!dataItems.length){ container.innerHTML='<div class="card">Keine Komponenten mit implementierten Anforderungen in der aktuellen Filterung.</div>'; return; }
         dataItems.sort(function(a,b){ return b.value-a.value || a.name.localeCompare(b.name,'de'); });
         var data={ name:'Komponenten', children:dataItems };
         var w=container.clientWidth || 900, h=container.clientHeight || 600, r=Math.min(w,h)/2 - 36;
@@ -10544,22 +10550,10 @@ function baseMatches(c){ return matches(c); }
       container.innerHTML='';
       if(typeof d3==='undefined'){ container.innerHTML='<div class="card">D3 wurde nicht geladen.</div>'; return; }
 
-      var counts = {};
-      var modalverbs = {};
-      for(var i=0;i<state.controls.length;i++){
-        var c = state.controls[i];
-        if(!matches(c)) continue;
-        var g = (c.groupPath && c.groupPath[0]) || 'Ohne Gruppe';
-        counts[g] = (counts[g]||0) + 1;
-        //Erstellt und zählt Modalverben pro Praktika
-        var m = c.modalverbs || 'Ohne Modalverb';
-        if (!modalverbs[g]) modalverbs[g] = {};
-        if (modalverbs[g].hasOwnProperty(m)) {
-          modalverbs[g][m]++;
-        } else {
-          modalverbs[g][m] = 1;
-        }
-      }
+      var count = stateControlsLoop(state.controls);
+      var counts = count[0];
+      var modalverbs = count[1];
+      var securityLevel = count[2];
       var keys = Object.keys(counts).sort(function(a,b){ return counts[b]-counts[a] || a.localeCompare(b,'de'); });
       if(!keys.length){ container.innerHTML='<div class="card">Keine Daten für die aktuelle Filterung.</div>'; return; }
 
@@ -10592,12 +10586,7 @@ function baseMatches(c){ return matches(c); }
         .attr('fill', function(d){ return color(d.data.name); })
         .attr('stroke', '#ffffff')
         .append('title').text(d => {
-          var tooltip = [d.data.name+': '+d.value, "Enthaltene Modalverben:"];
-          for(var i = 0; i < Object.keys(modalverbs[d.data.name]).length; i++){
-            //fügt die heruntergebrochene Modalverbanzahl in den tooltip ein
-            tooltip.push(Object.keys(modalverbs[d.data.name])[i]+': '+modalverbs[d.data.name][Object.keys(modalverbs[d.data.name])[i]]);
-          }
-          return tooltip.join("\n");
+          return buildDiagramTooltip(d.data.name, d.value, modalverbs, securityLevel).join("\n");
         });
       addSunburstSegmentLabels(g,nodes,r,.38,function(d){ return d.data.name; });
       addSunburstCenterLabel(g,'Katalog',root.value,'Anforderungen');
@@ -10611,22 +10600,10 @@ function baseMatches(c){ return matches(c); }
       container.innerHTML='';
       if(typeof d3==='undefined'){ container.innerHTML='<div class="card">D3 wurde nicht geladen.</div>'; return; }
       
-      var counts = {};
-      var modalverbs = {};
-      for(var i=0;i<state.controls.length;i++){
-        var c = state.controls[i];
-        if(!matches(c)) continue;
-        var g = (c.groupPath && c.groupPath[0]) || 'Ohne Gruppe';
-        counts[g] = (counts[g]||0) + 1;
-        //Erstellt und zählt Modalverben pro Praktika
-        var m = c.modalverbs || 'Ohne Modalverb';
-        if (!modalverbs[g]) modalverbs[g] = {};
-        if (modalverbs[g].hasOwnProperty(m)) {
-          modalverbs[g][m]++;
-        } else {
-          modalverbs[g][m] = 1;
-        }
-      }
+      var count = stateControlsLoop(state.controls);
+      var counts = count[0];
+      var modalverbs = count[1];
+      var securityLevel = count[2];
       var keys = Object.keys(counts).sort();
       if(!keys.length){ container.innerHTML='<div class="card">Keine Daten für die aktuelle Filterung.</div>'; return; }
 
@@ -10659,12 +10636,7 @@ function baseMatches(c){ return matches(c); }
         .attr('height', function(d){return h - y(d.value);})
         .attr('fill', function(d){return color(d.group);})
         .append('title').text(d => {
-          var tooltip = [d.group+': '+d.value, "Enthaltene Modalverben:"];
-          for(var i = 0; i < Object.keys(modalverbs[d.group]).length; i++){
-            //fügt die heruntergebrochene Modalverbanzahl in den tooltip ein
-            tooltip.push(Object.keys(modalverbs[d.group])[i]+': '+modalverbs[d.group][Object.keys(modalverbs[d.group])[i]]);
-          }
-          return tooltip.join("\n");
+          return buildDiagramTooltip(d.group, d.value, modalverbs, securityLevel).join("\n");
         });
 
       g.selectAll('.bar-label')
@@ -10680,6 +10652,47 @@ function baseMatches(c){ return matches(c); }
       addBarAxisTitles(g,w,h,margin,catalogPrimaryGroupFacetLabel(),'Anzahl Anforderungen');
     }
 
+    const buildDiagramTooltip = (group, value, modalverbs, securityLevel) => {
+      var name;
+      //liest den vollständigen Namen aus der SDT_PRACTICES-Array aus
+      for(var i = 0; i < SDT_PRACTICES.length; i++){
+        if(SDT_PRACTICES[i].id == group) name = SDT_PRACTICES[i].title.toUpperCase();
+      }
+      var tooltip = [name+': '+value, "MODALVERBEN:"];
+      for(var i = 0; i < Object.keys(modalverbs[group]).length; i++){
+        //fügt die heruntergebrochene Modalverbanzahl in den tooltip ein
+        tooltip.push(Object.keys(modalverbs[group])[i].toLowerCase()+': '+modalverbs[group][Object.keys(modalverbs[group])[i]]);
+      }
+      tooltip.push("SICHERHEITSNIVEAUS: ")
+      for(var i = 0; i < Object.keys(securityLevel[group]).length; i++){
+        //fügt die heruntergebrochenen Sicherheitsniveaus in den tooltip ein
+        tooltip.push(Object.keys(securityLevel[group])[i]+': '+securityLevel[group][Object.keys(securityLevel[group])[i]]);
+      }
+      return tooltip;
+    }
+
+    const stateControlsLoop = controls => {
+      let counts = {};
+      let modalverbs = {};
+      let securityLevel = {};
+      for(var i=0;i<state.controls.length;i++){
+        var c = state.controls[i];
+        if(!matches(c)) continue;
+        var g = (c.groupPath && c.groupPath[0]) || 'Ohne Gruppe';
+        counts[g] = (counts[g]||0) + 1;
+        //Erstellt und zählt Modalverben/Sicherheitsniveaus-Array pro Praktika
+        var m = c.modalverbs ?? 'Ohne Modalverb';
+        var s = c.sec ?? 'Ohne Anforderung';
+        if (!modalverbs[g]) modalverbs[g] = {};
+        if (!securityLevel[g]) securityLevel[g] = {};
+        if (modalverbs[g].hasOwnProperty(m)) modalverbs[g][m]++;
+        else modalverbs[g][m] = 1;
+        if (securityLevel[g].hasOwnProperty(s)) securityLevel[g][s]++;
+        else securityLevel[g][s] = 1;
+      }
+      return [counts, modalverbs, securityLevel];
+    }
+
     // Sichere DOM-ID aus beliebigen IDs erzeugen
     function cssId(s){ return String(s).replace(/[^a-z0-9-_]+/gi,'_'); }
 
@@ -10689,8 +10702,6 @@ function baseMatches(c){ return matches(c); }
     renderSelectionState(compEls.selectionState, 'Status Komponentendefinitionen', 'Kein Datensatz geladen', []);
     renderSelectionState(mappingEls.selectionState, 'Mappingstatus', 'Kein Datensatz geladen', []);
     showHomePage();
-
-  
 
     // --- Reset filters button ---
     // Filter und Suche auf Standard zuruecksetzen
@@ -10942,13 +10953,41 @@ function baseMatches(c){ return matches(c); }
         btn._gsppBound = true;
       }
     }
-    
-bindResetButton();
-bindExportButton();
-bindComponentResetButton();
-bindComponentExportButton();
-bindMappingResetButton();
-loadOscalDeepLink();
+
+    //Persistenz beim reload
+    const loadSettingsFromUrl = () => {
+      //Sucht Parameter im query-path und ruft entsprechende Funktione auf, um vorherigen Stand wieder herzustellen
+      if(window.location.search.charAt(0) != '?') return;
+      let params = new URLSearchParams(window.location.search);
+      params = [...params];
+      for(let i = 0; i < params.length; i++){
+        if(params[i][0] == 'primary_tab') switchTab(params[i][1]);
+        if(params[i][0] == 'secondary_tab') switchTab(params[i][1]);
+        if(params[i][0] == 'url') loadOscalFromUrl(params[i][1].split('_')[0], params[i][1].split('_')[1], params[i][1].split('_')[2]);
+      }
+    }
+
+    //Erweitert den query-path, wenn aufgerufen in -> function switchTab/loadOscalFromUrl
+    const appendToQueryPath = (key, value) => {
+      const url = new URL(window.location);
+      url.searchParams.set(key, value);
+      history.replaceState({}, "", url);
+    }
+
+    //Verkürzt den query-path, wenn aufgerufen in -> function switchTab
+    const deleteFromQueryPath = key => {
+      const url = new URL(window.location);
+      url.searchParams.delete(key);
+      history.replaceState({}, "", url);
+    }
+
+  bindResetButton();
+  bindExportButton();
+  bindComponentResetButton();
+  bindComponentExportButton();
+  bindMappingResetButton();
+  loadOscalDeepLink();
+  loadSettingsFromUrl();
 
 })();
   </script>
