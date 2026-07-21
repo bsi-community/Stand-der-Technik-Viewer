@@ -6155,9 +6155,22 @@
     function extractEffortInfo(props){
       var value='';
       if(props && props.length){
-        var names=['effort_level','effort','level','aufwand'];
-        for(var i=0;i<names.length && !value;i++){
-          value=valueOfProp(props,names[i])||'';
+        // effort_level ist in OSCAL-Katalogen nur ein Verfuegbarkeitssignal.
+        // Der hinterlegte Zahlenwert darf in der Katalogansicht nicht erscheinen.
+        var hasEffortLevel=false;
+        for(var i=0;i<props.length;i++){
+          var effortProp=props[i];
+          if(effortProp && String(effortProp.name||'').toLowerCase()==='effort_level'){
+            hasEffortLevel=true;
+            break;
+          }
+        }
+        if(hasEffortLevel){
+          value='n/a';
+        }
+        var names=['effort','level','aufwand'];
+        for(var ni=0;ni<names.length && !value;ni++){
+          value=valueOfProp(props,names[ni])||'';
         }
         if(!value){
           for(var j=0;j<props.length && !value;j++){
@@ -6651,7 +6664,7 @@ var targetsRaw=[]; for(var k=0;k<state.controls.length;k++){ var t=(state.contro
       allTags = uniqueList(tagsRaw).sort();
       msSetItems(els.tag, els.tagMenu, 'Alle Tags', allTags);
 
-      // Aufwaende (0 wird als n/a angezeigt)
+      // Aufwaende (effort_level wird unabhaengig vom Quellwert als n/a angezeigt)
       var effortOrder=['n/a','1','2','3','4','5'];
       allEfforts = effortOrder.slice();
       msSetItems(els.effort, els.effortMenu, 'Alle Aufwände', allEfforts);
@@ -6796,7 +6809,7 @@ function baseMatches(c){ return matches(c); }
         }
       }
 
-      // Aufwaende (0 wird als n/a angezeigt)
+      // Aufwaende (effort_level wurde bei der Extraktion bereits zu n/a normalisiert)
       if(allEfforts.length && state.efforts.length !== allEfforts.length){
         var effortDisplay = getEffortDisplayValue(c.effort||'');
         if(state.efforts.indexOf(effortDisplay)===-1) return false;
