@@ -10681,8 +10681,8 @@ function baseMatches(c){ return matches(c); }
         var g = (c.groupPath && c.groupPath[0]) || 'Ohne Gruppe';
         counts[g] = (counts[g]||0) + 1;
         //Erstellt und zählt Modalverben/Sicherheitsniveaus-Array pro Praktika
-        var m = c.modalverbs ?? 'Ohne Modalverb';
-        var s = c.sec ?? 'Ohne Anforderung';
+        var m = c.modalverbs || 'Ohne Modalverb';
+        var s = c.sec || 'Ohne Anforderung';
         if (!modalverbs[g]) modalverbs[g] = {};
         if (!securityLevel[g]) securityLevel[g] = {};
         if (modalverbs[g].hasOwnProperty(m)) modalverbs[g][m]++;
