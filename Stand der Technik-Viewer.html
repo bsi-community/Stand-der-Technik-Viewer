@@ -3363,7 +3363,7 @@
 
   <script src="./d3.v7.min.js"></script>
   <script>
-  (function(){
+  (async function(){
     "use strict";
 
     // Stand der Technik-Viewer: laeuft lokal im Browser und rendert OSCAL Catalogs und Component Definitions.
@@ -4887,7 +4887,7 @@
       return detected;
     }
 
-    function loadOscalFromUrl(rawUrl, expectedKind, sourceLabel, errorPrefix){
+    async function loadOscalFromUrl(rawUrl, expectedKind, sourceLabel, errorPrefix){
       
       var url;
       try{
@@ -10658,15 +10658,16 @@ function baseMatches(c){ return matches(c); }
       for(var i = 0; i < SDT_PRACTICES.length; i++){
         if(SDT_PRACTICES[i].id == group) name = SDT_PRACTICES[i].title.toUpperCase();
       }
+      if(!name) name = group;
       var tooltip = [name+': '+value, "MODALVERBEN:"];
       for(var i = 0; i < Object.keys(modalverbs[group]).length; i++){
         //fügt die heruntergebrochene Modalverbanzahl in den tooltip ein
-        tooltip.push(Object.keys(modalverbs[group])[i].toLowerCase()+': '+modalverbs[group][Object.keys(modalverbs[group])[i]]);
+        tooltip.push(Object.keys(modalverbs[group])[i].charAt(0).toUpperCase() + Object.keys(modalverbs[group])[i].substring(1).toLowerCase()+': '+modalverbs[group][Object.keys(modalverbs[group])[i]]);
       }
-      tooltip.push("SICHERHEITSNIVEAUS: ")
+      tooltip.push("SICHERHEITSNIVEAUS: ");
       for(var i = 0; i < Object.keys(securityLevel[group]).length; i++){
         //fügt die heruntergebrochenen Sicherheitsniveaus in den tooltip ein
-        tooltip.push(Object.keys(securityLevel[group])[i]+': '+securityLevel[group][Object.keys(securityLevel[group])[i]]);
+        tooltip.push(Object.keys(securityLevel[group])[i].charAt(0).toUpperCase() + Object.keys(securityLevel[group])[i].substring(1).toLowerCase()+': '+securityLevel[group][Object.keys(securityLevel[group])[i]]);
       }
       return tooltip;
     }
@@ -10681,8 +10682,8 @@ function baseMatches(c){ return matches(c); }
         var g = (c.groupPath && c.groupPath[0]) || 'Ohne Gruppe';
         counts[g] = (counts[g]||0) + 1;
         //Erstellt und zählt Modalverben/Sicherheitsniveaus-Array pro Praktika
-        var m = c.modalverbs || 'Ohne Modalverb';
-        var s = c.sec || 'Ohne Anforderung';
+        var m = c.modalverbs || 'Ohne';
+        var s = c.sec || 'Ohne';
         if (!modalverbs[g]) modalverbs[g] = {};
         if (!securityLevel[g]) securityLevel[g] = {};
         if (modalverbs[g].hasOwnProperty(m)) modalverbs[g][m]++;
@@ -10955,16 +10956,13 @@ function baseMatches(c){ return matches(c); }
     }
 
     //Persistenz beim reload
-    const loadSettingsFromUrl = () => {
+    const loadSettingsFromUrl = async () => {
       //Sucht Parameter im query-path und ruft entsprechende Funktione auf, um vorherigen Stand wieder herzustellen
       if(window.location.search.charAt(0) != '?') return;
       let params = new URLSearchParams(window.location.search);
-      params = [...params];
-      for(let i = 0; i < params.length; i++){
-        if(params[i][0] == 'primary_tab') switchTab(params[i][1]);
-        if(params[i][0] == 'secondary_tab') switchTab(params[i][1]);
-        if(params[i][0] == 'url') loadOscalFromUrl(params[i][1].split('_')[0], params[i][1].split('_')[1], params[i][1].split('_')[2]);
-      }
+      if(params.get("url")) await loadOscalFromUrl(params.get("url").split('_')[0], params.get("url").split('_')[1], params.get("url").split('_')[2]);
+      if(params.get("primary_tab")) switchTab(params.get("primary_tab"));
+      if(params.get("secondary_tab")) switchTab(params.get("secondary_tab"));
     }
 
     //Erweitert den query-path, wenn aufgerufen in -> function switchTab/loadOscalFromUrl
@@ -10987,7 +10985,7 @@ function baseMatches(c){ return matches(c); }
   bindComponentExportButton();
   bindMappingResetButton();
   loadOscalDeepLink();
-  loadSettingsFromUrl();
+  await loadSettingsFromUrl();
 
 })();
   </script>
