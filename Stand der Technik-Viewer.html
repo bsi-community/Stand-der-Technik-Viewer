@@ -5068,6 +5068,11 @@
     var BSI_REPOSITORY_TREE_URL='https://api.github.com/repos/BSI-Bund/Stand-der-Technik-Bibliothek/git/trees/main?recursive=1';
     var BSI_REPOSITORY_RAW_ROOT='https://raw.githubusercontent.com/BSI-Bund/Stand-der-Technik-Bibliothek/main/';
     var BSI_REPOSITORY_TITLE_CACHE_KEY='sdt-viewer:bsi-repository-titles:v1';
+    var BSI_CONTROL_LAYER_PREFIX='control_layer/';
+    var BSI_CONTROL_LAYER_MAPPINGS_PREFIX='control_layer/Mappings/';
+    var BSI_CONTROL_LAYER_SOURCES_DIRECTORY='sources';
+    var BSI_CONTROL_LAYER_CATALOGS_DIRECTORY='catalogs';
+    var BSI_IMPLEMENTATION_LAYER_PREFIX='implementation_layer/';
 
     function getRepositoryFileName(path){
       var parts=String(path||'').split('/');
@@ -5080,13 +5085,22 @@
       }).join('/');
     }
 
-    function getRepositoryJsonFiles(tree, prefix, catalogOnly){
+    function getRepositoryJsonFiles(tree, prefix, catalogOnly, excludedPrefixes){
       var entries=tree && Array.isArray(tree.tree) ? tree.tree : [];
+      var exclusions=Array.isArray(excludedPrefixes) ? excludedPrefixes : [];
       var files=[];
       for(var i=0;i<entries.length;i++){
         var entry=entries[i];
         var path=entry && entry.path ? String(entry.path) : '';
         if(entry.type!=='blob' || path.indexOf(prefix)!==0 || !/\.json$/i.test(path)) continue;
+        var excluded=false;
+        for(var j=0;j<exclusions.length;j++){
+          if(path.indexOf(exclusions[j])===0){
+            excluded=true;
+            break;
+          }
+        }
+        if(excluded) continue;
         if(catalogOnly && !/catalog\.json$/i.test(path)) continue;
         files.push({
           name:getRepositoryFileName(path),
@@ -5099,6 +5113,16 @@
         return a.name.localeCompare(b.name, 'de', { sensitivity:'base' }) || a.path.localeCompare(b.path, 'de', { sensitivity:'base' });
       });
       return files;
+    }
+
+    function isControlLayerSourceCatalogPath(path){
+      var value=String(path || '');
+      if(value.indexOf(BSI_CONTROL_LAYER_PREFIX)!==0) return false;
+      var segments=value.slice(BSI_CONTROL_LAYER_PREFIX.length).split('/');
+      return segments.length>=4
+        && String(segments[0] || '').trim()!==''
+        && String(segments[1] || '').toLowerCase()===BSI_CONTROL_LAYER_SOURCES_DIRECTORY
+        && String(segments[2] || '').toLowerCase()===BSI_CONTROL_LAYER_CATALOGS_DIRECTORY;
     }
 
     function appendRepositoryOptions(selectEl, label, files){
@@ -5180,6 +5204,44 @@
       return list;
     }
 
+    function normalizeRepositoryDocumentTitle(value){
+      var title=String(value || '').trim().replace(/\s+/g, ' ');
+      if(typeof title.normalize==='function') title=title.normalize('NFKC');
+      return title.toLowerCase();
+    }
+
+    function compareRepositoryDuplicatePreference(a,b){
+      var aName=getRepositoryFileName(a && a.path);
+      var bName=getRepositoryFileName(b && b.path);
+      return aName.length-bName.length
+        || String(a && a.path || '').length-String(b && b.path || '').length
+        || String(a && a.path || '').localeCompare(String(b && b.path || ''), 'de', { sensitivity:'base' });
+    }
+
+    function deduplicateRepositoryFilesByTitle(files){
+      var list=Array.isArray(files) ? files : [];
+      var unique=[];
+      var indexByTitle=Object.create(null);
+      for(var i=0;i<list.length;i++){
+        var file=list[i];
+        var key=normalizeRepositoryDocumentTitle(file && (file.title || file.fallbackTitle || file.name));
+        if(!key){
+          unique.push(file);
+          continue;
+        }
+        if(typeof indexByTitle[key]==='undefined'){
+          indexByTitle[key]=unique.length;
+          unique.push(file);
+          continue;
+        }
+        var existingIndex=indexByTitle[key];
+        if(compareRepositoryDuplicatePreference(file, unique[existingIndex])<0){
+          unique[existingIndex]=file;
+        }
+      }
+      return unique;
+    }
+
     function enrichRepositoryTitles(files, cache){
       var list=Array.isArray(files) ? files : [];
       var nextIndex=0;
@@ -5234,6 +5296,7 @@
     }
 
     function publishRepositoryFiles(sourceCatalogs, userCatalogs, componentDefinitions){
+      sourceCatalogs=deduplicateRepositoryFilesByTitle(sourceCatalogs);
       sortRepositoryFiles(userCatalogs);
       sortRepositoryFiles(sourceCatalogs);
       sortRepositoryFiles(componentDefinitions);
@@ -5268,9 +5331,25 @@
         })
         .then(function(tree){
           if(tree.truncated){ throw new Error('Die GitHub-Dateiliste ist unvollständig.'); }
-          var sourceCatalogs=getRepositoryJsonFiles(tree, 'Quellkataloge/', true);
-          var userCatalogs=getRepositoryJsonFiles(tree, 'Anwenderkataloge/', true);
-          var componentDefinitions=getRepositoryJsonFiles(tree, 'Implementierungsbeschreibungen/Komponenten/', false);
+          var controlLayerJsonFiles=getRepositoryJsonFiles(
+            tree,
+            BSI_CONTROL_LAYER_PREFIX,
+            false,
+            [BSI_CONTROL_LAYER_MAPPINGS_PREFIX]
+          );
+          var sourceCatalogs=[];
+          var userCatalogs=[];
+          for(var i=0;i<controlLayerJsonFiles.length;i++){
+            if(isControlLayerSourceCatalogPath(controlLayerJsonFiles[i].path)){
+              sourceCatalogs.push(controlLayerJsonFiles[i]);
+            }else if(
+              controlLayerJsonFiles[i].path.indexOf('/sources/')===-1
+              && /catalog\.json$/i.test(controlLayerJsonFiles[i].path)
+            ){
+              userCatalogs.push(controlLayerJsonFiles[i]);
+            }
+          }
+          var componentDefinitions=getRepositoryJsonFiles(tree, BSI_IMPLEMENTATION_LAYER_PREFIX, false);
           tagRepositoryFiles(userCatalogs, 'catalog', 'Anwenderkataloge');
           tagRepositoryFiles(sourceCatalogs, 'catalog', 'Quellkataloge');
           tagRepositoryFiles(componentDefinitions, 'component', 'Komponentendefinitionen');
