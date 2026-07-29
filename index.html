@@ -1614,9 +1614,10 @@
       box-shadow:none;
     }
     .header-brand > div:last-child{
+      position:relative;
       min-width:0;
       min-height:96px;
-      padding:10px 20px 10px 22px;
+      padding:8px 20px 8px 22px;
       background:rgba(249,252,255,.78);
       display:flex;
       align-items:center;
@@ -1632,10 +1633,28 @@
     }
     .header-wordmark{
       display:block;
-      width:min(100%,340px);
-      max-height:70px;
+      width:min(100%,440px);
+      max-height:80px;
       object-fit:contain;
       object-position:left center;
+    }
+    .viewer-version{
+      position:absolute;
+      right:0;
+      bottom:0;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:14px;
+      padding:1px 3px;
+      border:1px solid #cbd7e6;
+      background:#eef4fb;
+      color:#64758c;
+      font-size:7px;
+      font-weight:800;
+      line-height:1;
+      letter-spacing:.03em;
+      white-space:nowrap;
     }
     .header-subtitle{
       display:none !important;
@@ -2602,7 +2621,7 @@
         grid-template-columns:56px minmax(0,1fr);
       }
       .header-brand > div:last-child{
-        padding:18px 16px;
+        padding:12px 16px;
       }
       .wrap{
         padding:14px;
@@ -3039,7 +3058,9 @@
         </svg>
       </button>
       <div>
-        <h1><img class="header-wordmark" src="./viewer_logo.png" alt="Stand der Technik – Viewer" onerror="this.replaceWith(document.createTextNode('Stand der Technik – Viewer'))"></h1>
+        <h1><img class="header-wordmark" src="./viewer_logo-transparent.png" alt="Stand der Technik – Viewer" onerror="this.replaceWith(document.createTextNode('Stand der Technik – Viewer'))"></h1>
+        <!-- Mit VERSION und docs/adr/0001-semantic-versioning.md synchron halten. -->
+        <span id="viewerVersion" class="viewer-version" aria-label="Viewer-Version 1.0.3">v1.0.3</span>
         <p id="viewSubtitle" class="header-subtitle">Ein neu strukturierter Arbeitsbereich für OSCAL-Kataloge, Komponentendefinitionen und Analyseansichten mit klarer Navigation, ruhiger Leseführung und durchgängiger visueller Hierarchie.</p>
       </div>
     </div>
