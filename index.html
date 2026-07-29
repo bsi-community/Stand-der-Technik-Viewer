@@ -137,7 +137,7 @@
     .catalog-md figure{margin:10px 0}
     .catalog-md figcaption{margin-top:6px;font-size:12px;color:var(--dim)}
     .catalog-table{width:100%;border-collapse:collapse;margin:8px 0}
-    .catalog-table th,.catalog-table td{border:1px solid var(--muted);padding:8px 10px;vertical-align:top}
+    .catalog-table th,.catalog-table td{border:1px solid var(--muted);padding:8px 10px;vertical-align:top;line-height:1.45}
     .catalog-table th{width:30%;min-width:170px;background:#f6f8fb;color:var(--text);font-weight:700;text-align:left}
     .catalog-table td{color:var(--dim)}
     .catalog-section{margin:0 0 14px 0}
@@ -145,7 +145,7 @@
     .catalog-section-title.emphasis{background:#16385f;color:#ffffff;padding:6px 10px;border-radius:8px}
     .catalog-subitem{margin:10px 0 14px 0;padding-top:10px;border-top:2px solid var(--muted)}
     .catalog-subitem:first-of-type{padding-top:0;border-top:0}
-    .catalog-empty{color:var(--dim);font-style:italic}
+    .catalog-object-field{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:4px 8px;align-items:baseline;line-height:1.45}
     .catalog-list{margin:0;padding-left:20px}
     .catalog-list li{margin:4px 0}
     .import-component-definition .import-field{margin:0 0 8px 0}
@@ -162,7 +162,10 @@
     .component-property-table td{color:var(--text)}
     .component-property-table code{font-size:11px;word-break:break-all}
     .component-property-empty{color:var(--dim)}
-    .catalog-table-wrap{margin:8px 0}
+    .catalog-table-wrap{margin:0;min-width:0}
+    .catalog-table-wrap .catalog-md>p:first-child{margin-top:0}
+    .catalog-table-wrap .catalog-md>p:last-child{margin-bottom:0}
+    .catalog-table-wrap .catalog-md>p:only-child{line-height:inherit}
     .catalog-item{margin:10px 0}
     .catalog-item-label{font-weight:700;color:var(--text);margin:0 0 6px 0}
     .component-info-heading{margin:2px 0 10px 0;font-size:16px;font-weight:700;color:var(--text)}
@@ -2765,18 +2768,26 @@
     .registry-hero{position:relative;display:grid;gap:18px;max-width:980px;min-height:188px;padding-right:0}
     .registry-hero h2{margin:0;color:#001b3d;font-size:30px;line-height:1.05;font-weight:800;letter-spacing:0;overflow-wrap:anywhere}
     .registry-hero p{margin:0;color:#8b94a8;font-size:16px;line-height:1.6;max-width:680px}
-    .workspace-empty-state{min-height:330px;display:flex;align-items:center;justify-content:center;padding:42px 24px;border:1px solid #cbd7e6;background:rgba(255,255,255,.84);text-align:center}
-    .workspace-empty-inner{width:min(720px,100%);display:grid;justify-items:center;gap:14px}
-    .workspace-empty-icon{width:68px;height:68px;display:flex;align-items:center;justify-content:center;border:1px solid #b8cbe3;border-radius:50%;background:#eef5ff;color:#245b99;font-size:34px;font-weight:300}
-    .workspace-empty-kicker{color:#6f7f95;font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase}
-    .workspace-empty-state h3{margin:0;color:#001b3d;font-size:25px;line-height:1.2}
-    .workspace-empty-state > .workspace-empty-inner > p{max-width:620px;margin:0;color:#58677b;font-size:15px;line-height:1.6}
-    .workspace-empty-routes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;width:100%;margin-top:8px;text-align:left}
-    .workspace-empty-route{padding:14px 16px;border:1px solid #d4deeb;background:#f8fbff;color:#495668;font-size:13px;line-height:1.45}
-    .workspace-empty-route strong{display:block;margin-bottom:4px;color:#001b3d;font-size:13px}
-    .workspace-empty-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:8px}
-    .workspace-empty-actions .btn{width:auto;min-width:170px;justify-content:center}
-    .workspace-empty-actions .btn.primary{background:#111;color:#fff;border-color:#111}
+    .workspace-empty-state{min-height:520px;display:flex;align-items:center;justify-content:center;padding:clamp(32px,5vw,64px) clamp(18px,4vw,52px);border:1px solid #cbd7e6;background:rgba(255,255,255,.88);text-align:center}
+    .workspace-empty-inner{width:min(980px,100%);display:grid;justify-items:center;gap:14px}
+    .workspace-empty-state h3{margin:0;color:#001b3d;font-size:clamp(24px,2.25vw,34px);line-height:1.2}
+    .workspace-empty-intro{max-width:720px;margin:0;color:#58677b;font-size:15px;line-height:1.6}
+    .workspace-upload-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;width:100%;margin-top:12px;text-align:left}
+    .workspace-upload-option{display:grid;align-content:start;gap:14px;min-width:0;padding:22px;border:1px solid #d2ddea;background:#f9fbfe}
+    .workspace-upload-option.local{grid-column:1/-1}
+    .workspace-upload-option-header{display:grid;grid-template-columns:34px minmax(0,1fr);gap:12px;align-items:start}
+    .workspace-upload-step{width:34px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#e4f6fb;color:#007a96;font-size:13px;font-weight:800}
+    .workspace-upload-option h4{margin:0;color:#001b3d;font-size:16px;line-height:1.3}
+    .workspace-upload-option p{margin:4px 0 0;color:#64758c;font-size:13px;line-height:1.5}
+    .workspace-upload-dropzone{min-height:126px;margin:0;border-width:2px;background:#ffffff}
+    .workspace-upload-dropzone strong{font-size:15px;color:#001b3d}
+    .workspace-upload-dropzone span{max-width:580px;font-size:13px}
+    .workspace-upload-url-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:stretch}
+    .workspace-upload-url-row .input{min-height:44px;min-width:0}
+    .workspace-upload-url-row .btn{width:auto;min-width:136px;justify-content:center;background:#111;color:#fff;border-color:#111}
+    .workspace-upload-repository{width:100%;min-height:44px}
+    .workspace-upload-status{min-height:20px;margin:0;color:#64758c;font-size:12px;line-height:1.45}
+    .workspace-upload-options.without-repository .workspace-upload-option.url{grid-column:1/-1;width:min(680px,100%);justify-self:center}
     .registry-search-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;max-width:720px}
     .registry-search-row .input{min-height:40px;border-radius:8px;border-color:#cad3e0;background:#ffffff;font-size:14px}
     .registry-search-row .btn{width:auto;min-width:98px;min-height:40px;border-radius:8px;background:#08afd1;border-color:#08afd1;color:#ffffff;font-weight:800}
@@ -2855,7 +2866,10 @@
       .registry-list-head{display:none}
       .registry-document-row{grid-template-columns:1fr;gap:6px}
       .registry-document-badge{justify-self:start}
-      .workspace-empty-routes{grid-template-columns:1fr}
+      .workspace-upload-options{grid-template-columns:1fr}
+      .workspace-upload-option.local,.workspace-upload-options.without-repository .workspace-upload-option.url{grid-column:auto;width:100%}
+      .workspace-upload-url-row{grid-template-columns:1fr}
+      .workspace-upload-url-row .btn{width:100%}
     }
 
     /* UX-Feinschliff: klar getrennte Navigation und vollbreite Startseitenbereiche. */
@@ -2956,8 +2970,6 @@
     .registry-model-card p{max-width:560px;font-size:15px;line-height:1.55;text-align:center}
     .registry-model-footer{justify-content:center;align-items:center;flex-wrap:wrap;margin-top:12px;text-align:center}
     .registry-model-status{justify-content:center;margin-left:0;text-align:center}
-    .workspace-empty-routes.single{grid-template-columns:minmax(0,620px);justify-content:center}
-
     @media(max-width:1480px){
       .registry-home-shell{width:100%;max-width:none}
       .registry-home-main,.registry-help{max-width:none}
@@ -3892,61 +3904,185 @@
       }
     }
 
-    // Handlungsorientierter Leerzustand fuer Nutzer ohne bereits geladene OSCAL-Datei.
-    function renderWorkspaceEmptyState(container, mode){
+    function getWorkspaceUploadConfig(mode){
       var configs={
-        catalog:{title:'Noch kein OSCAL-Katalog geladen',noun:'einen Katalog',panel:els.catalogPanel,supportsHome:true},
-        component:{title:'Noch keine OSCAL-Komponentendefinition geladen',noun:'eine Komponentendefinition',panel:els.componentPanel,supportsHome:true},
-        mapping:{title:'Noch kein OSCAL Control Mapping geladen',noun:'ein Mapping',panel:els.mappingPanel,supportsHome:false}
+        catalog:{
+          title:'Noch kein OSCAL-Katalog geladen',
+          localTitle:'Lokale Katalogdatei laden',
+          localDescription:'Ziehe einen oder mehrere OSCAL Catalogs in die Fläche oder öffne per Klick den Dateibrowser.',
+          dropLabel:'Datei hierher ziehen',
+          dropHint:'oder klicken, um einen oder mehrere OSCAL Catalogs auszuwählen',
+          dropAria:'OSCAL Catalog per Drag and Drop oder Dateibrowser laden',
+          fileInput:els.file,
+          fileLoader:loadCatalogFile,
+          urlTitle:'Katalog über URL laden',
+          urlDescription:'Füge eine direkte HTTPS-Adresse zu einer JSON-Datei ein. GitHub-Links werden bei Bedarf als Raw-URL verarbeitet.',
+          urlPlaceholder:'Katalog-URL einfügen (JSON)',
+          urlInput:els.urlInput,
+          urlLoader:loadCatalogFromUrl,
+          repositoryTitle:'Aus dem öffentlichen BSI Repository laden',
+          repositoryDescription:'Wähle einen aktuellen Anwender- oder Quellkatalog direkt aus dem Stand der Technik GitHub Repository.',
+          repositorySelect:els.bsiSelect,
+          repositoryStatus:els.bsiStatus
+        },
+        component:{
+          title:'Noch keine OSCAL-Komponentendefinition geladen',
+          localTitle:'Lokale Komponentendefinition laden',
+          localDescription:'Ziehe eine oder mehrere OSCAL-Komponentendefinitionen in die Fläche oder öffne per Klick den Dateibrowser.',
+          dropLabel:'Datei hierher ziehen',
+          dropHint:'oder klicken, um eine oder mehrere Komponentendefinitionen auszuwählen',
+          dropAria:'OSCAL-Komponentendefinition per Drag and Drop oder Dateibrowser laden',
+          fileInput:compEls.file,
+          fileLoader:loadComponentFile,
+          urlTitle:'Komponentendefinition über URL laden',
+          urlDescription:'Füge eine direkte HTTPS-Adresse zu einer JSON-Datei ein. GitHub-Links werden bei Bedarf als Raw-URL verarbeitet.',
+          urlPlaceholder:'Komponentendefinition-URL einfügen (JSON)',
+          urlInput:compEls.urlInput,
+          urlLoader:loadComponentFromUrl,
+          repositoryTitle:'Aus dem öffentlichen BSI Repository laden',
+          repositoryDescription:'Wähle eine aktuelle Komponentendefinition direkt aus dem Stand der Technik GitHub Repository.',
+          repositorySelect:compEls.bsiSelect,
+          repositoryStatus:compEls.bsiStatus
+        },
+        mapping:{
+          title:'Noch kein OSCAL Control Mapping geladen',
+          localTitle:'Lokale Mapping-Datei laden',
+          localDescription:'Ziehe eine oder mehrere OSCAL Mapping Collections in die Fläche oder öffne per Klick den Dateibrowser.',
+          dropLabel:'Datei hierher ziehen',
+          dropHint:'oder klicken, um eine oder mehrere Mapping Collections auszuwählen',
+          dropAria:'OSCAL Control Mapping per Drag and Drop oder Dateibrowser laden',
+          fileInput:mappingEls.file,
+          fileLoader:loadMappingFile,
+          urlTitle:'Mapping über URL laden',
+          urlDescription:'Füge eine direkte HTTPS-Adresse zu einer JSON-Datei ein. GitHub-Blob-Links werden automatisch auf Raw-URLs umgeschrieben.',
+          urlPlaceholder:'Control-Mapping-URL einfügen (JSON)',
+          urlInput:mappingEls.urlInput,
+          urlLoader:loadMappingFromUrl,
+          repositoryTitle:'',
+          repositoryDescription:'',
+          repositorySelect:null,
+          repositoryStatus:null
+        }
       };
-      var cfg=configs[mode] || configs.catalog;
+      return configs[mode] || configs.catalog;
+    }
+
+    function createWorkspaceUploadOption(step, title, description, optionClass){
+      var option=document.createElement('section');
+      option.className='workspace-upload-option '+optionClass;
+      var header=document.createElement('div');
+      header.className='workspace-upload-option-header';
+      header.innerHTML='<span class="workspace-upload-step" aria-hidden="true">'+step+'</span>'
+        +'<div><h4>'+escapeHtml(title)+'</h4><p>'+escapeHtml(description)+'</p></div>';
+      option.appendChild(header);
+      return option;
+    }
+
+    function refreshWorkspaceRepositoryControls(mode){
+      var cfg=getWorkspaceUploadConfig(mode);
+      if(!cfg.repositorySelect) return;
+      var targets=document.querySelectorAll('select[data-workspace-repository="'+mode+'"]');
+      for(var i=0;i<targets.length;i++){
+        targets[i].innerHTML=cfg.repositorySelect.innerHTML;
+        targets[i].disabled=cfg.repositorySelect.disabled;
+        targets[i].value='';
+      }
+      var statuses=document.querySelectorAll('[data-workspace-repository-status="'+mode+'"]');
+      for(var s=0;s<statuses.length;s++){
+        statuses[s].textContent=cfg.repositoryStatus ? cfg.repositoryStatus.textContent : '';
+      }
+    }
+
+    // Vollstaendige Ladeoberflaeche fuer Nutzer ohne bereits geladenes OSCAL-Dokument.
+    function renderWorkspaceEmptyState(container, mode){
+      var cfg=getWorkspaceUploadConfig(mode);
       var empty=document.createElement('section');
       empty.className='workspace-empty-state';
-      empty.setAttribute('role','status');
+      empty.setAttribute('role','region');
+      empty.setAttribute('aria-labelledby','workspace-empty-title-'+mode);
+
       var inner=document.createElement('div');
       inner.className='workspace-empty-inner';
-      var directRoute=cfg.supportsHome
-        ? '<div class="workspace-empty-route"><strong>1 · Direkt hier laden</strong>Öffne links den Punkt „Dateiupload“. Dort kannst du eine lokale Datei hineinziehen, auswählen oder eine URL einfügen.</div>'
-        : '<div class="workspace-empty-route"><strong>Dateiupload im linken Menü</strong>Öffne links den Punkt „Dateiupload“. Dort kannst du eine lokale Mapping-Datei hineinziehen, auswählen oder eine URL einfügen.</div>';
-      var homeRoute=cfg.supportsHome
-        ? '<div class="workspace-empty-route"><strong>2 · Über die Startseite</strong>Wähle den Home-Button oben links. Dort kannst du Kataloge und Komponentendefinitionen aus dem öffentlichen BSI Repository suchen und öffnen.</div>'
-        : '';
-      inner.innerHTML=''
-        +'<div class="workspace-empty-icon" aria-hidden="true">⇧</div>'
-        +'<div class="workspace-empty-kicker">Bereit zum Start</div>'
-        +'<h3>'+escapeHtml(cfg.title)+'</h3>'
-        +'<p>Um Inhalte in diesem Arbeitsbereich anzuzeigen, lade zuerst '+escapeHtml(cfg.noun)+' als JSON-Datei oder über eine URL.</p>'
-        +'<div class="workspace-empty-routes'+(cfg.supportsHome?'':' single')+'">'
-          +directRoute
-          +homeRoute
-        +'</div>';
-      var actions=document.createElement('div');
-      actions.className='workspace-empty-actions';
-      var uploadBtn=document.createElement('button');
-      uploadBtn.className='btn primary';
-      uploadBtn.type='button';
-      uploadBtn.textContent='Dateiupload öffnen';
-      uploadBtn.addEventListener('click', function(){
-        var upload=cfg.panel && cfg.panel.querySelector('details[data-section="upload"]');
-        if(upload){
-          upload.open=true;
-          upload.scrollIntoView({behavior:'smooth',block:'start'});
-          var summary=upload.querySelector('summary');
-          if(summary) summary.focus({preventScroll:true});
+      var title=document.createElement('h3');
+      title.id='workspace-empty-title-'+mode;
+      title.textContent=cfg.title;
+      inner.appendChild(title);
+
+      var intro=document.createElement('p');
+      intro.className='workspace-empty-intro';
+      intro.textContent='Wähle den passenden Ladeweg. Alle lokalen Dateien werden ausschließlich in deinem Browser verarbeitet.';
+      inner.appendChild(intro);
+
+      var options=document.createElement('div');
+      options.className='workspace-upload-options'+(cfg.repositorySelect ? '' : ' without-repository');
+
+      var localOption=createWorkspaceUploadOption('1',cfg.localTitle,cfg.localDescription,'local');
+      var dropzone=document.createElement('div');
+      dropzone.className='dropzone workspace-upload-dropzone';
+      dropzone.setAttribute('role','button');
+      dropzone.setAttribute('tabindex','0');
+      dropzone.setAttribute('aria-label',cfg.dropAria);
+      dropzone.innerHTML='<strong>'+escapeHtml(cfg.dropLabel)+'</strong><span>'+escapeHtml(cfg.dropHint)+'</span>';
+      localOption.appendChild(dropzone);
+      bindDropzone(dropzone,cfg.fileInput,cfg.fileLoader);
+      options.appendChild(localOption);
+
+      var urlOption=createWorkspaceUploadOption('2',cfg.urlTitle,cfg.urlDescription,'url');
+      var urlRow=document.createElement('div');
+      urlRow.className='workspace-upload-url-row';
+      var urlInput=document.createElement('input');
+      urlInput.className='input workspace-upload-url-input';
+      urlInput.type='url';
+      urlInput.placeholder=cfg.urlPlaceholder;
+      urlInput.autocomplete='off';
+      urlInput.spellcheck=false;
+      urlInput.setAttribute('aria-label',cfg.urlTitle);
+      if(cfg.urlInput) urlInput.value=cfg.urlInput.value || '';
+      var urlButton=document.createElement('button');
+      urlButton.className='btn';
+      urlButton.type='button';
+      urlButton.textContent='Von URL laden';
+      function submitWorkspaceUrl(){
+        if(cfg.urlInput) cfg.urlInput.value=urlInput.value;
+        cfg.urlLoader(urlInput.value);
+      }
+      urlButton.addEventListener('click',submitWorkspaceUrl);
+      urlInput.addEventListener('keydown',function(ev){
+        if(ev.key==='Enter'){
+          ev.preventDefault();
+          submitWorkspaceUrl();
         }
       });
-      actions.appendChild(uploadBtn);
-      if(cfg.supportsHome){
-        var homeBtn=document.createElement('button');
-        homeBtn.className='btn';
-        homeBtn.type='button';
-        homeBtn.textContent='Zur Startseite';
-        homeBtn.addEventListener('click', function(){ switchTab('home'); });
-        actions.appendChild(homeBtn);
+      urlRow.appendChild(urlInput);
+      urlRow.appendChild(urlButton);
+      urlOption.appendChild(urlRow);
+      options.appendChild(urlOption);
+
+      if(cfg.repositorySelect){
+        var repositoryOption=createWorkspaceUploadOption('3',cfg.repositoryTitle,cfg.repositoryDescription,'repository');
+        var repositorySelect=document.createElement('select');
+        repositorySelect.className='input repository-select workspace-upload-repository';
+        repositorySelect.setAttribute('data-workspace-repository',mode);
+        repositorySelect.setAttribute('aria-label',cfg.repositoryTitle);
+        repositorySelect.addEventListener('change',function(){
+          var selected=repositorySelect.options[repositorySelect.selectedIndex];
+          var url=repositorySelect.value;
+          if(url) cfg.urlLoader(url,selected && selected.dataset.documentTitle ? selected.dataset.documentTitle : '');
+          repositorySelect.value='';
+        });
+        repositoryOption.appendChild(repositorySelect);
+        var repositoryStatus=document.createElement('p');
+        repositoryStatus.className='workspace-upload-status';
+        repositoryStatus.setAttribute('data-workspace-repository-status',mode);
+        repositoryStatus.setAttribute('aria-live','polite');
+        repositoryOption.appendChild(repositoryStatus);
+        options.appendChild(repositoryOption);
       }
-      inner.appendChild(actions);
+
+      inner.appendChild(options);
       empty.appendChild(inner);
       container.appendChild(empty);
+      refreshWorkspaceRepositoryControls(mode);
       return empty;
     }
 
@@ -5315,6 +5451,8 @@
       appendRepositoryOptions(compEls.bsiSelect, '', componentDefinitions);
       if(compEls.bsiSelect) compEls.bsiSelect.disabled=!componentDefinitions.length;
       if(compEls.bsiStatus) compEls.bsiStatus.textContent=componentDefinitions.length+' aktuelle Komponentendefinitionen verfügbar.';
+      refreshWorkspaceRepositoryControls('catalog');
+      refreshWorkspaceRepositoryControls('component');
       if(uiState.view==='home') renderRegistryHome();
     }
 
@@ -5373,6 +5511,8 @@
           registryState.error=String(err && err.message ? err.message : err);
           showRepositoryLoadError(els.bsiSelect, els.bsiStatus);
           showRepositoryLoadError(compEls.bsiSelect, compEls.bsiStatus);
+          refreshWorkspaceRepositoryControls('catalog');
+          refreshWorkspaceRepositoryControls('component');
           if(uiState.view==='home') renderRegistryHome();
         });
     }
@@ -7216,11 +7356,42 @@ function baseMatches(c){ return matches(c); }
       return String(key||'').replace(/-/g, ' ');
     }
 
-    function appendEmptyNotice(parent, text){
-      var empty=document.createElement('div');
-      empty.className='catalog-empty';
-      empty.textContent=text || 'Keine Eintraege vorhanden.';
-      parent.appendChild(empty);
+    function hasDisplayValue(value){
+      if(value===undefined || value===null) return false;
+      if(typeof value==='string') return value.trim()!=='';
+      if(Array.isArray(value)){
+        for(var ai=0;ai<value.length;ai++){
+          if(hasDisplayValue(value[ai])) return true;
+        }
+        return false;
+      }
+      if(typeof value==='object'){
+        var keys=Object.keys(value);
+        for(var ki=0;ki<keys.length;ki++){
+          if(hasDisplayValue(value[keys[ki]])) return true;
+        }
+        return false;
+      }
+      return true;
+    }
+
+    function getDisplayRows(rows){
+      return (rows||[]).filter(function(row){
+        return !!(row && row.name && hasDisplayValue(row.value));
+      });
+    }
+
+    function getObjectDisplayRows(obj, leadingRows, excludedKeys){
+      var rows=getDisplayRows(leadingRows);
+      var excluded={};
+      for(var ei=0;ei<(excludedKeys||[]).length;ei++) excluded[excludedKeys[ei]]=true;
+      var keys=Object.keys(obj||{});
+      for(var ki=0;ki<keys.length;ki++){
+        var key=keys[ki];
+        if(excluded[key] || !hasDisplayValue(obj[key])) continue;
+        rows.push({name:key, value:obj[key]});
+      }
+      return rows;
     }
 
     function buildCatalogValueNode(val){
@@ -7233,26 +7404,27 @@ function baseMatches(c){ return matches(c); }
       }
 
       if(Array.isArray(val)){
-        if(!val.length){
+        var displayItems=val.filter(hasDisplayValue);
+        if(!displayItems.length){
           wrap.textContent='-';
           return wrap;
         }
         var allScalars=true;
         var allObjects=true;
-        for(var ai=0;ai<val.length;ai++){
-          var itemType=typeof val[ai];
-          if(val[ai]!==null && itemType==='object'){ allScalars=false; }
+        for(var ai=0;ai<displayItems.length;ai++){
+          var itemType=typeof displayItems[ai];
+          if(displayItems[ai]!==null && itemType==='object'){ allScalars=false; }
           else { allObjects=false; }
         }
 
         // Scalar arrays (e.g. email-addresses, party-uuids) as plain stacked lines without bullets.
         if(allScalars){
-          for(var si=0;si<val.length;si++){
+          for(var si=0;si<displayItems.length;si++){
             var line=document.createElement('div');
-            if(typeof val[si]==='string'){
-              line.innerHTML='<div class="catalog-md">'+renderMarkupMultiline(val[si], state.qRaw)+'</div>';
+            if(typeof displayItems[si]==='string'){
+              line.innerHTML='<div class="catalog-md">'+renderMarkupMultiline(displayItems[si], state.qRaw)+'</div>';
             } else {
-              line.innerHTML=renderHighlightedInline(String(val[si]), state.qRaw);
+              line.innerHTML=renderHighlightedInline(String(displayItems[si]), state.qRaw);
             }
             wrap.appendChild(line);
           }
@@ -7261,18 +7433,18 @@ function baseMatches(c){ return matches(c); }
 
         // Object arrays (e.g. rlinks) as compact key/value lines, not nested tables.
         if(allObjects){
-          for(var oi=0;oi<val.length;oi++){
+          for(var oi=0;oi<displayItems.length;oi++){
             var compact=document.createElement('div');
             compact.className='catalog-subitem';
-            compact.appendChild(buildCatalogObjectInline(val[oi]));
+            compact.appendChild(buildCatalogObjectInline(displayItems[oi]));
             wrap.appendChild(compact);
           }
           return wrap;
         }
 
-        for(var mi=0;mi<val.length;mi++){
+        for(var mi=0;mi<displayItems.length;mi++){
           var mixed=document.createElement('div');
-          mixed.appendChild(buildCatalogValueNode(val[mi]));
+          mixed.appendChild(buildCatalogValueNode(displayItems[mi]));
           wrap.appendChild(mixed);
         }
         return wrap;
@@ -7294,7 +7466,7 @@ function baseMatches(c){ return matches(c); }
 
     function buildCatalogObjectInline(obj){
       var block=document.createElement('div');
-      var keys=Object.keys(obj||{});
+      var keys=Object.keys(obj||{}).filter(function(key){ return hasDisplayValue(obj[key]); });
       if(!keys.length){
         block.textContent='-';
         return block;
@@ -7303,6 +7475,7 @@ function baseMatches(c){ return matches(c); }
       for(var i=0;i<keys.length;i++){
         var k=keys[i];
         var row=document.createElement('div');
+        row.className='catalog-object-field';
         var label=document.createElement('strong');
         label.innerHTML=renderHighlightedInline(formatCatalogKey(k)+': ', state.qRaw);
         row.appendChild(label);
@@ -7376,9 +7549,9 @@ function baseMatches(c){ return matches(c); }
       var table=document.createElement('table');
       table.className='catalog-table';
       var tbody=document.createElement('tbody');
-      for(var i=0;i<rows.length;i++){
-        var row=rows[i];
-        if(!row || !row.name) continue;
+      var displayRows=getDisplayRows(rows);
+      for(var i=0;i<displayRows.length;i++){
+        var row=displayRows[i];
         var tr=document.createElement('tr');
         var th=document.createElement('th');
         th.innerHTML=renderHighlightedInline(formatCatalogKey(row.name), state.qRaw);
@@ -7402,27 +7575,31 @@ function baseMatches(c){ return matches(c); }
     }
 
     function appendCatalogSection(parent, title, rows){
+      var displayRows=getDisplayRows(rows);
+      if(!displayRows.length) return;
+
       var section=document.createElement('section');
       section.className='catalog-section';
 
-      var heading=document.createElement('h4');
-      heading.className='catalog-section-title';
-      var tLower = String(title||'').toLowerCase();
-      if(tLower==='basisdaten' || tLower==='props' || tLower==='resources'){
-        heading.className+=' emphasis';
+      if(title){
+        var heading=document.createElement('h4');
+        heading.className='catalog-section-title';
+        var tLower = String(title).toLowerCase();
+        if(tLower==='props' || tLower==='resources'){
+          heading.className+=' emphasis';
+        }
+        heading.innerHTML=renderHighlightedInline(title, state.qRaw);
+        section.appendChild(heading);
       }
-      heading.innerHTML=renderHighlightedInline(title, state.qRaw);
-      section.appendChild(heading);
 
-      if(!rows || !rows.length){
-        appendEmptyNotice(section, 'Keine Eintraege vorhanden.');
-      } else {
-        section.appendChild(buildCatalogTable(rows));
-      }
+      section.appendChild(buildCatalogTable(displayRows));
       parent.appendChild(section);
     }
 
     function appendCatalogObjectList(parent, title, items){
+      var displayItems=Array.isArray(items) ? items.filter(hasDisplayValue) : [];
+      if(!displayItems.length) return;
+
       var section=document.createElement('section');
       section.className='catalog-section';
 
@@ -7435,14 +7612,8 @@ function baseMatches(c){ return matches(c); }
       heading.innerHTML=renderHighlightedInline(title, state.qRaw);
       section.appendChild(heading);
 
-      if(!Array.isArray(items) || !items.length){
-        appendEmptyNotice(section, 'Keine Eintraege vorhanden.');
-        parent.appendChild(section);
-        return;
-      }
-
-      for(var i=0;i<items.length;i++){
-        var obj=items[i] || {};
+      for(var i=0;i<displayItems.length;i++){
+        var obj=displayItems[i] || {};
         var item=document.createElement('div');
         item.className='catalog-subitem';
         if(obj && typeof obj==='object'){
@@ -7458,21 +7629,10 @@ function baseMatches(c){ return matches(c); }
 
     function renderMetadataInfo(container){
       var meta=state.catalogMetadata || {};
-      appendCatalogSection(container, 'Basisdaten', [
-        { name:'uuid', value:state.catalogUuid || '-' },
-        { name:'title', value:meta.title || '-' },
-        { name:'last-modified', value:meta['last-modified'] || '-' },
-        { name:'version', value:meta.version || '-' },
-        { name:'oscal-version', value:meta['oscal-version'] || '-' },
-        { name:'published', value:meta.published || '-' },
-        { name:'remarks', value:meta.remarks || '-' }
+      var rows=getObjectDisplayRows(meta, [
+        { name:'uuid', value:state.catalogUuid }
       ]);
-
-      appendCatalogObjectList(container, 'Props', meta.props);
-      appendCatalogObjectList(container, 'links', meta.links);
-      appendCatalogObjectList(container, 'roles', meta.roles);
-      appendCatalogObjectList(container, 'parties', meta.parties);
-      appendCatalogObjectList(container, 'responsible-parties', meta['responsible-parties']);
+      appendCatalogSection(container, '', rows);
     }
 
     function renderBackMatterInfo(container){
@@ -7492,8 +7652,8 @@ function baseMatches(c){ return matches(c); }
     }
 
     function renderCatalogInfo(){
-      var hasMeta = !!(state.catalogUuid || state.catalogMetadata);
-      var hasBackMatter = !!state.catalogBackMatter;
+      var hasMeta = hasDisplayValue(state.catalogUuid) || hasDisplayValue(state.catalogMetadata);
+      var hasBackMatter = hasDisplayValue(state.catalogBackMatter);
       if(!hasMeta && !hasBackMatter) return;
 
       var heading=document.createElement('div');
@@ -7542,18 +7702,19 @@ function baseMatches(c){ return matches(c); }
       }
 
       if(Array.isArray(val)){
-        if(!val.length){
+        var displayItems=val.filter(hasDisplayValue);
+        if(!displayItems.length){
           wrap.textContent='-';
           return wrap;
         }
-        for(var ai=0;ai<val.length;ai++){
+        for(var ai=0;ai<displayItems.length;ai++){
           var itemWrap=document.createElement('div');
-          if(val[ai] && typeof val[ai]==='object' && !Array.isArray(val[ai])){
-            itemWrap.appendChild(buildGenericObjectInline(val[ai], searchTerm, resourceMap, baseUrl));
-          } else if(typeof val[ai]==='string'){
-            itemWrap.innerHTML='<div class="catalog-md">'+renderMarkupMultiline(val[ai], searchTerm)+'</div>';
+          if(displayItems[ai] && typeof displayItems[ai]==='object' && !Array.isArray(displayItems[ai])){
+            itemWrap.appendChild(buildGenericObjectInline(displayItems[ai], searchTerm, resourceMap, baseUrl));
+          } else if(typeof displayItems[ai]==='string'){
+            itemWrap.innerHTML='<div class="catalog-md">'+renderMarkupMultiline(displayItems[ai], searchTerm)+'</div>';
           } else {
-            itemWrap.innerHTML=renderHighlightedInline(String(val[ai]), searchTerm);
+            itemWrap.innerHTML=renderHighlightedInline(String(displayItems[ai]), searchTerm);
           }
           wrap.appendChild(itemWrap);
         }
@@ -7576,7 +7737,7 @@ function baseMatches(c){ return matches(c); }
 
     function buildGenericObjectInline(obj, searchTerm, resourceMap, baseUrl){
       var block=document.createElement('div');
-      var keys=Object.keys(obj||{});
+      var keys=Object.keys(obj||{}).filter(function(key){ return hasDisplayValue(obj[key]); });
       if(!keys.length){
         block.textContent='-';
         return block;
@@ -7589,6 +7750,7 @@ function baseMatches(c){ return matches(c); }
           continue;
         }
         var row=document.createElement('div');
+        row.className='catalog-object-field';
         var label=document.createElement('strong');
         label.innerHTML=renderHighlightedInline(formatCatalogKey(k)+': ', searchTerm);
         row.appendChild(label);
@@ -7612,9 +7774,9 @@ function baseMatches(c){ return matches(c); }
       var table=document.createElement('table');
       table.className='catalog-table';
       var tbody=document.createElement('tbody');
-      for(var i=0;i<rows.length;i++){
-        var row=rows[i];
-        if(!row || !row.name) continue;
+      var displayRows=getDisplayRows(rows);
+      for(var i=0;i<displayRows.length;i++){
+        var row=displayRows[i];
         var tr=document.createElement('tr');
         var th=document.createElement('th');
         th.innerHTML=renderHighlightedInline(formatCatalogKey(row.name), searchTerm);
@@ -7633,43 +7795,43 @@ function baseMatches(c){ return matches(c); }
     }
 
     function appendGenericSection(parent, title, rows, searchTerm, resourceMap, baseUrl){
+      var displayRows=getDisplayRows(rows);
+      if(!displayRows.length) return;
+
       var section=document.createElement('section');
       section.className='catalog-section';
-      var heading=document.createElement('h4');
-      heading.className='catalog-section-title';
-      heading.innerHTML=renderHighlightedInline(title, searchTerm);
-      section.appendChild(heading);
-      if(!rows || !rows.length){
-        appendEmptyNotice(section, 'Keine Eintraege vorhanden.');
-      } else {
-        section.appendChild(buildGenericTable(rows, searchTerm, resourceMap, baseUrl));
+      if(title){
+        var heading=document.createElement('h4');
+        heading.className='catalog-section-title';
+        heading.innerHTML=renderHighlightedInline(title, searchTerm);
+        section.appendChild(heading);
       }
+      section.appendChild(buildGenericTable(displayRows, searchTerm, resourceMap, baseUrl));
       parent.appendChild(section);
     }
 
     function appendGenericObjectList(parent, title, items, searchTerm, resourceMap, baseUrl){
+      var displayItems=Array.isArray(items) ? items.filter(hasDisplayValue) : [];
+      if(!displayItems.length) return;
+
       var section=document.createElement('section');
       section.className='catalog-section';
       var heading=document.createElement('h4');
       heading.className='catalog-section-title';
       heading.innerHTML=renderHighlightedInline(title, searchTerm);
       section.appendChild(heading);
-      if(!Array.isArray(items) || !items.length){
-        appendEmptyNotice(section, 'Keine Eintraege vorhanden.');
-        parent.appendChild(section);
-        return;
-      }
-      for(var i=0;i<items.length;i++){
+      for(var i=0;i<displayItems.length;i++){
         var item=document.createElement('div');
         item.className='catalog-subitem';
-        item.appendChild(buildGenericObjectInline(items[i], searchTerm, resourceMap, baseUrl));
+        item.appendChild(buildGenericObjectInline(displayItems[i], searchTerm, resourceMap, baseUrl));
         section.appendChild(item);
       }
       parent.appendChild(section);
     }
 
     function appendPropertiesSection(parent, props, searchTerm, resourceMap, baseUrl){
-      if(!Array.isArray(props) || !props.length) return;
+      var displayProps=Array.isArray(props) ? props.filter(hasDisplayValue) : [];
+      if(!displayProps.length) return;
 
       var details=document.createElement('details');
       details.innerHTML='<summary><strong>Properties</strong></summary>';
@@ -7677,8 +7839,8 @@ function baseMatches(c){ return matches(c); }
       var prepared=[];
       var hasClass=false;
       var hasExtra=false;
-      for(var pi=0;pi<props.length;pi++){
-        var preparedProp=props[pi] || {};
+      for(var pi=0;pi<displayProps.length;pi++){
+        var preparedProp=displayProps[pi] || {};
         var extraRows=[];
         if(preparedProp.uuid) extraRows.push({ name:'uuid', value:preparedProp.uuid });
         if(preparedProp.remarks) extraRows.push({ name:'remarks', value:preparedProp.remarks });
@@ -7746,11 +7908,9 @@ function baseMatches(c){ return matches(c); }
     }
 
     function appendImportedComponentDefinitions(parent, items, searchTerm, resourceMap, baseUrl, statuses){
-      if(!Array.isArray(items) || !items.length){
-        appendEmptyNotice(parent, 'Keine Eintraege vorhanden.');
-        return;
-      }
+      if(!Array.isArray(items) || !hasDisplayValue(items)) return;
       for(var i=0;i<items.length;i++){
+        if(!hasDisplayValue(items[i])) continue;
         var entry=items[i] || {};
         var status=(Array.isArray(statuses) && statuses[i]) ? statuses[i] : null;
         var item=document.createElement('div');
@@ -7811,10 +7971,7 @@ function baseMatches(c){ return matches(c); }
           item.appendChild(extra);
         }
 
-        if(!item.childNodes.length){
-          appendEmptyNotice(item, 'Keine Eintraege vorhanden.');
-        }
-        parent.appendChild(item);
+        if(item.childNodes.length) parent.appendChild(item);
       }
     }
 
@@ -7825,6 +7982,7 @@ function baseMatches(c){ return matches(c); }
       var rows=[];
       for(var k=0;k<keys.length;k++){
         if(excluded[keys[k]]) continue;
+        if(!hasDisplayValue(obj[keys[k]])) continue;
         rows.push({ name:keys[k], value:obj[keys[k]] });
       }
       if(rows.length){
@@ -9247,9 +9405,9 @@ function baseMatches(c){ return matches(c); }
     }
 
     function renderComponentDocumentInfo(container, searchTerm){
-      var hasMeta = !!(componentState.documentUuid || componentState.metadata);
-      var hasImports = !!(componentState.imports && componentState.imports.length);
-      var hasBackMatter = !!componentState.backMatter;
+      var hasMeta = hasDisplayValue(componentState.documentUuid) || hasDisplayValue(componentState.metadata);
+      var hasImports = hasDisplayValue(componentState.imports);
+      var hasBackMatter = hasDisplayValue(componentState.backMatter);
       if(!hasMeta && !hasImports && !hasBackMatter) return;
 
       var heading=document.createElement('div');
@@ -9264,21 +9422,10 @@ function baseMatches(c){ return matches(c); }
         var body=document.createElement('div');
         body.className='catalog-info-content';
         var meta=componentState.metadata || {};
-        appendGenericSection(body, 'Basisdaten', [
-          { name:'uuid', value:componentState.documentUuid || '-' },
-          { name:'title', value:meta.title || '-' },
-          { name:'last-modified', value:meta['last-modified'] || '-' },
-          { name:'version', value:meta.version || '-' },
-          { name:'oscal-version', value:meta['oscal-version'] || '-' },
-          { name:'published', value:meta.published || '-' },
-          { name:'remarks', value:meta.remarks || '-' }
-        ], searchTerm, componentState.resourceByUuid, componentState.baseUrl);
-        appendPropertiesSection(body, meta.props, searchTerm, componentState.resourceByUuid, componentState.baseUrl);
-        appendGenericObjectList(body, 'Links', meta.links, searchTerm, componentState.resourceByUuid, componentState.baseUrl);
-        appendGenericObjectList(body, 'Roles', meta.roles, searchTerm, componentState.resourceByUuid, componentState.baseUrl);
-        appendGenericObjectList(body, 'Parties', meta.parties, searchTerm, componentState.resourceByUuid, componentState.baseUrl);
-        appendGenericObjectList(body, 'Responsible Parties', meta['responsible-parties'], searchTerm, componentState.resourceByUuid, componentState.baseUrl);
-        appendRemainingObjectFields(body, 'Weitere Metadaten', meta, ['title','last-modified','version','oscal-version','published','remarks','props','links','roles','parties','responsible-parties'], searchTerm, componentState.resourceByUuid, componentState.baseUrl);
+        var metaRows=getObjectDisplayRows(meta, [
+          { name:'uuid', value:componentState.documentUuid }
+        ]);
+        appendGenericSection(body, '', metaRows, searchTerm, componentState.resourceByUuid, componentState.baseUrl);
         metaDetails.appendChild(body);
         container.appendChild(metaDetails);
       }
