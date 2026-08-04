@@ -3291,7 +3291,7 @@
       <div>
         <h1><img class="header-wordmark" src="./viewer_logo-transparent.png" alt="Stand der Technik – Viewer" onerror="this.replaceWith(document.createTextNode('Stand der Technik – Viewer'))"></h1>
         <!-- Mit VERSION und docs/adr/0001-semantic-versioning.md synchron halten. -->
-        <span id="viewerVersion" class="viewer-version" aria-label="Viewer-Version 2.0.1">v2.0.1</span>
+        <span id="viewerVersion" class="viewer-version" aria-label="Viewer-Version 2.0.2">v2.0.2</span>
         <p id="viewSubtitle" class="header-subtitle">Ein neu strukturierter Arbeitsbereich für OSCAL-Kataloge, Komponentendefinitionen und Analyseansichten mit klarer Navigation, ruhiger Leseführung und durchgängiger visueller Hierarchie.</p>
       </div>
     </div>
@@ -3375,7 +3375,7 @@
         <div style="margin-top:12px;display:grid;gap:8px" class="toolbar">
           <div class="field-label search-field-heading">
             <label for="q">Suche im Katalog</label>
-            <span class="search-help"><button class="search-help-trigger" type="button" aria-label="Suchhinweise anzeigen" aria-describedby="catalogSearchHelp">?</button><span class="search-help-tooltip" id="catalogSearchHelp" role="tooltip">Suchbegriffe durch Leerzeichen trennen: Alle müssen vorkommen. Alternativen mit ODER trennen: Mindestens eine Alternative muss vorkommen; Treffer mit beiden werden ebenfalls angezeigt. Feste Wortfolgen vollständig in Anführungszeichen setzen. Beispiele: Firewall Dokumentation verlangt beide Begriffe. &quot;G 0.18&quot; ODER &quot;G 0.20&quot; findet die erste, die zweite oder beide Gefährdungen.</span></span>
+            <span class="search-help"><button class="search-help-trigger" type="button" aria-label="Suchhinweise anzeigen" aria-describedby="catalogSearchHelp">?</button><span class="search-help-tooltip" id="catalogSearchHelp" role="tooltip">Suchbegriffe durch Leerzeichen trennen: Alle müssen vorkommen. Alternativen mit ODER trennen: Mindestens eine Alternative muss vorkommen; Treffer mit beiden werden ebenfalls angezeigt. Text in Anführungszeichen wird als eigenständige Wortfolge gesucht und nicht als Anfang eines längeren Begriffs gewertet. Beispiele: Firewall Dokumentation verlangt beide Begriffe. &quot;G 0.1&quot; findet G 0.1, aber nicht G 0.12. &quot;G 0.18&quot; ODER &quot;G 0.20&quot; findet die erste, die zweite oder beide Gefährdungen.</span></span>
           </div>
           <input id="q" class="input" type="text" placeholder="Suchen (ID, Titel, Text, Tags…)" aria-describedby="catalogSearchHelp" autocomplete="off" autocapitalize="off" spellcheck="false" name="q_oscal_viewer_stable2" />
           <div class="section-caption">Filter einschränken</div>
@@ -3483,7 +3483,7 @@
         <div style="margin-top:12px;display:grid;gap:8px" class="toolbar">
           <div class="field-label search-field-heading">
             <label for="compQ">Suche in Komponenten</label>
-            <span class="search-help"><button class="search-help-trigger" type="button" aria-label="Suchhinweise anzeigen" aria-describedby="componentSearchHelp">?</button><span class="search-help-tooltip" id="componentSearchHelp" role="tooltip">Suchbegriffe durch Leerzeichen trennen: Alle müssen vorkommen. Alternativen mit ODER trennen: Mindestens eine Alternative muss vorkommen; Treffer mit beiden werden ebenfalls angezeigt. Feste Wortfolgen vollständig in Anführungszeichen setzen. Beispiele: Firewall Dokumentation verlangt beide Begriffe. &quot;G 0.18&quot; ODER &quot;G 0.20&quot; findet die erste, die zweite oder beide Gefährdungen.</span></span>
+            <span class="search-help"><button class="search-help-trigger" type="button" aria-label="Suchhinweise anzeigen" aria-describedby="componentSearchHelp">?</button><span class="search-help-tooltip" id="componentSearchHelp" role="tooltip">Suchbegriffe durch Leerzeichen trennen: Alle müssen vorkommen. Alternativen mit ODER trennen: Mindestens eine Alternative muss vorkommen; Treffer mit beiden werden ebenfalls angezeigt. Text in Anführungszeichen wird als eigenständige Wortfolge gesucht und nicht als Anfang eines längeren Begriffs gewertet. Beispiele: Firewall Dokumentation verlangt beide Begriffe. &quot;G 0.1&quot; findet G 0.1, aber nicht G 0.12. &quot;G 0.18&quot; ODER &quot;G 0.20&quot; findet die erste, die zweite oder beide Gefährdungen.</span></span>
           </div>
           <input id="compQ" class="input" type="text" placeholder="Suchen (Komponente, Control-ID, Beschreibung, Quelle…)" aria-describedby="componentSearchHelp" autocomplete="off" autocapitalize="off" spellcheck="false" name="q_component_viewer" />
           <div class="section-caption">Filter einschränken</div>
@@ -3560,7 +3560,7 @@
         <div style="margin-top:12px;display:grid;gap:8px" class="toolbar">
           <div class="field-label search-field-heading">
             <label for="mappingQ">Suche im Mapping</label>
-            <span class="search-help"><button class="search-help-trigger" type="button" aria-label="Suchhinweise anzeigen" aria-describedby="mappingSearchHelp">?</button><span class="search-help-tooltip" id="mappingSearchHelp" role="tooltip">Suchbegriffe durch Leerzeichen trennen: Alle müssen vorkommen. Alternativen mit ODER trennen: Mindestens eine Alternative muss vorkommen; Treffer mit beiden werden ebenfalls angezeigt. Feste Wortfolgen vollständig in Anführungszeichen setzen. Beispiele: Firewall Dokumentation verlangt beide Begriffe. &quot;G 0.18&quot; ODER &quot;G 0.20&quot; findet die erste, die zweite oder beide Gefährdungen.</span></span>
+            <span class="search-help"><button class="search-help-trigger" type="button" aria-label="Suchhinweise anzeigen" aria-describedby="mappingSearchHelp">?</button><span class="search-help-tooltip" id="mappingSearchHelp" role="tooltip">Suchbegriffe durch Leerzeichen trennen: Alle müssen vorkommen. Alternativen mit ODER trennen: Mindestens eine Alternative muss vorkommen; Treffer mit beiden werden ebenfalls angezeigt. Text in Anführungszeichen wird als eigenständige Wortfolge gesucht und nicht als Anfang eines längeren Begriffs gewertet. Beispiele: Firewall Dokumentation verlangt beide Begriffe. &quot;G 0.1&quot; findet G 0.1, aber nicht G 0.12. &quot;G 0.18&quot; ODER &quot;G 0.20&quot; findet die erste, die zweite oder beide Gefährdungen.</span></span>
           </div>
           <input id="mappingQ" class="input" type="text" placeholder="Suchen (Control-ID, Katalog, Relationship…)" aria-describedby="mappingSearchHelp" autocomplete="off" autocapitalize="off" spellcheck="false" />
           <div class="section-caption">Filter einschränken</div>
@@ -3675,7 +3675,7 @@
       return String(value==null ? '' : value).replace(/\s+/g,' ').trim().toLocaleLowerCase('de-DE');
     }
     var _searchQueryCacheRaw=null;
-    var _searchQueryCache={groups:[],terms:[]};
+    var _searchQueryCache={groups:[],terms:[],highlightTerms:[]};
     function parseSearchQuery(rawQuery){
       var raw=String(rawQuery==null ? '' : rawQuery);
       if(raw===_searchQueryCacheRaw) return _searchQueryCache;
@@ -3704,6 +3704,8 @@
       var groupSeen=Object.create(null);
       var terms=[];
       var termSeen=Object.create(null);
+      var highlightTerms=[];
+      var highlightByValue=Object.create(null);
       function finishGroup(){
         if(currentGroup.length) groups.push(currentGroup);
         currentGroup=[];
@@ -3715,22 +3717,55 @@
           finishGroup();
           continue;
         }
-        if(!groupSeen[token.value]){
-          groupSeen[token.value]=true;
-          currentGroup.push(token.value);
+        var groupKey=(token.quoted ? 'exact:' : 'partial:')+token.value;
+        if(!groupSeen[groupKey]){
+          groupSeen[groupKey]=true;
+          currentGroup.push({value:token.value,exact:!!token.quoted});
         }
         if(!termSeen[token.value]){
           termSeen[token.value]=true;
           terms.push(token.value);
         }
+        if(!highlightByValue[token.value]){
+          highlightByValue[token.value]={value:token.value,exact:!!token.quoted};
+          highlightTerms.push(highlightByValue[token.value]);
+        } else if(!token.quoted){
+          highlightByValue[token.value].exact=false;
+        }
       }
       finishGroup();
       _searchQueryCacheRaw=raw;
-      _searchQueryCache={groups:groups,terms:terms};
+      _searchQueryCache={groups:groups,terms:terms,highlightTerms:highlightTerms};
       return _searchQueryCache;
     }
     function normalizeSearchQuery(searchQuery){
       return searchQuery && Array.isArray(searchQuery.groups) && Array.isArray(searchQuery.terms) ? searchQuery : parseSearchQuery(searchQuery);
+    }
+    var _searchWordCharacterRe;
+    try{
+      _searchWordCharacterRe=new RegExp('[\\p{L}\\p{N}\\p{M}]','u');
+    } catch(_searchWordCharacterError){
+      _searchWordCharacterRe=/[0-9A-Za-zÀ-ÖØ-öø-ÿ]/;
+    }
+    function isSearchWordCharacter(value){
+      return !!value && _searchWordCharacterRe.test(value);
+    }
+    function hasStandaloneSearchBoundaries(text, start, length){
+      var before=start>0 ? text.charAt(start-1) : '';
+      var after=start+length<text.length ? text.charAt(start+length) : '';
+      return !isSearchWordCharacter(before) && !isSearchWordCharacter(after);
+    }
+    function containsSearchClause(normalizedText, clause){
+      var value=typeof clause==='string' ? clause : clause && clause.value;
+      var exact=!!(clause && typeof clause==='object' && clause.exact);
+      if(!value) return false;
+      var start=0;
+      var index;
+      while((index=normalizedText.indexOf(value,start))!==-1){
+        if(!exact || hasStandaloneSearchBoundaries(normalizedText,index,value.length)) return true;
+        start=index+Math.max(1,value.length);
+      }
+      return false;
     }
     function matchesSearchText(text, searchQuery){
       var query=normalizeSearchQuery(searchQuery);
@@ -3740,7 +3775,7 @@
         var group=query.groups[gi];
         var groupMatches=true;
         for(var ti=0;ti<group.length;ti++){
-          if(normalizedText.indexOf(group[ti])===-1){ groupMatches=false; break; }
+          if(!containsSearchClause(normalizedText,group[ti])){ groupMatches=false; break; }
         }
         if(groupMatches) return true;
       }
@@ -3750,29 +3785,65 @@
       var query=normalizeSearchQuery(searchQuery);
       if(!query.terms.length) return false;
       var normalizedText=normalizeSearchValue(text);
-      for(var i=0;i<query.terms.length;i++){
-        if(normalizedText.indexOf(query.terms[i])!==-1) return true;
+      for(var gi=0;gi<query.groups.length;gi++){
+        for(var ti=0;ti<query.groups[gi].length;ti++){
+          if(containsSearchClause(normalizedText,query.groups[gi][ti])) return true;
+        }
       }
       return false;
     }
     function escapeRegExp(s){ return String(s||'').replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
     function searchTermRegexSource(term){ return escapeRegExp(term).replace(/\s+/g,'\\s+'); }
     var _searchHighlightCacheQuery='';
-    var _searchHighlightCacheRegex=null;
-    function getSearchHighlightRegex(rawQuery){
+    var _searchHighlightCachePatterns=[];
+    function getSearchHighlightPatterns(rawQuery){
       var query=String(rawQuery==null ? '' : rawQuery);
-      if(query===_searchHighlightCacheQuery) return _searchHighlightCacheRegex;
-      var terms=parseSearchQuery(query).terms.slice().sort(function(a,b){ return b.length-a.length; });
+      if(query===_searchHighlightCacheQuery) return _searchHighlightCachePatterns;
+      var parsedQuery=parseSearchQuery(query);
+      var terms=(parsedQuery.highlightTerms || []).slice().sort(function(a,b){ return b.value.length-a.value.length; });
       _searchHighlightCacheQuery=query;
-      _searchHighlightCacheRegex=terms.length ? new RegExp(terms.map(searchTermRegexSource).join('|'),'gi') : null;
-      return _searchHighlightCacheRegex;
+      _searchHighlightCachePatterns=terms.map(function(term){
+        return {exact:term.exact,regex:new RegExp(searchTermRegexSource(term.value),'gi')};
+      });
+      return _searchHighlightCachePatterns;
+    }
+    function getSearchHighlightRanges(text, patterns){
+      var ranges=[];
+      for(var pi=0;pi<patterns.length;pi++){
+        var pattern=patterns[pi];
+        var match;
+        pattern.regex.lastIndex=0;
+        while((match=pattern.regex.exec(text))!==null){
+          if(!pattern.exact || hasStandaloneSearchBoundaries(text,match.index,match[0].length)){
+            ranges.push({start:match.index,end:match.index+match[0].length});
+          }
+          if(!match[0].length) pattern.regex.lastIndex++;
+        }
+      }
+      ranges.sort(function(a,b){ return a.start-b.start || (b.end-b.start)-(a.end-a.start); });
+      var selected=[];
+      var cursor=-1;
+      for(var ri=0;ri<ranges.length;ri++){
+        if(ranges[ri].start<cursor) continue;
+        selected.push(ranges[ri]);
+        cursor=ranges[ri].end;
+      }
+      return selected;
     }
     function highlightSearchInHtml(html, rawQuery){
-      var re=getSearchHighlightRegex(rawQuery);
-      if(!re) return html;
+      var patterns=getSearchHighlightPatterns(rawQuery);
+      if(!patterns.length) return html;
       return String(html).split(/(<[^>]+>)/g).map(function(part){
         if(part && part.charAt(0)==='<') return part;
-        return part.replace(re, function(m){ return '<mark class="search-hit">'+m+'</mark>'; });
+        var ranges=getSearchHighlightRanges(part,patterns);
+        if(!ranges.length) return part;
+        var highlighted='';
+        var cursor=0;
+        for(var ri=0;ri<ranges.length;ri++){
+          highlighted+=part.slice(cursor,ranges[ri].start)+'<mark class="search-hit">'+part.slice(ranges[ri].start,ranges[ri].end)+'</mark>';
+          cursor=ranges[ri].end;
+        }
+        return highlighted+part.slice(cursor);
       }).join('');
     }
 
