@@ -98,8 +98,7 @@
     #graph{height:85vh;background:#0b1019;border:1px solid var(--muted);border-radius:16px;position:relative}
     #sunburst,#bar{height:85vh;background:#0b1019;border:1px solid var(--muted);border-radius:16px;position:relative;display:flex;align-items:center;justify-content:center}
     .chart-unavailable{display:flex!important;align-items:center;justify-content:center}
-    #jsonTab{height:85vh}
-    #jsonView{height:85vh;background:#0b1019;border:1px solid var(--muted);border-radius:16px;color:#e7f0ff;padding:12px;overflow:auto;white-space:pre-wrap;word-break:break-word;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px}
+    #targetHierarchyTab{min-height:85vh}
     .hidden{display:none!important}
     .note{font-size:12px;color:var(--dim)}
     mark{background:#ffffff;color:#000000;padding:1px 4px;border-radius:4px;font-weight:bold}
@@ -600,7 +599,7 @@
       color:#ffffff
     }
     .component-card.capability{border-left-color:#175cd3}
-    #graph,#sunburst,#bar,#jsonView{
+    #graph,#sunburst,#bar{
       height:82vh;
       background:linear-gradient(180deg,#fbfdff 0%,#edf3f9 100%);
       border:1px solid rgba(188,205,224,.98);
@@ -921,6 +920,103 @@
       font-size:13px;
       font-weight:700;
       color:var(--text);
+    }
+    .search-field-heading{position:relative;display:flex;align-items:center;gap:7px}
+    .search-field-heading > label{font:inherit;color:inherit}
+    .search-help{position:static;display:inline-flex;align-items:center}
+    .search-help-trigger{
+      width:20px;
+      min-width:20px;
+      min-height:20px;
+      height:20px;
+      padding:0;
+      border-radius:50%;
+      border:1px solid rgba(97,114,134,.55);
+      background:#ffffff;
+      color:var(--accent);
+      font-size:12px;
+      font-weight:800;
+      line-height:1;
+      box-shadow:none;
+      cursor:help
+    }
+    .search-help-tooltip{
+      position:absolute;
+      z-index:140;
+      top:calc(100% + 8px);
+      left:0;
+      width:min(300px,100%);
+      padding:10px 12px;
+      border:1px solid #27466c;
+      border-radius:10px;
+      background:#0b1019;
+      color:#e7f0ff;
+      font-size:12px;
+      font-weight:500;
+      line-height:1.45;
+      box-shadow:0 10px 24px rgba(0,0,0,.25);
+      opacity:0;
+      visibility:hidden;
+      pointer-events:none;
+      transform:translateY(-3px);
+      transition:opacity .15s ease,transform .15s ease,visibility .15s ease
+    }
+    .search-help:hover .search-help-tooltip,
+    .search-help:focus-within .search-help-tooltip{
+      opacity:1;
+      visibility:visible;
+      transform:translateY(0)
+    }
+    .filter-with-help{
+      position:relative;
+      display:block;
+      width:100%;
+      min-width:0;
+    }
+    .filter-with-help > .ms{
+      width:100%;
+      min-width:0;
+    }
+    .filter-with-help > .search-help{
+      position:absolute;
+      left:calc(100% + 5px);
+      top:23px;
+      transform:translateY(-50%);
+    }
+    .filter-with-help > .search-help .search-help-trigger{
+      width:18px;
+      min-width:18px;
+      min-height:18px;
+      height:18px;
+      font-size:11px;
+    }
+    .target-object-help-tooltip{
+      position:fixed;
+      z-index:1000;
+      top:0;
+      right:auto;
+      left:0;
+      width:300px;
+      max-width:calc(100vw - 16px);
+    }
+    .target-object-help-tooltip.is-visible{
+      opacity:1;
+      visibility:visible;
+      transform:translateY(0);
+    }
+    .ms-item.is-auto-selected{
+      background:rgba(28,124,104,.08);
+    }
+    .target-auto-selected-badge{
+      margin-left:auto;
+      padding:2px 6px;
+      border-radius:999px;
+      background:rgba(28,124,104,.12);
+      color:var(--accent-strong);
+      font-size:10px;
+      font-weight:800;
+      line-height:1.25;
+      white-space:nowrap;
     }
     .filter-split{
       margin:16px 0;
@@ -1348,23 +1444,162 @@
       position:relative;
       box-shadow:var(--shadow);
     }
-    #jsonTab{
-      height:auto;
-    }
-    #jsonView{
-      height:82vh;
-      min-height:540px;
-      background:linear-gradient(180deg, #233234 0%, #1b272a 100%);
-      border:1px solid rgba(31,42,37,.16);
+    #targetHierarchyTab{height:auto}
+    .target-hierarchy-view{
+      min-height:82vh;
+      display:grid;
+      grid-template-rows:auto minmax(560px,1fr);
+      overflow:hidden;
+      background:linear-gradient(180deg,#fbfdfc 0%,#eef5f1 100%);
+      border:1px solid rgba(212,221,213,.95);
       border-radius:24px;
-      color:#e7f4ef;
-      padding:16px;
-      overflow:auto;
-      white-space:pre-wrap;
-      word-break:break-word;
-      font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
-      font-size:12px;
       box-shadow:var(--shadow);
+    }
+    .target-hierarchy-header{
+      display:grid;
+      grid-template-columns:minmax(0,1fr) max-content;
+      align-items:center;
+      gap:22px;
+      padding:16px 20px;
+      background:rgba(255,255,255,.88);
+      border-bottom:1px solid rgba(212,221,213,.95);
+    }
+    .target-hierarchy-heading{min-width:0;width:100%}
+    .target-hierarchy-eyebrow{
+      margin:0 0 5px;
+      color:#087f78;
+      font-size:11px;
+      font-weight:900;
+      letter-spacing:.13em;
+      text-transform:uppercase;
+    }
+    .target-hierarchy-heading h2{
+      margin:0;
+      color:#18322f;
+      font-size:clamp(20px,2vw,28px);
+      line-height:1.2;
+    }
+    .target-hierarchy-heading p{
+      max-width:1050px;
+      margin:7px 0 0;
+      color:#5a6f69;
+      font-size:13px;
+      line-height:1.5;
+    }
+    .target-hierarchy-header .target-hierarchy-fit{
+      width:max-content!important;
+      min-width:0;
+      max-width:none;
+      justify-self:end;
+      align-self:center;
+      white-space:nowrap;
+    }
+    .target-hierarchy-canvas{
+      position:relative;
+      min-height:560px;
+      overflow:hidden;
+      background:
+        radial-gradient(circle at 20% 18%,rgba(23,156,149,.09),transparent 34%),
+        linear-gradient(rgba(59,91,83,.045) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(59,91,83,.045) 1px,transparent 1px),
+        #f8fbf9;
+      background-size:auto,32px 32px,32px 32px,auto;
+    }
+    .target-hierarchy-canvas svg{display:block;width:100%;height:100%;min-height:560px;cursor:grab;touch-action:none}
+    .target-hierarchy-canvas svg:active{cursor:grabbing}
+    .target-hierarchy-link{fill:none;stroke:#91a39e;stroke-width:1.6;opacity:.82}
+    .target-hierarchy-node{cursor:default;outline:none}
+    .target-hierarchy-node rect{
+      stroke:rgba(255,255,255,.96);
+      stroke-width:2;
+      filter:drop-shadow(0 3px 4px rgba(25,54,48,.2));
+      transition:filter .15s ease,stroke-width .15s ease,transform .15s ease;
+    }
+    .target-hierarchy-node:hover rect,
+    .target-hierarchy-node:focus rect{
+      stroke:#ffffff;
+      stroke-width:3;
+      filter:drop-shadow(0 7px 9px rgba(25,54,48,.28));
+    }
+    .target-hierarchy-node text{
+      fill:#ffffff;
+      font-size:12px;
+      font-weight:850;
+      letter-spacing:.005em;
+      pointer-events:none;
+      text-shadow:0 1px 1px rgba(0,0,0,.18);
+    }
+    .target-hierarchy-summary{
+      position:absolute;
+      right:18px;
+      bottom:18px;
+      width:min(310px,calc(100% - 36px));
+      padding:14px 16px;
+      background:rgba(255,255,255,.94);
+      border:1px solid rgba(119,145,137,.42);
+      border-radius:14px;
+      color:#334c47;
+      box-shadow:0 10px 28px rgba(30,54,48,.14);
+      backdrop-filter:blur(10px);
+      pointer-events:none;
+    }
+    .target-hierarchy-summary strong{display:block;margin-bottom:7px;color:#18322f;font-size:15px}
+    .target-hierarchy-summary span{display:block;font-size:12px;line-height:1.55}
+    .target-hierarchy-summary .direction{margin-top:5px;color:#087f78;font-weight:800}
+    .target-hierarchy-status{
+      min-height:560px;
+      display:grid;
+      place-items:center;
+      padding:34px;
+      text-align:center;
+    }
+    .target-hierarchy-status-card{
+      width:min(620px,100%);
+      padding:28px;
+      background:rgba(255,255,255,.94);
+      border:1px solid rgba(212,221,213,.95);
+      border-radius:18px;
+      color:#536963;
+      box-shadow:0 12px 32px rgba(30,54,48,.1);
+    }
+    .target-hierarchy-status-card strong{display:block;margin-bottom:8px;color:#18322f;font-size:18px}
+    .target-hierarchy-status-card .btn{margin-top:16px}
+    .target-hierarchy-tooltip{
+      position:fixed;
+      z-index:140;
+      width:min(760px,calc(100vw - 24px));
+      max-width:calc(100vw - 24px);
+      max-height:none;
+      overflow:visible;
+      padding:15px 16px;
+      background:#172925;
+      border:1px solid rgba(255,255,255,.18);
+      border-radius:14px;
+      color:#eef8f5;
+      box-shadow:0 18px 42px rgba(8,25,21,.34);
+      pointer-events:auto;
+    }
+    .target-hierarchy-tooltip[hidden]{display:none!important}
+    .target-hierarchy-tooltip h3{margin:0 0 10px;color:#ffffff;font-size:17px;line-height:1.25}
+    .target-hierarchy-tooltip dl{display:grid;grid-template-columns:108px minmax(0,1fr);gap:7px 12px;margin:0}
+    .target-hierarchy-tooltip dt{color:#9adfd3;font-size:11px;font-weight:900;letter-spacing:.06em;text-transform:uppercase}
+    .target-hierarchy-tooltip dd{margin:0;color:#eef8f5;font-size:12px;line-height:1.5;overflow-wrap:anywhere}
+    .target-hierarchy-tooltip.is-compact{
+      width:min(960px,calc(100vw - 24px));
+      padding:12px 14px;
+    }
+    .target-hierarchy-tooltip.is-compact h3{margin-bottom:8px;font-size:15px}
+    .target-hierarchy-tooltip.is-compact dl{gap:5px 11px}
+    .target-hierarchy-tooltip.is-compact dd{font-size:11px;line-height:1.35}
+    @media(max-width:760px){
+      .target-hierarchy-view{grid-template-rows:auto minmax(500px,1fr)}
+      .target-hierarchy-header{grid-template-columns:minmax(0,1fr);align-items:start;padding:15px 16px;gap:12px}
+      .target-hierarchy-header .target-hierarchy-fit{justify-self:start}
+      .target-hierarchy-canvas,.target-hierarchy-canvas svg,.target-hierarchy-status{min-height:500px}
+      .target-hierarchy-summary{right:12px;bottom:12px}
+      .target-hierarchy-tooltip{width:calc(100vw - 16px);max-width:calc(100vw - 16px);padding:12px}
+      .target-hierarchy-tooltip dl{grid-template-columns:minmax(0,1fr)}
+      .target-hierarchy-tooltip dt{margin-top:3px}
     }
     .graph-toolbar{
       position:absolute;
@@ -1544,7 +1779,7 @@
       .rel{
         grid-template-columns:1fr;
       }
-      #graph,#sunburst,#bar,#jsonView{
+      #graph,#sunburst,#bar,.target-hierarchy-canvas{
         min-height:440px;
         border-radius:20px;
       }
@@ -1733,7 +1968,7 @@
     .tab[data-tab="graph"],
     .tab[data-tab="sunburst"],
     .tab[data-tab="bar"],
-    .tab[data-tab="json"]{
+    .tab[data-tab="target-hierarchy"]{
       padding-top:35px;
     }
     .visual-context-label{
@@ -2556,12 +2791,6 @@
       background:#fbfdff;
       box-shadow:none;
     }
-    #jsonView{
-      border-radius:0;
-      background:#171a19;
-      color:#eef2ee;
-      box-shadow:none;
-    }
     .modal{
       backdrop-filter:blur(6px);
       background:rgba(17,17,17,.42);
@@ -2660,7 +2889,7 @@
     body.print-mode #graphTab,
     body.print-mode #sunburstTab,
     body.print-mode #barTab,
-    body.print-mode #jsonTab { display:none !important; }
+    body.print-mode #targetHierarchyTab { display:none !important; }
     body.print-mode .wrap { grid-template-columns: 1fr !important; }
     body.print-mode main { gap: 10px; }
     body.print-mode details { background:#ffffff; }
@@ -2910,10 +3139,11 @@
       grid-template-columns:minmax(120px,.85fr) minmax(240px,1.5fr) minmax(132px,.9fr);
     }
     .visualization-tab-group{
-      grid-template-columns:repeat(4,minmax(120px,1fr));
+      grid-template-columns:repeat(3,minmax(120px,1fr));
       border-left:5px solid #08afd1;
       box-shadow:-10px 0 0 rgba(8,175,209,.07);
     }
+    .visualization-tab-group.has-target-hierarchy{grid-template-columns:repeat(4,minmax(120px,1fr))}
     .nav-group-label{
       position:absolute;
       inset:0 0 auto;
@@ -2953,7 +3183,8 @@
       border-top:1px solid rgba(118,139,170,.16);
     }
     .workspace-tab-group .tab:first-of-type,.visualization-tab-group .tab:first-of-type{border-left:0}
-    .tab[data-tab="graph"],.tab[data-tab="sunburst"],.tab[data-tab="bar"],.tab[data-tab="json"]{padding-top:13px}
+    .tab[data-tab="graph"],.tab[data-tab="sunburst"],.tab[data-tab="bar"],.tab[data-tab="target-hierarchy"]{padding-top:13px}
+    .tab[hidden]{display:none!important}
     .visualization-tab-group.is-disabled{border-left-color:#cbd4e1;box-shadow:-10px 0 0 rgba(118,139,170,.05)}
     .visualization-tab-group.is-disabled .tab{opacity:.42;background:#f1f4f8;color:#758398;cursor:not-allowed}
     .visualization-tab-group.is-disabled .tab:hover{transform:none;background:#f1f4f8;color:#758398}
@@ -3060,11 +3291,11 @@
       <div>
         <h1><img class="header-wordmark" src="./viewer_logo-transparent.png" alt="Stand der Technik – Viewer" onerror="this.replaceWith(document.createTextNode('Stand der Technik – Viewer'))"></h1>
         <!-- Mit VERSION und docs/adr/0001-semantic-versioning.md synchron halten. -->
-        <span id="viewerVersion" class="viewer-version" aria-label="Viewer-Version 1.0.3">v1.0.3</span>
+        <span id="viewerVersion" class="viewer-version" aria-label="Viewer-Version 2.0.1">v2.0.1</span>
         <p id="viewSubtitle" class="header-subtitle">Ein neu strukturierter Arbeitsbereich für OSCAL-Kataloge, Komponentendefinitionen und Analyseansichten mit klarer Navigation, ruhiger Leseführung und durchgängiger visueller Hierarchie.</p>
       </div>
     </div>
-    <!-- Hauptnavigation fuer die grossen Viewer-Ansichten: Katalog, Komponentendefinitionen, Diagramme und JSON. -->
+    <!-- Hauptnavigation fuer die grossen Viewer-Ansichten: Katalog, Komponentendefinitionen und Diagramme. -->
     <div class="header-nav">
       <div class="tabs" aria-label="Ansichten">
         <div class="workspace-tab-group" role="tablist" aria-label="Arbeitsbereiche">
@@ -3078,7 +3309,7 @@
           <button class="tab" data-tab="graph" id="tab-graph" type="button" role="tab" aria-selected="false" aria-controls="graphTab" aria-disabled="true" disabled>Graph</button>
           <button class="tab" data-tab="sunburst" id="tab-sunburst" type="button" role="tab" aria-selected="false" aria-controls="sunburstTab" aria-disabled="true" disabled>Sunburst</button>
           <button class="tab" data-tab="bar" id="tab-bar" type="button" role="tab" aria-selected="false" aria-controls="barTab" aria-disabled="true" disabled>Balkendiagramm</button>
-          <button class="tab" data-tab="json" id="tab-json" type="button" role="tab" aria-selected="false" aria-controls="jsonTab" aria-disabled="true" disabled>JSON</button>
+          <button class="tab" data-tab="target-hierarchy" id="tab-target-hierarchy" type="button" role="tab" aria-selected="false" aria-controls="targetHierarchyTab" aria-disabled="true" disabled hidden>Vererbung Zielobjektkategorien</button>
         </div>
       </div>
     </div>
@@ -3137,24 +3368,31 @@
         <details class="sidebar-section" data-section="filters" name="catalog-sidebar-sections">
           <summary>
             <span class="sidebar-section-icon" aria-hidden="true">⌕</span>
-            <span class="sidebar-section-heading"><strong>Inhalte filtern</strong><small id="catalogFilterCount">Suche und 8 Filter</small></span>
+            <span class="sidebar-section-heading"><strong>Inhalte filtern</strong><small id="catalogFilterCount">Suche und 9 Filter</small></span>
           </summary>
           <div class="sidebar-section-body">
         <!-- Volltextsuche und facettierte Filter fuer die aktuell aktive Catalog-Quelle. -->
         <div style="margin-top:12px;display:grid;gap:8px" class="toolbar">
-          <label class="field-label" for="q">Suche im Katalog</label>
-          <input id="q" class="input" type="text" placeholder="Suchen (ID, Titel, Text, Tags…)" autocomplete="off" autocapitalize="off" spellcheck="false" name="q_oscal_viewer_stable2" />
+          <div class="field-label search-field-heading">
+            <label for="q">Suche im Katalog</label>
+            <span class="search-help"><button class="search-help-trigger" type="button" aria-label="Suchhinweise anzeigen" aria-describedby="catalogSearchHelp">?</button><span class="search-help-tooltip" id="catalogSearchHelp" role="tooltip">Suchbegriffe durch Leerzeichen trennen: Alle müssen vorkommen. Alternativen mit ODER trennen: Mindestens eine Alternative muss vorkommen; Treffer mit beiden werden ebenfalls angezeigt. Feste Wortfolgen vollständig in Anführungszeichen setzen. Beispiele: Firewall Dokumentation verlangt beide Begriffe. &quot;G 0.18&quot; ODER &quot;G 0.20&quot; findet die erste, die zweite oder beide Gefährdungen.</span></span>
+          </div>
+          <input id="q" class="input" type="text" placeholder="Suchen (ID, Titel, Text, Tags…)" aria-describedby="catalogSearchHelp" autocomplete="off" autocapitalize="off" spellcheck="false" name="q_oscal_viewer_stable2" />
           <div class="section-caption">Filter einschränken</div>
           <details class="ms hidden" id="groupMS"><summary>Alle Gruppen/Themen</summary><div class="ms-menu" id="groupMS_menu"></div></details>
           <details class="ms hidden" id="subgroupMS"><summary>Alle Untergruppen/Unterthemen</summary><div class="ms-menu" id="subgroupMS_menu"></div></details>
           <details class="ms" id="classMS"><summary>Alle Quellkataloge</summary><div class="ms-menu" id="classMS_menu"></div></details>
           <details class="ms" id="secMS"><summary>Alle Sicherheitsniveaus</summary><div class="ms-menu" id="secMS_menu"></div></details>
-          <details class="ms" id="targetMS"><summary>Alle Zielobjektkategorien</summary><div class="ms-menu" id="targetMS_menu"></div></details>
+          <div class="filter-with-help">
+            <details class="ms" id="targetMS" aria-describedby="targetObjectHelp"><summary>Alle Zielobjektkategorien</summary><div class="ms-menu" id="targetMS_menu"></div></details>
+            <span class="search-help" id="targetObjectHelpControl"><button class="search-help-trigger" type="button" aria-label="Hinweise zur Zielobjektvererbung anzeigen" aria-describedby="targetObjectHelp">?</button><span class="search-help-tooltip target-object-help-tooltip" id="targetObjectHelp" role="tooltip">Bei Auswahl einer Zielobjektkategorie berücksichtigt der Viewer automatisch auch alle übergeordneten Kategorien, deren Anforderungen auf diese Kategorie vererbt werden. Beispiel: „Webanwendungen“ umfasst zusätzlich „Webserver“ und „Anwendungen“. Automatisch ausgewählte Kategorien werden gekennzeichnet und können anschließend einzeln abgewählt werden. Grundlage ist die Zielobjekthierarchie des BSI Grundschutz++/Stand der Technik.</span></span>
+          </div>
           <details class="ms" id="tagMS"><summary>Alle Tags</summary><div class="ms-menu" id="tagMS_menu"></div></details>
           <details class="ms" id="effortMS"><summary>Alle Aufwände</summary><div class="ms-menu" id="effortMS_menu"></div></details>
           <details class="ms" id="modalverbMS"><summary>Alle Modalverben</summary><div class="ms-menu" id="modalverbMS_menu"></div></details>
           <details class="ms" id="documentationMS"><summary>Alle Dokumentationsempfehlungen</summary><div class="ms-menu" id="documentationMS_menu"></div></details>
           <details class="ms" id="actionwordMS"><summary>Alle Handlungswörter</summary><div class="ms-menu" id="actionwordMS_menu"></div></details>
+          <details class="ms" id="securityTargetMS"><summary>Alle Schutzziele</summary><div class="ms-menu" id="securityTargetMS_menu"></div></details>
         </div>
 
         <div class="status" style="margin-top:10px">
@@ -3243,8 +3481,11 @@
           <div class="sidebar-section-body">
         <!-- Volltextsuche und facettierte Filter fuer Komponenten, Quellen und Capabilities. -->
         <div style="margin-top:12px;display:grid;gap:8px" class="toolbar">
-          <label class="field-label" for="compQ">Suche in Komponenten</label>
-          <input id="compQ" class="input" type="text" placeholder="Suchen (Komponente, Control-ID, Beschreibung, Quelle…)" autocomplete="off" autocapitalize="off" spellcheck="false" name="q_component_viewer" />
+          <div class="field-label search-field-heading">
+            <label for="compQ">Suche in Komponenten</label>
+            <span class="search-help"><button class="search-help-trigger" type="button" aria-label="Suchhinweise anzeigen" aria-describedby="componentSearchHelp">?</button><span class="search-help-tooltip" id="componentSearchHelp" role="tooltip">Suchbegriffe durch Leerzeichen trennen: Alle müssen vorkommen. Alternativen mit ODER trennen: Mindestens eine Alternative muss vorkommen; Treffer mit beiden werden ebenfalls angezeigt. Feste Wortfolgen vollständig in Anführungszeichen setzen. Beispiele: Firewall Dokumentation verlangt beide Begriffe. &quot;G 0.18&quot; ODER &quot;G 0.20&quot; findet die erste, die zweite oder beide Gefährdungen.</span></span>
+          </div>
+          <input id="compQ" class="input" type="text" placeholder="Suchen (Komponente, Control-ID, Beschreibung, Quelle…)" aria-describedby="componentSearchHelp" autocomplete="off" autocapitalize="off" spellcheck="false" name="q_component_viewer" />
           <div class="section-caption">Filter einschränken</div>
           <details class="ms" id="compTypeMS"><summary>Alle Komponententypen</summary><div class="ms-menu" id="compTypeMS_menu"></div></details>
           <details class="ms" id="compSourceMS"><summary>Alle Quellen</summary><div class="ms-menu" id="compSourceMS_menu"></div></details>
@@ -3317,8 +3558,11 @@
           </summary>
           <div class="sidebar-section-body">
         <div style="margin-top:12px;display:grid;gap:8px" class="toolbar">
-          <label class="field-label" for="mappingQ">Suche im Mapping</label>
-          <input id="mappingQ" class="input" type="text" placeholder="Suchen (Control-ID, Katalog, Relationship…)" autocomplete="off" autocapitalize="off" spellcheck="false" />
+          <div class="field-label search-field-heading">
+            <label for="mappingQ">Suche im Mapping</label>
+            <span class="search-help"><button class="search-help-trigger" type="button" aria-label="Suchhinweise anzeigen" aria-describedby="mappingSearchHelp">?</button><span class="search-help-tooltip" id="mappingSearchHelp" role="tooltip">Suchbegriffe durch Leerzeichen trennen: Alle müssen vorkommen. Alternativen mit ODER trennen: Mindestens eine Alternative muss vorkommen; Treffer mit beiden werden ebenfalls angezeigt. Feste Wortfolgen vollständig in Anführungszeichen setzen. Beispiele: Firewall Dokumentation verlangt beide Begriffe. &quot;G 0.18&quot; ODER &quot;G 0.20&quot; findet die erste, die zweite oder beide Gefährdungen.</span></span>
+          </div>
+          <input id="mappingQ" class="input" type="text" placeholder="Suchen (Control-ID, Katalog, Relationship…)" aria-describedby="mappingSearchHelp" autocomplete="off" autocapitalize="off" spellcheck="false" />
           <div class="section-caption">Filter einschränken</div>
           <details class="ms" id="mappingPracticeMS"><summary>Alle Praktiken</summary><div class="ms-menu" id="mappingPracticeMS_menu"></div></details>
           <details class="ms" id="mappingRelationshipMS"><summary>Alle Relationships</summary><div class="ms-menu" id="mappingRelationshipMS_menu"></div></details>
@@ -3339,7 +3583,7 @@
       </div>
     </aside>
 
-    <!-- Rechter Inhaltsbereich fuer Uebersicht, Listen, Diagramme und JSON. -->
+    <!-- Rechter Inhaltsbereich fuer Uebersicht, Listen und Diagramme. -->
     <main>
       <!-- Startseite im Stil einer kompakten Content Registry fuer Repository-Inhalte. -->
       <section id="homeTab" class="registry-home" aria-labelledby="homeTitle"></section>
@@ -3371,15 +3615,27 @@
         <div id="bar"></div>
       </section>
 
-      <!-- JSON-Ansicht fuer die unveraenderte Rohdaten-Inspektion. -->
-      <section id="jsonTab" class="hidden" role="tabpanel" aria-labelledby="tab-json">
-        <pre id="jsonView" class="card">Kein Dokument geladen.</pre>
+      <!-- Aktuelle BSI-Zielobjekthierarchie fuer Kataloge mit target_object_categories. -->
+      <section id="targetHierarchyTab" class="hidden" role="tabpanel" aria-labelledby="tab-target-hierarchy">
+        <div class="target-hierarchy-view">
+          <div class="target-hierarchy-header">
+            <div class="target-hierarchy-heading">
+              <div class="target-hierarchy-eyebrow">BSI Grundschutz++ / Stand der Technik</div>
+              <h2>Vererbung der Zielobjektkategorien</h2>
+              <p>Die Pfeilrichtung verläuft von allgemeinen Elternkategorien zu spezielleren Kindkategorien. Bewege den Mauszeiger über eine Kategorie oder fokussiere sie mit der Tastatur, um Definition und Metadaten anzuzeigen.</p>
+            </div>
+            <button id="targetHierarchyFitBtn" class="btn target-hierarchy-fit" type="button">Alles anzeigen</button>
+          </div>
+          <div id="targetHierarchyCanvas" class="target-hierarchy-canvas" aria-live="polite"></div>
+        </div>
       </section>
 
       <!-- Fehler- und Statusmeldungen werden kontextbezogen in diesem Bereich eingeblendet. -->
       <section id="msg" class="card hidden"></section>
     </main>
   </div>
+
+  <div id="targetHierarchyTooltip" class="target-hierarchy-tooltip" role="tooltip" hidden></div>
 
   <!-- Modalansicht fuer die rohe JSON-Darstellung eines einzelnen Eintrags. -->
   <div id="jsonModal" class="modal hidden" role="dialog" aria-modal="true" aria-label="JSON des Eintrags">
@@ -3415,19 +3671,105 @@
       });
     }
 
-    function escapeRegExp(s){ return String(s||'').replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
-    var _searchRegexCacheTerm = '';
-    var _searchRegexCache = null;
-    function getSearchRegex(term){
-      if(!term) return null;
-      if(term===_searchRegexCacheTerm && _searchRegexCache) return _searchRegexCache;
-      _searchRegexCacheTerm = term;
-      _searchRegexCache = new RegExp(escapeRegExp(term), 'gi');
-      return _searchRegexCache;
+    function normalizeSearchValue(value){
+      return String(value==null ? '' : value).replace(/\s+/g,' ').trim().toLocaleLowerCase('de-DE');
     }
-    function highlightSearchInHtml(html, term){
-      if(!term) return html;
-      var re = getSearchRegex(term);
+    var _searchQueryCacheRaw=null;
+    var _searchQueryCache={groups:[],terms:[]};
+    function parseSearchQuery(rawQuery){
+      var raw=String(rawQuery==null ? '' : rawQuery);
+      if(raw===_searchQueryCacheRaw) return _searchQueryCache;
+      var tokens=[];
+      var current='';
+      var inQuotes=false;
+      function addCurrent(quoted){
+        var value=normalizeSearchValue(current);
+        current='';
+        if(value) tokens.push({value:value,quoted:!!quoted});
+      }
+      for(var i=0;i<raw.length;i++){
+        var ch=raw.charAt(i);
+        if(ch==='"'){
+          addCurrent(inQuotes);
+          inQuotes=!inQuotes;
+        } else if(/\s/.test(ch) && !inQuotes){
+          addCurrent(false);
+        } else {
+          current+=ch;
+        }
+      }
+      addCurrent(inQuotes);
+      var groups=[];
+      var currentGroup=[];
+      var groupSeen=Object.create(null);
+      var terms=[];
+      var termSeen=Object.create(null);
+      function finishGroup(){
+        if(currentGroup.length) groups.push(currentGroup);
+        currentGroup=[];
+        groupSeen=Object.create(null);
+      }
+      for(var ti=0;ti<tokens.length;ti++){
+        var token=tokens[ti];
+        if(!token.quoted && token.value==='oder'){
+          finishGroup();
+          continue;
+        }
+        if(!groupSeen[token.value]){
+          groupSeen[token.value]=true;
+          currentGroup.push(token.value);
+        }
+        if(!termSeen[token.value]){
+          termSeen[token.value]=true;
+          terms.push(token.value);
+        }
+      }
+      finishGroup();
+      _searchQueryCacheRaw=raw;
+      _searchQueryCache={groups:groups,terms:terms};
+      return _searchQueryCache;
+    }
+    function normalizeSearchQuery(searchQuery){
+      return searchQuery && Array.isArray(searchQuery.groups) && Array.isArray(searchQuery.terms) ? searchQuery : parseSearchQuery(searchQuery);
+    }
+    function matchesSearchText(text, searchQuery){
+      var query=normalizeSearchQuery(searchQuery);
+      if(!query.groups.length) return true;
+      var normalizedText=normalizeSearchValue(text);
+      for(var gi=0;gi<query.groups.length;gi++){
+        var group=query.groups[gi];
+        var groupMatches=true;
+        for(var ti=0;ti<group.length;ti++){
+          if(normalizedText.indexOf(group[ti])===-1){ groupMatches=false; break; }
+        }
+        if(groupMatches) return true;
+      }
+      return false;
+    }
+    function containsAnySearchTerm(text, searchQuery){
+      var query=normalizeSearchQuery(searchQuery);
+      if(!query.terms.length) return false;
+      var normalizedText=normalizeSearchValue(text);
+      for(var i=0;i<query.terms.length;i++){
+        if(normalizedText.indexOf(query.terms[i])!==-1) return true;
+      }
+      return false;
+    }
+    function escapeRegExp(s){ return String(s||'').replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+    function searchTermRegexSource(term){ return escapeRegExp(term).replace(/\s+/g,'\\s+'); }
+    var _searchHighlightCacheQuery='';
+    var _searchHighlightCacheRegex=null;
+    function getSearchHighlightRegex(rawQuery){
+      var query=String(rawQuery==null ? '' : rawQuery);
+      if(query===_searchHighlightCacheQuery) return _searchHighlightCacheRegex;
+      var terms=parseSearchQuery(query).terms.slice().sort(function(a,b){ return b.length-a.length; });
+      _searchHighlightCacheQuery=query;
+      _searchHighlightCacheRegex=terms.length ? new RegExp(terms.map(searchTermRegexSource).join('|'),'gi') : null;
+      return _searchHighlightCacheRegex;
+    }
+    function highlightSearchInHtml(html, rawQuery){
+      var re=getSearchHighlightRegex(rawQuery);
+      if(!re) return html;
       return String(html).split(/(<[^>]+>)/g).map(function(part){
         if(part && part.charAt(0)==='<') return part;
         return part.replace(re, function(m){ return '<mark class="search-hit">'+m+'</mark>'; });
@@ -3525,14 +3867,13 @@
     var $=function(s){return document.querySelector(s);}; var $$=function(s){return Array.prototype.slice.call(document.querySelectorAll(s));};
 
     // Zentraler Laufzeitstatus fuer Katalogdaten, Komponentendaten und UI-Zustaende.
-    var state={controls:[], idMap:new ObjMap(), uuidMap:new ObjMap(), edgesBase:[], q:'', qRaw:'', groups:[], subgroups:[], classes:[], secs:[], targets:[], tags:[], efforts:[], modalverbs:[], documentations:[], actionwords:[], topics:[], topicById:new ObjMap(), childrenByTopic:{}, childrenByPractice:{}, groupRoots:[], groupByKey:new ObjMap(), groupLabelsByLevel:[{},{}], controlsByGroup:{}, ungroupedControls:[], openTopics:{}, openControls:{}, practices:[], practiceById:new ObjMap(), topicsByPractice:{}, openPractices:{}, openGroups:{}, catalogGroupMode:'none', jsonText:'', catalogUuid:'', catalogMetadata:null, catalogBackMatter:null, catalogBaseUrl:'', catalogResourcesByUuid:new ObjMap()};
+    var state={controls:[], idMap:new ObjMap(), uuidMap:new ObjMap(), edgesBase:[], searchQuery:parseSearchQuery(''), qRaw:'', groups:[], subgroups:[], classes:[], secs:[], targets:[], autoSelectedTargets:[], hasTargetObjectCategories:false, tags:[], efforts:[], modalverbs:[], documentations:[], actionwords:[], securityTargets:[], topics:[], topicById:new ObjMap(), childrenByTopic:{}, childrenByPractice:{}, groupRoots:[], groupByKey:new ObjMap(), groupLabelsByLevel:[{},{}], controlsByGroup:{}, ungroupedControls:[], openTopics:{}, openControls:{}, practices:[], practiceById:new ObjMap(), topicsByPractice:{}, openPractices:{}, openGroups:{}, catalogGroupMode:'none', catalogUuid:'', catalogMetadata:null, catalogBackMatter:null, catalogBaseUrl:'', catalogResourcesByUuid:new ObjMap()};
     function createComponentState(){
       return {
         documentUuid:'',
         metadata:null,
         backMatter:null,
         baseUrl:'',
-        jsonText:'',
         imports:[],
         importStatuses:[],
         importedDocumentUuids:{},
@@ -3547,7 +3888,7 @@
         capabilityComponents:{},
         componentCapabilityKeys:{},
         componentToCapabilities:{},
-        q:'',
+        searchQuery:parseSearchQuery(''),
         qRaw:'',
         types:[],
         sources:[],
@@ -3565,9 +3906,8 @@
         provenance:null,
         backMatter:null,
         baseUrl:'',
-        jsonText:'',
         entries:[],
-        q:'',
+        searchQuery:parseSearchQuery(''),
         qRaw:'',
         practices:[],
         relationships:[],
@@ -3586,7 +3926,16 @@
     var activeCatalogSourceIndex=-1;
     var activeComponentSourceIndex=-1;
     var activeMappingSourceIndex=-1;
-    var allGroups=[], allSubgroups=[], allClasses=[], allSecs=[], allTargets=[], allTags=[], allEfforts=[], allModalverbs=[], allDocumentations=[], allActionwords=[];
+    var allGroups=[], allSubgroups=[], allClasses=[], allSecs=[], allTargets=[], allTags=[], allEfforts=[], allModalverbs=[], allDocumentations=[], allActionwords=[], allSecurityTargets=[];
+    var TARGET_OBJECT_CATEGORY_NAMESPACE_URL='https://raw.githubusercontent.com/BSI-Bund/Stand-der-Technik-Bibliothek/main/documentation/namespaces/target_object_categories.csv';
+    var targetHierarchyState={status:'idle',promise:null,error:null,ancestorsByName:Object.create(null),entries:[],roots:[],count:0,maxDepth:0};
+    var targetHierarchyActivationToken=0;
+    var SECURITY_TARGET_DEFINITIONS=[
+      {key:'confidentiality',label:'Vertraulichkeit'},
+      {key:'integrity',label:'Integrität'},
+      {key:'availability',label:'Verfügbarkeit'},
+      {key:'authenticity',label:'Authentizität'}
+    ];
     var allComponentTypes=[], allComponentSources=[], allComponentNames=[], allCapabilityNames=[];
     var allMappingPractices=[], allMappingRelationships=[], allMappingSourceCatalogs=[], allMappingTargetCatalogs=[], allMappingRationales=[], allMappingStatuses=[];
     // Aufwand-Definitionen aus stufen.csv (Stufe 0..5)
@@ -3601,11 +3950,11 @@
 
 
     // Gesammelte DOM-Referenzen fuer schnelle Zugriffe ohne wiederholte Query-Selektoren.
-    var els={ homeBtn:$('#homeBtn'), homeTab:$('#homeTab'), file:$('#file'), dropzone:$('#catalogDropzone'), sourceSelect:$('#catalogDatasetSelect'), sourcePicker:$('#catalogSourcePicker'), sourceButton:$('#catalogSourceButton'), sourcePickerMenu:$('#catalogSourceMenu'), urlInput:$('#urlInput'), urlLoadBtn:$('#urlLoadBtn'), bsiSelect:$('#bsiCatalogSelect'), bsiStatus:$('#bsiCatalogStatus'), q:$('#q'), group:$('#groupMS'), subgroup:$('#subgroupMS'), cls:$('#classMS'), sec:$('#secMS'), target:$('#targetMS'), tag:$('#tagMS'), effort:$('#effortMS'), modalverb:$('#modalverbMS'), documentation:$('#documentationMS'), actionword:$('#actionwordMS'), groupMenu:$('#groupMS_menu'), subgroupMenu:$('#subgroupMS_menu'), clsMenu:$('#classMS_menu'), secMenu:$('#secMS_menu'), targetMenu:$('#targetMS_menu'), tagMenu:$('#tagMS_menu'), effortMenu:$('#effortMS_menu'), modalverbMenu:$('#modalverbMS_menu'), documentationMenu:$('#documentationMS_menu'), actionwordMenu:$('#actionwordMS_menu'), filterCount:$('#catalogFilterCount'), resetBtn:$('#resetBtn'), exportPdfBtn:$('#exportPdfBtn'),
+    var els={ homeBtn:$('#homeBtn'), homeTab:$('#homeTab'), file:$('#file'), dropzone:$('#catalogDropzone'), sourceSelect:$('#catalogDatasetSelect'), sourcePicker:$('#catalogSourcePicker'), sourceButton:$('#catalogSourceButton'), sourcePickerMenu:$('#catalogSourceMenu'), urlInput:$('#urlInput'), urlLoadBtn:$('#urlLoadBtn'), bsiSelect:$('#bsiCatalogSelect'), bsiStatus:$('#bsiCatalogStatus'), q:$('#q'), group:$('#groupMS'), subgroup:$('#subgroupMS'), cls:$('#classMS'), sec:$('#secMS'), target:$('#targetMS'), targetHelp:$('#targetObjectHelpControl'), targetHelpTooltip:$('#targetObjectHelp'), tag:$('#tagMS'), effort:$('#effortMS'), modalverb:$('#modalverbMS'), documentation:$('#documentationMS'), actionword:$('#actionwordMS'), securityTarget:$('#securityTargetMS'), groupMenu:$('#groupMS_menu'), subgroupMenu:$('#subgroupMS_menu'), clsMenu:$('#classMS_menu'), secMenu:$('#secMS_menu'), targetMenu:$('#targetMS_menu'), tagMenu:$('#tagMS_menu'), effortMenu:$('#effortMS_menu'), modalverbMenu:$('#modalverbMS_menu'), documentationMenu:$('#documentationMS_menu'), actionwordMenu:$('#actionwordMS_menu'), securityTargetMenu:$('#securityTargetMS_menu'), filterCount:$('#catalogFilterCount'), resetBtn:$('#resetBtn'), exportPdfBtn:$('#exportPdfBtn'),
       catalogPanel:$('#catalogPanel'), componentPanel:$('#componentPanel'), mappingPanel:$('#mappingPanel'),
       viewSubtitle:$('#viewSubtitle'), visualContextLabel:$('#visualContextLabel'), visualizationTabGroup:$('#visualizationTabGroup'), viewSummary:$('#viewSummary'), selectionState:$('#catalogSelectionState'),
       fileInfo:$('#fileInfo'), countInfo:$('#countInfo'), graphInfo:$('#graphInfo'),
-      listTab:$('#listTab'), componentTab:$('#componentTab'), mappingTab:$('#mappingTab'), graphTab:$('#graphTab'), sunburstTab:$('#sunburstTab'), barTab:$('#barTab'), jsonTab:$('#jsonTab'), jsonView:$('#jsonView'), msg:$('#msg'),
+      listTab:$('#listTab'), componentTab:$('#componentTab'), mappingTab:$('#mappingTab'), graphTab:$('#graphTab'), sunburstTab:$('#sunburstTab'), barTab:$('#barTab'), targetHierarchyTab:$('#targetHierarchyTab'), targetHierarchyTabButton:$('#tab-target-hierarchy'), targetHierarchyCanvas:$('#targetHierarchyCanvas'), targetHierarchyFitBtn:$('#targetHierarchyFitBtn'), targetHierarchyTooltip:$('#targetHierarchyTooltip'), msg:$('#msg'),
       jsonModal:$('#jsonModal'), jsonModalBody:$('#jsonModalBody'), jsonModalClose:$('#jsonModalClose') };
     var compEls={
       file:$('#compFile'), dropzone:$('#componentDropzone'), sourceSelect:$('#componentDatasetSelect'), sourcePicker:$('#componentSourcePicker'), sourceButton:$('#componentSourceButton'), sourcePickerMenu:$('#componentSourceMenu'), urlInput:$('#compUrlInput'), urlLoadBtn:$('#compUrlLoadBtn'), bsiSelect:$('#bsiComponentSelect'), bsiStatus:$('#bsiComponentStatus'), q:$('#compQ'),
@@ -3644,7 +3993,7 @@
       var showSecondary=allSubgroups.length>0;
       if(els.group){ els.group.classList.toggle('hidden',!showPrimary); if(!showPrimary) els.group.open=false; }
       if(els.subgroup){ els.subgroup.classList.toggle('hidden',!showSecondary); if(!showSecondary) els.subgroup.open=false; }
-      if(els.filterCount){ els.filterCount.textContent='Suche und '+(8+(showPrimary?1:0)+(showSecondary?1:0))+' Filter'; }
+      if(els.filterCount){ els.filterCount.textContent='Suche und '+(9+(showPrimary?1:0)+(showSecondary?1:0))+' Filter'; }
     }
     // Vollstaendige dynamische Statusinhalte per Hover/Fokus zugaenglich halten.
     function syncStatusPillTooltip(pill){
@@ -3674,6 +4023,648 @@
     }
     bindStatusPillTooltips();
     var registryState={ status:'loading', catalogs:[], components:[], selectedModel:'', query:'', error:'' };
+
+    // Zielobjektvererbung aus dem aktuellen BSI-Namespace laden und als transitiven Eltern-Graph aufbereiten.
+    function normalizeTargetCategoryName(value){
+      var normalized=String(value==null ? '' : value).replace(/\s+/g,' ').trim();
+      if(normalized.normalize){ normalized=normalized.normalize('NFC'); }
+      return normalized.toLocaleLowerCase('de-DE');
+    }
+
+    function parseTargetHierarchyCsv(csvText){
+      var text=String(csvText==null ? '' : csvText);
+      if(text.charCodeAt(0)===0xFEFF) text=text.slice(1);
+      var rows=[];
+      var row=[];
+      var field='';
+      var inQuotes=false;
+      for(var i=0;i<text.length;i++){
+        var ch=text.charAt(i);
+        if(inQuotes){
+          if(ch==='"'){
+            if(text.charAt(i+1)==='"'){ field+='"'; i++; }
+            else { inQuotes=false; }
+          } else {
+            field+=ch;
+          }
+        } else if(ch==='"'){
+          inQuotes=true;
+        } else if(ch===','){
+          row.push(field);
+          field='';
+        } else if(ch==='\r' || ch==='\n'){
+          row.push(field);
+          rows.push(row);
+          row=[];
+          field='';
+          if(ch==='\r' && text.charAt(i+1)==='\n') i++;
+        } else {
+          field+=ch;
+        }
+      }
+      if(inQuotes) throw new Error('Die CSV enthält ein nicht geschlossenes Anführungszeichen.');
+      if(field || row.length){ row.push(field); rows.push(row); }
+      return rows;
+    }
+
+    function buildTargetHierarchy(csvText){
+      var rows=parseTargetHierarchyCsv(csvText);
+      if(rows.length<2) throw new Error('Die CSV enthält keine Zielobjektkategorien.');
+      var headers=rows[0].map(function(value){ return String(value||'').trim(); });
+      var nameIndex=headers.indexOf('Zielobjekt');
+      var definitionIndex=headers.indexOf('Definition');
+      var categoryIndex=headers.indexOf('Kategorie');
+      var synonymsIndex=headers.indexOf('Synonyme');
+      var parentIndex=headers.indexOf('ChildOfUUID');
+      var uuidIndex=headers.indexOf('UUID');
+      if(nameIndex===-1 || definitionIndex===-1 || categoryIndex===-1 || synonymsIndex===-1 || parentIndex===-1 || uuidIndex===-1){
+        throw new Error('Erforderliche CSV-Spalten fehlen.');
+      }
+
+      var byUuid=Object.create(null);
+      var byName=Object.create(null);
+      var entries=[];
+      for(var ri=1;ri<rows.length;ri++){
+        var sourceRow=rows[ri];
+        var hasValue=sourceRow.some(function(value){ return String(value||'').trim()!==''; });
+        if(!hasValue) continue;
+        var name=String(sourceRow[nameIndex]||'').replace(/\s+/g,' ').trim();
+        var uuid=String(sourceRow[uuidIndex]||'').trim().toLowerCase();
+        var parentUuid=String(sourceRow[parentIndex]||'').trim().toLowerCase();
+        var nameKey=normalizeTargetCategoryName(name);
+        var definition=String(sourceRow[definitionIndex]||'').replace(/\s+/g,' ').trim();
+        var category=String(sourceRow[categoryIndex]||'').replace(/\s+/g,' ').trim();
+        var synonyms=String(sourceRow[synonymsIndex]||'').split(',').map(function(value){ return value.replace(/\s+/g,' ').trim(); }).filter(Boolean);
+        if(!nameKey || name.length>160 || definition.length>10000 || category.length>160 || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(uuid)){
+          throw new Error('Ungültige Zielobjektkategorie in CSV-Zeile '+(ri+1)+'.');
+        }
+        if(byUuid[uuid] || byName[nameKey]){
+          throw new Error('Doppelte Zielobjektkategorie oder UUID in CSV-Zeile '+(ri+1)+'.');
+        }
+        var entry={name:name,nameKey:nameKey,definition:definition,category:category,synonyms:synonyms,uuid:uuid,parentUuid:parentUuid,children:[],depth:0,rootUuid:uuid};
+        entries.push(entry);
+        byUuid[uuid]=entry;
+        byName[nameKey]=entry;
+      }
+      if(!entries.length) throw new Error('Die CSV enthält keine verwertbaren Zielobjektkategorien.');
+      for(var ei=0;ei<entries.length;ei++){
+        if(entries[ei].parentUuid && !byUuid[entries[ei].parentUuid]){
+          throw new Error('Die Elternkategorie von „'+entries[ei].name+'“ fehlt.');
+        }
+        if(entries[ei].parentUuid) byUuid[entries[ei].parentUuid].children.push(entries[ei]);
+      }
+
+      var ancestorsByUuid=Object.create(null);
+      var visiting=Object.create(null);
+      function collectAncestors(uuid){
+        if(ancestorsByUuid[uuid]) return ancestorsByUuid[uuid].slice();
+        if(visiting[uuid]) throw new Error('Die Zielobjekthierarchie enthält einen Zyklus.');
+        visiting[uuid]=true;
+        var current=byUuid[uuid];
+        var ancestors=[];
+        if(current.parentUuid){
+          var parent=byUuid[current.parentUuid];
+          ancestors.push(parent.name);
+          ancestors=ancestors.concat(collectAncestors(parent.uuid));
+        }
+        delete visiting[uuid];
+        ancestorsByUuid[uuid]=ancestors;
+        return ancestors.slice();
+      }
+
+      var ancestorsByName=Object.create(null);
+      var maxDepth=0;
+      for(var ai=0;ai<entries.length;ai++){
+        var entryAncestors=collectAncestors(entries[ai].uuid);
+        ancestorsByName[entries[ai].nameKey]=entryAncestors;
+        entries[ai].depth=entryAncestors.length;
+        if(entries[ai].depth>maxDepth) maxDepth=entries[ai].depth;
+        var rootEntry=entries[ai];
+        while(rootEntry.parentUuid) rootEntry=byUuid[rootEntry.parentUuid];
+        entries[ai].rootUuid=rootEntry.uuid;
+      }
+      function sortEntries(list){
+        list.sort(function(a,b){ return b.name.localeCompare(a.name,'de',{sensitivity:'base'}); });
+        for(var si=0;si<list.length;si++) sortEntries(list[si].children);
+      }
+      var roots=entries.filter(function(entry){ return !entry.parentUuid; });
+      sortEntries(roots);
+      return {ancestorsByName:ancestorsByName,entries:entries,roots:roots,count:entries.length,maxDepth:maxDepth};
+    }
+
+    function loadTargetHierarchy(){
+      if(targetHierarchyState.status==='ready') return Promise.resolve(targetHierarchyState);
+      if(targetHierarchyState.promise) return targetHierarchyState.promise;
+      targetHierarchyState.status='loading';
+      targetHierarchyState.error=null;
+      targetHierarchyState.promise=fetch(TARGET_OBJECT_CATEGORY_NAMESPACE_URL,{cache:'no-cache'})
+        .then(function(response){
+          if(!response.ok) throw new Error('HTTP '+response.status);
+          return response.text();
+        })
+        .then(function(csvText){
+          if(csvText.length>250000) throw new Error('Die CSV überschreitet die erlaubte Größe.');
+          var hierarchy=buildTargetHierarchy(csvText);
+          targetHierarchyState.status='ready';
+          targetHierarchyState.ancestorsByName=hierarchy.ancestorsByName;
+          targetHierarchyState.entries=hierarchy.entries;
+          targetHierarchyState.roots=hierarchy.roots;
+          targetHierarchyState.count=hierarchy.count;
+          targetHierarchyState.maxDepth=hierarchy.maxDepth;
+          return targetHierarchyState;
+        })
+        .catch(function(error){
+          targetHierarchyState.status='error';
+          targetHierarchyState.promise=null;
+          targetHierarchyState.error=error;
+          throw error;
+        });
+      return targetHierarchyState.promise;
+    }
+
+    function ensureTargetHierarchyForActiveCatalog(){
+      var activationToken=++targetHierarchyActivationToken;
+      if(!state.hasTargetObjectCategories){
+        return;
+      }
+      loadTargetHierarchy().then(function(hierarchy){
+        if(activationToken!==targetHierarchyActivationToken || !state.hasTargetObjectCategories) return;
+        applyTargetAncestorsForCheckedOptions();
+        RefreshViews();
+      }).catch(function(){
+        if(activationToken!==targetHierarchyActivationToken || !state.hasTargetObjectCategories) return;
+        state.autoSelectedTargets=[];
+        syncTargetAutoSelectionUi();
+      });
+    }
+
+    function clearTargetHierarchyCanvas(){
+      if(!els.targetHierarchyCanvas) return;
+      while(els.targetHierarchyCanvas.firstChild) els.targetHierarchyCanvas.removeChild(els.targetHierarchyCanvas.firstChild);
+    }
+
+    var targetHierarchyTooltipHideTimer=0;
+    function hideTargetHierarchyTooltip(){
+      clearTimeout(targetHierarchyTooltipHideTimer);
+      if(!els.targetHierarchyTooltip) return;
+      els.targetHierarchyTooltip.hidden=true;
+      while(els.targetHierarchyTooltip.firstChild) els.targetHierarchyTooltip.removeChild(els.targetHierarchyTooltip.firstChild);
+    }
+
+    function scheduleTargetHierarchyTooltipHide(){
+      clearTimeout(targetHierarchyTooltipHideTimer);
+      targetHierarchyTooltipHideTimer=setTimeout(hideTargetHierarchyTooltip,100);
+    }
+
+    function positionTargetHierarchyTooltip(event,node){
+      var tooltip=els.targetHierarchyTooltip;
+      if(!tooltip || tooltip.hidden) return;
+      var rect=node && node.getBoundingClientRect ? node.getBoundingClientRect() : null;
+      var anchorX=event && typeof event.clientX==='number' ? event.clientX : (rect ? rect.right : 20);
+      var anchorY=event && typeof event.clientY==='number' ? event.clientY : (rect ? rect.top+rect.height/2 : 20);
+      var gap=14;
+      var left=anchorX+gap;
+      var top=anchorY+gap;
+      var width=tooltip.offsetWidth;
+      var height=tooltip.offsetHeight;
+      if(height>window.innerHeight-20){
+        tooltip.classList.add('is-compact');
+        width=tooltip.offsetWidth;
+        height=tooltip.offsetHeight;
+      }
+      if(left+width>window.innerWidth-10) left=Math.max(10,anchorX-width-gap);
+      if(top+height>window.innerHeight-10) top=Math.max(10,window.innerHeight-height-10);
+      tooltip.style.left=Math.max(10,left)+'px';
+      tooltip.style.top=Math.max(10,top)+'px';
+    }
+
+    function appendTargetHierarchyTooltipRow(list,label,value){
+      var term=document.createElement('dt');
+      term.textContent=label;
+      list.appendChild(term);
+      var description=document.createElement('dd');
+      description.textContent=value || 'Nicht angegeben';
+      list.appendChild(description);
+    }
+
+    function showTargetHierarchyTooltip(event,entry,node){
+      var tooltip=els.targetHierarchyTooltip;
+      if(!tooltip || !entry) return;
+      clearTimeout(targetHierarchyTooltipHideTimer);
+      tooltip.classList.remove('is-compact');
+      while(tooltip.firstChild) tooltip.removeChild(tooltip.firstChild);
+      var heading=document.createElement('h3');
+      heading.textContent=entry.name;
+      tooltip.appendChild(heading);
+      var list=document.createElement('dl');
+      appendTargetHierarchyTooltipRow(list,'Kategorie',entry.category && entry.category!=='-' ? entry.category : 'Nicht angegeben');
+      appendTargetHierarchyTooltipRow(list,'Definition',entry.definition || 'Keine Definition hinterlegt');
+      appendTargetHierarchyTooltipRow(list,'Synonyme',entry.synonyms && entry.synonyms.length ? entry.synonyms.join(', ') : 'Keine Synonyme hinterlegt');
+      tooltip.appendChild(list);
+      tooltip.hidden=false;
+      positionTargetHierarchyTooltip(event,node);
+    }
+
+    if(els.targetHierarchyTooltip){
+      els.targetHierarchyTooltip.addEventListener('mouseenter',function(){ clearTimeout(targetHierarchyTooltipHideTimer); });
+      els.targetHierarchyTooltip.addEventListener('mouseleave',hideTargetHierarchyTooltip);
+    }
+
+    function renderTargetHierarchyStatus(title,text,retry){
+      clearTargetHierarchyCanvas();
+      if(!els.targetHierarchyCanvas) return;
+      if(els.targetHierarchyFitBtn){
+        els.targetHierarchyFitBtn.disabled=true;
+        els.targetHierarchyFitBtn.onclick=null;
+      }
+      var status=document.createElement('div');
+      status.className='target-hierarchy-status';
+      var card=document.createElement('div');
+      card.className='target-hierarchy-status-card';
+      var heading=document.createElement('strong');
+      heading.textContent=title;
+      card.appendChild(heading);
+      var copy=document.createElement('div');
+      copy.textContent=text;
+      card.appendChild(copy);
+      if(retry){
+        var button=document.createElement('button');
+        button.className='btn';
+        button.type='button';
+        button.textContent='Erneut laden';
+        button.addEventListener('click',function(){
+          targetHierarchyState.status='idle';
+          targetHierarchyState.error=null;
+          renderTargetHierarchyView();
+        });
+        card.appendChild(button);
+      }
+      status.appendChild(card);
+      els.targetHierarchyCanvas.appendChild(status);
+    }
+
+    function targetHierarchyLabelLines(value){
+      var text=String(value||'').trim();
+      if(text.length<=24) return [text];
+      var words=text.split(/\s+/);
+      var lines=[''];
+      for(var i=0;i<words.length;i++){
+        var candidate=(lines[lines.length-1] ? lines[lines.length-1]+' ' : '')+words[i];
+        if(candidate.length<=24 || !lines[lines.length-1]){
+          lines[lines.length-1]=candidate;
+        }else if(lines.length<2){
+          lines.push(words[i]);
+        }else{
+          lines[1]+=' '+words[i];
+        }
+      }
+      if(lines.length===1 && lines[0].length>24) lines=[lines[0].slice(0,21)+'…'];
+      if(lines.length>1 && lines[1].length>24) lines[1]=lines[1].slice(0,21)+'…';
+      return lines.slice(0,2);
+    }
+
+    function renderTargetHierarchyView(){
+      hideTargetHierarchyTooltip();
+      if(!els.targetHierarchyCanvas) return;
+      if(!state.hasTargetObjectCategories){
+        renderTargetHierarchyStatus('Keine Zielobjekthierarchie verfügbar','Der aktive Katalog verwendet die OSCAL-Property „target_object_categories“ nicht.',false);
+        return;
+      }
+      if(targetHierarchyState.status==='error'){
+        var errorText=targetHierarchyState.error && targetHierarchyState.error.message ? targetHierarchyState.error.message : 'Die aktuelle BSI-Zielobjekthierarchie konnte nicht geladen werden.';
+        renderTargetHierarchyStatus('Zielobjekthierarchie konnte nicht geladen werden',errorText,true);
+        return;
+      }
+      if(targetHierarchyState.status!=='ready'){
+        renderTargetHierarchyStatus('Aktuelle Zielobjekthierarchie wird geladen','Die Namespace-Datei wird direkt aus dem öffentlichen BSI Stand der Technik Repository abgerufen.',false);
+        loadTargetHierarchy().then(function(){
+          if(uiState.view==='target-hierarchy' && state.hasTargetObjectCategories){
+            applyTargetAncestorsForCheckedOptions();
+            RefreshViews();
+            renderTargetHierarchyView();
+          }
+        }).catch(function(){
+          if(uiState.view==='target-hierarchy' && state.hasTargetObjectCategories) renderTargetHierarchyView();
+        });
+        return;
+      }
+      if(typeof d3==='undefined'){
+        renderTargetHierarchyStatus('Visualisierung nicht verfügbar','D3.js konnte nicht geladen werden.',false);
+        return;
+      }
+      if(!targetHierarchyState.roots.length){
+        renderTargetHierarchyStatus('Keine Zielobjektkategorien verfügbar','Die geladene Namespace-Datei enthält keine darstellbaren Kategorien.',false);
+        return;
+      }
+
+      clearTargetHierarchyCanvas();
+      var canvas=els.targetHierarchyCanvas;
+      if(els.targetHierarchyFitBtn) els.targetHierarchyFitBtn.disabled=false;
+      var width=Math.max(720,canvas.clientWidth||1000);
+      var height=Math.max(560,canvas.clientHeight||700);
+      var nodeWidth=188;
+      var nodeHeight=50;
+      var horizontalGap=238;
+      var verticalGap=72;
+      var virtualRoot={name:'Zielobjektkategorien',children:targetHierarchyState.roots};
+      var root=d3.hierarchy(virtualRoot,function(item){ return item.children; });
+      d3.tree().nodeSize([verticalGap,horizontalGap]).separation(function(a,b){
+        return a.parent===b.parent ? 1 : 1.18;
+      })(root);
+      var nodes=root.descendants().filter(function(item){ return item.depth>0; });
+      var links=root.links().filter(function(item){ return item.source.depth>0; });
+      var minTreeX=d3.min(nodes,function(item){ return item.x; })||0;
+      var palette=['#279f92','#ef8a25','#9654b5','#34a59a','#f2a325','#b95182','#3c91b5','#667f9b'];
+      var colorByRoot=Object.create(null);
+      for(var ri=0;ri<targetHierarchyState.roots.length;ri++) colorByRoot[targetHierarchyState.roots[ri].uuid]=palette[ri%palette.length];
+      function nodeX(item){ return 44+(item.depth-1)*horizontalGap; }
+      function nodeY(item){ return 44+(item.x-minTreeX); }
+      function nodeColor(item){
+        var base=d3.color(colorByRoot[item.data.rootUuid] || palette[0]);
+        return item.depth>1 ? base.brighter(Math.min(.42,(item.depth-1)*.11)).formatHex() : base.formatHex();
+      }
+
+      var svg=d3.select(canvas).append('svg')
+        .attr('width',width)
+        .attr('height',height)
+        .attr('viewBox','0 0 '+width+' '+height)
+        .attr('role','img')
+        .attr('aria-label','Hierarchie der BSI-Zielobjektkategorien');
+      var defs=svg.append('defs');
+      defs.append('marker')
+        .attr('id','targetHierarchyArrow')
+        .attr('viewBox','0 -5 10 10')
+        .attr('refX',8)
+        .attr('refY',0)
+        .attr('markerWidth',6)
+        .attr('markerHeight',6)
+        .attr('orient','auto')
+        .append('path')
+        .attr('d','M0,-5L10,0L0,5')
+        .attr('fill','#91a39e');
+      var graph=svg.append('g');
+      graph.selectAll('.target-hierarchy-link')
+        .data(links)
+        .enter()
+        .append('path')
+        .attr('class','target-hierarchy-link')
+        .attr('marker-end','url(#targetHierarchyArrow)')
+        .attr('d',function(link){
+          var sourceX=nodeX(link.source)+nodeWidth;
+          var sourceY=nodeY(link.source)+nodeHeight/2;
+          var targetX=nodeX(link.target);
+          var targetY=nodeY(link.target)+nodeHeight/2;
+          var middle=(sourceX+targetX)/2;
+          return 'M'+sourceX+','+sourceY+' C'+middle+','+sourceY+' '+middle+','+targetY+' '+targetX+','+targetY;
+        });
+      var node=graph.selectAll('.target-hierarchy-node')
+        .data(nodes)
+        .enter()
+        .append('g')
+        .attr('class','target-hierarchy-node')
+        .attr('transform',function(item){ return 'translate('+nodeX(item)+','+nodeY(item)+')'; })
+        .attr('tabindex',0)
+        .attr('role','img')
+        .attr('aria-describedby','targetHierarchyTooltip')
+        .attr('aria-label',function(item){ return item.data.name+'. Kategorie: '+(item.data.category || 'nicht angegeben')+'.'; });
+      node.append('rect')
+        .attr('width',nodeWidth)
+        .attr('height',nodeHeight)
+        .attr('rx',8)
+        .attr('fill',nodeColor);
+      node.each(function(item){
+        var lines=targetHierarchyLabelLines(item.data.name);
+        var text=d3.select(this).append('text').attr('x',nodeWidth/2).attr('text-anchor','middle');
+        for(var li=0;li<lines.length;li++){
+          text.append('tspan')
+            .attr('x',nodeWidth/2)
+            .attr('y',lines.length===1 ? 30 : (li===0 ? 21 : 37))
+            .text(lines[li]);
+        }
+      });
+      node
+        .on('mouseenter',function(event,item){ showTargetHierarchyTooltip(event,item.data,this); })
+        .on('mousemove',function(event,item){ positionTargetHierarchyTooltip(event,this); })
+        .on('mouseleave',scheduleTargetHierarchyTooltipHide)
+        .on('focus',function(event,item){ showTargetHierarchyTooltip(null,item.data,this); })
+        .on('blur',scheduleTargetHierarchyTooltipHide);
+
+      var zoom=d3.zoom().scaleExtent([.18,2.6]).on('zoom',function(event){ graph.attr('transform',event.transform); });
+      svg.call(zoom);
+      function fitHierarchy(){
+        var bounds=graph.node().getBBox();
+        if(!bounds.width || !bounds.height) return;
+        var padding=48;
+        var scale=Math.min(1.12,Math.min((width-padding*2)/bounds.width,(height-padding*2)/bounds.height));
+        if(!isFinite(scale) || scale<=0) scale=1;
+        var tx=width/2-scale*(bounds.x+bounds.width/2);
+        var ty=height/2-scale*(bounds.y+bounds.height/2);
+        svg.transition().duration(320).call(zoom.transform,d3.zoomIdentity.translate(tx,ty).scale(scale));
+      }
+      if(els.targetHierarchyFitBtn) els.targetHierarchyFitBtn.onclick=fitHierarchy;
+
+      var summary=document.createElement('div');
+      summary.className='target-hierarchy-summary';
+      var summaryTitle=document.createElement('strong');
+      summaryTitle.textContent='Zielobjektkategorien';
+      summary.appendChild(summaryTitle);
+      var counts=document.createElement('span');
+      counts.textContent='Alle: '+targetHierarchyState.count+' · Wurzelknoten: '+targetHierarchyState.roots.length+' · Hierarchieebenen: '+(targetHierarchyState.maxDepth+1);
+      summary.appendChild(counts);
+      var direction=document.createElement('span');
+      direction.className='direction';
+      direction.textContent='Elternknoten → Kindknoten · Allgemein → Speziell';
+      summary.appendChild(direction);
+      canvas.appendChild(summary);
+      requestAnimationFrame(fitHierarchy);
+    }
+
+    var targetHierarchyResizeTimer=0;
+    window.addEventListener('resize',function(){
+      if(uiState.view!=='target-hierarchy') return;
+      clearTimeout(targetHierarchyResizeTimer);
+      targetHierarchyResizeTimer=setTimeout(renderTargetHierarchyView,140);
+    },{passive:true});
+
+    function targetAncestorValues(value){
+      if(!state.hasTargetObjectCategories || targetHierarchyState.status!=='ready' || value==='__none__') return [];
+      var availableByName=Object.create(null);
+      for(var ai=0;ai<allTargets.length;ai++){
+        availableByName[normalizeTargetCategoryName(allTargets[ai])]=allTargets[ai];
+      }
+      var ancestors=targetHierarchyState.ancestorsByName[normalizeTargetCategoryName(value)] || [];
+      var values=[];
+      for(var i=0;i<ancestors.length;i++){
+        var availableValue=availableByName[normalizeTargetCategoryName(ancestors[i])];
+        if(availableValue) values.push(availableValue);
+      }
+      return uniqueList(values);
+    }
+
+    function removeAutoSelectedTarget(value){
+      var valueKey=normalizeTargetCategoryName(value);
+      state.autoSelectedTargets=state.autoSelectedTargets.filter(function(item){
+        return normalizeTargetCategoryName(item)!==valueKey;
+      });
+    }
+
+    function selectTargetAncestors(value){
+      if(!els.targetMenu) return;
+      var ancestorValues=targetAncestorValues(value);
+      for(var i=0;i<ancestorValues.length;i++){
+        var ancestorKey=normalizeTargetCategoryName(ancestorValues[i]);
+        var checkboxes=els.targetMenu.querySelectorAll('input[type="checkbox"]');
+        for(var ci=0;ci<checkboxes.length;ci++){
+          var cb=checkboxes[ci];
+          if(cb.dataset.value==='__all__' || normalizeTargetCategoryName(cb.dataset.value)!==ancestorKey) continue;
+          if(!cb.checked){
+            cb.checked=true;
+            state.autoSelectedTargets.push(cb.dataset.value);
+          }
+          break;
+        }
+      }
+      state.autoSelectedTargets=uniqueList(state.autoSelectedTargets);
+    }
+
+    function applyTargetAncestorsForCheckedOptions(){
+      if(!els.targetMenu) return;
+      var checked=Array.from(els.targetMenu.querySelectorAll('input[type="checkbox"]')).filter(function(cb){
+        return cb.dataset.value!=='__all__' && cb.dataset.value!=='__none__' && cb.checked;
+      });
+      for(var i=0;i<checked.length;i++) selectTargetAncestors(checked[i].dataset.value);
+    }
+
+    function handleTargetCheckboxChange(checkbox){
+      if(!checkbox) return;
+      removeAutoSelectedTarget(checkbox.dataset.value);
+      if(checkbox.checked) selectTargetAncestors(checkbox.dataset.value);
+    }
+
+    function syncTargetHelpAlignment(){
+      if(!els.target || !els.targetHelp || !els.target.getBoundingClientRect || !els.targetHelp.parentNode) return;
+      var summary=els.target.querySelector('summary');
+      var wrapper=els.targetHelp.parentNode;
+      if(!summary || !summary.getBoundingClientRect || !wrapper.getBoundingClientRect) return;
+      var summaryRect=summary.getBoundingClientRect();
+      var wrapperRect=wrapper.getBoundingClientRect();
+      if(summaryRect.height<=0 || wrapperRect.width<=0) return;
+      var center=summaryRect.top-wrapperRect.top+(summaryRect.height/2);
+      if(isFinite(center)) els.targetHelp.style.top=center+'px';
+    }
+
+    var targetHelpResizeObserver=null;
+    function scheduleTargetHelpAlignment(){
+      if(typeof requestAnimationFrame==='function') requestAnimationFrame(syncTargetHelpAlignment);
+      else setTimeout(syncTargetHelpAlignment,0);
+    }
+
+    function positionTargetHelpTooltip(){
+      if(!els.targetHelp || !els.targetHelpTooltip || !els.targetHelp.getBoundingClientRect) return;
+      var trigger=els.targetHelp.querySelector('.search-help-trigger');
+      if(!trigger || !trigger.getBoundingClientRect) return;
+      var triggerRect=trigger.getBoundingClientRect();
+      if(triggerRect.height<=0) return;
+      var left=triggerRect.right+10;
+      var availableWidth=Math.max(80,window.innerWidth-left-8);
+      els.targetHelpTooltip.style.width=Math.min(300,availableWidth)+'px';
+      els.targetHelpTooltip.style.left=left+'px';
+      var top=triggerRect.top+((triggerRect.height-els.targetHelpTooltip.offsetHeight)/2);
+      var maxTop=Math.max(8,window.innerHeight-els.targetHelpTooltip.offsetHeight-8);
+      els.targetHelpTooltip.style.top=Math.max(8,Math.min(top,maxTop))+'px';
+    }
+
+    function showTargetHelpTooltip(){
+      if(!els.targetHelpTooltip) return;
+      syncTargetHelpAlignment();
+      positionTargetHelpTooltip();
+      els.targetHelpTooltip.classList.add('is-visible');
+    }
+
+    function hideTargetHelpTooltip(){
+      if(els.targetHelpTooltip) els.targetHelpTooltip.classList.remove('is-visible');
+    }
+
+    function bindTargetHelpUi(){
+      if(!els.target || !els.targetHelp || !els.targetHelpTooltip || els.targetHelp._targetHelpBound) return;
+      els.targetHelp._targetHelpBound=true;
+      var trigger=els.targetHelp.querySelector('.search-help-trigger');
+      var summary=els.target.querySelector('summary');
+      var filterSection=els.target.closest ? els.target.closest('.sidebar-section[data-section="filters"]') : null;
+      document.body.appendChild(els.targetHelpTooltip);
+      els.targetHelp.addEventListener('mouseenter',showTargetHelpTooltip);
+      els.targetHelp.addEventListener('mouseleave',hideTargetHelpTooltip);
+      els.targetHelp.addEventListener('focusin',showTargetHelpTooltip);
+      els.targetHelp.addEventListener('focusout',hideTargetHelpTooltip);
+      if(trigger){
+        trigger.addEventListener('keydown',function(event){
+          if(event.key==='Escape'){
+            hideTargetHelpTooltip();
+            trigger.blur();
+          }
+        });
+      }
+      if(filterSection){
+        filterSection.addEventListener('toggle',function(){
+          if(!filterSection.open) hideTargetHelpTooltip();
+          scheduleTargetHelpAlignment();
+        });
+      }
+      els.target.addEventListener('toggle',scheduleTargetHelpAlignment);
+      if(typeof ResizeObserver!=='undefined' && summary){
+        targetHelpResizeObserver=new ResizeObserver(scheduleTargetHelpAlignment);
+        targetHelpResizeObserver.observe(summary);
+      }
+      window.addEventListener('resize',function(){
+        scheduleTargetHelpAlignment();
+        if(els.targetHelpTooltip.classList.contains('is-visible')) positionTargetHelpTooltip();
+      });
+      window.addEventListener('scroll',function(){
+        if(els.targetHelpTooltip.classList.contains('is-visible')) positionTargetHelpTooltip();
+      },true);
+      scheduleTargetHelpAlignment();
+    }
+
+    function syncTargetAutoSelectionUi(){
+      if(!els.targetMenu || !els.target) return;
+      var checkedNames=Object.create(null);
+      var checkedCbs=els.targetMenu.querySelectorAll('input[type="checkbox"]:checked');
+      for(var chi=0;chi<checkedCbs.length;chi++){
+        checkedNames[normalizeTargetCategoryName(checkedCbs[chi].dataset.value)]=true;
+      }
+      state.autoSelectedTargets=uniqueList(state.autoSelectedTargets).filter(function(value){
+        return !!checkedNames[normalizeTargetCategoryName(value)];
+      });
+      var autoSelectedNames=Object.create(null);
+      for(var i=0;i<state.autoSelectedTargets.length;i++) autoSelectedNames[normalizeTargetCategoryName(state.autoSelectedTargets[i])]=true;
+      var itemCbs=Array.from(els.targetMenu.querySelectorAll('input[type="checkbox"]')).filter(function(cb){ return cb.dataset.value!=='__all__'; });
+      for(var ci=0;ci<itemCbs.length;ci++){
+        var cb=itemCbs[ci];
+        var isAutoSelected=cb.checked && cb.dataset.value!=='__none__' && !!autoSelectedNames[normalizeTargetCategoryName(cb.dataset.value)];
+        cb.indeterminate=false;
+        var row=cb.closest ? cb.closest('.ms-item') : cb.parentNode;
+        if(!row) continue;
+        row.classList.toggle('is-auto-selected',isAutoSelected);
+        var badge=row.querySelector('.target-auto-selected-badge');
+        if(isAutoSelected && !badge){
+          badge=document.createElement('span');
+          badge.className='target-auto-selected-badge';
+          badge.textContent='automatisch';
+          row.appendChild(badge);
+        } else if(!isAutoSelected && badge){
+          badge.remove();
+        }
+        if(isAutoSelected){ cb.setAttribute('aria-label',(cb.dataset.label||cb.dataset.value)+' (automatisch ausgewählt; kann abgewählt werden)'); }
+        else { cb.removeAttribute('aria-label'); }
+      }
+      msUpdateSummary(els.target,'Alle Zielobjektkategorien',itemCbs);
+      if(state.autoSelectedTargets.length){
+        var summary=els.target.querySelector('summary');
+        summary.textContent+=' (+'+state.autoSelectedTargets.length+' automatisch)';
+      }
+      syncTargetHelpAlignment();
+    }
+    bindTargetHelpUi();
 
     // Aufbau und Synchronisation der facettierten Multi-Select-Dropdowns.
     function msSetItems(detailsEl, menuEl, allLabel, items, onChange){
@@ -3762,6 +4753,7 @@
 
       allCb.onchange = () => {
         const cbs = [...menuEl.querySelectorAll('input[type="checkbox"]')].filter(x=>x.dataset.value!=='__all__');
+        if(detailsEl && detailsEl.id==='targetMS') state.autoSelectedTargets=[];
         if(allCb.checked){
           cbs.forEach(x=>x.checked=true);
         } else {
@@ -3775,6 +4767,7 @@
         const t = ev.target;
         if(!(t instanceof HTMLInputElement)) return;
         if(t.dataset.value==='__all__') return;
+        if(detailsEl && detailsEl.id==='targetMS') handleTargetCheckboxChange(t);
         updateAllState();
         onChange();
       };
@@ -3898,28 +4891,32 @@
       els.mappingPanel.classList.toggle('hidden', !isMapping);
     }
 
-    // Kennzeichnet klar, auf welchen Datenbereich sich Graph, Sunburst, Balken und JSON beziehen.
+    // Kennzeichnet klar, auf welchen Datenbereich sich die Visualisierungen beziehen.
     function updateVisualizationContext(){
       var labels={catalog:'Kataloge',component:'Komponentendefinitionen',mapping:'Mappings'};
       var label=labels[uiState.dataMode] || labels.catalog;
       var isHome=uiState.view==='home';
+      var showTargetHierarchy=!isHome && uiState.dataMode==='catalog' && state.hasTargetObjectCategories;
       if(els.visualContextLabel){
         els.visualContextLabel.hidden=isHome;
         els.visualContextLabel.textContent='Auswertung von: '+label;
-        els.visualContextLabel.title='Graph, Sunburst, Balkendiagramm und JSON verwenden die Daten des Arbeitsbereichs „'+label+'“.';
+        els.visualContextLabel.title='Die Visualisierungen verwenden die Daten des Arbeitsbereichs „'+label+'“.';
       }
+      if(els.targetHierarchyTabButton) els.targetHierarchyTabButton.hidden=!showTargetHierarchy;
       if(els.visualizationTabGroup){
         els.visualizationTabGroup.classList.toggle('is-disabled',isHome);
+        els.visualizationTabGroup.classList.toggle('has-target-hierarchy',showTargetHierarchy);
         els.visualizationTabGroup.setAttribute('aria-disabled',isHome ? 'true' : 'false');
         var visualTabs=els.visualizationTabGroup.querySelectorAll('.tab');
         for(var vt=0;vt<visualTabs.length;vt++){
-          visualTabs[vt].disabled=isHome;
-          visualTabs[vt].setAttribute('aria-disabled',isHome ? 'true' : 'false');
+          var unavailable=isHome || (visualTabs[vt]===els.targetHierarchyTabButton && !showTargetHierarchy);
+          visualTabs[vt].disabled=unavailable;
+          visualTabs[vt].setAttribute('aria-disabled',unavailable ? 'true' : 'false');
         }
       }
       var modeTab=uiState.dataMode==='component' ? 'components' : (uiState.dataMode==='mapping' ? 'mappings' : 'list');
       var tabs=$$('.tab');
-      var isVisual=uiState.view==='graph' || uiState.view==='sunburst' || uiState.view==='bar' || uiState.view==='json';
+      var isVisual=uiState.view==='graph' || uiState.view==='sunburst' || uiState.view==='bar' || uiState.view==='target-hierarchy';
       for(var i=0;i<tabs.length;i++){
         tabs[i].classList.toggle('context-active', isVisual && tabs[i].getAttribute('data-tab')===modeTab);
       }
@@ -4118,7 +5115,7 @@
         graph:'Beziehungen und Abhängigkeiten als Netz visualisieren und gezielt anspringen.',
         sunburst:'Verteilungen verdichtet lesen, um Schwerpunkte schnell zu erkennen.',
         bar:'Mengenverhältnisse zwischen Gruppen, Themen oder Quellen direkt vergleichen.',
-        json:'Rohdaten ohne Transformationsverlust inspizieren.'
+        'target-hierarchy':'Vererbungsbeziehungen der aktuellen BSI-Zielobjektkategorien nachvollziehen.'
       };
       els.viewSubtitle.textContent = map[view] || map.list;
     }
@@ -4140,14 +5137,18 @@
 
     function collectCatalogActiveFilterChips(){
       var chips=[];
-      if(state.qRaw){ chips.push('Suche: ' + state.qRaw); }
+      if(state.searchQuery.groups.length){ chips.push('Suche: ' + state.qRaw); }
       if(allGroups.length && state.groups.length && state.groups.length !== allGroups.length){ chips.push(catalogPrimaryGroupFacetLabel()+': ' + formatChipValues(state.groups.map(function(value){ return catalogHierarchyOptionLabel(0,value); }), 2)); }
       if(allSubgroups.length && state.subgroups.length && state.subgroups.length !== allSubgroups.length){ chips.push(catalogSecondaryGroupFacetLabel()+': ' + formatChipValues(state.subgroups.map(function(value){ return catalogHierarchyOptionLabel(1,value); }), 2)); }
       if(allClasses.length && state.classes.length && state.classes.length !== allClasses.length){ chips.push('Quellkataloge: ' + formatChipValues(state.classes, 2)); }
       if(allSecs.length && state.secs.length && state.secs.length !== allSecs.length){ chips.push('Sicherheitsniveaus: ' + formatChipValues(state.secs, 2)); }
       if(allTargets.length){
         var targetBase=allTargets.length+1;
-        if(state.targets.length && state.targets.length !== targetBase){ chips.push('Zielobjekte: ' + formatChipValues(state.targets.map(function(v){ return v==='__none__' ? 'Ohne Zielobjekt' : v; }), 2)); }
+        if(state.targets.length && state.targets.length !== targetBase){
+          var targetChip='Zielobjekte: ' + formatChipValues(state.targets.map(function(v){ return v==='__none__' ? 'Ohne Zielobjekt' : v; }), 2);
+          if(state.autoSelectedTargets.length) targetChip+=' ('+state.autoSelectedTargets.length+' automatisch ausgewählt)';
+          chips.push(targetChip);
+        }
       }
       if(allTags.length){
         var tagBase=allTags.length+1;
@@ -4157,12 +5158,13 @@
       if(allModalverbs.length && state.modalverbs.length && state.modalverbs.length !== allModalverbs.length){ chips.push('Modalverben: ' + formatChipValues(state.modalverbs, 3)); }
       if(allDocumentations.length && state.documentations.length && state.documentations.length !== allDocumentations.length){ chips.push('Dokumentation: ' + formatChipValues(state.documentations, 2)); }
       if(allActionwords.length && state.actionwords.length && state.actionwords.length !== allActionwords.length){ chips.push('Handlungswörter: ' + formatChipValues(state.actionwords, 2)); }
+      if(allSecurityTargets.length && state.securityTargets.length !== allSecurityTargets.length){ chips.push('Schutzziele: ' + (state.securityTargets.length ? formatChipValues(state.securityTargets.map(securityTargetLabel), 3) : 'keine Auswahl')); }
       return chips;
     }
 
     function collectComponentActiveFilterChips(){
       var chips=[];
-      if(componentState.qRaw){ chips.push('Suche: ' + componentState.qRaw); }
+      if(componentState.searchQuery.groups.length){ chips.push('Suche: ' + componentState.qRaw); }
       if(allComponentTypes.length && componentState.types.length && componentState.types.length !== allComponentTypes.length){ chips.push('Typen: ' + formatChipValues(componentState.types, 2)); }
       if(allComponentSources.length && componentState.sources.length && componentState.sources.length !== allComponentSources.length){ chips.push('Quellen: ' + formatChipValues(componentState.sources, 2)); }
       if(allComponentNames.length && componentState.names.length && componentState.names.length !== allComponentNames.length){ chips.push('Komponenten: ' + formatChipValues(componentState.names, 2)); }
@@ -4172,7 +5174,7 @@
 
     function collectMappingActiveFilterChips(){
       var chips=[];
-      if(mappingState.qRaw){ chips.push('Suche: ' + mappingState.qRaw); }
+      if(mappingState.searchQuery.groups.length){ chips.push('Suche: ' + mappingState.qRaw); }
       if(allMappingPractices.length && mappingState.practices.length !== allMappingPractices.length){ chips.push('Praktiken: ' + formatChipValues(mappingState.practices, 3)); }
       if(allMappingRelationships.length && mappingState.relationships.length !== allMappingRelationships.length){ chips.push('Relationships: ' + formatChipValues(mappingState.relationships, 2)); }
       if(allMappingSourceCatalogs.length && mappingState.sourceCatalogs.length !== allMappingSourceCatalogs.length){ chips.push('Source: ' + formatChipValues(mappingState.sourceCatalogs, 1)); }
@@ -4361,7 +5363,8 @@
         file && file.name,
         file && file.path,
         file && file.category,
-        file && file.kind
+        file && file.kind,
+        file && file.documentId
       ].join(' ').toLowerCase();
     }
 
@@ -4442,7 +5445,7 @@
           +'</div>'
           +'<ol class="registry-guide-list">'
             +'<li><strong>Dokument finden oder laden.</strong><span>Nutze die Suche auf der Startseite, eine Modellkachel, einen lokalen JSON-Upload oder eine URL. Upload und URL-Abruf stehen im jeweiligen Arbeitsbereich unter &quot;Dateiupload&quot; bereit. Die Kacheln &quot;Kataloge&quot; und &quot;Komponentendefinitionen&quot; zeigen Inhalte aus dem <a href="https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek" target="_blank" rel="noopener noreferrer">öffentlichen BSI Stand der Technik GitHub-Repository</a>, die sich direkt im Viewer öffnen lassen.</span></li>'
-            +'<li><strong>Obere Menüleiste verstehen.</strong><span>Kataloge, Komponentendefinitionen und Mappings sind die drei Arbeitsbereiche. Die rechts daneben angezeigte Kontextzeile nennt jederzeit den aktiven Datenbereich. Graph, Sunburst, Balkendiagramm und JSON passen ihren Inhalt automatisch an diesen Bereich an.</span></li>'
+            +'<li><strong>Obere Menüleiste verstehen.</strong><span>Kataloge, Komponentendefinitionen und Mappings sind die drei Arbeitsbereiche. Die rechts daneben angezeigte Kontextzeile nennt jederzeit den aktiven Datenbereich. Graph, Sunburst und Balkendiagramm passen ihren Inhalt automatisch an diesen Bereich an. Bei geeigneten Katalogen wird zusätzlich die aktuelle Vererbung der BSI-Zielobjektkategorien eingeblendet.</span></li>'
             +'<li><strong>Passende Ansicht wählen.</strong><span>Kataloge zeigen Anforderungen, Komponentendefinitionen zeigen die Anforderungserfüllung referenzierter Anforderungen, Mappings zeigen Beziehungen zwischen Anforderungen (es muss sichergestellt sein, dass die passenden Kataloge in der Katalogansicht hochgeladen sind, um die Inhalte der entsprechenden Kataloge sauber in der Ansicht für Komponentendefinitionen und in der Mappingansicht anzeigen zu können).</span></li>'
             +'<li><strong>Inhalte eingrenzen.</strong><span>In der Katalogansicht, der Ansicht für Komponentendefinitionen und der Mappingansicht steht jeweils eine Menüleiste auf der linken Seite zur Verfügung, welche es ermöglicht die angezeigten Inhalte zu filtern (z.B. über ein Volltext-Suchfeld oder andere vorgegebene Filterungsmöglichkeiten). Somit ist man in der Lage gezielt nach Inhalten zu suchen.</span></li>'
             +'<li><strong>Ergebnisse sichern.</strong><span>Über den PDF-Export können die aktuellen Ansichten für Kataloge und Komponentendefinitionen druckoptimiert ausgegeben werden (via Browser Print-to-PDF-Funktion).</span></li>'
@@ -4580,6 +5583,7 @@
         registryState.query='';
       }
       hideEffortTooltip();
+      hideTargetHierarchyTooltip();
       uiState.view='home';
       updateHeaderSubtitle('home');
       var tabs=$$('.tab');
@@ -4590,7 +5594,7 @@
       updateVisualizationContext();
       if(els.homeTab) els.homeTab.classList.remove('hidden');
       if(els.viewSummary) els.viewSummary.classList.add('hidden');
-      els.listTab.classList.add('hidden'); els.componentTab.classList.add('hidden'); els.mappingTab.classList.add('hidden'); els.graphTab.classList.add('hidden'); els.sunburstTab.classList.add('hidden'); els.barTab.classList.add('hidden'); els.jsonTab.classList.add('hidden');
+      els.listTab.classList.add('hidden'); els.componentTab.classList.add('hidden'); els.mappingTab.classList.add('hidden'); els.graphTab.classList.add('hidden'); els.sunburstTab.classList.add('hidden'); els.barTab.classList.add('hidden'); els.targetHierarchyTab.classList.add('hidden');
       renderRegistryHome();
       hideMsg();
     }
@@ -4639,7 +5643,11 @@
         showHomePage(true);
         return;
       }
+      if(name==='target-hierarchy' && (uiState.dataMode!=='catalog' || !state.hasTargetObjectCategories)){
+        name='list';
+      }
       hideEffortTooltip();
+      hideTargetHierarchyTooltip();
       document.body.classList.remove('home-mode');
       if(els.homeTab) els.homeTab.classList.add('hidden');
       if(name==='list'){ uiState.dataMode='catalog'; setSidebarMode('catalog'); }
@@ -4655,7 +5663,7 @@
         b.setAttribute('aria-selected', active ? 'true' : 'false');
       }
       updateVisualizationContext();
-      els.listTab.classList.add('hidden'); els.componentTab.classList.add('hidden'); els.mappingTab.classList.add('hidden'); els.graphTab.classList.add('hidden'); els.sunburstTab.classList.add('hidden'); els.barTab.classList.add('hidden'); els.jsonTab.classList.add('hidden');
+      els.listTab.classList.add('hidden'); els.componentTab.classList.add('hidden'); els.mappingTab.classList.add('hidden'); els.graphTab.classList.add('hidden'); els.sunburstTab.classList.add('hidden'); els.barTab.classList.add('hidden'); els.targetHierarchyTab.classList.add('hidden');
       if(els.viewSummary){ els.viewSummary.classList.toggle('hidden', !(name==='list' || name==='components' || name==='mappings')); }
       if(name==='list'){ els.listTab.classList.remove('hidden'); renderList(); }
       if(name==='components'){ els.componentTab.classList.remove('hidden'); renderComponentView(); restoreComponentReturnTarget(); }
@@ -4663,7 +5671,7 @@
       if(name==='graph'){ els.graphTab.classList.remove('hidden'); drawGraph(); }
       if(name==='sunburst'){ els.sunburstTab.classList.remove('hidden'); drawSunburst(); }
       if(name==='bar'){ els.barTab.classList.remove('hidden'); drawBar(); }
-      if(name==='json'){ els.jsonTab.classList.remove('hidden'); renderJsonView(); }
+      if(name==='target-hierarchy'){ els.targetHierarchyTab.classList.remove('hidden'); renderTargetHierarchyView(); }
     }
     if(els.homeBtn){ els.homeBtn.addEventListener('click', function(){ switchTab('home'); }); }
     document.getElementById('tab-list').addEventListener('click', function(){ switchTab('list'); });
@@ -4672,7 +5680,7 @@
     document.getElementById('tab-graph').addEventListener('click', function(){ switchTab('graph'); });
     document.getElementById('tab-sunburst').addEventListener('click', function(){ switchTab('sunburst'); });
     document.getElementById('tab-bar').addEventListener('click', function(){ switchTab('bar'); });
-    document.getElementById('tab-json').addEventListener('click', function(){ switchTab('json'); });
+    document.getElementById('tab-target-hierarchy').addEventListener('click', function(){ switchTab('target-hierarchy'); });
 
     function shortenSourceLabel(label){
       var text=String(label||'').trim();
@@ -4680,11 +5688,33 @@
       return text.slice(0, 93)+'...';
     }
 
+    function getOscalDocumentRoot(root){
+      if(!root || typeof root!=='object') return null;
+      return root.catalog || root['component-definition'] || root['mapping-collection'] || root.profile || root;
+    }
+
     function getOscalDocumentTitle(root, fallbackLabel){
-      if(!root || typeof root!=='object') return String(fallbackLabel||'');
-      var doc=root.catalog || root['component-definition'] || root['mapping-collection'] || root.profile || root;
+      var doc=getOscalDocumentRoot(root);
+      if(!doc) return String(fallbackLabel||'');
       var metadata=doc && doc.metadata;
       return String((metadata && metadata.title) || doc.title || fallbackLabel || '').trim();
+    }
+
+    function normalizeOscalDocumentIdentifier(value){
+      var identifier=String(value||'').trim().toLowerCase();
+      if(identifier.indexOf('urn:uuid:')===0) identifier=identifier.slice(9);
+      return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(identifier) ? identifier : '';
+    }
+
+    function getOscalDocumentIdentifier(root){
+      var doc=getOscalDocumentRoot(root);
+      var metadata=doc && doc.metadata;
+      var documentIds=metadata && Array.isArray(metadata['document-ids']) ? metadata['document-ids'] : [];
+      for(var i=0;i<documentIds.length;i++){
+        var identifier=normalizeOscalDocumentIdentifier(documentIds[i] && documentIds[i].identifier);
+        if(identifier) return identifier;
+      }
+      return '';
     }
 
     function rebuildSourceSelect(selectEl, items, activeIndex, emptyLabel){
@@ -4790,11 +5820,16 @@
       activeCatalogSourceIndex=index;
       refreshCatalogSourceSelect();
       els.fileInfo.textContent='Katalog: '+source.label;
-      state.jsonText = source.jsonText || '';
       state.catalogBaseUrl = source.baseUrl || '';
       processCatalog(source.json);
       renderFilters();
       RefreshViews();
+      updateVisualizationContext();
+      if(uiState.view==='target-hierarchy'){
+        if(state.hasTargetObjectCategories) renderTargetHierarchyView();
+        else switchTab('list');
+      }
+      ensureTargetHierarchyForActiveCatalog();
       if(uiState.view==='components'){ renderComponentView(); }
       if(mappingState.entries.length){
         renderMappingFilters();
@@ -4809,7 +5844,6 @@
       activeComponentSourceIndex=index;
       refreshComponentSourceSelect();
       compEls.fileInfo.textContent='Komponentendefinition: '+source.label;
-      componentState.jsonText = source.jsonText || '';
       componentState.baseUrl = source.baseUrl || '';
       processComponentDefinition(source.json);
       renderComponentFilters();
@@ -4823,7 +5857,6 @@
       activeMappingSourceIndex=index;
       refreshMappingSourceSelect();
       mappingEls.fileInfo.textContent='Mappings: '+source.label;
-      mappingState.jsonText=source.jsonText || '';
       mappingState.baseUrl=source.baseUrl || '';
       processMappingCollection(source.json);
       renderMappingFilters();
@@ -4973,9 +6006,9 @@
       var reader = new FileReader();
       reader.onload=function(e){
         try{
-          var jsonText = e.target.result || '';
-          var json=JSON.parse(jsonText);
-          addCatalogSource({ label:f.name, json:json, jsonText:jsonText, baseUrl:'' });
+          var fileText=e.target.result || '';
+          var json=JSON.parse(fileText);
+          addCatalogSource({ label:f.name, json:json, baseUrl:'' });
         }catch(err){ showMsg('<strong>Fehler beim Laden der JSON:</strong><br/><code>'+escapeHtml(String(err.message||err))+'</code>', true); }
       };
       reader.onerror=function(){ showMsg('<strong>Fehler beim Lesen der Datei.</strong>', true); };
@@ -5035,7 +6068,7 @@
       if(kind && detected!==kind){
         throw new Error('Erwartet wurde '+oscalKindLabel(kind)+', geladen wurde jedoch '+oscalKindLabel(detected)+'.');
       }
-      var entry={ label:sourceLabel || url, json:json, jsonText:JSON.stringify(json, null, 2), baseUrl:url };
+      var entry={ label:sourceLabel || url, json:json, baseUrl:url };
       if(detected==='catalog') addCatalogSource(entry);
       else if(detected==='component') addComponentSource(entry);
       else addMappingSource(entry);
@@ -5089,9 +6122,9 @@
       var reader = new FileReader();
       reader.onload=function(e){
         try{
-          var jsonText = e.target.result || '';
-          var json=JSON.parse(jsonText);
-          addComponentSource({ label:f.name, json:json, jsonText:jsonText, baseUrl:'' });
+          var fileText=e.target.result || '';
+          var json=JSON.parse(fileText);
+          addComponentSource({ label:f.name, json:json, baseUrl:'' });
         }catch(err){ showMsg('<strong>Fehler beim Laden der Komponentendefinition:</strong><br/><code>'+escapeHtml(String(err.message||err))+'</code>', true); }
       };
       reader.onerror=function(){ showMsg('<strong>Fehler beim Lesen der Datei.</strong>', true); };
@@ -5129,10 +6162,10 @@
       var reader=new FileReader();
       reader.onload=function(e){
         try{
-          var jsonText=e.target.result || '';
-          var json=JSON.parse(jsonText);
+          var fileText=e.target.result || '';
+          var json=JSON.parse(fileText);
           if(!json || !json['mapping-collection']) throw new Error('Kein OSCAL mapping-collection Root gefunden.');
-          addMappingSource({ label:f.name, json:json, jsonText:jsonText, baseUrl:'' });
+          addMappingSource({ label:f.name, json:json, baseUrl:'' });
         }catch(err){
           showMsg('<strong>Fehler beim Laden des Control Mappings:</strong><br/><code>'+escapeHtml(String(err.message||err))+'</code>', true);
         }
@@ -5224,7 +6257,7 @@
 
     var BSI_REPOSITORY_TREE_URL='https://api.github.com/repos/BSI-Bund/Stand-der-Technik-Bibliothek/git/trees/main?recursive=1';
     var BSI_REPOSITORY_RAW_ROOT='https://raw.githubusercontent.com/BSI-Bund/Stand-der-Technik-Bibliothek/main/';
-    var BSI_REPOSITORY_TITLE_CACHE_KEY='sdt-viewer:bsi-repository-titles:v1';
+    var BSI_REPOSITORY_METADATA_CACHE_KEY='sdt-viewer:bsi-repository-metadata:v2';
     var BSI_CONTROL_LAYER_PREFIX='control_layer/';
     var BSI_CONTROL_LAYER_MAPPINGS_PREFIX='control_layer/Mappings/';
     var BSI_CONTROL_LAYER_SOURCES_DIRECTORY='sources';
@@ -5292,6 +6325,7 @@
         option.textContent=files[i].title || files[i].fallbackTitle || 'OSCAL-Dokument';
         option.dataset.fileName=files[i].name;
         option.dataset.documentTitle=files[i].title || '';
+        option.dataset.documentId=files[i].documentId || '';
         option.title=option.textContent;
         parent.appendChild(option);
       }
@@ -5305,9 +6339,9 @@
         .trim();
     }
 
-    function readRepositoryTitleCache(){
+    function readRepositoryMetadataCache(){
       try{
-        var stored=localStorage.getItem(BSI_REPOSITORY_TITLE_CACHE_KEY);
+        var stored=localStorage.getItem(BSI_REPOSITORY_METADATA_CACHE_KEY);
         var parsed=stored ? JSON.parse(stored) : {};
         return parsed && typeof parsed==='object' && !Array.isArray(parsed) ? parsed : {};
       }catch(err){
@@ -5315,15 +6349,19 @@
       }
     }
 
-    function applyRepositoryTitleCache(files, cache){
+    function applyRepositoryMetadataCache(files, cache){
       var list=Array.isArray(files) ? files : [];
       var pending=[];
       for(var i=0;i<list.length;i++){
         var file=list[i];
         file.fallbackTitle=repositoryFallbackTitle(file);
+        file.documentId='';
+        file.metadataLoaded=false;
         var cached=cache && cache[file.path];
-        if(file.sha && cached && cached.sha===file.sha && typeof cached.title==='string' && cached.title.trim()){
+        if(file.sha && cached && cached.sha===file.sha && typeof cached.title==='string' && cached.title.trim() && typeof cached.documentId==='string'){
           file.title=cached.title.trim();
+          file.documentId=normalizeOscalDocumentIdentifier(cached.documentId);
+          file.metadataLoaded=true;
         }else{
           file.title=file.fallbackTitle;
           pending.push(file);
@@ -5332,18 +6370,17 @@
       return pending;
     }
 
-    function persistRepositoryTitleCache(cache, currentFiles){
+    function persistRepositoryMetadataCache(currentFiles){
       var next={};
       var files=Array.isArray(currentFiles) ? currentFiles : [];
       for(var i=0;i<files.length;i++){
         var file=files[i];
-        var cached=cache && cache[file.path];
-        if(file.sha && cached && cached.sha===file.sha && typeof cached.title==='string' && cached.title.trim()){
-          next[file.path]={ sha:file.sha, title:cached.title.trim() };
+        if(file.sha && file.metadataLoaded && typeof file.title==='string' && file.title.trim()){
+          next[file.path]={ sha:file.sha, title:file.title.trim(), documentId:file.documentId || '' };
         }
       }
       try{
-        localStorage.setItem(BSI_REPOSITORY_TITLE_CACHE_KEY, JSON.stringify(next));
+        localStorage.setItem(BSI_REPOSITORY_METADATA_CACHE_KEY, JSON.stringify(next));
       }catch(err){
         // Der Viewer bleibt auch ohne verfügbaren Browser-Speicher vollständig nutzbar.
       }
@@ -5361,12 +6398,6 @@
       return list;
     }
 
-    function normalizeRepositoryDocumentTitle(value){
-      var title=String(value || '').trim().replace(/\s+/g, ' ');
-      if(typeof title.normalize==='function') title=title.normalize('NFKC');
-      return title.toLowerCase();
-    }
-
     function compareRepositoryDuplicatePreference(a,b){
       var aName=getRepositoryFileName(a && a.path);
       var bName=getRepositoryFileName(b && b.path);
@@ -5375,23 +6406,23 @@
         || String(a && a.path || '').localeCompare(String(b && b.path || ''), 'de', { sensitivity:'base' });
     }
 
-    function deduplicateRepositoryFilesByTitle(files){
+    function deduplicateRepositoryFilesByDocumentId(files){
       var list=Array.isArray(files) ? files : [];
       var unique=[];
-      var indexByTitle=Object.create(null);
+      var indexByDocumentId=Object.create(null);
       for(var i=0;i<list.length;i++){
         var file=list[i];
-        var key=normalizeRepositoryDocumentTitle(file && (file.title || file.fallbackTitle || file.name));
+        var key=normalizeOscalDocumentIdentifier(file && file.documentId);
         if(!key){
           unique.push(file);
           continue;
         }
-        if(typeof indexByTitle[key]==='undefined'){
-          indexByTitle[key]=unique.length;
+        if(typeof indexByDocumentId[key]==='undefined'){
+          indexByDocumentId[key]=unique.length;
           unique.push(file);
           continue;
         }
-        var existingIndex=indexByTitle[key];
+        var existingIndex=indexByDocumentId[key];
         if(compareRepositoryDuplicatePreference(file, unique[existingIndex])<0){
           unique[existingIndex]=file;
         }
@@ -5399,7 +6430,7 @@
       return unique;
     }
 
-    function enrichRepositoryTitles(files, cache){
+    function enrichRepositoryMetadata(files, cache){
       var list=Array.isArray(files) ? files : [];
       var nextIndex=0;
       function worker(){
@@ -5412,10 +6443,14 @@
           })
           .then(function(json){
             file.title=getOscalDocumentTitle(json, file.fallbackTitle);
-            if(file.sha) cache[file.path]={ sha:file.sha, title:file.title };
+            file.documentId=getOscalDocumentIdentifier(json);
+            file.metadataLoaded=true;
+            if(file.sha) cache[file.path]={ sha:file.sha, title:file.title, documentId:file.documentId };
           })
           .catch(function(){
             file.title=file.fallbackTitle;
+            file.documentId='';
+            file.metadataLoaded=false;
           })
           .then(worker);
       }
@@ -5453,7 +6488,10 @@
     }
 
     function publishRepositoryFiles(sourceCatalogs, userCatalogs, componentDefinitions){
-      sourceCatalogs=deduplicateRepositoryFilesByTitle(sourceCatalogs);
+      var uniqueFiles=deduplicateRepositoryFilesByDocumentId(userCatalogs.concat(sourceCatalogs,componentDefinitions));
+      userCatalogs=uniqueFiles.filter(function(file){ return file.kind==='catalog' && file.category==='Anwenderkataloge'; });
+      sourceCatalogs=uniqueFiles.filter(function(file){ return file.kind==='catalog' && file.category==='Quellkataloge'; });
+      componentDefinitions=uniqueFiles.filter(function(file){ return file.kind==='component'; });
       sortRepositoryFiles(userCatalogs);
       sortRepositoryFiles(sourceCatalogs);
       sortRepositoryFiles(componentDefinitions);
@@ -5513,17 +6551,18 @@
           tagRepositoryFiles(sourceCatalogs, 'catalog', 'Quellkataloge');
           tagRepositoryFiles(componentDefinitions, 'component', 'Komponentendefinitionen');
           var allFiles=userCatalogs.concat(sourceCatalogs, componentDefinitions);
-          var titleCache=readRepositoryTitleCache();
-          var pendingFiles=applyRepositoryTitleCache(allFiles, titleCache);
+          var metadataCache=readRepositoryMetadataCache();
+          var pendingFiles=applyRepositoryMetadataCache(allFiles, metadataCache);
 
           // Ausschließlich die frisch geladene GitHub-Dateiliste bestimmt den sichtbaren Bestand.
-          // Bereits bestätigte Titel beschleunigen die Darstellung, ohne alte Dokumente zu übernehmen.
-          persistRepositoryTitleCache(titleCache, allFiles);
-          publishRepositoryFiles(sourceCatalogs, userCatalogs, componentDefinitions);
-
-          if(!pendingFiles.length) return;
-          return enrichRepositoryTitles(pendingFiles, titleCache).then(function(){
-            persistRepositoryTitleCache(titleCache, allFiles);
+          // Titel und Document IDs unveränderter Dateien kommen aus dem SHA-gebundenen Cache.
+          if(!pendingFiles.length){
+            persistRepositoryMetadataCache(allFiles);
+            publishRepositoryFiles(sourceCatalogs, userCatalogs, componentDefinitions);
+            return;
+          }
+          return enrichRepositoryMetadata(pendingFiles, metadataCache).then(function(){
+            persistRepositoryMetadataCache(allFiles);
             publishRepositoryFiles(sourceCatalogs, userCatalogs, componentDefinitions);
           });
         })
@@ -5609,18 +6648,21 @@
       state.idMap=new ObjMap();
       state.uuidMap=new ObjMap();
       state.edgesBase=[];
-      state.q='';
+      state.searchQuery=parseSearchQuery('');
       state.qRaw='';
       state.groups=[];
       state.subgroups=[];
       state.classes=[];
       state.secs=[];
       state.targets=[];
+      state.autoSelectedTargets=[];
+      state.hasTargetObjectCategories=false;
       state.tags=[];
       state.efforts=[];
       state.modalverbs=[];
       state.documentations=[];
       state.actionwords=[];
+      state.securityTargets=[];
       state.topics=[];
       state.topicById=new ObjMap();
       state.childrenByTopic={};
@@ -5638,7 +6680,6 @@
       state.openPractices={};
       state.openGroups={};
       state.catalogGroupMode='none';
-      state.jsonText='';
       state.catalogUuid='';
       state.catalogMetadata=null;
       state.catalogBackMatter=null;
@@ -5654,6 +6695,9 @@
       allModalverbs=[];
       allDocumentations=[];
       allActionwords=[];
+      allSecurityTargets=[];
+      targetHierarchyActivationToken++;
+      hideTargetHierarchyTooltip();
       syncCatalogHierarchyFilterVisibility();
       if(els.q) els.q.value='';
       syncComponentParamMaps();
@@ -5664,7 +6708,8 @@
         renderMappingFilters();
         if(uiState.view==='mappings'){ renderMappingView(); }
       }
-      if(els.jsonView && uiState.dataMode==='catalog') els.jsonView.textContent='Kein Dokument geladen.';
+      updateVisualizationContext();
+      if(uiState.view==='target-hierarchy') switchTab('list');
       if(!loadedCatalogSources.length){
         activeCatalogSourceIndex=-1;
         refreshCatalogSourceSelect();
@@ -5682,7 +6727,6 @@
       componentState=createComponentState();
       renderSelectionState(compEls.selectionState, 'Status Komponentendefinitionen', 'Kein Datensatz geladen', []);
       if(uiState.view==='components'){ renderComponentView(); }
-      if(els.jsonView && uiState.dataMode==='component') els.jsonView.textContent='Kein Dokument geladen.';
       if(!loadedComponentSources.length){
         activeComponentSourceIndex=-1;
         refreshComponentSourceSelect();
@@ -5702,7 +6746,6 @@
       if(mappingEls.q) mappingEls.q.value='';
       renderSelectionState(mappingEls.selectionState, 'Mappingstatus', 'Kein Datensatz geladen', []);
       if(uiState.view==='mappings') renderMappingView();
-      if(els.jsonView && uiState.dataMode==='mapping') els.jsonView.textContent='Kein Dokument geladen.';
       if(!loadedMappingSources.length){
         activeMappingSourceIndex=-1;
         refreshMappingSourceSelect();
@@ -5733,17 +6776,19 @@
     function RefreshViews(){
       uiState.catalogExpandOverride = null;
       state.qRaw = (els.q.value||'').trim();
-      state.q = state.qRaw.toLowerCase();
+      state.searchQuery = parseSearchQuery(state.qRaw);
       state.groups = msGetSelected(els.group, els.groupMenu);
       state.subgroups = msGetSelected(els.subgroup, els.subgroupMenu);
       state.classes = msGetSelected(els.cls, els.clsMenu);
       state.secs = msGetSelected(els.sec, els.secMenu);
       state.targets = msGetSelected(els.target, els.targetMenu);
+      syncTargetAutoSelectionUi();
       state.tags = msGetSelected(els.tag, els.tagMenu);
       state.efforts = msGetSelected(els.effort, els.effortMenu);
       state.modalverbs = msGetSelected(els.modalverb, els.modalverbMenu);
       state.documentations = msGetSelected(els.documentation, els.documentationMenu);
       state.actionwords = msGetSelected(els.actionword, els.actionwordMenu);
+      state.securityTargets = msGetSelected(els.securityTarget, els.securityTargetMenu);
       if(!isFilterActive()){ state.openTopics = {}; state.openPractices = {}; state.openGroups = {}; }
       renderList();
       refreshChartsIfVisible();
@@ -5752,7 +6797,7 @@
     function refreshComponentViews(){
       uiState.componentExpandOverride = null;
       componentState.qRaw = (compEls.q && compEls.q.value || '').trim();
-      componentState.q = componentState.qRaw.toLowerCase();
+      componentState.searchQuery = parseSearchQuery(componentState.qRaw);
       componentState.types = msGetSelected(compEls.type, compEls.typeMenu);
       componentState.sources = msGetSelected(compEls.source, compEls.sourceMenu);
       componentState.names = msGetSelected(compEls.name, compEls.nameMenu);
@@ -5768,7 +6813,7 @@
 
     function refreshMappingViews(){
       mappingState.qRaw=(mappingEls.q && mappingEls.q.value || '').trim();
-      mappingState.q=mappingState.qRaw.toLowerCase();
+      mappingState.searchQuery=parseSearchQuery(mappingState.qRaw);
       mappingState.practices=msGetSelected(mappingEls.practice, mappingEls.practiceMenu);
       mappingState.relationships=msGetSelected(mappingEls.relationship, mappingEls.relationshipMenu);
       mappingState.sourceCatalogs=msGetSelected(mappingEls.sourceCatalog, mappingEls.sourceCatalogMenu);
@@ -5785,16 +6830,6 @@
       if(!els.graphTab.classList.contains('hidden')) drawGraph();
       if(!els.sunburstTab.classList.contains('hidden')) drawSunburst();
       if(!els.barTab.classList.contains('hidden')) drawBar();
-    }
-
-    function renderJsonView(){
-      if(!els.jsonView) return;
-      var text = uiState.dataMode==='component' ? componentState.jsonText : (uiState.dataMode==='mapping' ? mappingState.jsonText : state.jsonText);
-      if(text){
-        els.jsonView.textContent = text;
-      } else {
-        els.jsonView.textContent = 'Kein Dokument geladen.';
-      }
     }
 
     function mappingArray(value){
@@ -5819,10 +6854,8 @@
     }
 
     function processMappingCollection(root){
-      var jsonText=mappingState.jsonText;
       var baseUrl=mappingState.baseUrl;
       mappingState=createMappingState();
-      mappingState.jsonText=jsonText;
       mappingState.baseUrl=baseUrl;
       var doc=root && root['mapping-collection'];
       if(!doc) throw new Error('Kein OSCAL mapping-collection Root gefunden.');
@@ -5925,7 +6958,7 @@
     }
 
     function mappingEntryMatches(entry){
-      if(mappingState.q && entry.searchText.indexOf(mappingState.q)===-1) return false;
+      if(!matchesSearchText(entry.searchText, mappingState.searchQuery)) return false;
       if(allMappingPractices.length && mappingState.practices.length!==allMappingPractices.length){
         var practiceMatch=false;
         for(var p=0;p<mappingState.practices.length;p++){
@@ -6380,18 +7413,6 @@
       }
       return '';
     }
-    function detectEffortLabel(props){
-      var label='Aufwand';
-      if(!props || !props.length) return label;
-      for(var i=0;i<props.length;i++){
-        var p=props[i]; if(!p) continue;
-        var hay=((p.name||'')+' '+(p.ns||'')+' '+(p.class||'')+' '+(p.label||'')).toLowerCase();
-        if(hay.indexOf('aufwand')!==-1){ return 'Aufwand'; }
-        if(hay.indexOf('aufwand')!==-1){ label='Aufwand'; }
-      }
-      return label;
-    }
-
     function extractEffortInfo(props){
       var value='';
       if(props && props.length){
@@ -6419,8 +7440,7 @@
           }
         }
       }
-      var label=detectEffortLabel(props);
-      return { label:label, value:value };
+      return { label:'Aufwand', value:value };
     }
 
 
@@ -6473,6 +7493,27 @@
         }
       }
       return uniqueList(out);
+    }
+
+    function propsDeclareTargetObjectCategories(props){
+      if(!Array.isArray(props)) return false;
+      for(var i=0;i<props.length;i++){
+        var prop=props[i];
+        if(!prop) continue;
+        var name=String(prop.name||'').trim().toLowerCase();
+        var ns=String(prop.ns||'').trim().toLowerCase();
+        if(name==='target_object_categories' || /(?:^|\/)target_object_categories\.csv(?:$|[?#])/.test(ns)) return true;
+      }
+      return false;
+    }
+
+    function controlDeclaresTargetObjectCategories(props,parts){
+      if(propsDeclareTargetObjectCategories(props)) return true;
+      if(!Array.isArray(parts)) return false;
+      for(var i=0;i<parts.length;i++){
+        if(parts[i] && propsDeclareTargetObjectCategories(parts[i].props)) return true;
+      }
+      return false;
     }
 
 
@@ -6613,17 +7654,69 @@
       return uniqueList(out);
     }
 
-    function extractNamedControlProperty(props, name){
-      var out=[]; if(!props||!props.length) return out;
-      var wanted=String(name||'').toLowerCase();
-      for(var i=0;i<props.length;i++){
-        var p=props[i]; if(!p) continue;
-        if(String(p.name||'').toLowerCase()!==wanted) continue;
-        if(p.value!=null && String(p.value).trim()){
-          out.push(String(p.value).trim());
+    // BSI-Custom-Properties fuer Schutzziele und G0-Gefaehrdungen gemeinsam auswerten.
+    function isAssignedSecurityTargetValue(value){
+      var normalized=String(value==null ? '' : value).trim().toLowerCase();
+      if(!normalized) return false;
+      if(/^[+-]?\d+(?:[.,]\d+)?$/.test(normalized)) return parseFloat(normalized.replace(',','.'))>0;
+      return !/^(?:false|no|nein|none|nicht zugeordnet|n\/a|-)$/.test(normalized);
+    }
+
+    function extractControlSecurityMetadata(props){
+      var result={threats:[],targetValues:{},assignedTargets:[]};
+      for(var d=0;d<SECURITY_TARGET_DEFINITIONS.length;d++){
+        result.targetValues[SECURITY_TARGET_DEFINITIONS[d].key]=[];
+      }
+      var items=Array.isArray(props) ? props : [];
+      for(var i=0;i<items.length;i++){
+        var prop=items[i]; if(!prop) continue;
+        var name=String(prop.name||'').trim().toLowerCase();
+        var value=prop.value==null ? '' : String(prop.value).trim();
+        if(!value) continue;
+        if(name==='threats'){
+          var threatValues=splitMulti(value);
+          result.threats=result.threats.concat(threatValues.length ? threatValues : [value]);
+          continue;
+        }
+        for(var t=0;t<SECURITY_TARGET_DEFINITIONS.length;t++){
+          var definition=SECURITY_TARGET_DEFINITIONS[t];
+          if(name===definition.key){
+            result.targetValues[definition.key].push(value);
+            break;
+          }
         }
       }
-      return uniqueList(out);
+      result.threats=uniqueList(result.threats);
+      for(var ti=0;ti<SECURITY_TARGET_DEFINITIONS.length;ti++){
+        var key=SECURITY_TARGET_DEFINITIONS[ti].key;
+        result.targetValues[key]=uniqueList(result.targetValues[key]);
+        for(var vi=0;vi<result.targetValues[key].length;vi++){
+          if(isAssignedSecurityTargetValue(result.targetValues[key][vi])){
+            result.assignedTargets.push(key);
+            break;
+          }
+        }
+      }
+      return result;
+    }
+
+    function securityTargetLabel(key){
+      for(var i=0;i<SECURITY_TARGET_DEFINITIONS.length;i++){
+        if(SECURITY_TARGET_DEFINITIONS[i].key===key) return SECURITY_TARGET_DEFINITIONS[i].label;
+      }
+      return key;
+    }
+
+    function renderSecurityTargetMeta(control){
+      var html='';
+      var values=(control && control.securityTargetValues) || {};
+      for(var i=0;i<SECURITY_TARGET_DEFINITIONS.length;i++){
+        var definition=SECURITY_TARGET_DEFINITIONS[i];
+        var displayValues=values[definition.key] || [];
+        if(!displayValues.length) continue;
+        html+='<span class="kv"><strong>Schutzziel '+escapeHtml(definition.label)+':</strong> <code>'+renderHighlightedInline(displayValues.join(', '), state.qRaw)+'</code></span>';
+      }
+      return html;
     }
 
 
@@ -6684,7 +7777,7 @@
 
     // Catalog parsen, Hierarchien aufbauen und Controls in eine renderbare Struktur ueberfuehren.
     function processCatalog(root){
-      state.controls=[]; state.idMap=new ObjMap(); state.uuidMap=new ObjMap(); state.edgesBase=[]; state.groups=[]; state.subgroups=[]; state.topics=[]; state.topicById=new ObjMap(); state.childrenByTopic={}; state.childrenByPractice={}; state.groupRoots=[]; state.groupByKey=new ObjMap(); state.groupLabelsByLevel=[{},{}]; state.controlsByGroup={}; state.ungroupedControls=[]; state.openTopics={}; state.openControls={}; state.practices=[]; state.practiceById=new ObjMap(); state.topicsByPractice={}; state.openPractices={}; state.openGroups={}; state.catalogGroupMode='none'; state.catalogUuid=''; state.catalogMetadata=null; state.catalogBackMatter=null; state.catalogResourcesByUuid=new ObjMap();
+      state.controls=[]; state.idMap=new ObjMap(); state.uuidMap=new ObjMap(); state.edgesBase=[]; state.groups=[]; state.subgroups=[]; state.targets=[]; state.autoSelectedTargets=[]; state.hasTargetObjectCategories=false; state.topics=[]; state.topicById=new ObjMap(); state.childrenByTopic={}; state.childrenByPractice={}; state.groupRoots=[]; state.groupByKey=new ObjMap(); state.groupLabelsByLevel=[{},{}]; state.controlsByGroup={}; state.ungroupedControls=[]; state.openTopics={}; state.openControls={}; state.practices=[]; state.practiceById=new ObjMap(); state.topicsByPractice={}; state.openPractices={}; state.openGroups={}; state.catalogGroupMode='none'; state.catalogUuid=''; state.catalogMetadata=null; state.catalogBackMatter=null; state.catalogResourcesByUuid=new ObjMap();
 
       var catCandidate = root && (root.catalog || root.profile || root.component || root);
       if(!catCandidate){ throw new Error('Ungültige JSON-Struktur: Erwartet ein "catalog" / "profile" / "component" Objekt.'); }
@@ -6716,15 +7809,21 @@
         var effortLabel=effortInfo.label;
         var parts=Array.isArray(c.parts)? c.parts.map(function(p){ return { id:p.id, name:p.name, prose:(p.prose||''), props:(p.props||[]) }; }) : [];
         var targetsArr=extractTargets(c.props, parts);
+        if(controlDeclaresTargetObjectCategories(c.props,parts)) state.hasTargetObjectCategories=true;
         var tagsArr=extractTags(c.props, parts);
         var modalverbsArr=extractModalverbs(c.props, parts);
         var documentationArr=extractDocumentation(c.props, parts);
         var actionWordsArr=extractActionWords(c.props, parts);
-        var threatsArr=extractNamedControlProperty(c.props, 'threats');
-        var confidentialityArr=extractNamedControlProperty(c.props, 'confidentiality');
-        var integrityArr=extractNamedControlProperty(c.props, 'integrity');
-        var availabilityArr=extractNamedControlProperty(c.props, 'availability');
-        var authenticityArr=extractNamedControlProperty(c.props, 'authenticity');
+        var securityMetadata=extractControlSecurityMetadata(c.props);
+        var threatsArr=securityMetadata.threats;
+        var securityTargetSearchValues=[];
+        for(var sti=0;sti<SECURITY_TARGET_DEFINITIONS.length;sti++){
+          var securityTargetDefinition=SECURITY_TARGET_DEFINITIONS[sti];
+          var securityTargetValues=securityMetadata.targetValues[securityTargetDefinition.key] || [];
+          if(securityTargetValues.length){
+            securityTargetSearchValues.push(securityTargetDefinition.key, securityTargetDefinition.label, securityTargetValues.join(', '));
+          }
+        }
         var taxonomyL1=valueOfProp(c.props, 'Taxonomy-L1') || '';
         var taxonomyL2=valueOfProp(c.props, 'Taxonomy-L2') || '';
         var taxonomyL3=valueOfProp(c.props, 'Taxonomy-L3') || '';
@@ -6740,7 +7839,7 @@
                 // build searchable haystack (for Volltextsuche)
         var allProse='';
         if(parts){ for(var pi=0; pi<parts.length; pi++){ if(parts[pi] && parts[pi].prose) allProse += ' ' + parts[pi].prose; } }
-        var hay = [id, rawId, labelId, (c.title||''), uuid, cls, secLevel, effortLabel, targetsArr.join(', '), tagsArr.join(', '), modalverbsArr.join(', '), documentationArr.join(', '), actionWordsArr.join(', '), threatsArr.join(', '), confidentialityArr.join(', '), integrityArr.join(', '), availabilityArr.join(', '), authenticityArr.join(', '), taxonomyL1, taxonomyL2, taxonomyL3, taxonomyL4, remarks, allProse, topicIdVal, topicTitleVal].join(' \n ').toLowerCase();
+        var hay = [id, rawId, labelId, (c.title||''), uuid, cls, secLevel, effortLabel, targetsArr.join(', '), tagsArr.join(', '), modalverbsArr.join(', '), documentationArr.join(', '), actionWordsArr.join(', '), threatsArr.join(', '), securityTargetSearchValues.join(', '), taxonomyL1, taxonomyL2, taxonomyL3, taxonomyL4, remarks, allProse, topicIdVal, topicTitleVal].join(' \n ').toLowerCase();
 
         var entry={ id:id, rawId:rawId, labelId:labelId, uuid:uuid, title:(c.title||''), class:cls, cls:cls, sec_level:secLevel, sec:secLevel,
                     effort:effort, effortLabel:effortLabel,
@@ -6750,10 +7849,8 @@
                     documentation:(documentationArr.join(', ')), documentationArr:documentationArr,
                     actionwords:(actionWordsArr.join(', ')), actionwordsArr:actionWordsArr,
                     threats:(threatsArr.join(', ')), threatsArr:threatsArr,
-                    confidentiality:(confidentialityArr.join(', ')), confidentialityArr:confidentialityArr,
-                    integrity:(integrityArr.join(', ')), integrityArr:integrityArr,
-                    availability:(availabilityArr.join(', ')), availabilityArr:availabilityArr,
-                    authenticity:(authenticityArr.join(', ')), authenticityArr:authenticityArr,
+                    securityTargetValues:securityMetadata.targetValues,
+                    assignedSecurityTargets:securityMetadata.assignedTargets,
                     taxonomyL1:taxonomyL1, taxonomyL2:taxonomyL2, taxonomyL3:taxonomyL3, taxonomyL4:taxonomyL4,
                     practiceId:(practiceId||''),
                     groupKey:(groupKey||''),
@@ -6871,7 +7968,6 @@
       msSetItems(els.subgroup, els.subgroupMenu, catalogSecondaryGroupAllLabel(), secondaryOptions);
       syncCatalogHierarchyFilterVisibility();
 var classesRaw=[]; for(var j=0;j<state.controls.length;j++){ var c=state.controls[j].class||''; if(c) classesRaw.push(c); }
-      var classes=uniqueList(classesRaw).sort();
       allClasses = uniqueList(classesRaw).sort();
       msSetItems(els.cls, els.clsMenu, 'Alle Quellkataloge', allClasses);
 var secRaw=[];
@@ -6887,9 +7983,15 @@ var secRaw=[];
       }
       allSecs = uniqueList(secRaw).sort();
       msSetItems(els.sec, els.secMenu, 'Alle Sicherheitsniveaus', allSecs);
-var targetsRaw=[]; for(var k=0;k<state.controls.length;k++){ var t=(state.controls[k].target||''); if(t){ var parts=t.split(','); for(var p=0;p<parts.length;p++){ var s=String(parts[p]).trim(); if(s) targetsRaw.push(s); } } }
-      var targets=uniqueList(targetsRaw).sort();
-      allTargets = uniqueList(targetsRaw).sort();
+      var targetsRaw=[];
+      for(var k=0;k<state.controls.length;k++){
+        var controlTargets=state.controls[k].targetsArr || [];
+        for(var p=0;p<controlTargets.length;p++){
+          var targetValue=String(controlTargets[p]||'').trim();
+          if(targetValue) targetsRaw.push(targetValue);
+        }
+      }
+      allTargets = uniqueList(targetsRaw).sort(function(a,b){ return a.localeCompare(b,'de',{numeric:true}); });
       msSetItems(els.target, els.targetMenu, 'Alle Zielobjektkategorien', allTargets);
 
       // Tags (each control may have multiple)
@@ -6953,6 +8055,22 @@ var targetsRaw=[]; for(var k=0;k<state.controls.length;k++){ var t=(state.contro
       }
       allActionwords = uniqueList(awRaw).sort();
       msSetItems(els.actionword, els.actionwordMenu, 'Alle Handlungswörter', allActionwords);
+
+      // Schutzziele werden angeboten, sobald mindestens eine Control mit einem Wert groesser 0 zugeordnet ist.
+      var representedSecurityTargets={};
+      for(var si=0;si<state.controls.length;si++){
+        var assignedTargets=state.controls[si].assignedSecurityTargets || [];
+        for(var sj=0;sj<assignedTargets.length;sj++) representedSecurityTargets[assignedTargets[sj]]=true;
+      }
+      var securityTargetOptions=[];
+      allSecurityTargets=[];
+      for(var sd=0;sd<SECURITY_TARGET_DEFINITIONS.length;sd++){
+        var securityDefinition=SECURITY_TARGET_DEFINITIONS[sd];
+        if(!representedSecurityTargets[securityDefinition.key]) continue;
+        allSecurityTargets.push(securityDefinition.key);
+        securityTargetOptions.push({value:securityDefinition.key,label:securityDefinition.label});
+      }
+      msSetItems(els.securityTarget, els.securityTargetMenu, 'Alle Schutzziele', securityTargetOptions);
       bindResetButton();
     bindExportButton();
 }
@@ -6961,7 +8079,7 @@ function baseMatches(c){ return matches(c); }
 
     // Pruefen, ob Suche/Filter aktiv sind (steuert Auto-Open)
     function isFilterActive(){
-      if(state.q) return true;
+      if(state.searchQuery.groups.length) return true;
       if(allGroups.length && state.groups.length !== allGroups.length) return true;
       if(allSubgroups.length && state.subgroups.length !== allSubgroups.length) return true;
       if(allClasses.length && state.classes.length !== allClasses.length) return true;
@@ -6974,6 +8092,7 @@ function baseMatches(c){ return matches(c); }
       if(allModalverbs.length && state.modalverbs.length !== allModalverbs.length) return true;
       if(allDocumentations.length && state.documentations.length !== allDocumentations.length) return true;
       if(allActionwords.length && state.actionwords.length !== allActionwords.length) return true;
+      if(allSecurityTargets.length && state.securityTargets.length !== allSecurityTargets.length) return true;
       return false;
     }
 
@@ -6989,6 +8108,7 @@ function baseMatches(c){ return matches(c); }
       if(allEfforts.length && state.efforts.length===0) return false;
       if(allModalverbs.length && state.modalverbs.length===0) return false;
       if(allDocumentations.length && state.documentations.length===0) return false;
+      if(allSecurityTargets.length && state.securityTargets.length===0) return false;
 
       // Erste OSCAL-Gruppenebene: je nach erkanntem Katalog entweder Praktiken oder allgemeine Gruppen/Themen.
       if(allGroups.length && state.groups.length !== allGroups.length){
@@ -7012,7 +8132,7 @@ function baseMatches(c){ return matches(c); }
         if(state.secs.indexOf((c.sec||''))===-1) return false;
       }
 
-      // Zielobjektkategorien (mindestens eins passt) — unterstützt '__none__' für Anforderungen ohne Zielobjektkategorie
+      // Zielobjektkategorien (mindestens eins passt); automatisch ergänzte Eltern bleiben normal abwählbar.
       var baseTargetsLen = allTargets.length + 1; // + '__none__'
       if(allTargets.length && state.targets.length !== baseTargetsLen){
         var okT=false;
@@ -7089,10 +8209,18 @@ function baseMatches(c){ return matches(c); }
         }
       }
 
-      // Freitextsuche
-      if(state.q){
-        if((c.searchText||'').indexOf(state.q)===-1) return false;
+      // Schutzziele: mindestens eines der ausgewaehlten Ziele muss mit einem Wert groesser 0 zugeordnet sein.
+      if(allSecurityTargets.length && state.securityTargets.length !== allSecurityTargets.length){
+        var controlSecurityTargets=c.assignedSecurityTargets || [];
+        var matchesSecurityTarget=false;
+        for(var sti=0;sti<state.securityTargets.length;sti++){
+          if(controlSecurityTargets.indexOf(state.securityTargets[sti])!==-1){ matchesSecurityTarget=true; break; }
+        }
+        if(!matchesSecurityTarget) return false;
       }
+
+      // Freitextsuche
+      if(!matchesSearchText(c.searchText, state.searchQuery)) return false;
       return true;
     }
 
@@ -8593,10 +9721,8 @@ function baseMatches(c){ return matches(c); }
 
     // Component Definition parsen und alle Owner-, Implementierungs- und Requirement-Beziehungen aufbauen.
     function processComponentDefinition(root){
-      var jsonText=componentState.jsonText;
       var baseUrl=componentState.baseUrl;
       componentState=createComponentState();
-      componentState.jsonText=jsonText;
       componentState.baseUrl=baseUrl;
 
       var doc=getComponentDefinitionDocument(root);
@@ -8697,7 +9823,7 @@ function baseMatches(c){ return matches(c); }
     }
 
     function isComponentFilterActive(){
-      if(componentState.q) return true;
+      if(componentState.searchQuery.groups.length) return true;
       if(allComponentTypes.length && componentState.types.length !== allComponentTypes.length) return true;
       if(allComponentSources.length && componentState.sources.length !== allComponentSources.length) return true;
       if(allComponentNames.length && componentState.names.length !== allComponentNames.length) return true;
@@ -8730,7 +9856,7 @@ function baseMatches(c){ return matches(c); }
         }
         if(!okSource) return false;
       }
-      if(componentState.q && (entry.searchText||'').indexOf(componentState.q)===-1) return false;
+      if(!matchesSearchText(entry.searchText, componentState.searchQuery)) return false;
       return true;
     }
 
@@ -9014,13 +10140,11 @@ function baseMatches(c){ return matches(c); }
       var commands=(req && Array.isArray(req.configCommands)) ? req.configCommands : [];
       if(!commands.length) return false;
 
-      var normalizedSearch=String(searchTerm||'').trim().toLowerCase();
+      var searchQuery=parseSearchQuery(searchTerm);
       var searchMatch=false;
-      if(normalizedSearch){
-        for(var sm=0;sm<commands.length;sm++){
-          var searchableCommand=(String(commands[sm].value||'')+' '+String(commands[sm].remarks||'')).toLowerCase();
-          if(searchableCommand.indexOf(normalizedSearch)!==-1){ searchMatch=true; break; }
-        }
+      for(var sm=0;sm<commands.length && searchQuery.terms.length;sm++){
+        var searchableCommand=String(commands[sm].value||'')+' '+String(commands[sm].remarks||'');
+        if(containsAnySearchTerm(searchableCommand,searchQuery)){ searchMatch=true; break; }
       }
 
       var details=document.createElement('details');
@@ -10370,11 +11494,8 @@ function baseMatches(c){ return matches(c); }
         +   (c.documentation? '<span class="kv"><strong>Dokumentationsempfehlung:</strong> <code>'+renderHighlightedInline(c.documentation, state.qRaw)+'</code></span>':'')
         +   (c.actionwords? '<span class="kv"><strong>Handlungswörter:</strong> <code>'+renderHighlightedInline(c.actionwords, state.qRaw)+'</code></span>':'')
         +   (c.tags? '<span class="kv"><strong>Tags:</strong> <code>'+renderHighlightedInline(c.tags, state.qRaw)+'</code></span>':'')
-        +   (c.threats? '<span class="kv"><strong>Gefährdungen:</strong> <code>'+renderHighlightedInline(c.threats, state.qRaw)+'</code></span>':'')
-        +   (c.confidentiality? '<span class="kv"><strong>Vertraulichkeit:</strong> <code>'+renderHighlightedInline(c.confidentiality, state.qRaw)+'</code></span>':'')
-        +   (c.integrity? '<span class="kv"><strong>Integrität:</strong> <code>'+renderHighlightedInline(c.integrity, state.qRaw)+'</code></span>':'')
-        +   (c.availability? '<span class="kv"><strong>Verfügbarkeit:</strong> <code>'+renderHighlightedInline(c.availability, state.qRaw)+'</code></span>':'')
-        +   (c.authenticity? '<span class="kv"><strong>Authentizität:</strong> <code>'+renderHighlightedInline(c.authenticity, state.qRaw)+'</code></span>':'')
+        +   renderSecurityTargetMeta(c)
+        +   (c.threats? '<span class="kv"><strong>BSI G0-Gefährdungen:</strong> <code>'+renderHighlightedInline(c.threats, state.qRaw)+'</code></span>':'')
         +   (c.taxonomyL1? '<span class="kv"><strong>Taxonomy-L1:</strong> <code>'+renderHighlightedInline(c.taxonomyL1, state.qRaw)+'</code></span>':'')
         +   (c.taxonomyL2? '<span class="kv"><strong>Taxonomy-L2:</strong> <code>'+renderHighlightedInline(c.taxonomyL2, state.qRaw)+'</code></span>':'')
         +   (c.taxonomyL3? '<span class="kv"><strong>Taxonomy-L3:</strong> <code>'+renderHighlightedInline(c.taxonomyL3, state.qRaw)+'</code></span>':'')
@@ -10384,8 +11505,8 @@ function baseMatches(c){ return matches(c); }
 
       var details=document.createElement('div');
       if(c.statement){ var st=document.createElement('details'); st.open=true; st.innerHTML='<summary><strong>Statement</strong></summary><div class="catalog-md">'+statementHtml+'</div>'; details.appendChild(st); }
-      if(c.guidance){ var gu=document.createElement('details'); if(state.q && String(c.guidance).toLowerCase().indexOf(state.q)!==-1){ gu.open=true; } gu.innerHTML='<summary><strong>Guidance</strong></summary><div class="catalog-md">'+guidanceHtml+'</div>'; details.appendChild(gu); }
-      if(c.remarks){ var re=document.createElement('details'); if(state.q && String(c.remarks).toLowerCase().indexOf(state.q)!==-1){ re.open=true; } re.innerHTML='<summary><strong>Remarks</strong></summary><div class="catalog-md">'+remarksHtml+'</div>'; details.appendChild(re); }
+      if(c.guidance){ var gu=document.createElement('details'); if(containsAnySearchTerm(c.guidance,state.searchQuery)){ gu.open=true; } gu.innerHTML='<summary><strong>Guidance</strong></summary><div class="catalog-md">'+guidanceHtml+'</div>'; details.appendChild(gu); }
+      if(c.remarks){ var re=document.createElement('details'); if(containsAnySearchTerm(c.remarks,state.searchQuery)){ re.open=true; } re.innerHTML='<summary><strong>Remarks</strong></summary><div class="catalog-md">'+remarksHtml+'</div>'; details.appendChild(re); }
       if(Array.isArray(c.parts)){
         for(var p=0;p<c.parts.length;p++){
           var part=c.parts[p]; if(!part||!part.prose) continue; if(part.name==='statement'||part.name==='guidance') continue;
@@ -10925,6 +12046,7 @@ function baseMatches(c){ return matches(c); }
     function resetAllFilters(){
       try{
         if(els.q) els.q.value = '';
+        state.autoSelectedTargets=[];
 
         function checkAll(menuEl, detailsEl, allLabel){
           if(!menuEl || !detailsEl) return;
@@ -10955,6 +12077,7 @@ function baseMatches(c){ return matches(c); }
         checkAll(els.modalverbMenu, els.modalverb, 'Alle Modalverben');
         checkAll(els.documentationMenu, els.documentation, 'Alle Dokumentationsempfehlungen');
         checkAll(els.actionwordMenu, els.actionword, 'Alle Handlungswörter');
+        checkAll(els.securityTargetMenu, els.securityTarget, 'Alle Schutzziele');
         var openDropdowns = document.querySelectorAll('details.ms[open]');
         for(var od=0; od<openDropdowns.length; od++){
           openDropdowns[od].open = false;
@@ -11182,4 +12305,3 @@ loadOscalDeepLink();
   </script>
 </body>
 </html>
-

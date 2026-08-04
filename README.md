@@ -14,14 +14,14 @@ Der Viewer muss nicht installiert werden und benötigt keinen lokalen Server. F�
 
 2. Die Viewer-Datei aus diesem Repository herunterladen:
 
-   - `Stand der Technik-Viewer.html` für die deutsche Version
-   - `State-of-the-art-OSCAL-Viewer-EN.html` für die englische Version
+   - `Stand der Technik-Viewer.html` für die eigenständig ausführbare deutsche Version
+   - `index.html` wird inhaltlich byteidentisch gehalten und dient primär der Bereitstellung über GitHub Pages
 
    Auf GitHub dazu die jeweilige Datei öffnen und über den Download-Button herunterladen. Alternativ kann das gesamte Repository über `Code` > `Download ZIP` heruntergeladen und anschließend entpackt werden.
 
-3. Die Datei `d3.v7.min.js` herunterladen. Sie wird für die Graph-, Sunburst- und Balkendiagramme benötigt.
+3. Die Datei `d3.v7.min.js` herunterladen. Sie wird für die Graph-, Sunburst-, Balkendiagramm- und Zielobjekthierarchie-Ansichten benötigt.
 
-4. Die Datei `viewer_logo.png` herunterladen. Sie wird als Logo im linken Menüband angezeigt.
+4. Die Datei `viewer_logo-transparent.png` herunterladen. Sie wird als Logo im Kopfbereich angezeigt.
 
 5. Die drei heruntergeladenen Dateien in denselben Ordner legen. Für die deutsche Version muss der Ordner danach beispielsweise so aussehen:
 
@@ -29,10 +29,10 @@ Der Viewer muss nicht installiert werden und benötigt keinen lokalen Server. F�
    Stand-der-Technik-Viewer/
    |-- Stand der Technik-Viewer.html
    |-- d3.v7.min.js
-   |-- viewer_logo.png
+   |-- viewer_logo-transparent.png
    ```
 
-   Für die englische Version wird stattdessen `State-of-the-art-OSCAL-Viewer-EN.html` verwendet. Die Dateinamen von `d3.v7.min.js` und `viewer_logo.png` dürfen nicht geändert werden, da die HTML-Datei genau diese Namen erwartet.
+   Alternativ kann `index.html` anstelle von `Stand der Technik-Viewer.html` verwendet werden. Die Dateinamen von `d3.v7.min.js` und `viewer_logo-transparent.png` dürfen nicht geändert werden, da die HTML-Datei genau diese Namen erwartet.
 
 6. Die HTML-Datei per Doppelklick öffnen. Sie startet im Standardbrowser. Alternativ kann sie über das Kontextmenü mit einem aktuellen Browser wie Chrome, Edge oder Firefox geöffnet werden.
 
@@ -42,11 +42,11 @@ Der Viewer muss nicht installiert werden und benötigt keinen lokalen Server. F�
    - über die Dateiauswahl eine lokale OSCAL-JSON-Datei auswählen oder
    - eine URL zu einem OSCAL-JSON-Dokument eingeben und laden.
 
-   Lokale JSON-Uploads und URL-Importe stehen in der Katalog- und Komponentenansicht im linken Arbeitsbereich zur Verfügung.
+   Lokale JSON-Uploads und URL-Importe stehen in der Katalog-, Komponenten- und Mappingansicht im linken Arbeitsbereich zur Verfügung. Die Repository-Auswahl wird für Kataloge und Komponentendefinitionen angeboten.
 
-8. Nach dem Laden können die Katalog-, Komponenten- oder Mappingansicht sowie Suche, Filter, Diagramme, JSON-Ansicht und PDF-Export verwendet werden. Für die vollständige Komponenten- und Mappingdarstellung sollten die passenden Kataloge zusätzlich in der Katalogansicht geladen sein.
+8. Nach dem Laden können die Katalog-, Komponenten- oder Mappingansicht sowie Suche, Filter, Diagramme, JSON-Detailanzeigen und PDF-Export verwendet werden. Bei geeigneten Katalogen erscheint zusätzlich der Tab `Vererbung Zielobjektkategorien`. Für die vollständige Komponenten- und Mappingdarstellung sollten die passenden Kataloge zusätzlich in der Katalogansicht geladen sein.
 
-> **Wichtig:** Wenn das Logo fehlt, bleibt der Logo-Bereich leer. Wenn `d3.v7.min.js` fehlt oder nicht im selben Ordner liegt, funktioniert der Viewer grundsätzlich weiterhin, die Diagrammansichten können jedoch nicht dargestellt werden.
+> **Wichtig:** Wenn das Logo fehlt, zeigt der Viewer einen textuellen Titel als Fallback. Wenn `d3.v7.min.js` fehlt oder nicht im selben Ordner liegt, funktioniert der Viewer grundsätzlich weiterhin; Graph, Sunburst, Balkendiagramm und Zielobjekthierarchie können dann jedoch nicht dargestellt werden.
 
 Der Viewer verarbeitet aktuell:
 
@@ -60,18 +60,24 @@ Die gesamte Verarbeitung erfolgt clientseitig im Browser. Es gibt keinen Servera
 
 - `Stand der Technik-Viewer.html`
   Viewer mit eingebettetem CSS und JavaScript.
+- `index.html`
+  Byteidentische GitHub-Pages-Einstiegsdatei des deutschen Viewers.
 - `d3.v7.min.js`
-  Lokal eingebundene D3-Bibliothek für Graph-, Sunburst- und Balkendiagramm-Ansichten.
-- `viewer_logo.png`
-  Optionales Logo im linken Menüband.
+  Lokal eingebundene D3-Bibliothek für Graph-, Sunburst-, Balkendiagramm- und Zielobjekthierarchie-Ansichten.
+- `viewer_logo-transparent.png`
+  Logo mit transparentem Hintergrund für den Kopfbereich.
+- `VERSION`
+  Maßgebliche Versionsquelle des Viewers.
+- `CHANGELOG.md`
+  Nach Versionen gegliederte Übersicht der Änderungen.
 
 ## Was der Viewer aktuell kann
 
 ### Allgemein
 
 - drei getrennte Datenmodi in einer Datei
-  - `Katalog`
-  - `Komponenten`
+  - `Kataloge`
+  - `Komponentendefinitionen`
   - `Mappings`
 - paralleles Laden aller drei Dokumenttypen
   - Catalog per Datei oder URL
@@ -84,6 +90,11 @@ Die gesamte Verarbeitung erfolgt clientseitig im Browser. Es gibt keinen Servera
   - `Mappinganalyse` im Mappingmodus
 - GitHub-`blob`-Links werden automatisch auf `raw` umgeschrieben
 - geladene OSCAL-Dokumente werden in Quellen- und Repository-Auswahlen über `metadata.title` statt über den JSON-Dateinamen bezeichnet
+- Repository-Dokumente werden anhand von `metadata.document-ids[].identifier` identifiziert
+  - identische Document IDs werden dokumenttypübergreifend nur einmal angezeigt
+  - gleiche Titel oder Dateinamen bleiben vollständig sichtbar, wenn ihre Document IDs unterschiedlich sind
+  - Dokumente ohne gültige Document ID werden sicherheitshalber nicht zusammengeführt
+- SHA-gebundener Browser-Cache für Repository-Titel und Document IDs unveränderter Dateien
 - Startseite mit Repository-Suche, Modellkacheln, Nutzungshinweisen und Begriffserklärungen
 - vollständig lokale Darstellung im Browser
 
@@ -92,11 +103,11 @@ Die gesamte Verarbeitung erfolgt clientseitig im Browser. Es gibt keinen Servera
 Die Startseite dient als Einstieg in die Stand der Technik-Bibliothek. Sie enthält:
 
 - eine Suche nach Repository-Dokumenten
-- Modellkacheln für `Kataloge` und `Implementierungsbeschreibungen`
+- Modellkacheln für `Kataloge` und `Komponentendefinitionen`
 - eine kurze Anleitung `Wie nutze ich den Viewer?`
 - eine Begriffserklärung zentraler OSCAL- und Viewer-Begriffe
 
-Über die Kacheln `Kataloge` und `Implementierungsbeschreibungen` werden die entsprechenden Inhalte aus dem [öffentlichen BSI Stand der Technik GitHub-Repository](https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek) angezeigt. Ein erneuter Klick auf ein gelistetes Dokument lädt es direkt im Viewer.
+Über die Kacheln `Kataloge` und `Komponentendefinitionen` werden die entsprechenden Inhalte aus dem [öffentlichen BSI Stand der Technik GitHub-Repository](https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek) angezeigt. Ein Klick auf ein gelistetes Dokument lädt es direkt im Viewer.
 
 Die Anleitung erklärt:
 
@@ -108,19 +119,36 @@ Die Anleitung erklärt:
 
 ### Haupt-Tabs
 
-- `Katalog`
-- `Komponenten`
+- `Kataloge`
+- `Komponentendefinitionen`
 - `Mappings`
 - `Graph`
 - `Sunburst`
 - `Balkendiagramm`
-- `JSON`
+- konditional: `Vererbung Zielobjektkategorien`
 
-Der Tab `JSON` zeigt immer den aktuell aktiven Datenmodus. `Graph`, `Sunburst` und `Balkendiagramm` visualisieren Catalogs und Component Definitions; für Control Mappings bleibt die Crosswalk-Tabelle die primäre Ansicht.
+`Graph`, `Sunburst` und `Balkendiagramm` visualisieren den jeweils aktiven Datenmodus und unterstützen Kataloge, Komponentendefinitionen und Control Mappings. Der Crosswalk bleibt die primäre tabellarische Mappingansicht.
 
-Die obere Menüleiste führt zu den Arbeitsbereichen: `Katalog`, `Komponenten` und `Mappings` zeigen die dort hochgeladenen Inhalte an. `Graph`, `Sunburst` und `Balkendiagramm` visualisieren geladene Daten. `JSON` zeigt die Rohstruktur des aktiven Dokuments.
+Die obere Menüleiste führt zu den Arbeitsbereichen: `Kataloge`, `Komponentendefinitionen` und `Mappings` zeigen die dort geladenen Inhalte an. Die drei allgemeinen Diagramm-Tabs visualisieren den jeweils aktiven Arbeitsbereich.
+
+`Vererbung Zielobjektkategorien` ersetzt die frühere globale JSON-Gesamtansicht. Der Tab wird ausschließlich angezeigt, wenn im aktiven Katalog mindestens eine Control die OSCAL-Property `target_object_categories` verwendet. JSON-Rohdaten einzelner Controls, Anforderungen und Komponenten bleiben über die jeweiligen `JSON`-Buttons verfügbar.
 
 In der Katalog-, Komponenten- und Mappingansicht steht jeweils ein linker Arbeitsbereich zur Verfügung. Dort können Inhalte über Volltextsuche und weitere vorgegebene Filterungsmöglichkeiten eingegrenzt werden.
+
+### Volltextsuche in allen drei Arbeitsbereichen
+
+Die Suche verwendet in Katalogen, Komponentendefinitionen und Mappings dieselbe Syntax:
+
+- Mehrere durch Leerzeichen getrennte Begriffe werden mit `UND` verknüpft und müssen alle vorkommen.
+  - Beispiel: `Firewall Dokumentation`
+- Text in Anführungszeichen wird als zusammenhängende Wortfolge gesucht.
+  - Beispiel: `"G 0.18"`
+- Der deutsche Operator `ODER` trennt alternative Suchgruppen. Mindestens eine Alternative muss vorkommen; Ergebnisse mit beiden Alternativen werden ebenfalls angezeigt.
+  - Beispiel: `"G 0.18" ODER "G 0.20"`
+- Groß- und Kleinschreibung werden bei der Suche nicht unterschieden.
+- Ein Fragezeichen-Tooltip neben jedem Suchfeld erklärt die Syntax unmittelbar im Viewer.
+
+Treffer werden in den dargestellten Inhalten hervorgehoben. Die übrigen facettierten Filter werden zusätzlich zur Volltextsuche angewendet.
 
 ## Begriffserklärungen
 
@@ -181,9 +209,17 @@ Die Startseite enthält kompakte Begriffserklärungen für zentrale Begriffe:
 - Sicherheitsniveau
 - Aufwand inkl. Tooltip
 - Thema
-- Zielobjektkategorie
+- Zielobjektkategorien
 - Dokumentationsempfehlung
+- Modalverben
+- Handlungswörter
 - Tags
+- Schutzziele aus den Custom Properties:
+  - `confidentiality` → Vertraulichkeit
+  - `integrity` → Integrität
+  - `availability` → Verfügbarkeit
+  - `authenticity` → Authentizität
+- BSI-G0-Gefährdungen aus der Custom Property `threats`
 - JSON-Button pro Anforderung
 
 ### Detaildarstellung pro Anforderung
@@ -208,7 +244,7 @@ Die Anzeige ist bewusst als strukturierte Name/Wert-Darstellung umgesetzt und ni
 ### Suche und Filter im Katalog-Modus
 
 - Volltextsuche
-- Praktiken
+- je nach Katalogstruktur Praktiken und Themen beziehungsweise Gruppen und Untergruppen
 - Quellkataloge
 - Sicherheitsniveaus
 - Zielobjektkategorien
@@ -217,8 +253,40 @@ Die Anzeige ist bewusst als strukturierte Name/Wert-Darstellung umgesetzt und ni
 - Modalverben
 - Dokumentationsempfehlungen
 - Handlungswörter
+- Schutzziele
 
-Die Filter sind AND-verknüpft. `Filter zurücksetzen` leert das Suchfeld, setzt alle Dropdowns zurück und schließt geöffnete Filter-Dropdowns.
+Die Filter sind UND-verknüpft. `Filter zurücksetzen` leert das Suchfeld, setzt alle Dropdowns zurück und schließt geöffnete Filter-Dropdowns.
+
+### Automatische Vererbung der Zielobjektkategorien
+
+Sobald der aktive Katalog die Control-Property `target_object_categories` verwendet, lädt der Viewer bedarfsgesteuert die aktuelle Datei [`target_object_categories.csv`](https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/blob/main/documentation/namespaces/target_object_categories.csv) aus dem öffentlichen BSI Repository. Sie bildet die Zielobjekthierarchie des BSI Grundschutz++/Stand der Technik ab.
+
+Beim Auswählen einer Zielobjektkategorie ergänzt der Filter transitiv alle übergeordneten Kategorien, deren Anforderungen an die ausgewählte Kategorie vererbt werden. Beispiel:
+
+```text
+Anwendungen → Webserver → Webanwendungen
+```
+
+Die Auswahl `Webanwendungen` aktiviert damit initial auch `Webserver` und `Anwendungen`. Automatisch ergänzte Kategorien werden gekennzeichnet und können anschließend einzeln wieder abgewählt werden. Wird die Ausgangskategorie entfernt und erneut ausgewählt, wird die automatische Ergänzung erneut angewendet. `Alle Zielobjektkategorien` setzt die Auswahl und den Automatikzustand vollständig zurück.
+
+Die CSV-Verarbeitung validiert erforderliche Spalten, UUIDs, eindeutige Kategorien, Elternreferenzen und Zyklen. Ist die Datei nicht erreichbar oder ungültig, bleibt die exakte Zielobjektfilterung ohne Vererbungsautomatik nutzbar.
+
+### Visualisierung der Zielobjektvererbung
+
+Der konditionale Tab `Vererbung Zielobjektkategorien` zeigt die vollständige aktuelle Zielobjekthierarchie des BSI Grundschutz++/Stand der Technik, wenn der aktive Katalog `target_object_categories` verwendet. Die Visualisierung bietet:
+
+- Anordnung von allgemeinen Elternkategorien zu spezielleren Kindkategorien
+- farblich getrennte Wurzelfamilien und gerichtete Verbindungslinien
+- Zoom, Verschieben und die Aktion `Alles anzeigen`
+- Zusammenfassung von Kategorien, Wurzelknoten und Hierarchieebenen
+- Tooltips pro Kategorie mit:
+  - Definition
+  - Kategorie
+  - Synonymen, sofern vorhanden
+- Mausbedienung und Tastaturfokus für die Kategorien
+- verständliche Lade-, Fehler- und Wiederholungszustände
+
+Die CSV wird nur einmal pro Seitenaufruf geladen und für Filterautomatik und Visualisierung gemeinsam verwendet. Beim Wechsel auf einen Katalog ohne die Property sowie in der Komponenten- oder Mappingansicht wird der Tab vollständig ausgeblendet.
 
 ## Komponentenansicht
 
@@ -293,9 +361,9 @@ Ist kein passender Catalog geladen, weist die linke Spalte darauf hin. Die Imple
 
 ### Implemented Requirements und Cross-Navigation
 
-Wenn ein passender Catalog geladen ist, führt der Button `Im Katalog öffnen` direkt zur referenzierten Anforderung im Katalog-Tab.
+Wenn ein passender Catalog geladen ist, führt der Button `Im Katalog öffnen` direkt zur referenzierten Anforderung im Tab `Kataloge`.
 
-Der Viewer merkt sich dabei die exakte Position in der Komponentenansicht. Beim Zurückwechseln zum Tab `Komponenten` wird wieder zu genau der Requirement in der ursprünglichen Komponente gesprungen.
+Der Viewer merkt sich dabei die exakte Position in der Komponentenansicht. Beim Zurückwechseln zum Tab `Komponentendefinitionen` wird wieder zu genau der Requirement in der ursprünglichen Komponente gesprungen.
 
 Der Button `JSON` in jeder Tabellenzeile zeigt weiterhin die vollständigen Rohdaten des jeweiligen `Implemented Requirement`.
 
@@ -317,7 +385,7 @@ D3 wird lokal eingebunden:
 <script src="./d3.v7.min.js"></script>
 ```
 
-Die Diagramme werden lazy gerendert, also nur dann neu aufgebaut, wenn der jeweilige Tab sichtbar ist.
+Die Diagramme werden lazy gerendert, also nur dann neu aufgebaut, wenn der jeweilige Tab sichtbar ist. Die Zielobjekthierarchie nutzt dieselbe lokale D3-Bibliothek und wird ebenfalls erst beim Öffnen ihrer Ansicht aufgebaut.
 
 ### Graph
 
@@ -338,6 +406,12 @@ Im Komponenten-Modus:
   - Owner und Requirement
 - Klick auf Requirement-Knoten kann direkt in den Katalog springen oder innerhalb der Komponentenansicht navigieren
 
+Im Mapping-Modus:
+
+- gerichteter Graph zwischen Source- und Target-Controls
+- Relationship-Typ als Information an der Verbindung
+- getrennte Kennzeichnung von Source- und Target-Seite
+
 ### Sunburst
 
 Im Katalog-Modus:
@@ -349,6 +423,11 @@ Im Komponenten-Modus:
 - Verteilung der Einträge nach Komponententypen
 - zusätzliche Zusammenfassung von Capabilities
 
+Im Mapping-Modus:
+
+- Verteilung nach Source-Katalogen
+- darunter verwendete Relationship-Typen
+
 ### Balkendiagramm
 
 Im Katalog-Modus:
@@ -359,14 +438,18 @@ Im Komponenten-Modus:
 
 - Anzahl der referenzierten Anforderungen pro Quelle (`source`)
 
+Im Mapping-Modus:
+
+- Anzahl der Mapping-Beziehungen pro Relationship-Typ
+
 ## JSON-Funktionen
 
-- `JSON`-Tab
-  - zeigt immer das aktuell aktive Dokument als formatiertes JSON
-  - also entweder den geladenen Catalog oder die geladene Component Definition
-- JSON-Button in einzelnen Karten
+- JSON-Button in einzelnen Karten und Tabellenzeilen
   - öffnet ein Modal mit dem JSON genau dieses Eintrags
-  - z. B. Anforderung, Komponente oder Implemented Requirement
+  - unterstützt unter anderem Anforderungen, Komponenten und Implemented Requirements
+- die frühere globale JSON-Gesamtansicht wurde entfernt
+  - vollständige Quelldokumente können bei Bedarf direkt als ursprüngliche JSON-Datei betrachtet werden
+  - die gezielte Rohdatenprüfung im Viewer bleibt über die Detail-Buttons erhalten
 
 ## Markdown- und Markup-Unterstützung
 
@@ -446,18 +529,24 @@ Grober Aufbau:
 
 - Parser für Catalogs
 - Parser für Component Definitions
-- separater Laufzeitstatus für beide Datenmodi
+- Parser für Control Mapping Collections
+- validierter CSV-Parser für die BSI-Zielobjekthierarchie
+- separater Laufzeitstatus für Katalog-, Komponenten- und Mappingdaten
 - DOM-basierte Renderer für:
   - Katalogansicht
   - Komponentenansicht
+  - Mapping-Crosswalk
   - Metadaten
   - Back Matter
   - Diagramme
+  - Zielobjekthierarchie
 - Interaktionslogik für:
   - Multi-Select-Dropdowns
-  - debounced Suche
+  - gemeinsame UND-, Wortgruppen- und ODER-Suche
+  - automatische Zielobjektvererbung
   - JSON-Modal
   - Cross-Navigation zwischen Katalog und Komponenten
+- Repository-Indexierung mit Document-ID-Deduplizierung und SHA-gebundenem Metadaten-Cache
 
 ## Performance-Aspekte
 
@@ -466,9 +555,12 @@ Der Viewer ist auf größere OSCAL-Dokumente ausgelegt. Wichtige Maßnahmen:
 - debounced Volltextsuche
 - lazy Rendering der Diagramme
 - Caching für markup-fähige Texte
+- SHA-gebundener Cache für Repository-Titel und Document IDs
+- einmaliger, bedarfsgesteuerter Abruf der Zielobjekt-CSV pro Seitenaufruf
 - direkte DOM-Erzeugung ohne Framework
 - Lazy-Loading für Bilder
-- getrennte States für Katalog- und Komponenten-Daten
+- getrennte States für Katalog-, Komponenten- und Mappingdaten
+- keine zusätzliche vollständige JSON-Rohtextkopie pro geladenem Dokument
 
 ## Fehlerbehebung
 
@@ -485,6 +577,13 @@ Der Viewer ist auf größere OSCAL-Dokumente ausgelegt. Wichtige Maßnahmen:
   - Internetverbindung prüfen
   - Zugriff auf das öffentliche BSI Stand der Technik GitHub-Repository prüfen
   - lokale Dateien und URL-Uploads können weiterhin verwendet werden
+- Der Tab `Vererbung Zielobjektkategorien` erscheint nicht
+  - prüfen, ob der aktive Katalog mindestens eine Control mit der Property `target_object_categories` enthält
+  - der Tab wird nur in der Katalogansicht angeboten
+- Zielobjektvererbung oder -visualisierung kann nicht geladen werden
+  - Internetzugriff auf die öffentliche BSI-Namespace-Datei prüfen
+  - in der Visualisierung die Aktion `Erneut laden` verwenden
+  - die exakte Zielobjektfilterung bleibt auch ohne Hierarchiedaten verfügbar
 - Sprung in den Katalog funktioniert nicht
   - passender Catalog ist nicht geladen
   - `control-id` der Component Definition passt nicht zu einer Anforderung im geladenen Catalog
@@ -501,6 +600,7 @@ Der Viewer ist auf größere OSCAL-Dokumente ausgelegt. Wichtige Maßnahmen:
 - Verarbeitung erfolgt vollständig lokal im Browser
 - keine Telemetrie oder externe Tracking-Integration im Viewer
 - beim Laden per URL sendet der Browser eine HTTP-Anfrage an die angegebene Adresse
+- Repository-Auswahl und Zielobjekthierarchie senden HTTP-Anfragen an das öffentliche BSI GitHub-Repository
 - für externe Bilder oder Links gelten die Sicherheits- und Verfügbarkeitsbedingungen der jeweiligen Quelle
 
 ## Scope dieser README
@@ -512,9 +612,11 @@ Diese README beschreibt den aktuellen Implementierungsstand des `Stand der Techn
 - Komponentenansicht
 - Mappingansicht
 - Metadaten- und Backmatter-Anzeige
-- JSON-Tab und JSON-Modal
+- JSON-Detailmodal für einzelne Controls, Anforderungen und Komponenten
 - Such- und Filterlogik in Katalog-, Komponenten- und Mappingansicht
 - Diagrammansichten auf Basis von D3
+- automatische Zielobjektvererbung und konditionale Hierarchievisualisierung
+- Document-ID-basierte Repository-Deduplizierung
 - Cross-Navigation zwischen Komponenten und Katalog
 - PDF-Export
 - Markdown-/Markup-Unterstützung inklusive Tabellen, Bilder und Links
