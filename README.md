@@ -1,29 +1,36 @@
 ﻿# Stand der Technik-Viewer
 
-## Installation und Start
+## Viewer direkt nutzen
 
-Der Viewer muss nicht installiert werden und benötigt keinen lokalen Server. Für die Nutzung werden lediglich die Viewer-HTML-Datei, die D3-Bibliothek und das Logo gemeinsam in einem Ordner gespeichert.
+Die GitHub-Organisation `bsi-community` stellt den Stand der Technik-Viewer über GitHub Pages bereit. Er kann ohne Installation oder Download direkt im Browser geöffnet werden:
 
-### Schritt-für-Schritt-Anleitung
+**[Stand der Technik-Viewer öffnen](https://bsi-community.github.io/Stand-der-Technik-Viewer/)**
 
-1. Einen neuen Ordner auf dem eigenen Computer anlegen, zum Beispiel:
+Dies ist die empfohlene und einfachste Nutzungsweise. Bei jedem Aufruf wird automatisch die aktuell über GitHub Pages veröffentlichte Version des Viewers verwendet. Ein manueller Download der HTML-Dateien, der D3-Bibliothek oder des Logos ist dafür nicht erforderlich.
 
-   ```text
-   Stand-der-Technik-Viewer
-   ```
+## Viewer verwenden
 
-2. Die Viewer-Datei aus diesem Repository herunterladen:
+1. Im Viewer ein OSCAL-Dokument laden:
 
-   - `Stand der Technik-Viewer.html` für die eigenständig ausführbare deutsche Version
-   - `index.html` wird inhaltlich byteidentisch gehalten und dient primär der Bereitstellung über GitHub Pages
+   - über die Suche oder die Modellkacheln auf der Startseite ein Dokument aus dem öffentlichen BSI Stand der Technik Repository auswählen,
+   - über die Dateiauswahl eine lokale OSCAL-JSON-Datei auswählen oder
+   - eine URL zu einem OSCAL-JSON-Dokument eingeben und laden.
 
-   Auf GitHub dazu die jeweilige Datei öffnen und über den Download-Button herunterladen. Alternativ kann das gesamte Repository über `Code` > `Download ZIP` heruntergeladen und anschließend entpackt werden.
+   Lokale JSON-Uploads und URL-Importe stehen in der Katalog-, Komponenten- und Mappingansicht im linken Arbeitsbereich zur Verfügung. Die Repository-Auswahl wird für Kataloge und Komponentendefinitionen angeboten.
 
-3. Die Datei `d3.v7.min.js` herunterladen. Sie wird für die Graph-, Sunburst-, Balkendiagramm- und Zielobjekthierarchie-Ansichten benötigt.
+2. Nach dem Laden können die Katalog-, Komponenten- oder Mappingansicht sowie Suche, Filter, Diagramme, JSON-Detailanzeigen und PDF-Export verwendet werden. Bei geeigneten Katalogen erscheint zusätzlich der Tab `Vererbung Zielobjektkategorien`. Für die vollständige Komponenten- und Mappingdarstellung sollten die passenden Kataloge zusätzlich in der Katalogansicht geladen sein.
 
-4. Die Datei `viewer_logo-transparent.png` herunterladen. Sie wird als Logo im Kopfbereich angezeigt.
+## Lokale Nutzung (optional)
 
-5. Die drei heruntergeladenen Dateien in denselben Ordner legen. Für die deutsche Version muss der Ordner danach beispielsweise so aussehen:
+Der Viewer kann weiterhin vollständig lokal ausgeführt werden. Ein lokaler Server ist dafür nicht notwendig.
+
+1. Das Repository über `Code` > `Download ZIP` herunterladen und entpacken. Alternativ können die folgenden Dateien einzeln heruntergeladen werden:
+
+   - `Stand der Technik-Viewer.html` oder die inhaltlich byteidentische Datei `index.html`
+   - `d3.v7.min.js`
+   - `viewer_logo-transparent.png`
+
+2. Die drei Dateien gemeinsam in demselben Ordner speichern, zum Beispiel:
 
    ```text
    Stand-der-Technik-Viewer/
@@ -32,19 +39,9 @@ Der Viewer muss nicht installiert werden und benötigt keinen lokalen Server. F�
    |-- viewer_logo-transparent.png
    ```
 
-   Alternativ kann `index.html` anstelle von `Stand der Technik-Viewer.html` verwendet werden. Die Dateinamen von `d3.v7.min.js` und `viewer_logo-transparent.png` dürfen nicht geändert werden, da die HTML-Datei genau diese Namen erwartet.
+   Die Dateinamen von `d3.v7.min.js` und `viewer_logo-transparent.png` dürfen nicht geändert werden, da die HTML-Datei genau diese Namen erwartet.
 
-6. Die HTML-Datei per Doppelklick öffnen. Sie startet im Standardbrowser. Alternativ kann sie über das Kontextmenü mit einem aktuellen Browser wie Chrome, Edge oder Firefox geöffnet werden.
-
-7. Im Viewer ein OSCAL-Dokument laden:
-
-   - über die Suche oder die Modellkacheln auf der Startseite ein Dokument aus dem öffentlichen BSI Stand der Technik Repository auswählen,
-   - über die Dateiauswahl eine lokale OSCAL-JSON-Datei auswählen oder
-   - eine URL zu einem OSCAL-JSON-Dokument eingeben und laden.
-
-   Lokale JSON-Uploads und URL-Importe stehen in der Katalog-, Komponenten- und Mappingansicht im linken Arbeitsbereich zur Verfügung. Die Repository-Auswahl wird für Kataloge und Komponentendefinitionen angeboten.
-
-8. Nach dem Laden können die Katalog-, Komponenten- oder Mappingansicht sowie Suche, Filter, Diagramme, JSON-Detailanzeigen und PDF-Export verwendet werden. Bei geeigneten Katalogen erscheint zusätzlich der Tab `Vererbung Zielobjektkategorien`. Für die vollständige Komponenten- und Mappingdarstellung sollten die passenden Kataloge zusätzlich in der Katalogansicht geladen sein.
+3. `Stand der Technik-Viewer.html` oder `index.html` per Doppelklick in einem aktuellen Browser wie Chrome, Edge oder Firefox öffnen.
 
 > **Wichtig:** Wenn das Logo fehlt, zeigt der Viewer einen textuellen Titel als Fallback. Wenn `d3.v7.min.js` fehlt oder nicht im selben Ordner liegt, funktioniert der Viewer grundsätzlich weiterhin; Graph, Sunburst, Balkendiagramm und Zielobjekthierarchie können dann jedoch nicht dargestellt werden.
 
@@ -141,8 +138,8 @@ Die Suche verwendet in Katalogen, Komponentendefinitionen und Mappings dieselbe 
 
 - Mehrere durch Leerzeichen getrennte Begriffe werden mit `UND` verknüpft und müssen alle vorkommen.
   - Beispiel: `Firewall Dokumentation`
-- Text in Anführungszeichen wird als zusammenhängende Wortfolge gesucht.
-  - Beispiel: `"G 0.18"`
+- Text in Anführungszeichen wird als eigenständige zusammenhängende Wortfolge gesucht. Alphanumerische Fortsetzungen gelten nicht als Treffer.
+  - Beispiel: `"G 0.1"` findet `G 0.1`, aber nicht `G 0.10`, `G 0.12` oder `G 0.18`.
 - Der deutsche Operator `ODER` trennt alternative Suchgruppen. Mindestens eine Alternative muss vorkommen; Ergebnisse mit beiden Alternativen werden ebenfalls angezeigt.
   - Beispiel: `"G 0.18" ODER "G 0.20"`
 - Groß- und Kleinschreibung werden bei der Suche nicht unterschieden.
