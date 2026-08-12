@@ -5708,15 +5708,40 @@
       }, 0);
     }
 
+    function updateViewerQueryParam(key, value){
+      try{
+        var url=new URL(window.location.href);
+        if(value===null || value===undefined || value==='') url.searchParams.delete(key);
+        else url.searchParams.set(key, String(value));
+        window.history.replaceState({}, '', url.href);
+      }catch(_err){}
+    }
+
+    function persistViewerTabState(name){
+      var primaryTabs={home:true,list:true,components:true,mappings:true};
+      var secondaryTabs={graph:true,sunburst:true,bar:true,'target-hierarchy':true};
+      if(primaryTabs[name]){
+        updateViewerQueryParam('primary_tab', name);
+        updateViewerQueryParam('secondary_tab', null);
+        return;
+      }
+      if(!secondaryTabs[name]) return;
+      var primary=uiState.dataMode==='component' ? 'components' : (uiState.dataMode==='mapping' ? 'mappings' : 'list');
+      updateViewerQueryParam('primary_tab', primary);
+      updateViewerQueryParam('secondary_tab', name);
+    }
+
     // Hauptnavigation: Tabs umschalten und Ansichten nur bei Bedarf rendern.
     function switchTab(name){
       if(name==='home'){
+        persistViewerTabState(name);
         showHomePage(true);
         return;
       }
       if(name==='target-hierarchy' && (uiState.dataMode!=='catalog' || !state.hasTargetObjectCategories)){
         name='list';
       }
+      persistViewerTabState(name);
       hideEffortTooltip();
       hideTargetHierarchyTooltip();
       document.body.classList.remove('home-mode');
@@ -6169,8 +6194,20 @@
         });
     }
 
+    function persistLoadedOscalUrl(rawUrl, kind, sourceLabel){
+      var url;
+      try{ url=normalizeCatalogUrl(rawUrl); }catch(_err){ return; }
+      if(!url) return;
+      updateViewerQueryParam('url', url);
+      updateViewerQueryParam('kind', kind);
+      updateViewerQueryParam('label', sourceLabel || null);
+    }
+
     function loadCatalogFromUrl(rawUrl, sourceLabel){
-      return loadOscalFromUrl(rawUrl, 'catalog', sourceLabel, 'Fehler beim Laden der Katalog-URL:');
+      return loadOscalFromUrl(rawUrl, 'catalog', sourceLabel, 'Fehler beim Laden der Katalog-URL:').then(function(kind){
+        if(kind) persistLoadedOscalUrl(rawUrl, kind, sourceLabel);
+        return kind;
+      });
     }
 
     if(els.urlLoadBtn){
@@ -6210,7 +6247,10 @@
     }
 
     function loadComponentFromUrl(rawUrl, sourceLabel){
-      return loadOscalFromUrl(rawUrl, 'component', sourceLabel, 'Fehler beim Laden der Component-URL:');
+      return loadOscalFromUrl(rawUrl, 'component', sourceLabel, 'Fehler beim Laden der Component-URL:').then(function(kind){
+        if(kind) persistLoadedOscalUrl(rawUrl, kind, sourceLabel);
+        return kind;
+      });
     }
 
     if(compEls.urlLoadBtn){
@@ -6252,7 +6292,10 @@
     }
 
     function loadMappingFromUrl(rawUrl, sourceLabel){
-      return loadOscalFromUrl(rawUrl, 'mapping', sourceLabel, 'Fehler beim Laden der Mapping-URL:');
+      return loadOscalFromUrl(rawUrl, 'mapping', sourceLabel, 'Fehler beim Laden der Mapping-URL:').then(function(kind){
+        if(kind) persistLoadedOscalUrl(rawUrl, kind, sourceLabel);
+        return kind;
+      });
     }
     if(mappingEls.urlLoadBtn){
       mappingEls.urlLoadBtn.addEventListener('click', function(ev){
@@ -6324,6 +6367,25 @@
         });
       });
       return chain;
+    }
+
+    function restoreViewerStateFromUrl(){
+      var params;
+      try{ params=new URLSearchParams(window.location.search || ''); }
+      catch(_err){ return Promise.resolve(false); }
+
+      var primary=params.get('primary_tab') || '';
+      var secondary=params.get('secondary_tab') || '';
+      var allowedPrimary={home:true,list:true,components:true,mappings:true};
+      var allowedSecondary={graph:true,sunburst:true,bar:true,'target-hierarchy':true};
+      if(!allowedPrimary[primary]) primary='';
+      if(!allowedSecondary[secondary]) secondary='';
+
+      return loadOscalDeepLink().then(function(loaded){
+        if(primary) switchTab(primary);
+        if(secondary) switchTab(secondary);
+        return loaded;
+      });
     }
 
     var BSI_REPOSITORY_TREE_URL='https://api.github.com/repos/BSI-Bund/Stand-der-Technik-Bibliothek/git/trees/main?recursive=1';
@@ -11986,6 +12048,55 @@ function baseMatches(c){ return matches(c); }
       }
     }
 
+    function incrementDiagramCount(bucket, key){
+      var label=String(key||'').trim() || 'Ohne Angabe';
+      bucket[label]=(bucket[label]||0)+1;
+    }
+
+    function buildCatalogDiagramStats(){
+      var result={counts:{},modalverbs:{},securityLevels:{}};
+      for(var i=0;i<state.controls.length;i++){
+        var control=state.controls[i];
+        if(!matches(control)) continue;
+        var group=(control.groupPath && control.groupPath[0]) || 'Ohne Gruppe';
+        incrementDiagramCount(result.counts, group);
+        if(!result.modalverbs[group]) result.modalverbs[group]={};
+        if(!result.securityLevels[group]) result.securityLevels[group]={};
+
+        var modalValues=Array.isArray(control.modalverbsArr) ? control.modalverbsArr.slice() : splitMulti(control.modalverbs);
+        modalValues=uniqueList(modalValues.map(function(value){ return String(value||'').trim(); }).filter(Boolean));
+        if(!modalValues.length) modalValues=['Ohne Angabe'];
+        for(var mi=0;mi<modalValues.length;mi++) incrementDiagramCount(result.modalverbs[group], modalValues[mi]);
+
+        var securityValues=uniqueList(splitMulti(control.sec).map(function(value){ return String(value||'').trim(); }).filter(Boolean));
+        if(!securityValues.length) securityValues=['Ohne Angabe'];
+        for(var si=0;si<securityValues.length;si++) incrementDiagramCount(result.securityLevels[group], securityValues[si]);
+      }
+      return result;
+    }
+
+    function diagramGroupTitle(group){
+      var normalized=String(group||'').trim().toUpperCase();
+      for(var i=0;i<SDT_PRACTICES.length;i++){
+        if(SDT_PRACTICES[i].id===normalized) return SDT_PRACTICES[i].title;
+      }
+      return String(group||'Ohne Gruppe');
+    }
+
+    function appendDiagramTooltipCounts(lines, heading, counts){
+      lines.push(heading+':');
+      var keys=Object.keys(counts||{}).sort(function(a,b){ return a.localeCompare(b,'de'); });
+      if(!keys.length){ lines.push('Ohne Angabe: 0'); return; }
+      for(var i=0;i<keys.length;i++) lines.push(keys[i]+': '+counts[keys[i]]);
+    }
+
+    function buildDiagramTooltip(group, value, stats){
+      var lines=[diagramGroupTitle(group)+' ('+group+'): '+value];
+      appendDiagramTooltipCounts(lines, 'Modalverben', stats.modalverbs[group]);
+      appendDiagramTooltipCounts(lines, 'Sicherheitsniveaus', stats.securityLevels[group]);
+      return lines.join('\n');
+    }
+
     /* ---------------- Sunburst ---------------- */
     function drawSunburst(){
       if(uiState.dataMode==='component'){ drawComponentSunburst(); return; }
@@ -11994,13 +12105,8 @@ function baseMatches(c){ return matches(c); }
       container.innerHTML='';
       if(typeof d3==='undefined'){ container.innerHTML='<div class="card">D3 wurde nicht geladen.</div>'; return; }
 
-      var counts = {};
-      for(var i=0;i<state.controls.length;i++){
-        var c = state.controls[i];
-        if(!matches(c)) continue;
-        var g = (c.groupPath && c.groupPath[0]) || 'Ohne Gruppe';
-        counts[g] = (counts[g]||0) + 1;
-      }
+      var diagramStats=buildCatalogDiagramStats();
+      var counts=diagramStats.counts;
       var keys = Object.keys(counts).sort(function(a,b){ return counts[b]-counts[a] || a.localeCompare(b,'de'); });
       if(!keys.length){ container.innerHTML='<div class="card">Keine Daten für die aktuelle Filterung.</div>'; return; }
 
@@ -12034,7 +12140,7 @@ function baseMatches(c){ return matches(c); }
         .attr('d', arc)
         .attr('fill', function(d){ return color(d.data.name); })
         .attr('stroke', '#ffffff')
-        .append('title').text(function(d){ return d.data.name+': '+d.value; });
+        .append('title').text(function(d){ return buildDiagramTooltip(d.data.name, d.value, diagramStats); });
       addSunburstSegmentLabels(g,nodes,r,.38,function(d){ return d.data.name; });
       addSunburstCenterLabel(g,'Katalog',root.value,'Anforderungen');
     }
@@ -12047,13 +12153,8 @@ function baseMatches(c){ return matches(c); }
       container.innerHTML='';
       if(typeof d3==='undefined'){ container.innerHTML='<div class="card">D3 wurde nicht geladen.</div>'; return; }
 
-      var counts = {};
-      for(var i=0;i<state.controls.length;i++){
-        var c = state.controls[i];
-        if(!matches(c)) continue;
-        var g = (c.groupPath && c.groupPath[0]) || 'Ohne Gruppe';
-        counts[g] = (counts[g]||0) + 1;
-      }
+      var diagramStats=buildCatalogDiagramStats();
+      var counts=diagramStats.counts;
       var keys = Object.keys(counts).sort();
       if(!keys.length){ container.innerHTML='<div class="card">Keine Daten für die aktuelle Filterung.</div>'; return; }
 
@@ -12085,7 +12186,7 @@ function baseMatches(c){ return matches(c); }
         .attr('width', x.bandwidth())
         .attr('height', function(d){return h - y(d.value);})
         .attr('fill', function(d){return color(d.group);})
-        .append('title').text(function(d){ return d.group + ': ' + d.value; });
+        .append('title').text(function(d){ return buildDiagramTooltip(d.group, d.value, diagramStats); });
 
       g.selectAll('.bar-label')
         .data(data)
@@ -12370,7 +12471,7 @@ bindExportButton();
 bindComponentResetButton();
 bindComponentExportButton();
 bindMappingResetButton();
-loadOscalDeepLink();
+restoreViewerStateFromUrl();
 
 })();
   </script>
