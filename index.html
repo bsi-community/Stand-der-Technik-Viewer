@@ -232,8 +232,9 @@
     .implementation-statement{margin-top:12px;padding-top:12px;border-top:1px dashed var(--muted)}
     .implementation-statement:first-child{margin-top:0;padding-top:0;border-top:0}
     .implementation-statement-label{margin-bottom:5px;font-size:11px;font-weight:800;color:var(--dim);text-transform:uppercase;letter-spacing:.04em}
-    .implementation-remarks-list{display:grid;gap:12px;margin-top:10px}
-    .implementation-remark{padding:12px 14px;border:1px solid var(--muted);background:rgba(255,255,255,.55)}
+    .implemented-requirement-remarks{margin-top:12px}
+    .js-collapsible-description > .implemented-requirement-remarks{display:none}
+    .description-collapse.is-expanded .implemented-requirement-remarks{display:block}
     .implementation-row-actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
     .component-empty{color:var(--dim);font-style:italic}
     .component-source{font-size:12px;color:var(--dim)}
@@ -1446,9 +1447,10 @@
     }
     #targetHierarchyTab{height:auto}
     .target-hierarchy-view{
-      min-height:82vh;
+      height:82vh;
+      min-height:680px;
       display:grid;
-      grid-template-rows:auto minmax(560px,1fr);
+      grid-template-rows:auto minmax(0,1fr);
       overflow:hidden;
       background:linear-gradient(180deg,#fbfdfc 0%,#eef5f1 100%);
       border:1px solid rgba(212,221,213,.95);
@@ -1494,10 +1496,79 @@
       align-self:center;
       white-space:nowrap;
     }
+    .target-hierarchy-workspace{
+      min-width:0;
+      min-height:0;
+      display:grid;
+      grid-template-columns:minmax(280px,340px) minmax(0,1fr);
+      overflow:hidden;
+    }
+    .target-hierarchy-details{
+      min-width:0;
+      min-height:0;
+      height:100%;
+      box-sizing:border-box;
+      padding:20px;
+      overflow-x:hidden;
+      overflow-y:auto;
+      overscroll-behavior:contain;
+      scrollbar-gutter:stable;
+      overflow-anchor:none;
+      background:rgba(255,255,255,.94);
+      border-right:1px solid rgba(169,190,183,.65);
+      color:#334c47;
+    }
+    .target-hierarchy-details.is-empty{
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+    }
+    .target-hierarchy-details:focus-visible{outline:3px solid var(--ring);outline-offset:-4px}
+    .target-hierarchy-details-eyebrow{
+      margin:0 0 8px;
+      color:#087f78;
+      font-size:11px;
+      font-weight:900;
+      letter-spacing:.11em;
+      text-transform:uppercase;
+    }
+    .target-hierarchy-details h3{
+      margin:0 0 14px;
+      color:#18322f;
+      font-size:20px;
+      line-height:1.25;
+      overflow-wrap:anywhere;
+    }
+    .target-hierarchy-details p{
+      margin:0;
+      color:#5a6f69;
+      font-size:13px;
+      line-height:1.55;
+    }
+    .target-hierarchy-details dl{display:grid;gap:0;margin:0}
+    .target-hierarchy-details dt{
+      margin:0 0 3px;
+      color:#087f78;
+      font-size:11px;
+      font-weight:900;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+    }
+    .target-hierarchy-details dd{
+      margin:0 0 13px;
+      color:#334c47;
+      font-size:13px;
+      line-height:1.55;
+      overflow-wrap:anywhere;
+    }
+    .target-hierarchy-details dd:last-child{margin-bottom:0}
     .target-hierarchy-canvas{
       position:relative;
-      min-height:560px;
+      min-width:0;
+      min-height:0;
+      height:100%;
       overflow:hidden;
+      overflow-anchor:none;
       background:
         radial-gradient(circle at 20% 18%,rgba(23,156,149,.09),transparent 34%),
         linear-gradient(rgba(59,91,83,.045) 1px,transparent 1px),
@@ -1505,7 +1576,7 @@
         #f8fbf9;
       background-size:auto,32px 32px,32px 32px,auto;
     }
-    .target-hierarchy-canvas svg{display:block;width:100%;height:100%;min-height:560px;cursor:grab;touch-action:none}
+    .target-hierarchy-canvas svg{display:block;width:100%;height:100%;min-height:0;cursor:grab;touch-action:none}
     .target-hierarchy-canvas svg:active{cursor:grabbing}
     .target-hierarchy-link{fill:none;stroke:#91a39e;stroke-width:1.6;opacity:.82}
     .target-hierarchy-node{cursor:default;outline:none}
@@ -1516,7 +1587,8 @@
       transition:filter .15s ease,stroke-width .15s ease,transform .15s ease;
     }
     .target-hierarchy-node:hover rect,
-    .target-hierarchy-node:focus rect{
+    .target-hierarchy-node:focus rect,
+    .target-hierarchy-node.is-active rect{
       stroke:#ffffff;
       stroke-width:3;
       filter:drop-shadow(0 7px 9px rgba(25,54,48,.28));
@@ -1547,7 +1619,8 @@
     .target-hierarchy-summary span{display:block;font-size:12px;line-height:1.55}
     .target-hierarchy-summary .direction{margin-top:5px;color:#087f78;font-weight:800}
     .target-hierarchy-status{
-      min-height:560px;
+      min-height:0;
+      height:100%;
       display:grid;
       place-items:center;
       padding:34px;
@@ -1564,42 +1637,20 @@
     }
     .target-hierarchy-status-card strong{display:block;margin-bottom:8px;color:#18322f;font-size:18px}
     .target-hierarchy-status-card .btn{margin-top:16px}
-    .target-hierarchy-tooltip{
-      position:fixed;
-      z-index:140;
-      width:min(760px,calc(100vw - 24px));
-      max-width:calc(100vw - 24px);
-      max-height:none;
-      overflow:visible;
-      padding:15px 16px;
-      background:#172925;
-      border:1px solid rgba(255,255,255,.18);
-      border-radius:14px;
-      color:#eef8f5;
-      box-shadow:0 18px 42px rgba(8,25,21,.34);
-      pointer-events:auto;
+    @media(max-width:1000px){
+      .target-hierarchy-view{height:auto;min-height:82vh;grid-template-rows:auto auto}
+      .target-hierarchy-workspace{grid-template-columns:minmax(0,1fr);grid-template-rows:260px minmax(500px,1fr);overflow:visible}
+      .target-hierarchy-details{height:100%;max-height:260px;border-right:0;border-bottom:1px solid rgba(169,190,183,.65)}
     }
-    .target-hierarchy-tooltip[hidden]{display:none!important}
-    .target-hierarchy-tooltip h3{margin:0 0 10px;color:#ffffff;font-size:17px;line-height:1.25}
-    .target-hierarchy-tooltip dl{display:grid;grid-template-columns:108px minmax(0,1fr);gap:7px 12px;margin:0}
-    .target-hierarchy-tooltip dt{color:#9adfd3;font-size:11px;font-weight:900;letter-spacing:.06em;text-transform:uppercase}
-    .target-hierarchy-tooltip dd{margin:0;color:#eef8f5;font-size:12px;line-height:1.5;overflow-wrap:anywhere}
-    .target-hierarchy-tooltip.is-compact{
-      width:min(960px,calc(100vw - 24px));
-      padding:12px 14px;
-    }
-    .target-hierarchy-tooltip.is-compact h3{margin-bottom:8px;font-size:15px}
-    .target-hierarchy-tooltip.is-compact dl{gap:5px 11px}
-    .target-hierarchy-tooltip.is-compact dd{font-size:11px;line-height:1.35}
     @media(max-width:760px){
-      .target-hierarchy-view{grid-template-rows:auto minmax(500px,1fr)}
+      .target-hierarchy-view{grid-template-rows:auto auto}
       .target-hierarchy-header{grid-template-columns:minmax(0,1fr);align-items:start;padding:15px 16px;gap:12px}
       .target-hierarchy-header .target-hierarchy-fit{justify-self:start}
-      .target-hierarchy-canvas,.target-hierarchy-canvas svg,.target-hierarchy-status{min-height:500px}
+      .target-hierarchy-workspace{grid-template-rows:230px minmax(500px,1fr)}
+      .target-hierarchy-details{height:100%;padding:16px;max-height:230px}
+      .target-hierarchy-details h3{font-size:18px}
+      .target-hierarchy-canvas,.target-hierarchy-canvas svg,.target-hierarchy-status{height:500px;min-height:500px}
       .target-hierarchy-summary{right:12px;bottom:12px}
-      .target-hierarchy-tooltip{width:calc(100vw - 16px);max-width:calc(100vw - 16px);padding:12px}
-      .target-hierarchy-tooltip dl{grid-template-columns:minmax(0,1fr)}
-      .target-hierarchy-tooltip dt{margin-top:3px}
     }
     .graph-toolbar{
       position:absolute;
@@ -3291,7 +3342,7 @@
       <div>
         <h1><img class="header-wordmark" src="./viewer_logo-transparent.png" alt="Stand der Technik – Viewer" onerror="this.replaceWith(document.createTextNode('Stand der Technik – Viewer'))"></h1>
         <!-- Mit VERSION und docs/adr/0001-semantic-versioning.md synchron halten. -->
-        <span id="viewerVersion" class="viewer-version" aria-label="Viewer-Version 2.0.2">v2.0.2</span>
+        <span id="viewerVersion" class="viewer-version" aria-label="Viewer-Version 2.1.1">v2.1.1</span>
         <p id="viewSubtitle" class="header-subtitle">Ein neu strukturierter Arbeitsbereich für OSCAL-Kataloge, Komponentendefinitionen und Analyseansichten mit klarer Navigation, ruhiger Leseführung und durchgängiger visueller Hierarchie.</p>
       </div>
     </div>
@@ -3622,11 +3673,18 @@
             <div class="target-hierarchy-heading">
               <div class="target-hierarchy-eyebrow">BSI Grundschutz++ / Stand der Technik</div>
               <h2>Vererbung der Zielobjektkategorien</h2>
-              <p>Die Pfeilrichtung verläuft von allgemeinen Elternkategorien zu spezielleren Kindkategorien. Bewege den Mauszeiger über eine Kategorie oder fokussiere sie mit der Tastatur, um Definition und Metadaten anzuzeigen.</p>
+              <p>Die Pfeilrichtung verläuft von allgemeinen Elternkategorien zu spezielleren Kindkategorien. Bewege den Mauszeiger über eine Kategorie oder fokussiere sie mit der Tastatur, um Definition und Metadaten im Detailbereich anzuzeigen.</p>
             </div>
             <button id="targetHierarchyFitBtn" class="btn target-hierarchy-fit" type="button">Alles anzeigen</button>
           </div>
-          <div id="targetHierarchyCanvas" class="target-hierarchy-canvas" aria-live="polite"></div>
+          <div class="target-hierarchy-workspace">
+            <aside id="targetHierarchyDetails" class="target-hierarchy-details is-empty" tabindex="0" aria-label="Details zur Zielobjektkategorie" aria-live="polite">
+              <div class="target-hierarchy-details-eyebrow">Kategorie-Details</div>
+              <h3>Kategorie auswählen</h3>
+              <p>Bewege den Mauszeiger über eine Zielobjektkategorie oder fokussiere sie mit der Tastatur. Die zugehörigen Angaben erscheinen hier, ohne die Grafik zu verdecken.</p>
+            </aside>
+            <div id="targetHierarchyCanvas" class="target-hierarchy-canvas"></div>
+          </div>
         </div>
       </section>
 
@@ -3634,8 +3692,6 @@
       <section id="msg" class="card hidden"></section>
     </main>
   </div>
-
-  <div id="targetHierarchyTooltip" class="target-hierarchy-tooltip" role="tooltip" hidden></div>
 
   <!-- Modalansicht fuer die rohe JSON-Darstellung eines einzelnen Eintrags. -->
   <div id="jsonModal" class="modal hidden" role="dialog" aria-modal="true" aria-label="JSON des Eintrags">
@@ -4025,7 +4081,7 @@
       catalogPanel:$('#catalogPanel'), componentPanel:$('#componentPanel'), mappingPanel:$('#mappingPanel'),
       viewSubtitle:$('#viewSubtitle'), visualContextLabel:$('#visualContextLabel'), visualizationTabGroup:$('#visualizationTabGroup'), viewSummary:$('#viewSummary'), selectionState:$('#catalogSelectionState'),
       fileInfo:$('#fileInfo'), countInfo:$('#countInfo'), graphInfo:$('#graphInfo'),
-      listTab:$('#listTab'), componentTab:$('#componentTab'), mappingTab:$('#mappingTab'), graphTab:$('#graphTab'), sunburstTab:$('#sunburstTab'), barTab:$('#barTab'), targetHierarchyTab:$('#targetHierarchyTab'), targetHierarchyTabButton:$('#tab-target-hierarchy'), targetHierarchyCanvas:$('#targetHierarchyCanvas'), targetHierarchyFitBtn:$('#targetHierarchyFitBtn'), targetHierarchyTooltip:$('#targetHierarchyTooltip'), msg:$('#msg'),
+      listTab:$('#listTab'), componentTab:$('#componentTab'), mappingTab:$('#mappingTab'), graphTab:$('#graphTab'), sunburstTab:$('#sunburstTab'), barTab:$('#barTab'), targetHierarchyTab:$('#targetHierarchyTab'), targetHierarchyTabButton:$('#tab-target-hierarchy'), targetHierarchyCanvas:$('#targetHierarchyCanvas'), targetHierarchyFitBtn:$('#targetHierarchyFitBtn'), targetHierarchyDetails:$('#targetHierarchyDetails'), msg:$('#msg'),
       jsonModal:$('#jsonModal'), jsonModalBody:$('#jsonModalBody'), jsonModalClose:$('#jsonModalClose') };
     var compEls={
       file:$('#compFile'), dropzone:$('#componentDropzone'), sourceSelect:$('#componentDatasetSelect'), sourcePicker:$('#componentSourcePicker'), sourceButton:$('#componentSourceButton'), sourcePickerMenu:$('#componentSourceMenu'), urlInput:$('#compUrlInput'), urlLoadBtn:$('#compUrlLoadBtn'), bsiSelect:$('#bsiComponentSelect'), bsiStatus:$('#bsiComponentStatus'), q:$('#compQ'),
@@ -4274,42 +4330,34 @@
       while(els.targetHierarchyCanvas.firstChild) els.targetHierarchyCanvas.removeChild(els.targetHierarchyCanvas.firstChild);
     }
 
-    var targetHierarchyTooltipHideTimer=0;
-    function hideTargetHierarchyTooltip(){
-      clearTimeout(targetHierarchyTooltipHideTimer);
-      if(!els.targetHierarchyTooltip) return;
-      els.targetHierarchyTooltip.hidden=true;
-      while(els.targetHierarchyTooltip.firstChild) els.targetHierarchyTooltip.removeChild(els.targetHierarchyTooltip.firstChild);
+    function resetTargetHierarchyDetails(){
+      var details=els.targetHierarchyDetails;
+      if(!details) return;
+      details.classList.add('is-empty');
+      details.removeAttribute('data-entry-key');
+      details.setAttribute('aria-label','Details zur Zielobjektkategorie');
+      details.scrollTop=0;
+      while(details.firstChild) details.removeChild(details.firstChild);
+      var eyebrow=document.createElement('div');
+      eyebrow.className='target-hierarchy-details-eyebrow';
+      eyebrow.textContent='Kategorie-Details';
+      details.appendChild(eyebrow);
+      var heading=document.createElement('h3');
+      heading.textContent='Kategorie auswählen';
+      details.appendChild(heading);
+      var copy=document.createElement('p');
+      copy.textContent='Bewege den Mauszeiger über eine Zielobjektkategorie oder fokussiere sie mit der Tastatur. Die zugehörigen Angaben erscheinen hier, ohne die Grafik zu verdecken.';
+      details.appendChild(copy);
+      setTargetHierarchyActiveNode(null);
     }
 
-    function scheduleTargetHierarchyTooltipHide(){
-      clearTimeout(targetHierarchyTooltipHideTimer);
-      targetHierarchyTooltipHideTimer=setTimeout(hideTargetHierarchyTooltip,100);
+    function setTargetHierarchyActiveNode(node){
+      var activeNodes=els.targetHierarchyCanvas ? els.targetHierarchyCanvas.querySelectorAll('.target-hierarchy-node.is-active') : [];
+      for(var i=0;i<activeNodes.length;i++) activeNodes[i].classList.remove('is-active');
+      if(node && node.classList) node.classList.add('is-active');
     }
 
-    function positionTargetHierarchyTooltip(event,node){
-      var tooltip=els.targetHierarchyTooltip;
-      if(!tooltip || tooltip.hidden) return;
-      var rect=node && node.getBoundingClientRect ? node.getBoundingClientRect() : null;
-      var anchorX=event && typeof event.clientX==='number' ? event.clientX : (rect ? rect.right : 20);
-      var anchorY=event && typeof event.clientY==='number' ? event.clientY : (rect ? rect.top+rect.height/2 : 20);
-      var gap=14;
-      var left=anchorX+gap;
-      var top=anchorY+gap;
-      var width=tooltip.offsetWidth;
-      var height=tooltip.offsetHeight;
-      if(height>window.innerHeight-20){
-        tooltip.classList.add('is-compact');
-        width=tooltip.offsetWidth;
-        height=tooltip.offsetHeight;
-      }
-      if(left+width>window.innerWidth-10) left=Math.max(10,anchorX-width-gap);
-      if(top+height>window.innerHeight-10) top=Math.max(10,window.innerHeight-height-10);
-      tooltip.style.left=Math.max(10,left)+'px';
-      tooltip.style.top=Math.max(10,top)+'px';
-    }
-
-    function appendTargetHierarchyTooltipRow(list,label,value){
+    function appendTargetHierarchyDetailsRow(list,label,value){
       var term=document.createElement('dt');
       term.textContent=label;
       list.appendChild(term);
@@ -4318,27 +4366,32 @@
       list.appendChild(description);
     }
 
-    function showTargetHierarchyTooltip(event,entry,node){
-      var tooltip=els.targetHierarchyTooltip;
-      if(!tooltip || !entry) return;
-      clearTimeout(targetHierarchyTooltipHideTimer);
-      tooltip.classList.remove('is-compact');
-      while(tooltip.firstChild) tooltip.removeChild(tooltip.firstChild);
+    function showTargetHierarchyDetails(entry,node){
+      var details=els.targetHierarchyDetails;
+      if(!details || !entry) return;
+      var entryKey=String(entry.uuid || entry.name || '');
+      if(entryKey && details.getAttribute('data-entry-key')===entryKey && !details.classList.contains('is-empty')){
+        setTargetHierarchyActiveNode(node);
+        return;
+      }
+      details.classList.remove('is-empty');
+      details.setAttribute('data-entry-key',entryKey);
+      details.setAttribute('aria-label','Details zur Zielobjektkategorie '+entry.name);
+      details.scrollTop=0;
+      while(details.firstChild) details.removeChild(details.firstChild);
+      var eyebrow=document.createElement('div');
+      eyebrow.className='target-hierarchy-details-eyebrow';
+      eyebrow.textContent='Kategorie-Details';
+      details.appendChild(eyebrow);
       var heading=document.createElement('h3');
       heading.textContent=entry.name;
-      tooltip.appendChild(heading);
+      details.appendChild(heading);
       var list=document.createElement('dl');
-      appendTargetHierarchyTooltipRow(list,'Kategorie',entry.category && entry.category!=='-' ? entry.category : 'Nicht angegeben');
-      appendTargetHierarchyTooltipRow(list,'Definition',entry.definition || 'Keine Definition hinterlegt');
-      appendTargetHierarchyTooltipRow(list,'Synonyme',entry.synonyms && entry.synonyms.length ? entry.synonyms.join(', ') : 'Keine Synonyme hinterlegt');
-      tooltip.appendChild(list);
-      tooltip.hidden=false;
-      positionTargetHierarchyTooltip(event,node);
-    }
-
-    if(els.targetHierarchyTooltip){
-      els.targetHierarchyTooltip.addEventListener('mouseenter',function(){ clearTimeout(targetHierarchyTooltipHideTimer); });
-      els.targetHierarchyTooltip.addEventListener('mouseleave',hideTargetHierarchyTooltip);
+      appendTargetHierarchyDetailsRow(list,'Kategorie',entry.category && entry.category!=='-' ? entry.category : 'Nicht angegeben');
+      appendTargetHierarchyDetailsRow(list,'Definition',entry.definition || 'Keine Definition hinterlegt');
+      appendTargetHierarchyDetailsRow(list,'Synonyme',entry.synonyms && entry.synonyms.length ? entry.synonyms.join(', ') : 'Keine Synonyme hinterlegt');
+      details.appendChild(list);
+      setTargetHierarchyActiveNode(node);
     }
 
     function renderTargetHierarchyStatus(title,text,retry){
@@ -4395,7 +4448,7 @@
     }
 
     function renderTargetHierarchyView(){
-      hideTargetHierarchyTooltip();
+      resetTargetHierarchyDetails();
       if(!els.targetHierarchyCanvas) return;
       if(!state.hasTargetObjectCategories){
         renderTargetHierarchyStatus('Keine Zielobjekthierarchie verfügbar','Der aktive Katalog verwendet die OSCAL-Property „target_object_categories“ nicht.',false);
@@ -4431,8 +4484,12 @@
       clearTargetHierarchyCanvas();
       var canvas=els.targetHierarchyCanvas;
       if(els.targetHierarchyFitBtn) els.targetHierarchyFitBtn.disabled=false;
-      var width=Math.max(720,canvas.clientWidth||1000);
-      var height=Math.max(560,canvas.clientHeight||700);
+      var canvasWidth=canvas.clientWidth||1000;
+      var canvasHeight=canvas.clientHeight||700;
+      targetHierarchyRenderedCanvasWidth=canvasWidth;
+      targetHierarchyRenderedCanvasHeight=canvasHeight;
+      var width=Math.max(720,canvasWidth);
+      var height=Math.max(560,canvasHeight);
       var nodeWidth=188;
       var nodeHeight=50;
       var horizontalGap=238;
@@ -4496,7 +4553,7 @@
         .attr('transform',function(item){ return 'translate('+nodeX(item)+','+nodeY(item)+')'; })
         .attr('tabindex',0)
         .attr('role','img')
-        .attr('aria-describedby','targetHierarchyTooltip')
+        .attr('aria-controls','targetHierarchyDetails')
         .attr('aria-label',function(item){ return item.data.name+'. Kategorie: '+(item.data.category || 'nicht angegeben')+'.'; });
       node.append('rect')
         .attr('width',nodeWidth)
@@ -4514,11 +4571,9 @@
         }
       });
       node
-        .on('mouseenter',function(event,item){ showTargetHierarchyTooltip(event,item.data,this); })
-        .on('mousemove',function(event,item){ positionTargetHierarchyTooltip(event,this); })
-        .on('mouseleave',scheduleTargetHierarchyTooltipHide)
-        .on('focus',function(event,item){ showTargetHierarchyTooltip(null,item.data,this); })
-        .on('blur',scheduleTargetHierarchyTooltipHide);
+        .on('mouseenter',function(event,item){ showTargetHierarchyDetails(item.data,this); })
+        .on('focus',function(event,item){ showTargetHierarchyDetails(item.data,this); })
+        .on('click',function(event,item){ showTargetHierarchyDetails(item.data,this); });
 
       var zoom=d3.zoom().scaleExtent([.18,2.6]).on('zoom',function(event){ graph.attr('transform',event.transform); });
       svg.call(zoom);
@@ -4551,10 +4606,20 @@
     }
 
     var targetHierarchyResizeTimer=0;
+    var targetHierarchyRenderedCanvasWidth=0;
+    var targetHierarchyRenderedCanvasHeight=0;
     window.addEventListener('resize',function(){
       if(uiState.view!=='target-hierarchy') return;
       clearTimeout(targetHierarchyResizeTimer);
-      targetHierarchyResizeTimer=setTimeout(renderTargetHierarchyView,140);
+      targetHierarchyResizeTimer=setTimeout(function(){
+        if(!els.targetHierarchyCanvas) return;
+        var nextWidth=els.targetHierarchyCanvas.clientWidth||0;
+        var nextHeight=els.targetHierarchyCanvas.clientHeight||0;
+        if(targetHierarchyRenderedCanvasWidth && targetHierarchyRenderedCanvasHeight
+          && Math.abs(nextWidth-targetHierarchyRenderedCanvasWidth)<24
+          && Math.abs(nextHeight-targetHierarchyRenderedCanvasHeight)<24) return;
+        renderTargetHierarchyView();
+      },140);
     },{passive:true});
 
     function targetAncestorValues(value){
@@ -5654,7 +5719,7 @@
         registryState.query='';
       }
       hideEffortTooltip();
-      hideTargetHierarchyTooltip();
+      resetTargetHierarchyDetails();
       uiState.view='home';
       updateHeaderSubtitle('home');
       var tabs=$$('.tab');
@@ -5743,7 +5808,7 @@
       }
       persistViewerTabState(name);
       hideEffortTooltip();
-      hideTargetHierarchyTooltip();
+      resetTargetHierarchyDetails();
       document.body.classList.remove('home-mode');
       if(els.homeTab) els.homeTab.classList.add('hidden');
       if(name==='list'){ uiState.dataMode='catalog'; setSidebarMode('catalog'); }
@@ -6830,7 +6895,7 @@
       allActionwords=[];
       allSecurityTargets=[];
       targetHierarchyActivationToken++;
-      hideTargetHierarchyTooltip();
+      resetTargetHierarchyDetails();
       syncCatalogHierarchyFilterVisibility();
       if(els.q) els.q.value='';
       syncComponentParamMaps();
@@ -10072,49 +10137,25 @@ function baseMatches(c){ return matches(c); }
           body.appendChild(implDescription);
         }
         body.appendChild(renderImplementationRequirementsTable(impl, searchTerm));
-        appendImplementationRequirementRemarks(body, impl, searchTerm);
 
         details.appendChild(body);
         container.appendChild(details);
       }
     }
 
-    function appendImplementationRequirementRemarks(parent, impl, searchTerm){
-      var requirements=(impl && impl.requirements) || [];
-      var remarksRequirements=[];
-      for(var i=0;i<requirements.length;i++){
-        if(String(requirements[i].remarks||'').trim()) remarksRequirements.push(requirements[i]);
-      }
-      if(!remarksRequirements.length) return;
+    function appendImplementedRequirementRemarks(parent, req, searchTerm){
+      if(!String(req && req.remarks || '').trim()) return false;
 
-      var details=document.createElement('details');
-      details.innerHTML='<summary><strong>Remarks</strong></summary>';
-      var list=document.createElement('div');
-      list.className='implementation-remarks-list';
-
-      for(var r=0;r<remarksRequirements.length;r++){
-        var req=remarksRequirements[r];
-        var catalogMatch=findCatalogControlForRequirement(req);
-        var catalogControl=catalogMatch.control;
-        var displayId=(catalogControl && (catalogControl.labelId || catalogControl.id || catalogControl.rawId))
-          || req.catalogControlId || normalizeControlRef(req.controlId) || req.controlId || 'ohne-control-id';
-        var displayTitle=getCatalogControlTitle(catalogControl);
-        var item=document.createElement('div');
-        item.className='implementation-remark';
-        var label=document.createElement('div');
-        label.className='implementation-requirement-id';
-        label.innerHTML='<strong>'+renderHighlightedInline(displayId, searchTerm)+'</strong>'
-          +(displayTitle ? ' - '+renderHighlightedInline(displayTitle, searchTerm) : '');
-        item.appendChild(label);
-        var prose=document.createElement('div');
-        prose.className='catalog-md';
-        prose.innerHTML=renderMarkupWithParams(req.remarks, req.paramMap, searchTerm);
-        item.appendChild(prose);
-        list.appendChild(item);
-      }
-
-      details.appendChild(list);
-      parent.appendChild(details);
+      var section=document.createElement('section');
+      section.className='implemented-requirement-remarks catalog-md';
+      var heading=document.createElement('h4');
+      heading.textContent='Anmerkungen';
+      section.appendChild(heading);
+      var prose=document.createElement('div');
+      prose.innerHTML=renderMarkupWithParams(req.remarks, req.paramMap, searchTerm);
+      section.appendChild(prose);
+      parent.appendChild(section);
+      return true;
     }
 
     function appendCapabilityComponentsSection(parent, owner, searchTerm){
@@ -10438,10 +10479,15 @@ function baseMatches(c){ return matches(c); }
 
           var implementationCell=document.createElement('td');
           var hasDescription=false;
-          if(String(req.description||'').trim()){
+          var hasRequirementDescription=!!String(req.description||'').trim();
+          var hasRequirementRemarks=!!String(req.remarks||'').trim();
+          if(hasRequirementDescription || hasRequirementRemarks){
             var reqDescription=document.createElement('div');
             reqDescription.className='implementation-description catalog-md js-collapsible-description';
-            reqDescription.innerHTML=renderMarkupWithParams(req.description, req.paramMap, searchTerm);
+            if(hasRequirementDescription){
+              reqDescription.innerHTML=renderMarkupWithParams(req.description, req.paramMap, searchTerm);
+            }
+            appendImplementedRequirementRemarks(reqDescription, req, searchTerm);
             implementationCell.appendChild(reqDescription);
             hasDescription=true;
           }
@@ -10529,7 +10575,8 @@ function baseMatches(c){ return matches(c); }
       wrapper.style.setProperty('--description-fade-height', Math.max(10, Math.ceil(lineHeight * .7))+'px');
       wrapper.style.setProperty('--description-fade-soft-height', Math.max(4, Math.ceil(lineHeight * .28))+'px');
 
-      var hasOverflow=content.scrollHeight > clampHeight + 1;
+      var hasCollapsedRemarks=!!content.querySelector('.implemented-requirement-remarks');
+      var hasOverflow=hasCollapsedRemarks || content.scrollHeight > clampHeight + 1;
       wrapper.classList.toggle('has-overflow', hasOverflow);
       toggle.hidden=!hasOverflow;
       if(!hasOverflow){
