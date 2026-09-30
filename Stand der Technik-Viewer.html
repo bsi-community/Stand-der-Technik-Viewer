@@ -3326,6 +3326,14 @@
       .sunburst-legend{width:min(260px,38%)}
     }
     
+    .mapping-gap-summary{margin:12px 0;padding:10px 14px;border:1px solid var(--muted);border-radius:8px}
+    .mapping-gap-summary summary{cursor:pointer;font-weight:600}
+    .mapping-gap-summary ul{columns:3;column-width:220px;padding-left:20px}
+    .mapping-gap-summary li{break-inside:avoid;overflow-wrap:anywhere}
+    .mapping-gap-warning{margin:12px 0;padding:8px 14px;background:#fff8e8;border-left:3px solid #b88420;overflow-wrap:anywhere}
+    .mapping-gap-warning pre{white-space:pre-wrap}
+    .mapping-table .mapping-note-row td{padding:8px 14px;background:#f6f8fb;border-top:0}
+    .mapping-note-row .catalog-md p{margin:4px 0}
 </style>
 </head>
 <body>
@@ -7119,7 +7127,86 @@
           });
         }
       }
+      readMappingNotesAndGaps(doc);
       mappingEls.countInfo.textContent=mappingState.entries.length+' Mapping-Beziehungen';
+    }
+
+    // Display native mapping notes and explicit gap summaries without inferring relationships.
+    function mappingNotes(raw){
+      var notes=[];
+      if(raw.remarks) notes.push({text:String(raw.remarks)});
+      mappingArray(raw.qualifiers).forEach(function(q){
+        if(!q) return;
+        var label='Einschränkung ('+[q.subject,q.predicate,q.category].filter(Boolean).join(' · ')+')';
+        if(q.description) notes.push({label:label,text:String(q.description)});
+        if(q.remarks && q.remarks!==q.description) notes.push({text:String(q.remarks)});
+      });
+      return notes;
+    }
+    function readMappingNotesAndGaps(doc){
+      mappingState.entries.forEach(function(entry){
+        entry.notes=mappingNotes(entry.raw || {});
+        entry.searchText+=' '+entry.notes.map(function(n){return (n.label || '')+' '+n.text;}).join(' ').toLowerCase();
+      });
+      mappingState.gapGroups=[];
+      mappingState.gapWarnings=[];
+      mappingArray(doc.mappings || doc.mapping).forEach(function(group,index){
+        ['source','target'].forEach(function(side){
+          var summary=group[side+'-gap-summary'];
+          if(!summary) return;
+          var resource=group[side+'-resource'] || {};
+          var label='Mapping '+(index+1)+' · '+(side==='source'?'Quelle: ':'Ziel: ')+mappingResourceLabel(resource);
+          var ids=[],seen=Object.create(null);
+          mappingArray(summary['unmapped-controls']).forEach(function(selector){
+            mappingArray(selector['with-ids']).forEach(function(id){
+              if(typeof id==='string' && id && !seen[id]){seen[id]=true;ids.push(id);}
+            });
+            if(mappingArray(selector.matching).length || selector['with-child-controls']==='yes'){
+              mappingState.gapWarnings.push({label:label,selector:selector});
+            }
+          });
+          if(ids.length) mappingState.gapGroups.push({label:label,ids:ids});
+        });
+      });
+    }
+    function renderMappingGaps(container){
+      var groups=mappingState.gapGroups || [];
+      var count=groups.reduce(function(total,group){return total+group.ids.length;},0);
+      if(count){
+        var details=document.createElement('details');details.className='mapping-gap-summary';
+        var summary=document.createElement('summary');
+        summary.textContent=count+' nicht zugeordnete Controls im gesamten Mapping-Dokument';
+        details.appendChild(summary);
+        groups.forEach(function(group){
+          var heading=document.createElement('p');heading.textContent=group.label;details.appendChild(heading);
+          var list=document.createElement('ul');
+          group.ids.forEach(function(id){
+            var item=document.createElement('li');item.textContent=id+' — nicht zugeordnet';list.appendChild(item);
+          });
+          details.appendChild(list);
+        });
+        container.appendChild(details);
+      }
+      (mappingState.gapWarnings || []).forEach(function(warning){
+        var notice=document.createElement('div');notice.className='mapping-gap-warning';notice.setAttribute('role','status');
+        var text=document.createElement('p');
+        text.textContent=warning.label+': Die Lückenliste kann unvollständig sein. Musterselektion und die Auswahl untergeordneter Controls werden nicht aufgelöst.';
+        notice.appendChild(text);
+        var details=document.createElement('details'),summary=document.createElement('summary'),selector=document.createElement('pre');
+        summary.textContent='Nicht aufgelöster Selektor';selector.textContent=JSON.stringify(warning.selector,null,2);
+        details.appendChild(summary);details.appendChild(selector);notice.appendChild(details);container.appendChild(notice);
+      });
+    }
+    function appendMappingNotes(tbody,entry){
+      if(!entry.notes || !entry.notes.length) return;
+      var row=document.createElement('tr');row.className='mapping-note-row';
+      var cell=document.createElement('td');cell.colSpan=7;
+      entry.notes.forEach(function(note){
+        if(note.label){var label=document.createElement('strong');label.textContent=note.label;cell.appendChild(label);}
+        var body=document.createElement('div');body.className='catalog-md';
+        body.innerHTML=renderMarkupMultiline(note.text,mappingState.qRaw);cell.appendChild(body);
+      });
+      row.appendChild(cell);tbody.appendChild(row);
     }
 
     function renderMappingFilters(){
@@ -7514,6 +7601,7 @@
       });
 
       renderMappingDocumentInfo(els.mappingTab);
+      renderMappingGaps(els.mappingTab);
       var wrap=document.createElement('div');
       wrap.className='mapping-table-wrap';
       var table=document.createElement('table');
@@ -7594,6 +7682,7 @@
           }
           tbody.appendChild(row);
         }
+        appendMappingNotes(tbody,entry);
       }
       table.appendChild(tbody);
       wrap.appendChild(table);

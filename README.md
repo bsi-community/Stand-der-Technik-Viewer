@@ -518,6 +518,27 @@ Die aktuellen Katalog- und Komponentenansichten können über die Browser-Print-
 
 Vor dem Druck öffnet der Viewer die relevante Listenansicht, klappt Details auf und schaltet auf ein druckoptimiertes Layout um.
 
+## Mapping-Lücken und Anmerkungen
+
+Die Mapping-Tabelle und ihre Filter und Diagramme enthalten die tatsächlichen
+Zuordnungen. Native `source-gap-summary` und `target-gap-summary` werden separat
+als kurzer aufklappbarer Hinweis mit Anzahl und IDs der nicht zugeordneten Controls
+angezeigt. Der Hinweis gilt für das gesamte Dokument, unabhängig von Tabellenfiltern.
+IDs werden pro Mapping und Quell-/Zielseite dedupliziert; sie erzeugen keine zusätzlichen
+Beziehungen oder Tabellenzeilen.
+
+`map.remarks` und die Beschreibungen und Anmerkungen aus `map.qualifiers` erscheinen
+direkt unter der jeweiligen Zuordnung, ohne Aufklappen. Diese Texte sind durchsuchbar.
+Das gilt für beliebige Relationship-Werte und Namespaces. Der Viewer interpretiert keine
+speziellen Property-Namen und zerlegt keine Freitexte. Für eine knappe Darstellung
+sollte das Mapping-Dokument an diesen Stellen nur die relevante Erläuterung enthalten.
+Properties, Quellenlisten und zusätzliche Metadatenbereiche werden nicht eingeblendet.
+Die ursprüngliche Dokumentübersicht bleibt erhalten.
+
+Bei Lücken werden explizite `with-ids` angezeigt. Nicht aufgelöste `matching`-Muster
+oder `with-child-controls: yes` erhalten einen sichtbaren Hinweis; in diesem Fall
+kann die angezeigte Liste unvollständig sein.
+
 ## Technischer Aufbau
 
 Der Viewer ist eine einzelne HTML-Datei mit eingebettetem CSS und JavaScript.
