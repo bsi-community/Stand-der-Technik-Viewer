@@ -1,0 +1,99 @@
+/* Druckansicht fuer den PDF-Export ueber den Browser-Druckdialog. */
+body.print-mode {
+  --bg: #ffffff;
+  --panel: #ffffff;
+  --card: #ffffff;
+  --muted: #c9c9c9;
+  --accent: #0b5cff;
+  --ok: #b25a00;
+  --text: #000000;
+  --dim: #333333;
+}
+body.print-mode header,
+body.print-mode aside,
+body.print-mode .overview,
+body.print-mode .tabs,
+body.print-mode #graphTab,
+body.print-mode #sunburstTab,
+body.print-mode #barTab,
+body.print-mode #targetHierarchyTab {
+  display: none !important;
+}
+body.print-mode .wrap {
+  grid-template-columns: 1fr !important;
+}
+body.print-mode main {
+  gap: 10px;
+}
+body.print-mode details {
+  background: #ffffff;
+}
+body.print-mode .card {
+  background: #ffffff;
+}
+body.print-mode mark {
+  background: #f3f3f3;
+  color: #000000;
+  border: 1px solid #e0e0e0;
+}
+body.print-mode .rel-item.related {
+  background: #f1f1f1;
+  color: #000000;
+  border-color: #666666;
+}
+body.print-mode .rel-item.required {
+  background: #ffe8d2;
+  color: #000000;
+  border-color: #8b4a0a;
+}
+body.print-mode .pill {
+  display: none !important;
+}
+body.print-mode .graph-toolbar {
+  display: none !important;
+}
+body.print-mode .note {
+  display: none !important;
+}
+body.print-mode .description-collapse-content {
+  max-height: none !important;
+  overflow: visible !important;
+  -webkit-mask-image: none !important;
+  mask-image: none !important;
+}
+body.print-mode .description-collapse::after {
+  display: none !important;
+}
+body.print-mode .description-collapse-toggle {
+  display: none !important;
+}
+@media print {
+  header,
+  aside,
+  .overview,
+  .tabs,
+  .graph-toolbar,
+  .note,
+  .pill {
+    display: none !important;
+  }
+  .wrap {
+    grid-template-columns: 1fr !important;
+  }
+  .card {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  .description-collapse-content {
+    max-height: none !important;
+    overflow: visible !important;
+    -webkit-mask-image: none !important;
+    mask-image: none !important;
+  }
+  .description-collapse::after {
+    display: none !important;
+  }
+  .description-collapse-toggle {
+    display: none !important;
+  }
+}

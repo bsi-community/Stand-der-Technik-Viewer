@@ -1,0 +1,208 @@
+/* UX-Feinschliff: klar getrennte Navigation und vollbreite Startseitenbereiche. */
+.tabs {
+  display: grid;
+  grid-template-columns: minmax(520px, 3fr) minmax(600px, 4fr);
+  gap: 10px;
+  overflow: visible;
+}
+.workspace-tab-group,
+.visualization-tab-group {
+  position: relative;
+  display: grid;
+  min-width: 0;
+  min-height: 96px;
+  padding-top: 28px;
+  background: rgba(245, 249, 254, 0.78);
+}
+.workspace-tab-group {
+  grid-template-columns: minmax(120px, 0.85fr) minmax(240px, 1.5fr) minmax(132px, 0.9fr);
+}
+.visualization-tab-group {
+  grid-template-columns: repeat(3, minmax(120px, 1fr));
+  border-left: 5px solid #08afd1;
+  box-shadow: -10px 0 0 rgba(8, 175, 209, 0.07);
+}
+.visualization-tab-group.has-target-hierarchy {
+  grid-template-columns: repeat(4, minmax(120px, 1fr));
+}
+.nav-group-label {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 2;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 14px;
+  background: #e9eef5;
+  color: #5f6f84;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  line-height: 1;
+  text-align: center;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
+}
+.visualization-tab-group .nav-group-label {
+  background: #dff5fa;
+  color: #006c82;
+}
+.nav-group-label[hidden] {
+  display: none !important;
+}
+.visual-context-label {
+  position: absolute;
+  inset: 0 0 auto;
+}
+.visual-context-label::before {
+  content: '';
+}
+.workspace-tab-group .tab,
+.visualization-tab-group .tab {
+  min-width: 0;
+  min-height: 68px;
+  padding: 13px 18px;
+  border-top: 1px solid rgba(118, 139, 170, 0.16);
+}
+.workspace-tab-group .tab:first-of-type,
+.visualization-tab-group .tab:first-of-type {
+  border-left: 0;
+}
+.tab[data-tab='graph'],
+.tab[data-tab='sunburst'],
+.tab[data-tab='bar'],
+.tab[data-tab='target-hierarchy'] {
+  padding-top: 13px;
+}
+.tab[hidden] {
+  display: none !important;
+}
+.visualization-tab-group.is-disabled {
+  border-left-color: #cbd4e1;
+  box-shadow: -10px 0 0 rgba(118, 139, 170, 0.05);
+}
+.visualization-tab-group.is-disabled .tab {
+  opacity: 0.42;
+  background: #f1f4f8;
+  color: #758398;
+  cursor: not-allowed;
+}
+.visualization-tab-group.is-disabled .tab:hover {
+  transform: none;
+  background: #f1f4f8;
+  color: #758398;
+}
+
+.registry-home-shell {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 28px;
+  width: min(1640px, calc(100% - 68px));
+  max-width: 1640px;
+}
+.registry-home-main,
+.registry-help {
+  grid-column: 1;
+  width: 100%;
+  max-width: none;
+}
+.registry-help {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+}
+.registry-help-card.guide {
+  grid-column: 1/-1;
+}
+.registry-hero {
+  max-width: 1120px;
+}
+.registry-hero p {
+  max-width: 920px;
+}
+.registry-model-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  max-width: none;
+}
+.registry-model-card {
+  min-height: 250px;
+  align-content: center;
+  justify-items: center;
+  padding: 28px clamp(24px, 4vw, 54px);
+  text-align: center;
+  overflow: hidden;
+}
+.registry-model-card h3 {
+  width: 100%;
+  margin: 6px 0 0;
+  font-size: clamp(18px, 1.45vw, 24px);
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+.registry-model-card p {
+  max-width: 560px;
+  font-size: 15px;
+  line-height: 1.55;
+  text-align: center;
+}
+.registry-model-footer {
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 12px;
+  text-align: center;
+}
+.registry-model-status {
+  justify-content: center;
+  margin-left: 0;
+  text-align: center;
+}
+@media (max-width: 1480px) {
+  .registry-home-shell {
+    width: 100%;
+    max-width: none;
+  }
+  .registry-home-main,
+  .registry-help {
+    max-width: none;
+  }
+}
+@media (max-width: 1320px) {
+  .header-nav {
+    overflow-x: auto;
+  }
+  .tabs {
+    grid-template-columns: minmax(520px, 3fr) minmax(600px, 4fr);
+    min-width: 1130px;
+    overflow: visible;
+  }
+}
+@media (max-width: 900px) {
+  .registry-model-grid,
+  .registry-help {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .registry-help-card.guide {
+    grid-column: auto;
+  }
+  .registry-model-card {
+    min-height: 220px;
+  }
+}
+@media (max-width: 760px) {
+  .registry-home-shell,
+  .registry-home-main,
+  .registry-help {
+    width: 100%;
+    max-width: 100%;
+  }
+  .registry-hero,
+  .registry-model-grid,
+  .registry-browser,
+  .registry-list {
+    max-width: 100%;
+  }
+}
