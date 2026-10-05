@@ -1,8 +1,7 @@
 Third-party runtime dependencies
 
 Bundled by the Stand der Technik-Viewer. The application license does not replace the following dependency licenses.
-
-d3 7.8.5 (ISC)
+d3 7.9.0 (ISC)
 Copyright 2010-2023 Mike Bostock
 
 Permission to use, copy, modify, and/or distribute this software for any purpose
