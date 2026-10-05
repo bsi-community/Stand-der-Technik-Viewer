@@ -1,0 +1,39 @@
+{
+  "name": "stand-der-technik-viewer",
+  "private": true,
+  "type": "module",
+  "description": "Clientseitiger Viewer für OSCAL-Dokumente der Stand der Technik-Bibliothek",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && node scripts/check-build.mjs",
+    "preview": "vite preview",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "check": "npm run lint && npm run format:check && npm run typecheck && npm test && npm run build && npm run test:e2e",
+    "test:baseline": "node scripts/compare-baseline.mjs",
+    "test:live": "node scripts/live-smoke.mjs"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@playwright/test": "1.63.0",
+    "@types/node": "26.6.4",
+    "acorn": "8.18.0",
+    "eslint": "10.12.0",
+    "globals": "17.13.0",
+    "postcss": "8.5.29",
+    "prettier": "3.9.9",
+    "typescript": "7.0.2",
+    "vite": "8.3.2",
+    "vitest": "5.0.3"
+  },
+  "dependencies": {
+    "d3": "7.8.5"
+  }
+}

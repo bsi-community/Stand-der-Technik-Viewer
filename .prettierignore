@@ -1,0 +1,9 @@
+package-lock.json
+node_modules
+dist
+test-results
+playwright-report
+coverage
+LICENSE
+
+public/THIRD-PARTY-NOTICES.txt
