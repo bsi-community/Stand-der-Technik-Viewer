@@ -114,6 +114,14 @@ Die Startseite enthält kompakte Begriffserklärungen für zentrale Begriffe:
 
 ## Mappingansicht
 
+Die Kopfzeile der Mapping-Tabelle benennt für Source und Target die in der Mapping-Datei referenzierten Kataloge, auch wenn noch keine Kataloge geladen wurden. Sie zeigt den Dateinamen bzw. einen vorhandenen Titel, die vollständige Referenz und den Hinweis, den Katalog für Titel und Anforderungstexte in der Katalogansicht zu laden. Bei `#uuid`-Verweisen werden Titel und Dateiverweise aus dem zugehörigen Back Matter ergänzt. Gleiche Ressourcen werden je Tabellenseite zusammengefasst; aktive Filter bestimmen, welche Ressourcen erscheinen.
+
+HTTP-/HTTPS-Referenzen lassen sich öffnen. Relative Referenzen werden bei per URL geladenen Mappings gegen deren Dokument-URL aufgelöst. Bei lokalen Dateien fehlt diese Basis; die Pfade bleiben deshalb als kopierbarer Text sichtbar. Kataloge werden nicht automatisch nachgeladen.
+
+**Versionsangaben:** Das [OSCAL Mapping-Modell](https://pages.nist.gov/OSCAL-Reference/models/v1.2.3/mapping/json-reference/#/mapping-collection/mappings/source-resource) verlangt `type` und `href` für die Ressourcenreferenzen, aber keine Katalogversion. `metadata.version` bezeichnet die Mapping-Datei und `metadata.oscal-version` die OSCAL-Modellversion. Beide werden nicht als Katalogversion ausgegeben. Der Viewer zeigt optionale Properties namens `version`, `catalog-version` oder `document-version` an der Ressourcenreferenz oder der direkt referenzierten Back-Matter-Ressource als „Versionsangabe im Mapping“. Diese Angaben können je Herausgeber unterschiedliche Bedeutungen haben; sie sind keine verifizierte Versionsbindung. Die Version eines zugeordneten, geladenen Katalogs erscheint separat aus dessen `metadata.version`. Versionsnummern werden nicht aus Dateinamen geraten.
+
+Für die spätere Identifizierung des tatsächlich verwendeten Stands sollten Mapping-Autoren unveränderliche Referenzen verwenden, etwa eine URL mit Git-Commit statt eines veränderlichen Branches. Back-Matter-Ressourcen können zusätzlich `rlinks[].hashes` zur Integritätsprüfung enthalten. Der Viewer zeigt die Referenzen an, prüft jedoch keine Hashes und bestätigt daher keine historische Dateigleichheit.
+
 - Laden einer OSCAL Control Mapping Collection
   - per Datei-Upload
   - per URL-Import via `fetch`

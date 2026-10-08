@@ -1,5 +1,13 @@
 # Prüfbericht zum Architekturumbau
 
+## Ergänzung vom 08.10.2026: Katalogreferenzen in der Mappingansicht
+
+Die vorhandene Source-/Target-Kopfzeile zeigt nun Ressourcenreferenzen und Ladehinweise auch ohne geladene Kataloge. Back-Matter-Titel und -Verweise sowie optionale Versions-Properties werden ausgewertet. Die Version des geladenen Katalogs bleibt ausdrücklich von Angaben im Mapping getrennt; keine Änderung an der bestehenden Katalog-/Control-Zuordnung und keine automatische Nachladung.
+
+Geprüft mit Node.js 24.19.0: ESLint, vollständige Prettier-Prüfung, TypeScript-Modellverträge, 42 Unit-/Architektur-/CSS-Tests, Produktionsbuild und Assetprüfung sowie 54 Browserprüfungen (18 Abläufe in Chromium, Firefox und WebKit) erfolgreich. Die zusätzlichen Abläufe prüfen insbesondere Mapping-only, Laden/Entfernen, mehrere Ressourcen, Filter, Versionen, Back Matter, nicht vertrauenswürdige Inhalte und lange Referenzen auf schmalen Ansichten.
+
+Die acht übrigen Zustände des historischen Bildschirmvergleichs sind pixelidentisch. Die Mapping-Kopfzeile ist bewusst verändert und wurde gesondert visuell geprüft; der unveränderte historische `test:baseline` meldet deshalb dort erwartungsgemäß eine Abweichung. Der CSS-Test schützt weiterhin alle ursprünglichen Stylesheets mit dem ursprünglichen Hash; die neue Gestaltung liegt ausschließlich im ergänzenden `mapping-resource.css`. Die nachfolgenden Angaben dokumentieren unverändert die frühere Abnahme vom 05.10.2026.
+
 Stand: 05.10.2026 · Zielversion: 3.0.0 · Branch: `restructure-viewer`
 
 ## Ausgangspunkt und Umfang

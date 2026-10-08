@@ -16,6 +16,7 @@ Das Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1
 
 ### Kleine Bedienverbesserung
 
+- Mapping-Tabellen zeigen die referenzierten Source-/Target-Kataloge bereits ohne geladene Kataloge: Dateiname bzw. Back-Matter-Titel, vollständige Referenz, Ladehinweis und vorhandene Versionsangaben. Die Version eines geladenen Katalogs wird separat ausgewiesen.
 - JSON-Dialog unterstützt Escape, begrenzt den Tastaturfokus auf den Dialog und gibt den Fokus danach an die auslösende Schaltfläche zurück.
 
 ### Ausgangsstand
