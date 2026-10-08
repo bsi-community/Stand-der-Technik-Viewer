@@ -31,6 +31,14 @@ Nur ein Push oder manueller Workflowlauf auf `main` kann deployen. Pull Requests
 
 Der Basis-Pfad ist in `vite.config.js` auf `/Stand-der-Technik-Viewer/` festgelegt. Bei Repository-Umbenennung, Organisationswechsel oder eigener Domain Pfad, Testadressen, Links und Deployment-Dokumentation gemeinsam anpassen.
 
+## Aktualisierung bei Lesezeichen-Aufrufen
+
+GitHub Pages liefert HTML mit `Cache-Control: max-age=600`. Ein normaler Aufruf kann deshalb bis zu zehn Minuten alte Startseiten verwenden; verschiedene Query-Strings besitzen getrennte Cache-Einträge. Die gehashten JS-/CSS-Dateinamen allein lösen dies nicht, weil eine alte Startseite weiterhin die alten Dateien referenziert.
+
+Der Build veröffentlicht deshalb `release.json` mit einer aus dem Build-Inhalt erzeugten Kennung. Ein kleines Inline-Skript in der Startseite prüft diese Kennung vor dem Anwendungsstart per `fetch` mit `cache: 'no-store'` und einer eindeutigen Anfrage-URL. Bei einer neuen Veröffentlichung öffnet es dieselbe Adresse einmalig mit einem Release-Parameter und entfernt diesen anschließend aus der sichtbaren URL. Bestehende Parameter und Fragmente bleiben erhalten. Das Skript läuft unabhängig von den gehashten Modulen, damit auch eine alte Startseite mit inzwischen entfernten Assets aktualisiert werden kann. Die Kennung ändert sich auch ohne Änderung von `VERSION`.
+
+Es gibt keine Hintergrund-Neuladung während der Arbeit: Lokal geladene Dokumente bleiben erhalten. Ein fehlgeschlagener oder nach drei Sekunden abgebrochener Versionsabruf verhindert den Start nicht. Ein Wiederholungsschutz verhindert Schleifen bei kurzzeitig unterschiedlichen CDN-Ständen. Der Schutz wirkt ab der ersten geladenen Veröffentlichung, die ihn enthält; bereits vorher zwischengespeicherte Startseiten erhalten ihn nach Ablauf ihrer Cache-Gültigkeit. Die Cache-Header von GitHub Pages werden dadurch nicht verändert.
+
 ## Rückfall und Störungen
 
 - Vor dem Merge: Branch nicht mergen; die bestehende Veröffentlichung bleibt unberührt.

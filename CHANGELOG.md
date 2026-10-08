@@ -16,6 +16,7 @@ Das Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1
 
 ### Behoben
 
+- Veraltete Lesezeichen-Aufrufe durch den zehnminütigen GitHub-Pages-Cache: Startprüfung gegen eine Build-Kennung lädt neue Veröffentlichungen automatisch; laufende Sitzungen mit lokalen Dokumenten bleiben erhalten.
 - Verpflichtenden visuellen CI-Vergleich auf eine unabhängig gebaute, eingefrorene Referenz mit der neuen Mapping-Kopfzeile umgestellt; zusätzlich wird die Mappingansicht ohne geladene Kataloge vollständig verglichen.
 
 ### Kleine Bedienverbesserung
