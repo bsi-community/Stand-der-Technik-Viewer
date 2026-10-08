@@ -1,5 +1,15 @@
 # Prüfbericht zum Architekturumbau
 
+## Ergänzung vom 08.10.2026: Katalogreferenzen in der Mappingansicht
+
+Die vorhandene Source-/Target-Kopfzeile zeigt nun Ressourcenreferenzen und Ladehinweise auch ohne geladene Kataloge. Back-Matter-Titel und -Verweise sowie optionale Versions-Properties werden ausgewertet. Die Version des geladenen Katalogs bleibt ausdrücklich von Angaben im Mapping getrennt; keine Änderung an der bestehenden Katalog-/Control-Zuordnung und keine automatische Nachladung.
+
+Geprüft mit Node.js 24.19.0: ESLint, vollständige Prettier-Prüfung, TypeScript-Modellverträge, 42 Unit-/Architektur-/CSS-Tests, Produktionsbuild und Assetprüfung sowie 54 Browserprüfungen (18 Abläufe in Chromium, Firefox und WebKit) erfolgreich. Die zusätzlichen Abläufe prüfen insbesondere Mapping-only, Laden/Entfernen, mehrere Ressourcen, Filter, Versionen, Back Matter, nicht vertrauenswürdige Inhalte und lange Referenzen auf schmalen Ansichten.
+
+Die ersten CI-Läufe von PR #11 scheiterten ausschließlich an `test:baseline`: Die neue Mapping-Kopfzeile wurde noch mit der alten Oberfläche verglichen. Die frühere Einordnung dieser Abweichung als bloß erwartetes Ergebnis war für den verpflichtenden CI-Check falsch. Die Referenzstrategie wurde deshalb angepasst: unabhängiger Referenzbuild aus einer festen, in `main` enthaltenen Revision plus eingefrorenem Mapping-Patch. Der Workflow und seine Pflichtprüfungen bleiben aktiv; kein Screenshotbereich wird ausgespart.
+
+Die neue Prüfung besteht für alle zehn vollständigen Ansichten einschließlich „Mapping ohne Kataloge“. Eine absichtlich rot eingefärbte Katalogüberschrift im temporären Testbuild wird in beiden Mapping-Zuständen als Fehler erkannt; nach Wiederherstellung bestehen alle zehn Vergleiche erneut. Der CSS-Test schützt weiterhin alle ursprünglichen Stylesheets mit dem ursprünglichen Hash; die neue Gestaltung liegt ausschließlich im ergänzenden `mapping-resource.css`. Die nachfolgenden Angaben dokumentieren unverändert die frühere Abnahme vom 05.10.2026.
+
 Stand: 05.10.2026 · Zielversion: 3.0.0 · Branch: `restructure-viewer`
 
 ## Ausgangspunkt und Umfang

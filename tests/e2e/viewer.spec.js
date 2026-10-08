@@ -99,6 +99,127 @@ test('mappings: partial coverage, gaps, search and diagrams', async ({ page }) =
     await expect(page.locator('#' + container + ' svg')).toBeVisible();
   }
 });
+test('mapping headers identify missing catalogs and update after loading and removing them', async ({
+  page,
+}, testInfo) => {
+  await upload(page, '#mappingFile', mapping);
+  const source = page.locator('.mapping-source-context');
+  const target = page.locator('.mapping-target-context');
+  await expect(source).toContainText('source.json');
+  await expect(target).toContainText('catalog.json');
+  await expect(target.getByRole('link')).toHaveAttribute(
+    'href',
+    'https://example.org/catalog.json',
+  );
+  await expect(target).toContainText('Katalogversion im Mapping nicht angegeben');
+  await expect(target).toContainText(
+    'Für Titel und Anforderungstexte in der Katalogansicht laden.',
+  );
+  await expect(target.locator('details')).toHaveCount(0);
+  await page.setViewportSize({ width: 1920, height: 1080 });
+  await page
+    .locator('.mapping-table')
+    .screenshot({ path: testInfo.outputPath('mapping-only.png') });
+  await page.setViewportSize({ width: 1440, height: 1000 });
+
+  await upload(page, '#file', catalog, 'catalog.json');
+  await page.locator('#tab-mappings').click();
+  await expect(target).toContainText('Testkatalog Sicherheit');
+  await expect(target).toContainText('Zugeordneter Katalog geladen · Version 1.0.0');
+  await expect(target).toContainText('Katalogversion im Mapping nicht angegeben');
+  await expect(page.locator('.mapping-target-title-cell')).toContainText('Zugänge schützen');
+  await expect(page.locator('.mapping-target-prose-cell')).toContainText('monatlich');
+  await expect(source).toContainText('in der Katalogansicht laden');
+
+  await page.locator('#tab-list').click();
+  await page.locator('#catalogPanel details[data-section="upload"] > summary').click();
+  await page.locator('#catalogSourceButton').click();
+  await page.getByRole('button', { name: 'Testkatalog Sicherheit entfernen', exact: true }).click();
+  await page.locator('#tab-mappings').click();
+  await expect(target).toContainText('catalog.json');
+  await expect(target).not.toContainText('Zugeordneter Katalog geladen');
+  await expect(target).toContainText('in der Katalogansicht laden');
+});
+
+test('mapping headers resolve back matter, distinguish versions and respect filtered resource pairs', async ({
+  page,
+}) => {
+  const fixture = structuredClone(mapping);
+  const doc = fixture['mapping-collection'];
+  doc.metadata.version = 'MAPPING-9';
+  const group = doc.mappings[0];
+  group['source-resource'] = { type: 'catalog', href: '#source' };
+  group['target-resource'] = {
+    type: 'catalog',
+    href: 'https://example.org/catalog.json',
+    props: [{ name: 'version', ns: 'https://example.org/ns', value: '0.8' }],
+  };
+  doc['back-matter'] = {
+    resources: [
+      {
+        uuid: 'source',
+        title: 'Source-Katalog mit Version',
+        props: [{ name: 'version', ns: 'https://example.org/ns', value: '2.0' }],
+        rlinks: [{ href: '../catalogs/source-v2.json' }],
+      },
+    ],
+  };
+  doc.mappings.push(structuredClone(group));
+  doc.mappings.push({
+    ...structuredClone(group),
+    'source-resource': { href: 'other.json' },
+    maps: [
+      {
+        relationship: 'equal-to',
+        sources: [{ 'id-ref': 'OTHER' }],
+        targets: [{ 'id-ref': 'AC-2' }],
+      },
+    ],
+  });
+  await upload(page, '#file', catalog, 'catalog.json');
+  await upload(page, '#mappingFile', fixture);
+  const source = page.locator('.mapping-source-context');
+  const target = page.locator('.mapping-target-context');
+  await expect(source.locator('.mapping-catalog-context')).toHaveCount(2);
+  await expect(source).toContainText('Source-Katalog mit Version');
+  await expect(source).toContainText('../catalogs/source-v2.json');
+  await expect(source.getByRole('link')).toHaveCount(0);
+  await expect(source).toContainText('Versionsangabe im Mapping: 2.0');
+  await expect(target).toContainText('Versionsangabe im Mapping: 0.8');
+  await expect(target).toContainText('Zugeordneter Katalog geladen · Version 1.0.0');
+  await expect(source).not.toContainText('MAPPING-9');
+  await page.locator('#mappingPanel details[data-section="filters"] > summary').click();
+  await page.locator('#mappingQ').fill('OTHER');
+  await expect(source.locator('.mapping-catalog-context')).toHaveCount(1);
+  await expect(source).toContainText('other.json');
+  await expect(source).not.toContainText('source-v2');
+});
+
+test('mapping header escapes content and wraps long references within the table', async ({
+  page,
+}) => {
+  const fixture = structuredClone(mapping);
+  const longPath = '../' + 'long-directory-'.repeat(30) + '/catalog.json';
+  fixture['mapping-collection'].mappings[0]['source-resource'] = {
+    href: longPath,
+    title: '<img src=x onerror="window.injected=true">',
+  };
+  fixture['mapping-collection'].mappings[0]['target-resource'] = { href: 'javascript:alert(1)' };
+  await upload(page, '#mappingFile', fixture);
+  await expect(page.locator('.mapping-source-context')).toContainText('<img src=x');
+  await expect(page.locator('.mapping-source-context img')).toHaveCount(0);
+  await expect(page.locator('.mapping-target-context a')).toHaveCount(0);
+  for (const width of [1440, 390]) {
+    await page.setViewportSize({ width, height: 900 });
+    const size = await page.locator('.mapping-source-context').evaluate((cell) => ({
+      width: cell.clientWidth,
+      content: cell.scrollWidth,
+    }));
+    expect(size.content).toBeLessThanOrEqual(size.width + 1);
+  }
+  expect(await page.evaluate(() => window.injected)).toBeUndefined();
+});
+
 test('deep links load remote documents and restore secondary tab', async ({ page }) => {
   await page.goto(
     './?url=https%3A%2F%2Fexample.org%2Fcatalog.json&kind=catalog&primary_tab=list&secondary_tab=bar',

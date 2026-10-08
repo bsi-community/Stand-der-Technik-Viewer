@@ -1,0 +1,242 @@
+diff --git a/src/domain/mapping-resource.js b/src/domain/mapping-resource.js
+new file mode 100644
+index 0000000..10f98c1
+--- /dev/null
++++ b/src/domain/mapping-resource.js
+@@ -0,0 +1,66 @@
++/** Resource hints supplied by a mapping; these do not verify a catalog revision. */
++import { mappingArray } from './mapping.js';
++
++const text = (value) => (typeof value === 'string' ? value.trim() : '');
++
++function referenceName(href) {
++  if (!href || href.startsWith('#')) return href;
++  const path = href.split(/[?#]/)[0].replace(/\\/g, '/');
++  const name = path.slice(path.lastIndexOf('/') + 1) || href;
++  try {
++    return decodeURIComponent(name);
++  } catch (_error) {
++    return name;
++  }
++}
++
++/** Local relative references must never resolve against the viewer's own URL. */
++export function mappingReferenceUrl(href, baseUrl = '') {
++  if (!href || href.startsWith('#')) return '';
++  try {
++    const url = baseUrl ? new URL(href, baseUrl) : new URL(href);
++    return ['http:', 'https:'].includes(url.protocol) ? url.href : '';
++  } catch (_error) {
++    return '';
++  }
++}
++
++export function describeMappingResource(resource = {}, backMatter = null, baseUrl = '') {
++  const href = text(resource.href);
++  const linked = href.startsWith('#')
++    ? mappingArray(backMatter?.resources).find(
++        (item) => text(item?.uuid).toLowerCase() === href.slice(1).toLowerCase(),
++      )
++    : null;
++  const references = [...new Set([href, ...mappingArray(linked?.rlinks).map((l) => text(l?.href))])]
++    .filter(Boolean)
++    .map((value) => ({ value, url: mappingReferenceUrl(value, baseUrl) }));
++  // Extensions are publisher-defined hints, not a standard required version field.
++  const versions = [];
++  for (const [origin, item] of [
++    ['Ressourcenreferenz', resource],
++    ['Back Matter', linked],
++  ]) {
++    for (const prop of mappingArray(item?.props)) {
++      if (!['version', 'catalog-version', 'document-version'].includes(prop?.name)) continue;
++      if (!text(prop.value)) continue;
++      versions.push({
++        value: text(prop.value),
++        origin,
++        name: prop.name,
++        namespace: text(prop.ns),
++      });
++    }
++  }
++  return {
++    title:
++      text(resource.title) ||
++      text(linked?.title) ||
++      referenceName(references.find((ref) => !ref.value.startsWith('#'))?.value || href) ||
++      text(resource.uuid) ||
++      'Katalogreferenz nicht angegeben',
++    references,
++    versions,
++    type: text(resource.type),
++  };
++}
+diff --git a/src/features/mappings/resource-header.js b/src/features/mappings/resource-header.js
+new file mode 100644
+index 0000000..2baac2b
+--- /dev/null
++++ b/src/features/mappings/resource-header.js
+@@ -0,0 +1,76 @@
++/** Compact resource identity and loading guidance in the existing table header. */
++import { describeMappingResource } from '../../domain/mapping-resource.js';
++import { resolveMappingCatalogSource } from './resolution.js';
++
++function appendText(parent, className, value) {
++  const element = document.createElement('div');
++  element.className = className;
++  element.textContent = value;
++  parent.appendChild(element);
++  return element;
++}
++
++export function appendMappingResourceHeader(cell, entries, side, state) {
++  const seen = new Set();
++  const rendered = new Set();
++  for (const entry of entries) {
++    const resource = entry[side + 'Resource'];
++    if (seen.has(resource)) continue;
++    seen.add(resource);
++    const details = describeMappingResource(resource, state.backMatter, state.baseUrl);
++    const source = resolveMappingCatalogSource(
++      resource,
++      entry[side + 'Catalog'],
++      entry[side + 'CatalogRefs'] || entry[side + 'Refs'],
++    );
++    const loadedVersion = source?.json?.catalog?.metadata?.version;
++    const key = JSON.stringify([details, source?.catalogUuid, source?.catalogTitle, loadedVersion]);
++    if (rendered.has(key)) continue;
++    rendered.add(key);
++    const block = document.createElement('div');
++    block.className = 'mapping-catalog-context';
++    appendText(block, 'mapping-catalog-name', source?.catalogTitle || details.title);
++    for (const ref of details.references) {
++      const line = appendText(
++        block,
++        'mapping-catalog-reference',
++        ref.value.startsWith('#') ? 'Mapping-Referenz: ' : 'Referenz: ',
++      );
++      const value = document.createElement(ref.url ? 'a' : 'span');
++      value.textContent = ref.value;
++      if (ref.url) {
++        value.href = ref.url;
++        value.target = '_blank';
++        value.rel = 'noopener noreferrer';
++      }
++      line.appendChild(value);
++    }
++    const versions = [...new Set(details.versions.map((version) => version.value))];
++    const versionLine = appendText(
++      block,
++      'mapping-catalog-version',
++      versions.length
++        ? 'Versionsangabe im Mapping: ' + versions.join(' · ')
++        : 'Katalogversion im Mapping nicht angegeben',
++    );
++    if (versions.length) {
++      versionLine.title =
++        details.versions
++          .map(
++            (version) =>
++              `${version.origin}: ${version.name} = ${version.value}${version.namespace ? ' (' + version.namespace + ')' : ''}`,
++          )
++          .join('\n') + '\nAngabe des Herausgebers; nicht anhand der Katalogdatei verifiziert.';
++    }
++    appendText(
++      block,
++      'mapping-catalog-status',
++      source
++        ? 'Zugeordneter Katalog geladen' + (loadedVersion ? ' · Version ' + loadedVersion : '')
++        : details.type === 'profile'
++          ? 'Für Titel und Anforderungstexte den aufgelösten Katalog in der Katalogansicht laden.'
++          : 'Für Titel und Anforderungstexte in der Katalogansicht laden.',
++    );
++    cell.appendChild(block);
++  }
++}
+diff --git a/src/features/mappings/view.js b/src/features/mappings/view.js
+index eeee221..bfd8b36 100644
+--- a/src/features/mappings/view.js
++++ b/src/features/mappings/view.js
+@@ -6,5 +6,2 @@ import { appendMappingNotes, renderMappingGaps } from './filters.js';
+-import {
+-  collectMappingHeaderTitles,
+-  mappingControlDetails,
+-  resolveMappingCatalogSource,
+-} from './resolution.js';
++import { mappingControlDetails, resolveMappingCatalogSource } from './resolution.js';
++import { appendMappingResourceHeader } from './resource-header.js';
+@@ -285,8 +281,0 @@ export function renderMappingView() {
+-  var sourceHeaderTitle = collectMappingHeaderTitles(
+-    visible.length ? visible : mappingStore.mappingState.entries,
+-    'source',
+-  );
+-  var targetHeaderTitle = collectMappingHeaderTitles(
+-    visible.length ? visible : mappingStore.mappingState.entries,
+-    'target',
+-  );
+@@ -301,5 +290,3 @@ export function renderMappingView() {
+-    '<tr><th colspan="3"><strong>Source-Katalog und Controls:</strong> ' +
+-    escapeHtml(sourceHeaderTitle) +
+-    '</th><th class="mapping-relation-context" aria-hidden="true"></th><th colspan="3"><strong>Target-Katalog und Controls:</strong> ' +
+-    escapeHtml(targetHeaderTitle) +
+-    '</th></tr>' +
++    '<tr><th colspan="3" scope="colgroup" class="mapping-source-context"><strong>Source-Katalog und Controls</strong></th>' +
++    '<th class="mapping-relation-context" aria-hidden="true"></th>' +
++    '<th colspan="3" scope="colgroup" class="mapping-target-context"><strong>Target-Katalog und Controls</strong></th></tr>' +
+@@ -307,0 +295,8 @@ export function renderMappingView() {
++  for (const side of ['source', 'target']) {
++    appendMappingResourceHeader(
++      table.querySelector('.mapping-' + side + '-context'),
++      visible.length ? visible : mappingStore.mappingState.entries,
++      side,
++      mappingStore.mappingState,
++    );
++  }
+diff --git a/src/styles/index.css b/src/styles/index.css
+index 50c7231..7282c74 100644
+--- a/src/styles/index.css
++++ b/src/styles/index.css
+@@ -6,0 +7 @@
++@import './mapping-resource.css';
+diff --git a/src/styles/mapping-resource.css b/src/styles/mapping-resource.css
+new file mode 100644
+index 0000000..0c06a70
+--- /dev/null
++++ b/src/styles/mapping-resource.css
+@@ -0,0 +1,37 @@
++/* Resource references supplement the preserved mapping table layout. */
++.mapping-table th.mapping-source-context,
++.mapping-table th.mapping-target-context {
++  vertical-align: top;
++}
++.mapping-catalog-context {
++  margin-top: 6px;
++  text-align: left;
++  text-transform: none;
++  letter-spacing: normal;
++  overflow-wrap: anywhere;
++  font-size: 12px;
++  line-height: 1.5;
++}
++.mapping-catalog-context + .mapping-catalog-context {
++  padding-top: 8px;
++  border-top: 1px solid var(--muted);
++}
++.mapping-catalog-name {
++  font-weight: 700;
++  font-size: 13px;
++}
++.mapping-catalog-reference,
++.mapping-catalog-version {
++  color: var(--dim);
++}
++.mapping-catalog-reference a {
++  color: #184f91;
++  text-decoration: underline;
++}
++.mapping-catalog-reference a:focus-visible {
++  outline: 2px solid currentColor;
++  outline-offset: 2px;
++}
++.mapping-catalog-status {
++  margin-top: 3px;
++}

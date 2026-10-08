@@ -3,11 +3,8 @@ import { mappingStore, uiStore } from '../../app/store.js';
 import { getCatalogPreviewParamMap } from '../../app/catalog-lookup.js';
 import { mappingRelationshipSymbol } from '../../domain/mapping.js';
 import { appendMappingNotes, renderMappingGaps } from './filters.js';
-import {
-  collectMappingHeaderTitles,
-  mappingControlDetails,
-  resolveMappingCatalogSource,
-} from './resolution.js';
+import { mappingControlDetails, resolveMappingCatalogSource } from './resolution.js';
+import { appendMappingResourceHeader } from './resource-header.js';
 import { mappingEntryMatches } from './selectors.js';
 import { collectMappingActiveFilterChips, renderSelectionState } from '../selection.js';
 import { renderWorkspaceEmptyState } from '../sources/empty-state.js';
@@ -282,14 +279,6 @@ export function renderMappingView() {
   wrap.className = 'mapping-table-wrap';
   var table = document.createElement('table');
   table.className = 'mapping-table';
-  var sourceHeaderTitle = collectMappingHeaderTitles(
-    visible.length ? visible : mappingStore.mappingState.entries,
-    'source',
-  );
-  var targetHeaderTitle = collectMappingHeaderTitles(
-    visible.length ? visible : mappingStore.mappingState.entries,
-    'target',
-  );
   table.innerHTML =
     '' +
     '<colgroup>' +
@@ -298,13 +287,19 @@ export function renderMappingView() {
     '<col class="mapping-id-col"><col class="mapping-title-col"><col class="mapping-prose-col">' +
     '</colgroup>' +
     '<thead>' +
-    '<tr><th colspan="3"><strong>Source-Katalog und Controls:</strong> ' +
-    escapeHtml(sourceHeaderTitle) +
-    '</th><th class="mapping-relation-context" aria-hidden="true"></th><th colspan="3"><strong>Target-Katalog und Controls:</strong> ' +
-    escapeHtml(targetHeaderTitle) +
-    '</th></tr>' +
+    '<tr><th colspan="3" scope="colgroup" class="mapping-source-context"><strong>Source-Katalog und Controls</strong></th>' +
+    '<th class="mapping-relation-context" aria-hidden="true"></th>' +
+    '<th colspan="3" scope="colgroup" class="mapping-target-context"><strong>Target-Katalog und Controls</strong></th></tr>' +
     '<tr><th>Prose</th><th>Titel</th><th>ID</th><th class="mapping-relation-heading">Relationship</th><th>ID</th><th>Titel</th><th>Prose</th></tr>' +
     '</thead>';
+  for (const side of ['source', 'target']) {
+    appendMappingResourceHeader(
+      table.querySelector('.mapping-' + side + '-context'),
+      visible.length ? visible : mappingStore.mappingState.entries,
+      side,
+      mappingStore.mappingState,
+    );
+  }
   var tbody = document.createElement('tbody');
   if (!visible.length) {
     var emptyRow = document.createElement('tr');

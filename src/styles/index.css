@@ -4,5 +4,6 @@
 @import './layout.css';
 @import './print.css';
 @import './mappings.css';
+@import './mapping-resource.css';
 @import './navigation.css';
 @import './visualizations.css';

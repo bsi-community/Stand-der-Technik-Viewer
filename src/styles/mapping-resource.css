@@ -1,0 +1,37 @@
+/* Resource references supplement the preserved mapping table layout. */
+.mapping-table th.mapping-source-context,
+.mapping-table th.mapping-target-context {
+  vertical-align: top;
+}
+.mapping-catalog-context {
+  margin-top: 6px;
+  text-align: left;
+  text-transform: none;
+  letter-spacing: normal;
+  overflow-wrap: anywhere;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.mapping-catalog-context + .mapping-catalog-context {
+  padding-top: 8px;
+  border-top: 1px solid var(--muted);
+}
+.mapping-catalog-name {
+  font-weight: 700;
+  font-size: 13px;
+}
+.mapping-catalog-reference,
+.mapping-catalog-version {
+  color: var(--dim);
+}
+.mapping-catalog-reference a {
+  color: #184f91;
+  text-decoration: underline;
+}
+.mapping-catalog-reference a:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+.mapping-catalog-status {
+  margin-top: 3px;
+}
