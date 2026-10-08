@@ -1,42 +1,47 @@
-/** Reproducible visual migration check against the original Git revision.
- * Serve only known baseline files, on loopback; do not mutate any checkout.
- * Run after npm run build; starts its own preview on loopback port 4183.
+/** Compare independently built, frozen reference and current UI in the same browser.
+ * Run after npm run build; loopback previews use ports 4174 and 4183.
  */
-import { execFileSync, spawn } from 'node:child_process';
-import { createServer } from 'node:http';
+import { spawn } from 'node:child_process';
+import path from 'node:path';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { chromium } from '@playwright/test';
+import { buildVisualBaseline } from './build-visual-baseline.mjs';
 import { catalog, component, mapping, hierarchyCsv } from '../tests/fixtures/documents.js';
 
-const ref = '36c1dc82243360c0f2e8578fc641af2ab80b5a98';
-const original = (name) =>
-  execFileSync('git', ['show', `${ref}:${name}`], { maxBuffer: 4 * 1024 * 1024 });
-const files = new Map([
-  ['/', [original('index.html'), 'text/html; charset=utf-8']],
-  ['/d3.v7.min.js', [original('d3.v7.min.js'), 'text/javascript']],
-  ['/viewer_logo-transparent.png', [original('viewer_logo-transparent.png'), 'image/png']],
-]);
-const server = createServer((req, res) => {
-  const value = files.get(new URL(req.url, 'http://localhost').pathname);
-  res.writeHead(value ? 200 : 404, { 'Content-Type': value?.[1] || 'text/plain' });
-  res.end(value?.[0] || 'Not found');
-});
-await new Promise((resolve) => server.listen(4174, '127.0.0.1', resolve));
-const browser = await chromium.launch();
-const preview = spawn(
-  process.execPath,
-  ['node_modules/vite/bin/vite.js', 'preview', '--port', '4183'],
-  { stdio: 'ignore' },
-);
+const baseline = await buildVisualBaseline();
+const previews = [];
+let browser;
 const output = 'test-results/baseline';
 await mkdir(output, { recursive: true });
 const pictures = new Map();
 const failures = [];
 try {
+  for (const [cwd, port] of [
+    [baseline.root, '4174'],
+    [process.cwd(), '4183'],
+  ]) {
+    previews.push(
+      spawn(
+        process.execPath,
+        [
+          path.resolve('node_modules/vite/bin/vite.js'),
+          'preview',
+          '--configLoader',
+          'native',
+          '--port',
+          port,
+        ],
+        { cwd, stdio: 'inherit' },
+      ),
+    );
+  }
+  browser = await chromium.launch();
   let ready = false;
   for (let attempt = 0; attempt < 100; attempt++) {
     try {
-      ready = (await fetch('http://127.0.0.1:4183/Stand-der-Technik-Viewer/')).ok;
+      ready =
+        (await fetch('http://127.0.0.1:4174/Stand-der-Technik-Viewer/')).ok &&
+        (await fetch('http://127.0.0.1:4183/Stand-der-Technik-Viewer/')).ok;
     } catch {
       /* server starting */
     }
@@ -45,7 +50,7 @@ try {
   }
   if (!ready) throw new Error('Production preview did not start. Run npm run build first.');
   for (const [name, url] of [
-    ['before', 'http://127.0.0.1:4174/'],
+    ['before', 'http://127.0.0.1:4174/Stand-der-Technik-Viewer/'],
     ['after', 'http://127.0.0.1:4183/Stand-der-Technik-Viewer/'],
   ]) {
     const page = await browser.newPage({
@@ -86,6 +91,14 @@ try {
       }
     }
     await capture('home');
+    await page.locator('#tab-mappings').click();
+    await page.locator('#mappingFile').setInputFiles({
+      name: 'mapping-only.json',
+      mimeType: 'application/json',
+      buffer: Buffer.from(JSON.stringify(mapping)),
+    });
+    await page.locator('.mapping-source-context').waitFor();
+    await capture('mapping-only');
     for (const [kind, json, input, tab] of [
       ['catalog', catalog, '#file', '#tab-list'],
       ['component', component, '#compFile', '#tab-components'],
@@ -115,8 +128,8 @@ try {
     await page.close();
   }
 } finally {
-  preview.kill();
-  await browser.close();
-  await new Promise((resolve) => server.close(resolve));
+  for (const preview of previews) preview.kill();
+  await browser?.close();
+  await baseline.cleanup();
 }
 if (failures.length) throw new Error('Baseline differences: ' + failures.join(', '));

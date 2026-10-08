@@ -14,6 +14,10 @@ Das Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1
 - Dokumentation in Entwickler-Einstieg, Bedienungsanleitung, Architektur und Betrieb gegliedert.
 - Keine separate per Doppelklick startbare Offline-Ausgabe mehr. Die alte HTML-URL leitet unter Beibehaltung der Parameter auf den Viewer weiter.
 
+### Behoben
+
+- Verpflichtenden visuellen CI-Vergleich auf eine unabhängig gebaute, eingefrorene Referenz mit der neuen Mapping-Kopfzeile umgestellt; zusätzlich wird die Mappingansicht ohne geladene Kataloge vollständig verglichen.
+
 ### Kleine Bedienverbesserung
 
 - Mapping-Tabellen zeigen die referenzierten Source-/Target-Kataloge bereits ohne geladene Kataloge: Dateiname bzw. Back-Matter-Titel, vollständige Referenz, Ladehinweis und vorhandene Versionsangaben. Die Version eines geladenen Katalogs wird separat ausgewiesen.
