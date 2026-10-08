@@ -8,6 +8,15 @@ assert.match(version, /^\d+\.\d+\.\d+$/);
 assert.ok(html.includes(`v${version}`), 'visible build version missing');
 assert.ok(!html.includes('%VIEWER_VERSION%'), 'unresolved version placeholder');
 assert.ok(!html.includes('/src/main.js'), 'unbuilt source entry');
+const release = JSON.parse(fs.readFileSync('dist/release.json', 'utf8'));
+assert.match(release.buildId, /^[a-f0-9]{64}$/);
+assert.equal(release.version, version);
+assert.ok(html.includes(release.buildId), 'HTML and release manifest disagree');
+assert.ok(!html.includes('__VIEWER_RELEASE_BUILD_ID__'), 'unresolved release build ID');
+assert.ok(
+  html.indexOf('data-viewer-update') < html.indexOf('type="module"'),
+  'update guard must run before potentially stale asset imports',
+);
 const assets = [...html.matchAll(/(?:src|href)="([^"]+)"/g)]
   .map((m) => m[1])
   .filter((url) => url.startsWith(base));

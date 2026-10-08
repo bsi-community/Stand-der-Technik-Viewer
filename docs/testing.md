@@ -28,6 +28,8 @@ Der CSS-Vertrag schützt weiterhin sämtliche ursprünglichen Stylesheets mit de
 
 ## Fachliche und Live-Abnahme
 
+Die Aktualisierungsprüfungen in `tests/e2e/updates.spec.js` testen veraltetes HTML, entfernte alte Assets, alte benannte HTML-Links, erhaltene Parameter/Fragmente, Schleifenschutz, ungültige/nicht erreichbare/langsame Versionsantworten und den Erhalt bereits geladener Dokumente. Ein zusätzlicher lokaler HTTP-Server reproduziert in allen drei Browser-Engines einen echten `max-age=600`-Cache: erster Besuch, neue Veröffentlichung, zweiter Besuch über dieselbe Adresse ohne manuelles Neuladen. Dieser Test verwendet einen eigenen Browser-Kontext ohne Request-Routing, damit der Browsercache tatsächlich aktiv bleibt.
+
 Zusätzlich mit repräsentativen realen Katalogen und Komponenten prüfen: Datei und URL laden, mehrere Quellen wechseln/entfernen, Suche und kombinierte Filter, Metadaten/Back Matter, Parameter, Cross-Navigation, JSON-Details, Diagramme und Print-to-PDF. Bei großen Dokumenten auch Bedienbarkeit und Wartezeiten beurteilen.
 
 Der automatisierte Drucktest prüft Aufbereitung und Wiederherstellung der Ansicht mit ersetztem `window.print`. Er steuert nicht den betriebssystemspezifischen Druckdialog. Ein echter PDF-Export bleibt Teil der manuellen Abnahme. WebKit ist ein Test der Engine, keine vollständige Garantie für jede Safari-/iOS-Version.

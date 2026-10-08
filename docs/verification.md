@@ -1,5 +1,13 @@
 # Prüfbericht zum Architekturumbau
 
+## Ergänzung vom 08.10.2026: automatische Aktualisierung beim Öffnen
+
+Der Live-Abruf der Pages-Startseite bestätigte `Cache-Control: max-age=600`. Das Firefox-Lesezeichen verweist auf die Root-Adresse; diese und die Mapping-Adresse mit Query-String werden getrennt gecacht. Ein Neuladen der Mapping-Adresse aktualisiert daher nicht zwingend den Cache des Lesezeichens.
+
+Eine vor den Asset-Imports eingebettete Startprüfung vergleicht die Build-Kennung mit einer nicht gecachten Release-Datei und navigiert bei Abweichung einmalig auf eine versionsspezifische URL. Der reguläre Anwendungsstart wartet darauf. Laufende Sitzungen werden nicht erneut geprüft oder neu geladen.
+
+Lokal mit Node.js 24.19.0 bestanden: ESLint, vollständige Prettier-Prüfung, TypeScript-Modellverträge, 42 Unit-/Architektur-/CSS-Tests, Produktionsbuild samt Release-/Assetprüfung, 84 Browserprüfungen und alle zehn vollständigen visuellen Vergleiche. Die visuelle Referenz wurde nicht verändert. Die 30 zusätzlichen Browserprüfungen decken zehn Update-Szenarien in Chromium, Firefox und WebKit ab; darunter ein echter HTTP-Cache mit zehn Minuten Gültigkeit und ein Versionswechsel zwischen zwei Besuchen ohne manuelles Neuladen. Auch entfernte alte Assets, Schleifenschutz, Versionsabruf-Ausfälle und der Erhalt lokaler Mapping-Dateien sind geprüft.
+
 ## Ergänzung vom 08.10.2026: Katalogreferenzen in der Mappingansicht
 
 Die vorhandene Source-/Target-Kopfzeile zeigt nun Ressourcenreferenzen und Ladehinweise auch ohne geladene Kataloge. Back-Matter-Titel und -Verweise sowie optionale Versions-Properties werden ausgewertet. Die Version des geladenen Katalogs bleibt ausdrücklich von Angaben im Mapping getrennt; keine Änderung an der bestehenden Katalog-/Control-Zuordnung und keine automatische Nachladung.
