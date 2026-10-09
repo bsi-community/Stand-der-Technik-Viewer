@@ -143,7 +143,7 @@ header h1 {
   max-width: 1800px;
   margin: 0 auto;
 }
-aside {
+.wrap > aside {
   position: sticky;
   top: 16px;
   max-height: calc(100vh - 32px);
@@ -292,7 +292,7 @@ aside {
     grid-template-columns: minmax(0, 1fr);
     padding: 16px;
   }
-  aside {
+  .wrap > aside {
     position: static;
     max-height: none;
   }
@@ -323,7 +323,7 @@ aside {
     display: block;
     padding: 0;
   }
-  aside {
+  .wrap > aside {
     display: none;
   }
 }

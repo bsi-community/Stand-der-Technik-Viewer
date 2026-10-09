@@ -119,3 +119,26 @@ verglichen. Browserbilder liegen unter `test-results/` und gehören nicht in Git
 
 BundesSans unterliegt gesonderten Nutzungsbedingungen und wird nicht durch die
 KERN- oder Projektlizenz mitlizenziert.
+
+## Nachprüfung der Diagramme und übrigen Ansichten
+
+Die KERN-Seitenleistenregeln gelten nur für `.wrap > aside`. Diagrammlegenden
+und der Detailbereich der Zielobjekthierarchie bleiben davon unabhängig. Die
+SVG-Höhe wird ausdrücklich festgelegt, da KERN Medien ansonsten mit `height: auto`
+skaliert. Beim Fenstergrößenwechsel werden die sichtbaren Diagramme neu berechnet;
+alte Graphsimulationen werden vor einem Neuaufbau beendet.
+
+Der Sunburst reserviert Platz für die Legende und begrenzt radiale Beschriftungen
+auf die Breite des jeweiligen Rings. Vollständige Bezeichnungen bleiben als
+Tooltip und in der Legende verfügbar. Balkenachsen zeigen ausschließlich passende
+Ganzzahlmarkierungen. Die Hierarchiefarben, Parameter und Verweisboxen wurden für
+bessere Textkontraste angepasst. Diagrammtext verwendet dieselbe Schriftvariable
+wie die Oberfläche; damit greift auch die vorbereitete BundesSans-Einbindung.
+
+`tests/e2e/kern-visuals.spec.js` prüft alle drei Diagrammtypen für Kataloge,
+Komponentendefinitionen und Mappings nach Größenwechseln bei 1920, 1280 und 800 Pixeln
+Breite. Dazu gehört ein synthetischer Katalog mit 1000 Anforderungen. Geprüft werden
+SVG-Grenzen, freie Legendenflächen im Sunburst, Beschriftungen, Achsenwerte und
+Seitenüberlauf. Weitere Ansichten umfassen Startseite, leere Arbeitsbereiche,
+aufgeklappte Anforderungen und Komponenten, Mappings, Zielobjekthierarchie und
+JSON-Dialog; Bildschirmbilder werden als lokale Testartefakte gespeichert.

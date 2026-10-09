@@ -95,6 +95,9 @@
   font-size: 13px;
   color: var(--dim);
 }
+.mapping-catalog-missing {
+  opacity: 1;
+}
 .mapping-table .mapping-entry-start td {
   border-top: 2px solid var(--muted);
 }

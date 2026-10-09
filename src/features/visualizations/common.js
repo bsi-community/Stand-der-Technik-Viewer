@@ -58,6 +58,12 @@ export function renderSunburstLegend(container, title, items) {
   );
 }
 
+export function barAxisTickValues(scale) {
+  return document.documentElement.dataset.viewerDesign === 'kern'
+    ? scale.ticks(6).filter(Number.isInteger)
+    : null;
+}
+
 export function addBarAxisTitles(g, width, height, margin, xLabel, yLabel) {
   if (xLabel) {
     g.append('text')
@@ -82,7 +88,28 @@ export function sunburstInnerRadius(d, radius, innerRatio) {
   return Math.max(d.y0, radius * (innerRatio || 0));
 }
 
+// Keep the comparison mode pixel-identical; KERN reserves an explicit legend column.
+function kernLegendWidth(width) {
+  return Math.min(280, width * 0.35);
+}
+
+export function sunburstChartRadius(width, height, legacyInset) {
+  if (document.documentElement.dataset.viewerDesign !== 'kern')
+    return Math.min(width, height) / 2 - legacyInset;
+  return Math.max(24, Math.min(width - kernLegendWidth(width) - 48, height - 48) / 2);
+}
+
+const graphSimulations = new WeakMap();
+export function setGraphSimulation(container, simulation) {
+  graphSimulations.get(container)?.stop();
+  if (simulation) graphSimulations.set(container, simulation);
+  else graphSimulations.delete(container);
+}
+
 export function sunburstChartCenterX(width, radius) {
+  if (document.documentElement.dataset.viewerDesign === 'kern')
+    return (width - kernLegendWidth(width) - 48) / 2 + 16;
+
   var legendWidth = Math.min(300, width * 0.32);
   var availableWidth = width - legendWidth - 42;
   return Math.max(radius + 18, availableWidth / 2);
@@ -120,13 +147,24 @@ export function addSunburstSegmentLabels(group, nodes, radius, innerRatio, label
     .attr('dy', '0.35em')
     .attr('text-anchor', 'middle')
     .attr('fill', '#ffffff')
-    .style('font-size', '11px')
-    .style('font-weight', '800')
+    .style('font-size', document.documentElement.dataset.viewerDesign === 'kern' ? '12px' : '11px')
+    .style('font-weight', document.documentElement.dataset.viewerDesign === 'kern' ? '700' : '800')
     .text(function (d) {
       var full = String(labelFn ? labelFn(d) : (d.data && d.data.name) || '');
       var inner = sunburstInnerRadius(d, radius, innerRatio);
-      var maxChars = Math.max(5, Math.floor(((d.x1 - d.x0) * ((inner + d.y1) / 2)) / 6.5));
-      return full.length > maxChars ? full.slice(0, Math.max(4, maxChars - 1)) + '…' : full;
+      var maxChars =
+        document.documentElement.dataset.viewerDesign === 'kern'
+          ? Math.max(2, Math.floor((d.y1 - inner - 12) / 7))
+          : Math.max(5, Math.floor(((d.x1 - d.x0) * ((inner + d.y1) / 2)) / 6.5));
+      return full.length > maxChars
+        ? full.slice(
+            0,
+            Math.max(
+              document.documentElement.dataset.viewerDesign === 'kern' ? 1 : 4,
+              maxChars - 1,
+            ),
+          ) + '…'
+        : full;
     })
     .append('title')
     .text(function (d) {

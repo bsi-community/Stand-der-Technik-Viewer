@@ -118,6 +118,37 @@ summary {
 .meta .kv {
   border-radius: 4px;
 }
+.rel-item.related,
+.rel-item.required {
+  background: var(--panel);
+  border: 1px solid var(--muted);
+  border-left: 3px solid var(--accent);
+  border-radius: 4px;
+  color: var(--text);
+}
+.rel-item.required {
+  border-left-color: #806019;
+  background: #fff8e7;
+}
+.rel-item .hint,
+.rel-item .kv {
+  color: var(--dim);
+}
+.rel-item .kv {
+  background: white;
+  border-color: var(--muted);
+  font-size: 13px;
+}
+.rel-item .kv code {
+  color: inherit;
+  background: transparent;
+}
+.param {
+  color: #755300;
+}
+.param-value {
+  color: #6b3da6;
+}
 @media print {
   .control-card-body {
     display: block;

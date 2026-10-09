@@ -261,6 +261,18 @@ export function renderTargetHierarchyView() {
     '#3c91b5',
     '#667f9b',
   ];
+  const kern = document.documentElement.dataset.viewerDesign === 'kern';
+  if (kern)
+    palette = [
+      '#176e66',
+      '#945009',
+      '#70408d',
+      '#246946',
+      '#725800',
+      '#863d63',
+      '#256985',
+      '#465c75',
+    ];
   var colorByRoot = Object.create(null);
   for (var ri = 0; ri < hierarchyStore.targetHierarchyState.roots.length; ri++)
     colorByRoot[hierarchyStore.targetHierarchyState.roots[ri].uuid] = palette[ri % palette.length];
@@ -272,6 +284,7 @@ export function renderTargetHierarchyView() {
   }
   function nodeColor(item) {
     var base = d3.color(colorByRoot[item.data.rootUuid] || palette[0]);
+    if (kern) return base.formatHex();
     return item.depth > 1
       ? base.brighter(Math.min(0.42, (item.depth - 1) * 0.11)).formatHex()
       : base.formatHex();

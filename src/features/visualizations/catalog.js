@@ -8,11 +8,14 @@ import { catalogPrimaryGroupFacetLabel } from '../catalog/hierarchy-filters.js';
 import { baseMatches, matches } from '../catalog/selectors.js';
 import {
   addBarAxisTitles,
+  barAxisTickValues,
   addSunburstCenterLabel,
   addSunburstSegmentLabels,
   renderChartLegend,
   renderSunburstLegend,
   sunburstChartCenterX,
+  sunburstChartRadius,
+  setGraphSimulation,
   sunburstInnerRadius,
 } from './common.js';
 import { drawComponentBar, drawComponentGraph, drawComponentSunburst } from './components.js';
@@ -34,6 +37,7 @@ export function drawGraph() {
   try {
     var el = document.getElementById('graph');
     if (!el) return;
+    setGraphSimulation(el, null);
     el.classList.remove('chart-unavailable');
     el.innerHTML =
       '<div class="graph-toolbar"><button id="fitBtn" class="btn" title="Alles anzeigen">Alles anzeigen</button></div>';
@@ -178,6 +182,7 @@ export function drawGraph() {
       .force('charge', d3.forceManyBody().strength(-240))
       .force('center', d3.forceCenter(width / 2, height / 2))
       .force('collide', d3.forceCollide(40));
+    setGraphSimulation(el, sim);
 
     var link = g
       .selectAll('.link')
@@ -463,7 +468,7 @@ export function drawSunburst() {
 
   var w = container.clientWidth || 900;
   var h = container.clientHeight || 600;
-  var r = Math.min(w, h) / 2 - 30;
+  var r = sunburstChartRadius(w, h, 30);
 
   var color = d3.scaleOrdinal(d3.schemeTableau10).domain(keys);
 
@@ -584,7 +589,7 @@ export function drawBar() {
     .style('text-anchor', 'end')
     .attr('fill', '#40566f');
   g.append('g')
-    .call(d3.axisLeft(y).ticks(6).tickFormat(d3.format('d')))
+    .call(d3.axisLeft(y).ticks(6).tickValues(barAxisTickValues(y)).tickFormat(d3.format('d')))
     .selectAll('text')
     .attr('fill', '#40566f');
   g.selectAll('.domain, .tick line').attr('stroke', '#c3d1e0');

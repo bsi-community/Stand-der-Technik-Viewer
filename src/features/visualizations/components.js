@@ -7,11 +7,14 @@ import { componentOwnerName } from '../../app/components.js';
 import { buildComponentGraphData, getMatchedComponentOwners } from '../components/graph-data.js';
 import {
   addBarAxisTitles,
+  barAxisTickValues,
   addSunburstCenterLabel,
   addSunburstSegmentLabels,
   renderChartLegend,
   renderSunburstLegend,
   sunburstChartCenterX,
+  sunburstChartRadius,
+  setGraphSimulation,
 } from './common.js';
 import { escapeHtml } from '../../shared/html.js';
 import { showMsg } from '../../shared/ui/messages.js';
@@ -22,6 +25,7 @@ export function drawComponentGraph() {
     try {
       var el = document.getElementById('graph');
       if (!el) return;
+      setGraphSimulation(el, null);
       el.classList.remove('chart-unavailable');
       el.innerHTML =
         '<div class="graph-toolbar"><button id="fitBtn" class="btn" title="Alles anzeigen">Alles anzeigen</button></div>';
@@ -81,6 +85,7 @@ export function drawComponentGraph() {
         .force('charge', d3.forceManyBody().strength(-250))
         .force('center', d3.forceCenter(width / 2, height / 2))
         .force('collide', d3.forceCollide(36));
+      setGraphSimulation(el, sim);
 
       var link = g
         .selectAll('.link')
@@ -253,7 +258,7 @@ export function drawComponentSunburst() {
     var data = { name: 'Komponenten', children: dataItems };
     var w = container.clientWidth || 900,
       h = container.clientHeight || 600,
-      r = Math.min(w, h) / 2 - 36;
+      r = sunburstChartRadius(w, h, 36);
     var root = d3.hierarchy(data).sum(function (d) {
       return d.value || 0;
     });
@@ -404,7 +409,7 @@ export function drawComponentBar() {
       .attr('transform', 'translate(0,' + h + ')')
       .call(d3.axisBottom(x).tickFormat(''));
     g.append('g')
-      .call(d3.axisLeft(y).ticks(6).tickFormat(d3.format('d')))
+      .call(d3.axisLeft(y).ticks(6).tickValues(barAxisTickValues(y)).tickFormat(d3.format('d')))
       .selectAll('text')
       .attr('fill', '#40566f');
     g.selectAll('.domain, .tick line').attr('stroke', '#c3d1e0');

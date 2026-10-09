@@ -1,8 +1,19 @@
 /** Presentation-only entry point. Uses existing loading and rendering paths. */
 import { addCatalogSource, addMappingSource, activateCatalogSource } from './sources.js';
 import { switchTab } from './actions.js';
+import { refreshChartsIfVisible } from './refresh.js';
 
 export async function prepareKernPreview() {
+  // SVG coordinates must be recomputed when the available workspace changes.
+  let chartResizeTimer;
+  window.addEventListener(
+    'resize',
+    () => {
+      clearTimeout(chartResizeTimer);
+      chartResizeTimer = setTimeout(refreshChartsIfVisible, 140);
+    },
+    { passive: true },
+  );
   const skip = document.createElement('a');
   skip.className = 'kern-skip';
   skip.href = '#viewerMain';
