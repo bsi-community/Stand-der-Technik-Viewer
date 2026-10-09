@@ -71,15 +71,19 @@ export function renderRegistrySearch(parent, placeholder) {
   var row = document.createElement('div');
   row.className = 'registry-search-row';
   var input = document.createElement('input');
-  input.className = 'input';
+  input.className =
+    document.documentElement.dataset.viewerDesign === 'kern' ? 'input kern-form-input' : 'input';
   input.type = 'search';
   input.placeholder = placeholder || 'Dokumente suchen...';
   input.value = uiStore.registryState.query || '';
   input.setAttribute('aria-label', 'Repository-Dokumente suchen');
   var button = document.createElement('button');
-  button.className = 'btn';
+  button.className =
+    document.documentElement.dataset.viewerDesign === 'kern' ? 'kern-btn kern-btn--primary' : 'btn';
   button.type = 'button';
-  button.textContent = 'Suchen';
+  if (document.documentElement.dataset.viewerDesign === 'kern') {
+    button.innerHTML = '<span class="kern-label">Suchen</span>';
+  } else button.textContent = 'Suchen';
   function applySearch() {
     uiStore.registryState.query = input.value || '';
     if (!uiStore.registryState.selectedModel && uiStore.registryState.query.trim())
@@ -254,6 +258,10 @@ export function renderRegistryHome() {
   hero.className = 'registry-hero';
   hero.innerHTML =
     '<h2 id="homeTitle">Einstieg in die Stand der Technik-Bibliothek</h2><p>Die Stand der Technik-Bibliothek des BSI bündelt maschinenlesbare Sicherheitsanforderungen und produktspezifische Umsetzungsbeschreibungen im OSCAL-Format. Sie schafft eine gemeinsame, versionierbare Datenbasis, um den Stand der Technik strukturiert zu recherchieren, zu vergleichen und in Sicherheits- und Compliance-Prozessen weiterzuverwenden.</p><p>Durchsuche und öffne aktuelle OSCAL-Kataloge und Komponentendefinitionen direkt aus dem öffentlichen BSI Stand der Technik Repository oder lasse dir die Inhalte aus dem öffentlichen Repository direkt über die unten stehenden Kacheln „Kataloge“ und „Komponentendefinitionen“ anzeigen.</p>';
+  if (document.documentElement.dataset.viewerDesign === 'kern') {
+    hero.innerHTML =
+      '<h2 id="homeTitle">Sicherheitsanforderungen verstehen und vergleichen</h2><p>Durchsuche die Stand der Technik-Bibliothek des BSI. Lies Anforderungen im Zusammenhang, prüfe ihre Umsetzung und vergleiche Kataloge miteinander.</p>';
+  }
   renderRegistrySearch(hero, 'Dokumente suchen...');
   var count = document.createElement('div');
   count.className = 'registry-count';

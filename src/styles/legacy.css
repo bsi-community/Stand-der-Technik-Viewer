@@ -1,0 +1,2 @@
+@layer legacy, kern, viewer;
+@import './index.css' layer(legacy);

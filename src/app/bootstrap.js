@@ -738,5 +738,5 @@ export function startViewer() {
 
   bindMappingResetButton();
 
-  restoreViewerStateFromUrl();
+  return restoreViewerStateFromUrl();
 }

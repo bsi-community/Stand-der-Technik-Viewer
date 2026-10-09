@@ -103,8 +103,20 @@ export function renderMappingDocumentInfo(container) {
     );
     provCard.appendChild(desc);
   }
-  grid.appendChild(provCard);
-  container.appendChild(grid);
+  if (
+    document.documentElement.dataset.viewerDesign !== 'kern' ||
+    provList.childElementCount ||
+    provenance['mapping-description']
+  )
+    grid.appendChild(provCard);
+  if (document.documentElement.dataset.viewerDesign === 'kern') {
+    const info = document.createElement('details');
+    info.className = 'mapping-document-details';
+    const summary = document.createElement('summary');
+    summary.textContent = 'Mapping-Informationen · ' + (metadata.title || 'Mapping Collection');
+    info.append(summary, grid);
+    container.appendChild(info);
+  } else container.appendChild(grid);
 }
 
 var mappingViewportScrollbarCleanup = null;
@@ -278,7 +290,15 @@ export function renderMappingView() {
   var wrap = document.createElement('div');
   wrap.className = 'mapping-table-wrap';
   var table = document.createElement('table');
-  table.className = 'mapping-table';
+  table.className =
+    document.documentElement.dataset.viewerDesign === 'kern'
+      ? 'mapping-table kern-table'
+      : 'mapping-table';
+  if (document.documentElement.dataset.viewerDesign === 'kern') {
+    wrap.tabIndex = 0;
+    wrap.setAttribute('role', 'region');
+    wrap.setAttribute('aria-label', 'Mapping-Vergleich; bei Bedarf horizontal scrollen');
+  }
   table.innerHTML =
     '' +
     '<colgroup>' +

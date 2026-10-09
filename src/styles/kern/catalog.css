@@ -1,0 +1,128 @@
+.catalog-info-heading {
+  font-size: 18px;
+}
+details {
+  border-radius: 4px;
+  background: white;
+  border: 1px solid var(--muted);
+}
+summary {
+  min-height: 44px;
+  padding: 8px 0;
+}
+.catalog-group,
+.catalog-subgroup {
+  border-radius: 4px;
+  background: white;
+  box-shadow: none;
+}
+.card.control-card {
+  border: 1px solid var(--muted);
+  border-radius: 4px;
+  padding: 0;
+  background: #fff;
+  box-shadow: none;
+  margin-top: 12px;
+}
+.control-summary {
+  padding: 16px 20px;
+  background: #f5f6fa;
+  gap: 16px;
+  border: 0;
+  min-height: 60px;
+}
+.control-card[open] > .control-summary {
+  border-bottom: 1px solid var(--muted);
+  background: #eef1fa;
+}
+.control-summary-title {
+  font-size: 18px;
+  line-height: 1.4;
+  font-weight: 700;
+}
+.control-summary-id mark {
+  background: transparent;
+  color: var(--accent);
+  padding: 0;
+  font-size: 16px;
+}
+.control-card-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.control-card-body > .meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
+  gap: 12px 24px;
+  border-top: 1px solid var(--muted);
+  padding-top: 16px;
+  margin: 0;
+}
+.control-meta-heading {
+  margin: 0;
+  grid-column: 1 / -1;
+  font-weight: 700;
+  font-size: 16px;
+}
+.control-card-body > .meta .kv {
+  display: block;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  margin: 0;
+  background: none;
+  line-height: 1.5;
+  font-size: 14px;
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+.control-card-body > .meta .kv strong {
+  display: block;
+  font-size: 13px;
+  color: var(--dim);
+  font-weight: 400;
+}
+.control-card-body > .meta .kv code {
+  font-family: var(--viewer-font);
+  font-size: 14px;
+}
+.control-card-body details {
+  margin: 0 0 12px;
+  padding: 0 16px 12px;
+  background: white;
+  border: 0;
+  border-left: 3px solid var(--muted);
+}
+.control-card-body details[open] {
+  border-left-color: var(--accent);
+}
+.control-card-body summary {
+  font-size: 16px;
+}
+.catalog-md {
+  font-size: 16px;
+  line-height: 1.65;
+}
+.catalog-md p {
+  line-height: 1.65;
+  max-width: 95ch;
+}
+.catalog-table th,
+.catalog-table td {
+  font-size: 14px;
+}
+.badge,
+.pill,
+.meta .kv {
+  border-radius: 4px;
+}
+@media print {
+  .control-card-body {
+    display: block;
+  }
+  .control-card-body > .meta {
+    break-inside: avoid;
+  }
+}

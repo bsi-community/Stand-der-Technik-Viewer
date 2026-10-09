@@ -1,10 +1,15 @@
-import { readFileSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
 import { defineConfig } from 'vite';
 import { viewerReleasePlugin } from './scripts/viewer-release-plugin.mjs';
 const version = readFileSync(new URL('./VERSION', import.meta.url), 'utf8').trim();
 const base = '/Stand-der-Technik-Viewer/';
 export default defineConfig({
   base,
+  define: {
+    'import.meta.env.VIEWER_BUNDESSANS': existsSync('public/assets/bundessans/manifest.json')
+      ? readFileSync('public/assets/bundessans/manifest.json', 'utf8')
+      : 'null',
+  },
   plugins: [
     {
       name: 'viewer-version',

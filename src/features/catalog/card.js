@@ -194,6 +194,14 @@ export function renderCard(c) {
     }
   }
   if (details.childElementCount) body.appendChild(details);
+  if (document.documentElement.dataset.viewerDesign === 'kern') {
+    const meta = body.querySelector(':scope > .meta');
+    const label = document.createElement('h4');
+    label.className = 'control-meta-heading';
+    label.textContent = 'Metadaten';
+    meta.prepend(label);
+    body.appendChild(meta);
+  }
 
   var required = [],
     related = [];

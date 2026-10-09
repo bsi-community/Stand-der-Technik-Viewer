@@ -61,7 +61,9 @@ export function renderList() {
     renderOverviewCard({
       title: matched.length ? 'Kataloganalyse' : 'Keine Treffer im Katalog',
       description: matched.length
-        ? 'Die Übersicht priorisiert sichtbare Treffer, aktive Einschränkungen und Schnellaktionen, damit Navigation und Auswertung ohne Suchaufwand funktionieren.'
+        ? document.documentElement.dataset.viewerDesign === 'kern'
+          ? 'Anforderungen lesen, nach Merkmalen filtern und im Zusammenhang prüfen.'
+          : 'Die Übersicht priorisiert sichtbare Treffer, aktive Einschränkungen und Schnellaktionen, damit Navigation und Auswertung ohne Suchaufwand funktionieren.'
         : 'Die aktuelle Suche oder Filterung liefert keine sichtbaren Anforderungen. Passe die Einschränkungen an oder setze sie gesammelt zurück.',
       stats: [
         {

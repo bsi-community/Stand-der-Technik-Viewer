@@ -1,0 +1,146 @@
+.home-mode .wrap {
+  display: block;
+}
+.registry-home-shell {
+  display: block;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 8px 0 40px;
+}
+.registry-hero {
+  display: block;
+  min-height: 0;
+  background: none;
+  border: 0;
+  padding: 8px 0 24px;
+  box-shadow: none;
+}
+.registry-home-main {
+  display: block;
+}
+.registry-hero h2 {
+  font-size: clamp(30px, 3vw, 42px);
+  line-height: 1.2;
+  font-weight: 700;
+  max-width: 25ch;
+  color: var(--text);
+  margin: 0 0 20px;
+}
+.registry-hero p {
+  max-width: 75ch;
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--dim);
+  margin: 0 0 20px;
+}
+.registry-search-row {
+  max-width: 800px;
+  gap: 12px;
+  margin: 24px 0 12px;
+}
+.registry-search-row .input {
+  font-size: 18px;
+  min-height: 48px;
+}
+.registry-search-row .kern-btn {
+  min-height: 48px;
+}
+.registry-count {
+  font-size: 14px;
+  color: var(--dim);
+}
+.registry-section-label {
+  font-size: 18px;
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--text);
+  margin: 12px 0 16px;
+}
+.registry-model-grid {
+  gap: 24px;
+}
+.registry-model-card {
+  align-content: start;
+  justify-items: start;
+  background: #fff;
+  border: 1px solid var(--muted);
+  border-radius: 4px;
+  border-top: 4px solid var(--accent);
+  box-shadow: none;
+  padding: 24px;
+  text-align: left;
+  min-height: 200px;
+}
+.registry-model-card:hover {
+  background: var(--panel);
+  transform: none;
+  box-shadow: none;
+  border-color: var(--accent);
+}
+.registry-model-card h3 {
+  font-size: 24px;
+  color: var(--text);
+  margin: 0 0 12px;
+}
+.registry-model-card p {
+  text-align: left;
+  font-size: 16px;
+  color: var(--dim);
+  line-height: 1.5;
+}
+.registry-model-footer,
+.registry-model-status {
+  justify-content: flex-start;
+  text-align: left;
+}
+.registry-model-dot {
+  display: none;
+}
+.registry-model-link {
+  color: var(--accent);
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.registry-model-status {
+  font-size: 14px;
+}
+.registry-help {
+  margin-top: 40px;
+  gap: 24px;
+}
+.registry-help-card {
+  border: 1px solid var(--muted);
+  border-radius: 4px;
+  box-shadow: none;
+  background: white;
+  padding: 24px;
+}
+.registry-help-card h3 {
+  font-size: 21px;
+}
+.registry-help-card p,
+.registry-help-card li,
+.registry-help-card dd {
+  font-size: 16px;
+  color: var(--dim);
+}
+.registry-help-intro {
+  margin-top: 40px;
+  font-size: 16px;
+}
+@media (max-width: 800px) {
+  .registry-model-grid {
+    grid-template-columns: 1fr;
+  }
+  .registry-search-row {
+    flex-wrap: wrap;
+  }
+  .registry-help {
+    display: block;
+  }
+  .registry-help-card {
+    margin-bottom: 16px;
+  }
+}
