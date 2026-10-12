@@ -1,10 +1,21 @@
 /** KERN application setup, independent of comparison scenarios. */
+import viewerMark from '../assets/viewer-mark.svg';
 import { refreshChartsIfVisible } from './refresh.js';
 import { setGraphSimulation } from '../features/visualizations/common.js';
 import { prepareKernWorkbench } from './kern-workbench.js';
 
 export async function prepareKernPresentation() {
   prepareKernWorkbench();
+  const home = document.getElementById('homeBtn');
+  const mark = document.createElement('img');
+  mark.src = viewerMark;
+  mark.alt = '';
+  mark.width = 40;
+  mark.height = 40;
+  mark.className = 'viewer-brand-mark';
+  home.after(mark);
+  home.title = 'Zur Startseite';
+
   // Observe the actual surfaces, including changes caused by responsive layout.
   // A window resize event can precede the new element dimensions (notably WebKit).
   let chartResizeFrame;
