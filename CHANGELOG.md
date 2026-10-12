@@ -6,13 +6,17 @@ Das Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1
 
 ## Unveröffentlicht
 
+### Behoben
+
+- Responsive Hierarchieprüfung wartet auf eine sichtbare, korrekt begrenzte Tabelle und misst den aktuellen DOM gemeinsam. Ein Neuaufbau während der Firefox-Prüfung kann dadurch keinen falschen Fehler durch ein entferntes Element auslösen; die Seiten- und Tabellenbreiten bleiben verpflichtend geprüft.
+
 ### Dokumentation
 
 - README, Bedienung, Architektur, KERN-Stand, Prüfstrategie und Pages-Betrieb auf die veröffentlichte KERN-Oberfläche abgestimmt; alte Prüfberichte als historische Nachweise gekennzeichnet.
 - Verbindliche Dokumentationspflege im selben PR durch Beitragsregeln, Agentenhinweise und PR-Checkliste festgehalten.
 - Lokaler Mac-Starter unabhängig vom abgeschlossenen KERN-Testbranch nutzbar.
 
-## 3.0.0 – Veröffentlicht, dokumentierter Stand 2026-10-12
+## 3.0.0 – Stand auf main, dokumentiert am 2026-10-12
 
 Die sichtbare Versionsnummer blieb bei den folgenden Merges 3.0.0. Die Liste beschreibt den auf `main` übernommenen Stand einschließlich PR #13 und #14; sie behauptet keinen neuen Release-Tag.
 

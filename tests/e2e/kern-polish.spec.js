@@ -63,8 +63,24 @@ test('hierarchy table keeps words intact; details scroll the page while diagram 
       .evaluate((el) => el.clientWidth),
   ).toBeGreaterThan(140);
   await page.setViewportSize({ width: 375, height: 900 });
-  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-  expect(await table.evaluate((el) => el.scrollWidth > el.parentElement.clientWidth)).toBe(true);
+  // Resizing rebuilds the hierarchy after a debounce. Resolve and measure the
+  // current table together so a detached, zero-width table cannot fail the check.
+  await expect
+    .poll(() =>
+      page.evaluate(() => {
+        const currentTable = document.querySelector('.viewer-chart-data table');
+        const wrapper = currentTable?.parentElement;
+        return {
+          pageFits: document.documentElement.scrollWidth <= innerWidth,
+          tableVisible: Boolean(currentTable?.getClientRects().length),
+          wrapperFits: Boolean(
+            wrapper && wrapper.clientWidth > 0 && wrapper.clientWidth <= innerWidth,
+          ),
+          tableOverflows: Boolean(wrapper && currentTable.scrollWidth > wrapper.clientWidth),
+        };
+      }),
+    )
+    .toEqual({ pageFits: true, tableVisible: true, wrapperFits: true, tableOverflows: true });
 });
 
 test('sunburst labels fit radial text and preserve readable narrow sectors', async ({ page }) => {

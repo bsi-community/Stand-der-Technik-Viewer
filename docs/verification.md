@@ -20,6 +20,25 @@ Branch-Namen und damaligen Aussagen zur noch ausstehenden Veröffentlichung gelt
 für den jeweiligen Prüfzeitpunkt, nicht als Beschreibung des heutigen Betriebs.
 Aktuelle Befehle und Freigabeschritte: [Prüfstrategie](testing.md) und [Betrieb](deployment.md).
 
+## Deployment-Diagnose vom 12. Oktober 2026
+
+Der [main-Lauf 38244430190](https://github.com/bsi-community/Stand-der-Technik-Viewer/actions/runs/38244430190)
+für `fc4e960` scheiterte trotz zuvor grüner PR-Prüfungen: 233 Browserfälle bestanden,
+der Firefox-Fall zur responsiven Hierarchietabelle scheiterte an der einmaligen
+Breitenmessung unmittelbar nach dem Fenstergrößenwechsel, auch im Wiederholungsversuch.
+Der `deploy`-Job wurde deshalb übersprungen. Beim Diagnoseabruf blieb die frühere
+Pages-Veröffentlichung aktiv; dies war kein Browsercache-Problem.
+
+Die Messung wurde im Folgebranch auf eine gemeinsame Abfrage des aktuellen DOM
+mit begrenztem Warten auf den erwarteten Layoutzustand umgestellt. Anforderungen
+an Lesbarkeit, Tabellenüberlauf und Seitenbreite sowie die Veröffentlichungssperre
+bei Fehlern bleiben erhalten. Lokal bestanden nach der Korrektur Lint, vollständige Formatprüfung und 36 gezielte
+Browserprüfungen (die vier Fälle aus `kern-polish.spec.js`, jeweils dreimal in
+Chromium, Firefox und WebKit, mit zwei Workern und ohne Wiederholungsversuche bei
+Fehlern). Der Ubuntu-CI-Nachweis für die Korrektur steht bis zum Push aus. Nach
+dem zwischenzeitlichen Merge von PR #15 liegt sie separat auf
+`codex/viewer-hierarchy-check`, ausgehend von `main` (`51288b4`).
+
 ## Historie: Architekturumbau
 
 ## Ergänzung vom 08.10.2026: automatische Aktualisierung beim Öffnen
