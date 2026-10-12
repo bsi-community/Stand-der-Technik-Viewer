@@ -366,6 +366,26 @@ bleibt auch bei einer Filterung ohne Treffer sichtbar; vor dem Laden eines
 Katalogs erscheint weiterhin nur der Importbereich. Das Legacy-Design bleibt
 unverändert.
 
+## CI-Nachbesserung: große Diagramme und Größenwechsel (12. Oktober 2026)
+
+Der erste GitHub-Lauf des KERN-PRs bestand 198 Browserprüfungen; die drei
+browserabhängigen Ausführungen des großen Katalog-Diagrammtests scheiterten.
+Die Ursachen waren das Einpassen erst nach Ende der Kräfteberechnung, veraltete
+SVG-Maße nach einem Größenwechsel in WebKit und das gemeinsame Zeitbudget für
+neun Diagramm-/Fenstergrößenkombinationen samt umfangreicher Trace-Aufzeichnung.
+
+- Der KERN-Kataloggraph wird bereits ab dem ersten Bild und während seiner
+  Berechnung eingepasst. Eigenes Zoomen, Verschieben oder Ziehen beendet die
+  automatische Anpassung; „Alles anzeigen“ bleibt verfügbar.
+- Ein ResizeObserver verfolgt die tatsächlichen Diagrammflächen, auch ohne
+  Fenstergrößenänderung. Verborgene Graphen verbrauchen keine weitere Rechenzeit.
+- Größenprüfungen sind nach Arbeitsbereich und Diagramm getrennt. Alle drei
+  Browser und alle bisherigen Fenstergrößen bleiben abgedeckt; Graphgrenzen
+  werden nun bei jeder geprüften Breite kontrolliert. Eine zusätzliche Prüfung
+  deckt Größenänderungen des Containers ohne Fenster-Resize ab.
+- Der Workflow und seine Veröffentlichungssperre bei Fehlern bleiben bestehen.
+  Pages veröffentlicht weiterhin ausschließlich den geprüften Release-Build.
+
 ## Verbleibende Schritte bis zur Gesamtabnahme
 
 1. BundesSans-Webfonts nach Bereitstellung einbinden; anschließend Schriftmetriken,

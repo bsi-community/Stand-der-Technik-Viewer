@@ -1,19 +1,32 @@
 /** KERN application setup, independent of comparison scenarios. */
 import { refreshChartsIfVisible } from './refresh.js';
+import { setGraphSimulation } from '../features/visualizations/common.js';
 import { prepareKernWorkbench } from './kern-workbench.js';
 
 export async function prepareKernPresentation() {
   prepareKernWorkbench();
-  // SVG coordinates must be recomputed when the available workspace changes.
-  let chartResizeTimer;
-  window.addEventListener(
-    'resize',
-    () => {
-      clearTimeout(chartResizeTimer);
-      chartResizeTimer = setTimeout(refreshChartsIfVisible, 140);
-    },
-    { passive: true },
-  );
+  // Observe the actual surfaces, including changes caused by responsive layout.
+  // A window resize event can precede the new element dimensions (notably WebKit).
+  let chartResizeFrame;
+  const surfaces = ['graph', 'sunburst', 'bar'].map((id) => document.getElementById(id));
+  const observer = new ResizeObserver(() => {
+    cancelAnimationFrame(chartResizeFrame);
+    chartResizeFrame = requestAnimationFrame(() => {
+      if (!surfaces[0].clientWidth) setGraphSimulation(surfaces[0], null);
+      const stale = surfaces.some((el) => {
+        const svg = el.querySelector(':scope > svg');
+        return (
+          el.clientWidth &&
+          el.clientHeight &&
+          svg &&
+          (Number(svg.getAttribute('width')) !== el.clientWidth ||
+            Number(svg.getAttribute('height')) !== el.clientHeight)
+        );
+      });
+      if (stale) refreshChartsIfVisible();
+    });
+  });
+  surfaces.forEach((el) => observer.observe(el));
   const skip = document.createElement('a');
   skip.className = 'kern-skip';
   skip.href = '#viewerMain';

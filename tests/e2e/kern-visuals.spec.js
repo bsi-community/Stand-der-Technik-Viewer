@@ -40,15 +40,15 @@ test.beforeEach(async ({ page }) => {
 
 // These assertions catch the original regression (legend in normal flow plus
 // native media height:auto) and stale D3 dimensions after an actual window resize.
+// Each chart has its own budget and diagnostics: tracing 1000 moving SVG nodes is
+// much more expensive on a shared CI runner than on a local development machine.
 for (const mode of ['catalog', 'component', 'mapping']) {
-  test(`${mode}: all chart surfaces and sunburst sectors stay inside their frames after resizing`, async ({
-    page,
-  }, testInfo) => {
-    test.setTimeout(60000);
-    await upload(page, 'list', '#file', mode === 'catalog' ? largeCatalog : catalog);
-    if (mode === 'component') await upload(page, 'components', '#compFile', component);
-    if (mode === 'mapping') await upload(page, 'mappings', '#mappingFile', mapping);
-    for (const chart of ['graph', 'sunburst', 'bar']) {
+  for (const chart of ['graph', 'sunburst', 'bar']) {
+    test(`${mode}: ${chart} stays inside its frame after resizing`, async ({ page }, testInfo) => {
+      test.setTimeout(60000);
+      await upload(page, 'list', '#file', mode === 'catalog' ? largeCatalog : catalog);
+      if (mode === 'component') await upload(page, 'components', '#compFile', component);
+      if (mode === 'mapping') await upload(page, 'mappings', '#mappingFile', mapping);
       await page.locator(`#tab-${chart}`).click();
       await expect(page.locator(`#${chart} svg`)).toBeVisible();
       for (const width of [1920, 1280, 800]) {
@@ -126,7 +126,7 @@ for (const mode of ['catalog', 'component', 'mapping']) {
             ).toBe(true);
           }
         }
-        if (width === 1280 && chart === 'graph') {
+        if (chart === 'graph') {
           await expect
             .poll(
               async () =>
@@ -146,9 +146,29 @@ for (const mode of ['catalog', 'component', 'mapping']) {
             .locator(`#${chart}`)
             .screenshot({ path: testInfo.outputPath(`${mode}-${chart}.png`) });
       }
-    }
-  });
+    });
+  }
 }
+
+test('chart dimensions follow their container without a window resize', async ({ page }) => {
+  await upload(page, 'list', '#file', catalog);
+  await page.locator('#tab-sunburst').click();
+  const chart = page.locator('#sunburst');
+  const viewport = page.viewportSize();
+  await chart.evaluate((el) => {
+    el.style.width = '640px';
+    el.style.height = '480px';
+  });
+  await expect
+    .poll(() =>
+      chart.evaluate((el) => {
+        const svg = el.querySelector('svg');
+        return [Number(svg.getAttribute('width')), Number(svg.getAttribute('height'))];
+      }),
+    )
+    .toEqual([638, 478]);
+  expect(page.viewportSize()).toEqual(viewport);
+});
 
 test('remaining workspaces: expanded content, hierarchy details, dialog and empty states fit the page', async ({
   page,

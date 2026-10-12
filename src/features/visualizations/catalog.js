@@ -224,6 +224,7 @@ export function drawGraph() {
         d3
           .drag()
           .on('start', function (ev, d) {
+            userInteracted = true;
             d.fx = d.x;
             d.fy = d.y;
           })
@@ -303,7 +304,7 @@ export function drawGraph() {
       });
     svg.call(zoom);
 
-    function fitToScreenInternal() {
+    function fitToScreenInternal(animate = true) {
       var minX = Infinity,
         minY = Infinity,
         maxX = -Infinity,
@@ -325,10 +326,8 @@ export function drawGraph() {
       if (scale > 10) scale = 10;
       var tx = ((el.clientWidth || 900) - scale * (minX + maxX)) / 2;
       var ty = ((el.clientHeight || 600) - scale * (minY + maxY)) / 2;
-      svg
-        .transition()
-        .duration(chartMotionDuration(400))
-        .call(zoom.transform, d3.zoomIdentity.translate(tx, ty).scale(scale));
+      const target = animate ? svg.transition().duration(chartMotionDuration(400)) : svg;
+      target.call(zoom.transform, d3.zoomIdentity.translate(tx, ty).scale(scale));
     }
 
     function autoFitToScreen() {
@@ -338,6 +337,7 @@ export function drawGraph() {
     }
 
     function manualFitToScreen() {
+      userInteracted = true;
       fitToScreenInternal();
     }
 
@@ -346,7 +346,7 @@ export function drawGraph() {
       fitBtn.addEventListener('click', manualFitToScreen);
     }
 
-    sim.on('tick', function () {
+    function renderGraphTick() {
       link
         .attr('x1', function (d) {
           return d.source.x;
@@ -363,8 +363,13 @@ export function drawGraph() {
       node.attr('transform', function (d) {
         return 'translate(' + d.x + ',' + d.y + ')';
       });
-    });
+      // Keep large graphs in view from the first frame. Waiting for simulation.end
+      // leaves slow devices with a clipped graph for several seconds.
+      if (isKern() && !userInteracted) fitToScreenInternal(false);
+    }
+    sim.on('tick', renderGraphTick);
     sim.on('end', autoFitToScreen);
+    if (isKern()) renderGraphTick();
     addGraphControls(el, svg, zoom, manualFitToScreen, () => {
       userInteracted = true;
     });
