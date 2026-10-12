@@ -60,3 +60,14 @@ referenzierte Dateipfade prüfen, Kommandos mit `package.json`/Workflow abgleich
 und `git diff --check` ausführen. Für reine Prosa ist kein vollständiger
 Browserdurchlauf nötig. Änderungen an Startern zusätzlich syntaktisch und beim
 Start prüfen. Viewer-Codeänderungen benötigen die passenden fachlichen Tests.
+
+## Größenwechsel ohne Messrennen
+
+Die Zielobjekthierarchie baut ihre Darstellung nach einem Fenstergrößenwechsel
+verzögert neu auf. Der responsive Test in `kern-polish.spec.js` ermittelt das
+aktuelle Tabellenelement und seine Maße in derselben Browser-Auswertung und wartet
+mit `expect.poll` auf den fertigen Zustand. Er verlangt weiterhin eine sichtbare
+Tabelle, eine auf die Fensterbreite begrenzte Scrollfläche, deren überbreiten
+Tabelleninhalt und eine Seite ohne horizontalen Überlauf. Bleibt dieser Zustand
+aus, schlägt der Test fehl. Keine feste Schlafpause, deaktivierte Assertion oder
+zusätzliche Wiederholung des gesamten Tests ersetzt diese Prüfung.

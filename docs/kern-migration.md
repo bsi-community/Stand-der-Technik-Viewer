@@ -25,6 +25,16 @@ Prüfzeitpunkte. Angaben zu lokalen Testbranches oder damaligen Prüfzahlen sind
 historische Nachweise. Für aktuelle Nutzung und Veröffentlichung gelten
 [Bedienungsanleitung](user-guide.md) und [Betrieb](deployment.md).
 
+## Folgekorrektur: responsive CI-Prüfung am 12. Oktober 2026
+
+Nach PR #14 blockierte ein fehlgeschlagener Firefox-Test im erneuten main-Lauf die
+Pages-Veröffentlichung von Logo und Importbestätigung. Die Hierarchietabelle wird
+bei Größenwechseln neu aufgebaut; der Test misst deshalb nun das aktuelle Element
+und die erwarteten Layoutbedingungen zusammen mit begrenztem Warten. Keine
+Layoutanforderung oder Deployment-Sperre wurde entfernt. Diagnose und Prüfumfang
+stehen in [verification.md](verification.md); der nächste erfolgreiche main-Lauf
+muss die noch ausstehende Veröffentlichung übernehmen.
+
 ## Komponenten und Zuständigkeiten
 
 | Baustein              | Umsetzung                                                                                                           | Zuständigkeit                                               |
