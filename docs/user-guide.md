@@ -2,6 +2,20 @@
 
 [Viewer öffnen](https://bsi-community.github.io/Stand-der-Technik-Viewer/) · [Entwicklung und Betrieb](../README.md)
 
+## Oberfläche und Orientierung
+
+Der Viewer verwendet KERN UX mit lokal ausgelieferter Fira Sans. BundesSans ist
+noch nicht integriert. Der normale Einstieg öffnet die Startseite; gezielte
+Deep Links können einen bestimmten Arbeitsbereich oder ein Dokument öffnen.
+Links oben führt der Home-Button mit dem Häuschen zur Startseite. Die Bildmarke
+daneben ist ein Logo ohne eigene Klickfunktion.
+
+Die Arbeitsbereiche `Kataloge`, `Komponentendefinitionen` und `Mappings` besitzen
+jeweils eine Seitenleiste für Dateiupload, geladene Quellen sowie Suche und Filter.
+Unterhalb der Arbeitsbereichsnavigation stehen die zugehörige Inhaltsansicht und
+die Diagrammtabs. Auf schmalen Bildschirmen ordnen sich Bereiche um; breite
+Fachtabellen können innerhalb ihres Rahmens horizontal gescrollt werden.
+
 ## Viewer verwenden
 
 1. Im Viewer ein OSCAL-Dokument laden:
@@ -14,11 +28,20 @@
 
 2. Nach dem Laden können die Katalog-, Komponenten- oder Mappingansicht sowie Suche, Filter, Diagramme, JSON-Detailanzeigen und PDF-Export verwendet werden. Bei geeigneten Katalogen erscheint zusätzlich der Tab `Vererbung Zielobjektkategorien`. Für die vollständige Komponenten- und Mappingdarstellung sollten die passenden Kataloge zusätzlich in der Katalogansicht geladen sein.
 
+### Rückmeldungen beim Laden
+
+Während eines Imports erscheint ein Ladehinweis. Reine Erfolgsmeldungen wie
+„1 Dokument geladen.“ verschwinden nach fünf Sekunden und sofort beim Wechsel
+der Ansicht, bei Rückkehr zur Startseite oder beim Entfernen eines Dokuments.
+Ein neuer Import ersetzt die vorherige Bestätigung. Fehlermeldungen und gemischte
+Ergebnisse mit fehlgeschlagenen Importen werden nicht zeitgesteuert ausgeblendet.
+Bereits erfolgreich geladene Dokumente bleiben bei einem weiteren Importfehler erhalten.
+
 ## Was der Viewer aktuell kann
 
 ### Allgemein
 
-- drei getrennte Datenmodi in einer Datei
+- drei getrennte Arbeitsbereiche in einer Browseranwendung
   - `Kataloge`
   - `Komponentendefinitionen`
   - `Mappings`
@@ -60,7 +83,7 @@ Die Anleitung erklärt:
 - wie die linke Menüleiste in Katalog-, Komponenten- und Mappingansicht für Suche und Filter genutzt wird
 - wie aktuelle Katalog- und Komponentenansichten über die Browser-Print-to-PDF-Funktion ausgegeben werden können
 
-### Haupt-Tabs
+### Arbeitsbereiche und Darstellungstabs
 
 - `Kataloge`
 - `Komponentendefinitionen`
@@ -125,7 +148,8 @@ Für die spätere Identifizierung des tatsächlich verwendeten Stands sollten Ma
 - Laden einer OSCAL Control Mapping Collection
   - per Datei-Upload
   - per URL-Import via `fetch`
-- strukturierte Anzeige von Metadata, Provenance, Ressourcen und Control-Referenzen
+- gegliederte Mapping-Informationen mit Metadaten, Herkunft/Methodik, Ressourcen und Control-Referenzen; längere Beschreibungen erhalten ausreichend Lesebreite
+- Relationship-Werte besitzen deutsche Erläuterungen nach OSCAL aus Sicht der Source; per Maus und Tastatur erreichbar
 - sieben Spalten umfassende Crosswalk-Tabelle:
   - Source: `Prose`, `Titel`, `ID`
   - Mitte: `Relationship`
@@ -185,7 +209,7 @@ Für die spätere Identifizierung des tatsächlich verwendeten Stands sollten Ma
 
 ### Kataloginformationen
 
-Oberhalb der Anforderungen werden strukturierte Informationen aus dem Catalog angezeigt:
+Unter „Katalog Informationen“ steht der Dokumenttitel sichtbar über den aufklappbaren Metadaten. Unter Backmatter und Trennlinie beginnt der Abschnitt „Anforderungen“. Angezeigt werden außerdem:
 
 - `Metadaten`
 - `Backmatter`
@@ -230,11 +254,13 @@ Der konditionale Tab `Vererbung Zielobjektkategorien` zeigt die vollständige ak
 - farblich getrennte Wurzelfamilien und gerichtete Verbindungslinien
 - Zoom, Verschieben und die Aktion `Alles anzeigen`
 - Zusammenfassung von Kategorien, Wurzelknoten und Hierarchieebenen
-- Tooltips pro Kategorie mit:
+- fester Kategorie-Detailbereich mit:
   - Definition
   - Kategorie
   - Synonymen, sofern vorhanden
 - Mausbedienung und Tastaturfokus für die Kategorien
+- Zoomen per Mausrad im Diagramm; über dem Detailbereich scrollt die Seite
+- durchsuchbare Alternative „Diagrammdaten als Tabelle“
 - verständliche Lade-, Fehler- und Wiederholungszustände
 
 Die CSV wird nur einmal pro Seitenaufruf geladen und für Filterautomatik und Visualisierung gemeinsam verwendet. Beim Wechsel auf einen Katalog ohne die Property sowie in der Komponenten- oder Mappingansicht wird der Tab vollständig ausgeblendet.
@@ -331,6 +357,10 @@ Auch hier setzt `Filter zurücksetzen` alle Filter auf den Ausgangszustand zurü
 ## Diagramme
 
 D3 ist Bestandteil des veröffentlichten Builds. Es wird kein zusätzliches Laufzeit-CDN benötigt.
+
+Graphen, Sunburst, Balken und Zielobjekthierarchie besitzen unterhalb der Grafik
+„Diagrammdaten als Tabelle“ als durchsuchbare Alternative. Graphen und Hierarchie
+bieten zusätzlich Schaltflächen für Zoom, Verschieben und „Alles anzeigen“.
 
 Die Diagramme werden lazy gerendert, also nur dann neu aufgebaut, wenn der jeweilige Tab sichtbar ist. Die Zielobjekthierarchie nutzt dieselbe lokale D3-Bibliothek und wird ebenfalls erst beim Öffnen ihrer Ansicht aufgebaut.
 
@@ -540,6 +570,20 @@ Der Viewer ist auf größere OSCAL-Dokumente ausgelegt. Wichtige Maßnahmen:
   - Filter zurücksetzen
   - prüfen, ob der gesuchte Begriff in den geladenen Daten wirklich vorkommt
 
+## Tastaturbedienung und Zugänglichkeit
+
+„Zum Inhalt springen“ überspringt den Kopfbereich. Darstellungstabs lassen sich
+mit Pfeiltasten bzw. Home/End fokussieren und mit Enter oder Leertaste aktivieren.
+Aufklappbereiche, Filter und Aktionen sind per Tastatur bedienbar. Größere
+Mehrfachfilter bieten eine Suche innerhalb ihrer Werte; Escape schließt sie und
+gibt den Fokus an die Zusammenfassung zurück. Der JSON-Dialog begrenzt den Fokus,
+lässt sich mit Escape schließen und führt zur auslösenden Schaltfläche zurück.
+
+KERN-Bausteine, sichtbarer Fokus, semantische Beschriftungen und Tabellenalternativen
+unterstützen Zugänglichkeit. Daraus folgt keine vollständige WCAG-Konformität oder
+Zertifizierung; die echte Screenreader-Abnahme ist noch offen. Siehe
+[Prüfgrenzen und Abnahme](kern-acceptance.md).
+
 ## Sicherheit und Datenschutz
 
 - Verarbeitung erfolgt vollständig lokal im Browser
@@ -550,7 +594,7 @@ Der Viewer ist auf größere OSCAL-Dokumente ausgelegt. Wichtige Maßnahmen:
 
 ## Umfang dieser Anleitung
 
-Diese Anleitung beschreibt den aktuellen Implementierungsstand des `Stand der Technik-Viewers` im Ordner, einschließlich:
+Diese Anleitung beschreibt den aktuellen Implementierungsstand des `Stand der Technik-Viewers` auf Basis von KERN UX, einschließlich:
 
 - Startseite mit Repository-Suche, Anleitung und Begriffserklärungen
 - Katalogansicht

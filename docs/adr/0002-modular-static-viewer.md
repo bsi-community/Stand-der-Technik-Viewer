@@ -1,7 +1,12 @@
 # ADR 0002: Modularer statischer Viewer
 
-- Status: Akzeptiert für den lokalen Umbau; Live-Freigabe separat
+- Status: Akzeptiert und umgesetzt; UI-/Release-Ergänzungen in ADR 0003
 - Datum: 2026-10-05
+- Einordnung aktualisiert: 2026-10-12
+
+Diese Entscheidung dokumentiert den ursprünglichen Architekturumbau. Die spätere
+KERN-Oberfläche und `dist-release/` als Pages-Artefakt sind in
+[ADR 0003](0003-kern-ui.md) beschrieben; die folgenden Erwägungen bleiben historisch erhalten.
 
 ## Kontext
 

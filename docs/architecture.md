@@ -2,9 +2,18 @@
 
 ## Ziel und bewusste Grenzen
 
-Der Umbau verändert die technische Organisation, nicht das Bedienkonzept. Ausgangspunkt ist Git-Commit `36c1dc82243360c0f2e8578fc641af2ab80b5a98` vom 30.09.2026 mit sichtbarer Version 2.1.1. Die bestehenden Funktionen einschließlich partieller Mappings bleiben erhalten. Es gibt weiterhin weder Backend noch Datenbank, Uploaddienst, Telemetrie oder Laufzeit-CDN.
+Der veröffentlichte Viewer ist eine statische Browseranwendung für OSCAL-Kataloge,
+Komponentendefinitionen und Mappings. KERN UX ist die aktuelle Oberflächengrundlage.
+Es gibt weder Backend noch Datenbank, Uploaddienst, Telemetrie oder Laufzeit-CDN.
+Lokale Dateien werden im Browser verarbeitet; Repository-, URL- und Versionsabrufe
+sowie externe Dokumentressourcen benötigen Netzwerkzugriff.
 
-Die Anwendung nutzt native ES-Module, DOM-Rendering und D3. Ein Frameworkwechsel hätte gleichzeitig Darstellung, Zustandsführung und Komponentenmodell verändert und wäre für diese verhaltensbewahrende Migration unnötig riskant. Vite löst Module auf, bündelt Assets mit Inhalts-Hashes und erzeugt die statische Veröffentlichung. Node.js wird nur für Entwicklung, Tests und Build benötigt, nicht auf GitHub Pages.
+Die Anwendung nutzt native ES-Module, DOM-Rendering und D3. Vite löst Module auf,
+bündelt Assets mit Inhalts-Hashes und erzeugt den statischen Release-Build.
+Node.js wird nur für Entwicklung, Tests und Build benötigt, nicht auf Pages.
+Der ursprüngliche Architekturumbau aus dem Ein-Datei-Viewer und seine damaligen
+Grenzen sind in [ADR 0002](adr/0002-modular-static-viewer.md) dokumentiert; die
+anschließende UI-Entscheidung in [ADR 0003](adr/0003-kern-ui.md).
 
 ## Zuständigkeiten
 
@@ -41,9 +50,20 @@ Der bestehende, getestete JavaScript-Code bleibt zunächst erhalten. `domain/con
 
 ## CSS und Assets
 
-`styles/index.css` legt die Importreihenfolge fest. Die bestehenden Regeln wurden entlang vollständiger Blöcke aufgeteilt; Reihenfolge, Selektoren und Deklarationen sind absichtlich erhalten. Bestehende Überschreibungen dürfen nicht allein aus ästhetischen Gründen umsortiert werden. Eine spätere CSS-Konsolidierung benötigt eigene visuelle Regressionstests.
+`main.js` lädt regulär `styles/kern/index.css`. Native KERN-Styles und fachliche
+Viewer-Kompositionen sind durch CSS-Layer geordnet. Legacy-Styles besitzen einen
+getrennten Einstieg und stehen ausschließlich für explizite Entwicklungsvergleiche
+zur Verfügung. Ihre historische Kaskade bleibt durch Regressionstests geschützt.
 
-Das Logo liegt unter `public/assets/`. Die alte URL `Stand der Technik-Viewer.html` ist eine kleine Weiterleitung, die Suchparameter und Hash beibehält; sie ist keine zweite zu pflegende Anwendung. Vite setzt den Repository-Unterpfad für veröffentlichte Skripte, Styles und Bilder.
+Die neue SVG-Bildmarke liegt unter `src/assets/viewer-mark.svg` und wird auch als
+Favicon gebündelt. Sie steht ohne eigene Aktion zwischen Home-Button und Texttitel.
+Das PNG unter `public/assets/viewer-logo.png` dient der Legacy-Ansicht. Fira Sans
+wird lokal ausgeliefert; die optionale BundesSans-Einbindung beschreibt
+[kern-preview.md](kern-preview.md).
+
+Die alte URL `Stand der Technik-Viewer.html` leitet unter Erhalt von Suchparametern
+und Hash weiter. Das Inline-Startskript und `release.json` erkennen neue Builds,
+ohne laufende Sitzungen neu zu laden; siehe [Betrieb](deployment.md).
 
 ## Erweiterungen
 
@@ -59,9 +79,9 @@ Für SSP, Assessment Plan, Assessment Results oder POA&M werden jeweils ein Mode
 
 Es gibt keine offizielle Norm, die einen bestimmten `src/`-Ordnerbaum vorschreibt. Maßgeblich sind hier nachvollziehbare Zuständigkeiten, reproduzierbare Builds, überprüfte Schnittstellen, automatisierte Regressionstests und dokumentierter Betrieb.
 
-## KERN-Testbranch
+## KERN-Oberfläche
 
-Die lokale KERN-Umstellung ergänzt wiederverwendbare UI-Primitiven und eine
+Die veröffentlichte KERN-Oberfläche verwendet wiederverwendbare UI-Primitiven und eine
 separate Shell-Einrichtung. Umfang und noch ausstehende Abnahmen
 sind im [KERN-Migrationsstand](kern-migration.md) dokumentiert. Die ursprüngliche
 verhaltensbewahrende Migration oben bleibt die Grundlage der OSCAL-Fachlogik.
@@ -81,12 +101,15 @@ Print-Details verändern daher keine Aufklappzustände im Store.
 importiert keine Legacy-Dateien: `styles/kern/index.css` legt die Layer `structure`
 (fachliche Layouts), `kern` (native Bibliothek) und `viewer` (Gestaltung) fest.
 Der Architekturtest verhindert lokale CSS-Imports außerhalb des KERN-Verzeichnisses.
-`app/kern-presentation.js` richtet Schrift, Fokus, Titel und Größenanpassung ein.
+`app/kern-presentation.js` richtet Schrift, Fokus, Bildmarke, Titel und Größenanpassung ein.
+`shared/ui/import-feedback.js` bündelt parallele Importe und entfernt reine
+Erfolgsmeldungen nach fünf Sekunden oder bei Navigation/Entfernung einer Quelle.
+Die Live-Region bleibt bestehen; Lade- und Fehlerzustände haben keinen Ablauf-Timer.
 `app/kern-preview.js` und `preview/documents.js` werden nur für explizite
 Vergleichsparameter dynamisch geladen.
 
 Vite setzt `import.meta.env.VIEWER_COMPARISON` abhängig vom Build-Modus. Im Modus
-`release` ist die Konstante `false`; Der Bundler entfernt damit die Vergleichszweige,
+`release` ist die Konstante `false`; der Bundler entfernt damit die Vergleichszweige,
 Legacy-CSS und Demo-Chunks. `check-build.mjs dist-release` prüft die Artefaktgrenze,
 `playwright.release.config.js` den Einstieg samt echtem Dateiimport. Der Pages-
 Workflow paketiert nur `dist-release`; seine Freigabe bleibt an `main` gebunden.

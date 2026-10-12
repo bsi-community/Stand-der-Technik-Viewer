@@ -1,5 +1,15 @@
 # KERN-Abnahmeprotokoll – 10. Oktober 2026
 
+## Einordnung nach Veröffentlichung – 12. Oktober 2026
+
+Dieses Protokoll bewahrt die Ergebnisse vom 10. Oktober. Der damalige Testbranch
+ist inzwischen nach `main` übernommen; weitere Korrekturen und die neue Bildmarke
+folgten. Eine Veröffentlichung ersetzt weder die offene Screenreader-Abnahme noch
+eine dokumentierte fachliche Gesamtabnahme. BundesSans ist weiterhin nicht aktiv.
+Aktueller Umfang und Nacharbeiten: [KERN-Stand](kern-migration.md).
+Die nachstehenden Prüfzahlen und Aussagen „nichts veröffentlicht“ beziehen sich
+auf den ursprünglichen Prüfzeitpunkt, nicht auf den aktuellen Viewer.
+
 ## Ergebnis und Geltungsbereich
 
 Die technische Inhaltsprüfung und die unten dokumentierten manuellen
@@ -158,8 +168,8 @@ Prüfperson, Datum sowie Abweichungen gehören ins Folgeprotokoll.
     Querverweis trotz vorheriger Filter öffnen und Reset-Meldung hören.
 12. Fachverantwortliche gleichen repräsentative eigene Dokumente, mehrdeutige
     Quellen und Mehrfachzuordnungen ab und dokumentieren ihre Freigabe oder
-    Restbefunde. Vor Veröffentlichung folgen BundesSans-Layoutprüfung und eine
-    gesonderte Veröffentlichungsentscheidung.
+    Restbefunde. Bei späterer BundesSans-Einbindung folgen eine erneute Layoutprüfung
+    und die Freigabe dieser Änderung vor ihrer Veröffentlichung.
 
 Eine Abnahme kann erst als abgeschlossen markiert werden, wenn diese noch
 offenen Nachweise vorliegen. Die automatisierten Prüfungen und die bisherige
