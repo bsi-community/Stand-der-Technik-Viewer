@@ -1,3 +1,4 @@
+import { clearImportSuccess } from '../../shared/ui/import-feedback.js';
 /** features/home/view: see docs/architecture.md for responsibilities. */
 import {
   isKern,
@@ -390,6 +391,7 @@ export function renderRegistryHome() {
 }
 
 export function showHomePage(resetRegistry) {
+  clearImportSuccess();
   if (resetRegistry) {
     uiStore.registryState.selectedModel = '';
     uiStore.registryState.query = '';

@@ -1,3 +1,4 @@
+import { clearImportSuccess } from '../shared/ui/import-feedback.js';
 /** app/navigation: see docs/architecture.md for responsibilities. */
 import {
   drawBar,
@@ -138,6 +139,7 @@ export function persistViewerTabState(name) {
 }
 
 export function switchTab(name) {
+  if (name !== uiStore.uiState.view) clearImportSuccess();
   if (name === 'home') {
     persistViewerTabState(name);
     showHomePage(true);

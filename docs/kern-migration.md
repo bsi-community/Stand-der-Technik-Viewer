@@ -404,6 +404,18 @@ in Chromium, Firefox und WebKit; Darstellung bei 320 und 375 Pixeln sowie im
 normalen Desktop-Fenster; Rückkehr zur Startseite per Tastatur. Die Logo-Änderung
 liegt lokal auf `codex/viewer-kern-logo` und ist noch nicht veröffentlicht.
 
+## Kurzzeitige Importbestätigung (12. Oktober 2026)
+
+Erfolgreiche Datei- und URL-Importe zeigen die gemeinsame grüne Bestätigung für
+fünf Sekunden. Beim Ansichtswechsel, bei Rückkehr zur Startseite und beim
+Entfernen eines Dokuments wird eine bestehende Erfolgsmeldung sofort geleert.
+Die Live-Region bleibt im DOM erhalten; der leere Balken benötigt keinen Platz.
+Neue Importe ersetzen die alte Bestätigung und setzen deren Timer zurück.
+Laufende Importe sowie Fehler und gemischte Ergebnisse mit Fehlern werden nicht
+automatisch ausgeblendet. Das gilt für Kataloge, Komponentendefinitionen und
+Mappings gleichermaßen. Browserprüfungen decken Ablauf, Navigation, Entfernen
+und den Schutz neuer Lade-/Fehlermeldungen vor alten Timern ab.
+
 ## Verbleibende Schritte bis zur Gesamtabnahme
 
 1. BundesSans-Webfonts nach Bereitstellung einbinden; anschließend Schriftmetriken,

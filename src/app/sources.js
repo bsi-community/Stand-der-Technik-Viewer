@@ -1,3 +1,4 @@
+import { clearImportSuccess } from '../shared/ui/import-feedback.js';
 /** app/sources: see docs/architecture.md for responsibilities. */
 import {
   RefreshViews,
@@ -114,6 +115,7 @@ export function addMappingSource(entry) {
 
 export function removeCatalogSource(index) {
   if (index < 0 || index >= sourceStore.loadedCatalogSources.length) return;
+  clearImportSuccess();
   sourceStore.loadedCatalogSources.splice(index, 1);
   if (!sourceStore.loadedCatalogSources.length) {
     sourceStore.activeCatalogSourceIndex = -1;
@@ -134,6 +136,7 @@ export function removeCatalogSource(index) {
 
 export function removeComponentSource(index) {
   if (index < 0 || index >= sourceStore.loadedComponentSources.length) return;
+  clearImportSuccess();
   sourceStore.loadedComponentSources.splice(index, 1);
   if (!sourceStore.loadedComponentSources.length) {
     sourceStore.activeComponentSourceIndex = -1;
@@ -154,6 +157,7 @@ export function removeComponentSource(index) {
 
 export function removeMappingSource(index) {
   if (index < 0 || index >= sourceStore.loadedMappingSources.length) return;
+  clearImportSuccess();
   sourceStore.loadedMappingSources.splice(index, 1);
   if (!sourceStore.loadedMappingSources.length) {
     sourceStore.activeMappingSourceIndex = -1;
