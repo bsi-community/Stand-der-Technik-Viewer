@@ -71,3 +71,12 @@ Tabelle, eine auf die Fensterbreite begrenzte Scrollfläche, deren überbreiten
 Tabelleninhalt und eine Seite ohne horizontalen Überlauf. Bleibt dieser Zustand
 aus, schlägt der Test fehl. Keine feste Schlafpause, deaktivierte Assertion oder
 zusätzliche Wiederholung des gesamten Tests ersetzt diese Prüfung.
+
+## Unfertigen Seitenstart prüfen
+
+`tests/release/startup.spec.js` hält Skripte, Stylesheets bzw. die Versionsantwort
+gezielt zurück und prüft bereits vor der fertigen Anwendung die neue Bildmarke,
+deren 40-×-40-Abmessungen, den Texttitel und das 24-×-24-Home-Symbol. Kein Aufruf
+des alten PNG darf erfolgen. Danach werden die Antworten freigegeben und der
+reguläre Start sowie die Home-Navigation geprüft, bei 375 und 1280 Pixeln in allen
+drei Browser-Engines. Der Build-Vertrag schützt zusätzlich die initiale HTML-Ausgabe.

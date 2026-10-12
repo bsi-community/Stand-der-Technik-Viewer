@@ -16,21 +16,21 @@
           type="button"
           aria-label="Zur Startseite"
         >
-          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
             <path d="M3 10.5 12 3l9 7.5"></path>
             <path d="M5.5 9.5V21h13V9.5"></path>
             <path d="M9.5 21v-6h5v6"></path>
           </svg>
         </button>
+        <img
+          class="viewer-brand-mark"
+          src="/src/assets/viewer-mark.svg"
+          alt=""
+          width="40"
+          height="40"
+        />
         <div>
-          <h1>
-            <img
-              class="header-wordmark"
-              src="/assets/viewer-logo.png"
-              alt="Stand der Technik – Viewer"
-              onerror="this.replaceWith(document.createTextNode('Stand der Technik – Viewer'))"
-            />
-          </h1>
+          <h1>Stand der Technik-Viewer</h1>
           <!-- Versionsangabe wird beim Build aus VERSION eingesetzt. -->
           <span
             id="viewerVersion"

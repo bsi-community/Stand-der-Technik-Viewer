@@ -14,6 +14,15 @@ Promise.resolve(window.__viewerReady).then(async (ready) => {
     fontStatus = await prepareKernPresentation();
   } else {
     await import('./styles/legacy.css');
+    // Only the explicit comparison view needs the historic image. Its stylesheet
+    // must be ready before inserting it; the initial HTML always uses KERN branding.
+    document.querySelector('.viewer-brand-mark').remove();
+    const wordmark = document.createElement('img');
+    wordmark.className = 'header-wordmark';
+    wordmark.src = `${import.meta.env.BASE_URL}assets/viewer-logo.png`;
+    wordmark.alt = 'Stand der Technik – Viewer';
+    wordmark.onerror = () => wordmark.replaceWith(document.createTextNode(wordmark.alt));
+    document.querySelector('header h1').replaceChildren(wordmark);
   }
   await startViewer();
   if (

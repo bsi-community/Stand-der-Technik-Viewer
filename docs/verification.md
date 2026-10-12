@@ -1,5 +1,21 @@
 # Prüfstände und historische Nachweise
 
+## Startlogo-Korrektur – 12. Oktober 2026
+
+Auf `codex/viewer-startup-logo`, ausgehend von `main` nach PR #16 (`1469c3c`),
+wurde das alte PNG aus der initialen HTML-Kopfzeile entfernt. Die neue SVG-Bildmarke
+und das Home-Symbol sind bereits ohne geladenes JavaScript/CSS auf ihre vorgesehenen
+Maße begrenzt. Das alte Bild wird nur im expliziten Legacy-Vergleich nachgeladen.
+
+Lokal erfolgreich: Lint, vollständige Formatprüfung, TypeScript,
+43 Unit-/Architekturtests, 234 reguläre Browserfälle, beide Builds samt Asset- und
+Release-Isolationsprüfung, 21 Release-Browserfälle und alle zehn unveränderten
+Legacy-Bildvergleiche. Die neuen 18 Startfälle verzögern gezielt Skripte, Stylesheets
+oder Versionsantworten bei 375/1280 Pixeln in Chromium, Firefox und WebKit. Sie
+prüfen die Logo-Maße schon vor dem fertigen Start und schließen Anforderungen des
+alten PNG aus. Beide Browserdurchläufe liefen ohne Test-Retries. Der Ubuntu-CI-
+und Pages-Nachweis steht bis zum Push bzw. Merge dieses Folgebranches aus.
+
 ## Aktueller Bezug – 12. Oktober 2026
 
 Der KERN-Umbau und die Folgekorrekturen sind auf `main` übernommen: PR #13

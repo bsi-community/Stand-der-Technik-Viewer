@@ -101,7 +101,11 @@ Print-Details verändern daher keine Aufklappzustände im Store.
 importiert keine Legacy-Dateien: `styles/kern/index.css` legt die Layer `structure`
 (fachliche Layouts), `kern` (native Bibliothek) und `viewer` (Gestaltung) fest.
 Der Architekturtest verhindert lokale CSS-Imports außerhalb des KERN-Verzeichnisses.
-`app/kern-presentation.js` richtet Schrift, Fokus, Bildmarke, Titel und Größenanpassung ein.
+Die initiale `index.html` enthält die neue SVG-Bildmarke und den Texttitel bereits
+vor dem Anwendungsstart; Logo und Home-Symbol besitzen feste HTML-Abmessungen.
+`app/kern-presentation.js` richtet Schrift, Fokus, Titel und Größenanpassung ein.
+Nur der Vergleichseinstieg in `main.js` ersetzt die Kopfzeile nach dem Laden der
+Legacy-Styles durch das historische PNG. Der KERN-Start fordert dieses Bild nicht an.
 `shared/ui/import-feedback.js` bündelt parallele Importe und entfernt reine
 Erfolgsmeldungen nach fünf Sekunden oder bei Navigation/Entfernung einer Quelle.
 Die Live-Region bleibt bestehen; Lade- und Fehlerzustände haben keinen Ablauf-Timer.

@@ -8,6 +8,8 @@ Das Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1
 
 ### Behoben
 
+- Neues KERN-Logo bereits im initialen HTML mit festen Abmessungen hinterlegt. Das alte, zuvor kurzzeitig übergroß sichtbare PNG wird nur noch in der historischen Vergleichsansicht nach deren Stylesheet geladen. Auch das Home-Symbol besitzt feste Ausgangsmaße.
+
 - Responsive Hierarchieprüfung wartet auf eine sichtbare, korrekt begrenzte Tabelle und misst den aktuellen DOM gemeinsam. Ein Neuaufbau während der Firefox-Prüfung kann dadurch keinen falschen Fehler durch ein entferntes Element auslösen; die Seiten- und Tabellenbreiten bleiben verpflichtend geprüft.
 
 ### Dokumentation

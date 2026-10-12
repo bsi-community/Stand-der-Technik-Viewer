@@ -30,9 +30,11 @@ assert.ok(
   'missing CSS asset',
 );
 assert.ok(
-  assets.some((url) => url.endsWith('.png')),
-  'missing logo asset',
+  assets.some((url) => /viewer-mark-[^/]+\.svg$/.test(url)),
+  'missing hashed viewer mark',
 );
+assert.ok(!html.includes('viewer-logo.png'), 'historic logo leaked into initial HTML');
+assert.match(html, /class="viewer-brand-mark"[^>]*width="40"[^>]*height="40"/);
 for (const url of assets)
   assert.ok(fs.statSync(path.join(output, url.slice(base.length))).size > 0, `missing ${url}`);
 assert.ok(!/(?:src|href)="\/assets\//.test(html), 'asset URL ignores Pages subpath');
