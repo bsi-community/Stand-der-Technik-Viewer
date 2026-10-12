@@ -35,6 +35,16 @@ Layoutanforderung oder Deployment-Sperre wurde entfernt. Diagnose und Prüfumfan
 stehen in [verification.md](verification.md); der nächste erfolgreiche main-Lauf
 muss die noch ausstehende Veröffentlichung übernehmen.
 
+## Folgekorrektur: Logo beim ersten Seitenaufbau am 12. Oktober 2026
+
+Die initiale HTML-Kopfzeile enthält jetzt direkt die neue SVG-Bildmarke (40 × 40)
+und den Texttitel. Das Home-Symbol besitzt bereits vor dem Laden der Styles feste
+Abmessungen (24 × 24). Der KERN-Start erzeugt kein zusätzliches Logo mehr.
+Das historische PNG wird nur in der ausdrücklich gewählten Legacy-Vergleichsansicht
+und erst nach deren Stylesheet eingesetzt. So erscheint es während der
+Versionsprüfung oder bei langsamen Skript-/CSS-Abrufen nicht mehr im KERN-Viewer.
+Die Versionsprüfung und ihre Cache-Behandlung bleiben unverändert.
+
 ## Komponenten und Zuständigkeiten
 
 | Baustein              | Umsetzung                                                                                                           | Zuständigkeit                                               |
