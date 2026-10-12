@@ -1,4 +1,7 @@
 /** features/mappings/view: see docs/architecture.md for responsibilities. */
+import { isKern, kernContent, kernTable } from '../../shared/ui/kern.js';
+import { addRelationshipHelp } from './relationship-help.js';
+import { renderKernMappingDocumentInfo } from './document-info.js';
 import { mappingStore, uiStore } from '../../app/store.js';
 import { getCatalogPreviewParamMap } from '../../app/catalog-lookup.js';
 import { mappingRelationshipSymbol } from '../../domain/mapping.js';
@@ -67,6 +70,7 @@ export function appendMappingInfoItem(list, label, value) {
 }
 
 export function renderMappingDocumentInfo(container) {
+  if (isKern()) return renderKernMappingDocumentInfo(container);
   var grid = document.createElement('div');
   grid.className = 'mapping-document-grid';
   var metadata = mappingStore.mappingState.metadata || {};
@@ -132,6 +136,25 @@ export function setupMappingViewportScrollbar(wrap, table) {
   scrollbar.setAttribute('role', 'scrollbar');
   scrollbar.setAttribute('aria-label', 'Mapping-Tabelle horizontal scrollen');
   scrollbar.setAttribute('aria-orientation', 'horizontal');
+  if (isKern()) {
+    wrap.id = 'mapping-comparison-scroll';
+    scrollbar.setAttribute('aria-controls', wrap.id);
+    scrollbar.addEventListener('keydown', (event) => {
+      const max = Math.max(0, table.scrollWidth - wrap.clientWidth);
+      const positions = {
+        ArrowLeft: wrap.scrollLeft - 80,
+        ArrowRight: wrap.scrollLeft + 80,
+        PageUp: wrap.scrollLeft - wrap.clientWidth,
+        PageDown: wrap.scrollLeft + wrap.clientWidth,
+        Home: 0,
+        End: max,
+      };
+      if (!(event.key in positions)) return;
+      event.preventDefault();
+      wrap.scrollLeft = Math.max(0, Math.min(max, positions[event.key]));
+      syncFromTable();
+    });
+  }
   var track = document.createElement('div');
   track.className = 'mapping-viewport-scrollbar-track';
   scrollbar.appendChild(track);
@@ -394,6 +417,7 @@ export function renderMappingView() {
           (entry.status ? '<span>· ' + escapeHtml(entry.status) + '</span>' : '') +
           '</div>';
         relationCell.title = 'Relationship aus Sicht der Source: ' + entry.relationship;
+        if (isKern()) addRelationshipHelp(relationCell, entry.relationship);
         row.appendChild(relationCell);
       }
 
@@ -415,5 +439,7 @@ export function renderMappingView() {
   table.appendChild(tbody);
   wrap.appendChild(table);
   uiStore.els.mappingTab.appendChild(wrap);
+  kernTable(table, 'Mapping-Vergleich der Quell- und Zielanforderungen');
+  kernContent(uiStore.els.mappingTab);
   setupMappingViewportScrollbar(wrap, table);
 }

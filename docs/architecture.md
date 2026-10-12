@@ -58,3 +58,37 @@ Für SSP, Assessment Plan, Assessment Results oder POA&M werden jeweils ein Mode
 - [GitHub: Custom Pages workflows](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages)
 
 Es gibt keine offizielle Norm, die einen bestimmten `src/`-Ordnerbaum vorschreibt. Maßgeblich sind hier nachvollziehbare Zuständigkeiten, reproduzierbare Builds, überprüfte Schnittstellen, automatisierte Regressionstests und dokumentierter Betrieb.
+
+## KERN-Testbranch
+
+Die lokale KERN-Umstellung ergänzt wiederverwendbare UI-Primitiven und eine
+separate Shell-Einrichtung. Umfang und noch ausstehende Abnahmen
+sind im [KERN-Migrationsstand](kern-migration.md) dokumentiert. Die ursprüngliche
+verhaltensbewahrende Migration oben bleibt die Grundlage der OSCAL-Fachlogik.
+
+### KERN-Inhalte und Druck
+
+`shared/ui/kern.js` erzeugt gemeinsame Beschreibungslisten und stellt Tabellen,
+Buttons und Details für explizit übergebene Inhaltsbereiche bereit. Die generischen
+Metadatenrenderer behalten sichere Linkauflösung und Rich Text bei. Mapping-
+Dokumentinformationen liegen in `features/mappings/document-info.js`.
+`app/kern-print.js` druckt ausschließlich eine DOM-Kopie der aktuellen Auswahl;
+Print-Details verändern daher keine Aufklappzustände im Store.
+
+### Unabhängiger KERN-Einstieg und Release-Build
+
+`main.js` entscheidet vor dem Start zwischen den getrennten Stylesheets. KERN
+importiert keine Legacy-Dateien: `styles/kern/index.css` legt die Layer `structure`
+(fachliche Layouts), `kern` (native Bibliothek) und `viewer` (Gestaltung) fest.
+Der Architekturtest verhindert lokale CSS-Imports außerhalb des KERN-Verzeichnisses.
+`app/kern-presentation.js` richtet Schrift, Fokus, Titel und Größenanpassung ein.
+`app/kern-preview.js` und `preview/documents.js` werden nur für explizite
+Vergleichsparameter dynamisch geladen.
+
+Vite setzt `import.meta.env.VIEWER_COMPARISON` abhängig vom Build-Modus. Im Modus
+`release` ist die Konstante `false`; Der Bundler entfernt damit die Vergleichszweige,
+Legacy-CSS und Demo-Chunks. `check-build.mjs dist-release` prüft die Artefaktgrenze,
+`playwright.release.config.js` den Einstieg samt echtem Dateiimport. Der Pages-
+Workflow paketiert nur `dist-release`; seine Freigabe bleibt an `main` gebunden.
+Die separaten macOS-KERN-Bildreferenzen ersetzen nicht den plattformübergreifenden
+funktionalen Browserlauf oder die eingefrorene Legacy-Referenz.

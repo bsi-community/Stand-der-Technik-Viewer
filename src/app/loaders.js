@@ -5,28 +5,54 @@ import { detectOscalKind, oscalKindLabel } from '../domain/documents.js';
 import { escapeHtml } from '../shared/html.js';
 import { showMsg } from '../shared/ui/messages.js';
 import { normalizeCatalogUrl } from '../shared/urls.js';
+import { isKern } from '../shared/ui/kern.js';
+import { beginImport, urlValidationError } from '../shared/ui/import-feedback.js';
 
-export function loadCatalogFile(f) {
-  if (!f) return;
-  var reader = new FileReader();
-  reader.onload = function (e) {
-    try {
-      var fileText = e.target.result || '';
-      var json = JSON.parse(fileText);
-      addCatalogSource({ label: f.name, json: json, baseUrl: '' });
-    } catch (err) {
+/** A single lifecycle for all local inputs, including simultaneous multi-file imports. */
+function loadLocalDocument(file, kind) {
+  if (!file) return Promise.resolve('');
+  const finish = beginImport(kind, file.name);
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    function fail(error) {
+      const message = String(error.message || error);
       showMsg(
-        '<strong>Fehler beim Laden der JSON:</strong><br/><code>' +
-          escapeHtml(String(err.message || err)) +
+        '<strong>Datei konnte nicht geladen werden:</strong><br/><code>' +
+          escapeHtml(file.name + ': ' + message) +
           '</code>',
         true,
       );
+      finish(message);
+      resolve('');
     }
-  };
-  reader.onerror = function () {
-    showMsg('<strong>Fehler beim Lesen der Datei.</strong>', true);
-  };
-  reader.readAsText(f);
+    reader.onload = (event) => {
+      try {
+        const json = JSON.parse(event.target.result || '');
+        const detected = detectOscalKind(json);
+        if (detected !== kind)
+          throw new Error(
+            'Erwartet wurde ' +
+              oscalKindLabel(kind) +
+              '. Bitte eine passende OSCAL-JSON-Datei auswählen.',
+          );
+        const entry = { label: file.name, json, baseUrl: '' };
+        if (kind === 'catalog') addCatalogSource(entry);
+        else if (kind === 'component') addComponentSource(entry);
+        else addMappingSource(entry);
+        finish();
+        resolve(kind);
+      } catch (error) {
+        fail(error);
+      }
+    };
+    reader.onerror = () => fail(new Error('Die Datei konnte nicht gelesen werden.'));
+    reader.onabort = () => fail(new Error('Das Lesen wurde abgebrochen.'));
+    reader.readAsText(file);
+  });
+}
+
+export function loadCatalogFile(file) {
+  return loadLocalDocument(file, 'catalog');
 }
 
 export function addOscalUrlSource(kind, json, url, sourceLabel) {
@@ -52,11 +78,15 @@ export function addOscalUrlSource(kind, json, url, sourceLabel) {
   return detected;
 }
 
+const pendingUrls = new Map();
+
 export function loadOscalFromUrl(rawUrl, expectedKind, sourceLabel, errorPrefix) {
   var url;
   try {
     url = normalizeCatalogUrl(rawUrl);
+    if (isKern() && !url) throw new Error('Bitte eine Dokument-URL eingeben.');
   } catch (err) {
+    urlValidationError(expectedKind, err.message);
     showMsg(
       '<strong>' +
         (errorPrefix || 'Fehler beim Laden der URL:') +
@@ -68,7 +98,10 @@ export function loadOscalFromUrl(rawUrl, expectedKind, sourceLabel, errorPrefix)
     return Promise.resolve('');
   }
   if (!url) return Promise.resolve('');
-  return fetch(url, { credentials: 'same-origin', cache: 'no-store' })
+  const key = `${expectedKind}:${url}`;
+  if (pendingUrls.has(key)) return pendingUrls.get(key);
+  const finish = beginImport(expectedKind, sourceLabel || url);
+  const request = fetch(url, { credentials: 'same-origin', cache: 'no-store' })
     .then(function (res) {
       if (!res.ok) {
         throw new Error('HTTP ' + res.status);
@@ -76,9 +109,13 @@ export function loadOscalFromUrl(rawUrl, expectedKind, sourceLabel, errorPrefix)
       return res.json();
     })
     .then(function (json) {
-      return addOscalUrlSource(expectedKind, json, url, sourceLabel);
+      const kind = addOscalUrlSource(expectedKind, json, url, sourceLabel);
+      finish();
+      return kind;
     })
     .catch(function (err) {
+      finish(String(err.message || err));
+      urlValidationError(expectedKind, String(err.message || err));
       showMsg(
         '<strong>' +
           (errorPrefix || 'Fehler beim Laden der URL:') +
@@ -88,7 +125,10 @@ export function loadOscalFromUrl(rawUrl, expectedKind, sourceLabel, errorPrefix)
         true,
       );
       return '';
-    });
+    })
+    .finally(() => pendingUrls.delete(key));
+  pendingUrls.set(key, request);
+  return request;
 }
 
 export function persistLoadedOscalUrl(rawUrl, kind, sourceLabel) {
@@ -116,27 +156,8 @@ export function loadCatalogFromUrl(rawUrl, sourceLabel) {
   });
 }
 
-export function loadComponentFile(f) {
-  if (!f) return;
-  var reader = new FileReader();
-  reader.onload = function (e) {
-    try {
-      var fileText = e.target.result || '';
-      var json = JSON.parse(fileText);
-      addComponentSource({ label: f.name, json: json, baseUrl: '' });
-    } catch (err) {
-      showMsg(
-        '<strong>Fehler beim Laden der Komponentendefinition:</strong><br/><code>' +
-          escapeHtml(String(err.message || err)) +
-          '</code>',
-        true,
-      );
-    }
-  };
-  reader.onerror = function () {
-    showMsg('<strong>Fehler beim Lesen der Datei.</strong>', true);
-  };
-  reader.readAsText(f);
+export function loadComponentFile(file) {
+  return loadLocalDocument(file, 'component');
 }
 
 export function loadComponentFromUrl(rawUrl, sourceLabel) {
@@ -151,29 +172,8 @@ export function loadComponentFromUrl(rawUrl, sourceLabel) {
   });
 }
 
-export function loadMappingFile(f) {
-  if (!f) return;
-  var reader = new FileReader();
-  reader.onload = function (e) {
-    try {
-      var fileText = e.target.result || '';
-      var json = JSON.parse(fileText);
-      if (!json || !json['mapping-collection'])
-        throw new Error('Kein OSCAL mapping-collection Root gefunden.');
-      addMappingSource({ label: f.name, json: json, baseUrl: '' });
-    } catch (err) {
-      showMsg(
-        '<strong>Fehler beim Laden des Control Mappings:</strong><br/><code>' +
-          escapeHtml(String(err.message || err)) +
-          '</code>',
-        true,
-      );
-    }
-  };
-  reader.onerror = function () {
-    showMsg('<strong>Fehler beim Lesen der Mapping-Datei.</strong>', true);
-  };
-  reader.readAsText(f);
+export function loadMappingFile(file) {
+  return loadLocalDocument(file, 'mapping');
 }
 
 export function loadMappingFromUrl(rawUrl, sourceLabel) {

@@ -3,7 +3,9 @@
 ## Start und Vergleich
 
 Die Vorschau läuft ausschließlich lokal auf dem Branch `restructure-viewer-KERN`.
-Die vorhandene Pages-Veröffentlichung und deren Workflow sind unverändert.
+Die vorhandene Pages-Veröffentlichung bleibt unverändert. Der Workflow im Testbranch
+ist für den späteren Release-Build vorbereitet; veröffentlicht wird weiterhin nur
+aus `main`.
 Eine lokale Änderung oder ein lokaler Commit veröffentlicht nichts.
 
 Voraussetzung für eine frische Installation: Node.js 24 mit npm.
@@ -16,9 +18,12 @@ npm run preview:kern
 Auf dem eingerichteten Mac kann alternativ `KERN-Vorschau.command` im Projektordner
 per Doppelklick gestartet werden. Das Terminal geöffnet lassen; mit Ctrl+C beenden.
 Der Starter prüft den Branch und verwendet bei Bedarf die vorhandene Node-Laufzeit
-von Codex. Belegte Ports werden nicht automatisch ersetzt.
+von Codex. Belegte Ports werden nicht automatisch ersetzt. Der ausgegebene Link
+führt seit dem 11. Oktober 2026 zur normalen Ansicht ohne Test- und Vergleichsleiste.
+Die folgenden Vergleichslinks sind ausschließlich für Entwicklung und QA gedacht.
 
-- [Startseite](http://127.0.0.1:5186/Stand-der-Technik-Viewer/)
+- [Normaler Einstieg](http://127.0.0.1:5186/Stand-der-Technik-Viewer/)
+- [Startseite mit Vergleichsleiste](http://127.0.0.1:5186/Stand-der-Technik-Viewer/?preview=home)
 - [Geöffnete Anforderung mit Filtern](http://127.0.0.1:5186/Stand-der-Technik-Viewer/?preview=catalog)
 - [Gefüllte Mapping-Tabelle](http://127.0.0.1:5186/Stand-der-Technik-Viewer/?preview=mapping)
 - [Bisherige Startseite](http://127.0.0.1:5186/Stand-der-Technik-Viewer/?design=legacy)
@@ -41,7 +46,7 @@ als Datei zu öffnen wird nicht unterstützt. Für einen gebauten Stand:
 
 Die eigentlichen BundesSans-Dateien liegen dem Repository nicht bei. Die Vorschau
 verwendet deshalb zunächst die lokal ausgelieferte KERN-Standardschrift Fira Sans
-und zeigt diesen Zustand oben an. BundesSans ist eine bewusste typografische
+und zeigt diesen Zustand in der optionalen Vergleichsleiste an. BundesSans ist eine bewusste typografische
 Anpassung des KERN-Standards.
 
 Ein zur Nutzung bereitgestelltes BundesSans-Webfont-Paket zunächst entpacken.
@@ -63,35 +68,46 @@ vor einer späteren Veröffentlichung ist deren Nutzungsfreigabe zu klären.
 
 Eingebunden ist `@kern-ux/native` in festgelegter Version 2.8.2 mit den originalen
 KERN-Tokens, Basisstilen und Fira-Sans-Dateien. Die Vorschau verwendet KERN-Markup
-für das Suchfeld, dessen primären Button und die Mapping-Tabelle sowie eigene
-Anpassungen für die fachlichen Viewer-Komponenten. Sie ist noch keine vollständig
+für Buttons, Felder, Checkboxen/Fieldsets, Details, Anforderungsmetadaten und die
+Mapping-Tabelle sowie eigene Kompositionen für fachliche Viewer-Komponenten. Sie ist noch keine vollständig
 auf native KERN-Komponenten umgestellte oder auf Barrierefreiheit zertifizierte
 Anwendung.
 
-Die bestehenden Styles liegen unverändert in `src/styles/index.css` und werden
-über `legacy.css` in der CSS-Layer `legacy` geladen. Darüber liegen die Layer
-`kern` und `viewer`. Mit `?design=legacy` werden die KERN-Styles und die Änderungen
-an der Darstellung nicht aktiviert. Die bisherigen Parser, Datenmodelle,
-Filterlogiken und Ladewege bleiben die gemeinsame Grundlage.
+KERN und Legacy haben getrennte CSS-Einstiege. Die KERN-Layer `structure`, `kern`
+und `viewer` enthalten ausschließlich eigene Viewer-Kompositionen und native
+KERN-Styles. `?design=legacy` lädt im Entwicklungs-/Vergleichsbuild ausschließlich
+die bisherige Gestaltung. Parser, Datenmodelle, Filter und Ladewege sind gemeinsam.
+
+Der normale Einstieg lädt weder Vergleichsleiste noch Beispieldaten. Diese werden
+nur über `?preview=home`, `?preview=catalog` oder `?preview=mapping` angefordert.
+Der separate Veröffentlichungseinstieg entfernt sie bereits beim Bauen:
+
+```sh
+npm run build:release
+npm run test:release
+npm run preview -- --outDir dist-release
+```
+
+`dist-release/` enthält keine Legacy-Styles und keine Vergleichs-/Demodatenmodule.
+Auch entsprechende URL-Parameter aktivieren dort keinen Vergleich. Der Workflow
+prüft beide Builds und paketiert für eine spätere Veröffentlichung nur
+`dist-release/`. Ein lokaler Build allein veröffentlicht nichts.
 
 Die Zuständigkeiten sind getrennt:
 
-| Bereich                                             | Einstieg                                                           |
-| --------------------------------------------------- | ------------------------------------------------------------------ |
-| Tokens, Schrift, Fokus, allgemeine Elemente         | `src/styles/kern/foundation.css`                                   |
-| Kopfbereich, Navigation, Seitenleiste, Übersichten  | `src/styles/kern/shell.css`                                        |
-| Startseite und Suche                                | `src/styles/kern/home.css` und `src/features/home/view.js`         |
-| Anforderung, Inhalt und Metadaten                   | `src/styles/kern/catalog.css` und `src/features/catalog/card.js`   |
-| Vergleichstabelle und Dokumentinformationen         | `src/styles/kern/mappings.css` und `src/features/mappings/view.js` |
-| Vorschauleiste, optionale Schrift und Beispieldaten | `src/app/kern-preview.js`, `src/preview/documents.js`              |
+| Bereich                                            | Einstieg                                                           |
+| -------------------------------------------------- | ------------------------------------------------------------------ |
+| Tokens, Schrift, Fokus, allgemeine Elemente        | `src/styles/kern/foundation.css`                                   |
+| Kopfbereich, Navigation, Seitenleiste, Übersichten | `src/styles/kern/shell.css`                                        |
+| Startseite und Suche                               | `src/styles/kern/home.css` und `src/features/home/view.js`         |
+| Anforderung, Inhalt und Metadaten                  | `src/styles/kern/catalog.css` und `src/features/catalog/card.js`   |
+| Vergleichstabelle und Dokumentinformationen        | `src/styles/kern/mappings.css` und `src/features/mappings/view.js` |
+| Schrift und Einrichtung der KERN-Ansicht           | `src/app/kern-presentation.js`                                     |
+| Optionale Vergleichsleiste und Beispieldaten       | `src/app/kern-preview.js`, `src/preview/documents.js`              |
 
-Für die weitere Umstellung können diese Module direkt erweitert werden. Als
-nächste Schritte bleiben insbesondere Komponentendefinitionen, komplexe
-Mehrfachfilter, Dialoge, Diagramme, Druckansichten und leere/fehlerhafte Zustände
-systematisch an die passenden KERN-Muster anzupassen. Anschließend folgen eine
-vertiefte Tastatur-/Screenreader-Prüfung und Tests mit repräsentativen großen
-Echtdokumenten. Die Legacy-Layer sollte erst nach vollständiger Migration und
-Abnahme entfallen.
+Der [Migrationsstand](kern-migration.md) dokumentiert die umgestellten Bereiche,
+die Echtdaten- und Druckprüfung sowie die noch ausstehende BundesSans-Einbindung
+und manuelle Abnahme mit assistiven Technologien.
 
 Ein offizieller Bundes-Header wird nicht mitgeliefert. Die Vorschauleiste
 kennzeichnet die Testversion; die Verwendung eines Designsystems allein bestätigt
@@ -99,16 +115,22 @@ keine amtliche Herausgeberschaft.
 
 ## Prüfung
 
-`npm run check` umfasst die bestehenden Prüfungen sowie drei neue Browserfälle
-für KERN in jeweils Chromium, Firefox und WebKit. Die neuen Fälle prüfen unter
-anderem Beispielanforderung, Suche/Zurücksetzen, aufgelöste Mapping-Inhalte,
-Sprunglink und Überlaufverhalten bei 800 Pixeln Breite.
+`npm run check` umfasst Lint, Formatprüfung, den dokumentierten TypeScript-Bereich,
+Unit-/Architekturtests, Build und die Browserfälle in Chromium, Firefox und WebKit.
+`npm run test:baseline` prüft zehn Legacy-Ansichten gegen die eingefrorene Referenz.
 
-`npm run test:baseline` vergleicht den Legacy-Modus gegen den eingefrorenen
-Ausgangsstand. Nur die zusätzliche KERN-Abhängigkeit ist beim Lockfile-Vergleich
-ausgenommen; sonstige Abhängigkeitsänderungen bleiben ein Fehler.
-Die KERN-Gestaltung wird dabei bewusst nicht gegen das alte Erscheinungsbild
-verglichen. Browserbilder liegen unter `test-results/` und gehören nicht in Git.
+`npm run test:kern-visual` vergleicht zwölf KERN-Bildreferenzen für Startseite,
+Import, Anforderung, Sunburst, Mapping und Komponenten bei 1440 und 375 Pixeln.
+Die geprüften Referenzen liegen unter `tests/visual/references/darwin/` und gelten
+für Chromium aus der festgelegten Playwright-Version auf macOS mit Fira Sans.
+Andere Betriebssysteme brauchen separat geprüfte Referenzen. Nach BundesSans-
+Einbindung sind die Referenzen bewusst neu abzunehmen. Sie werden nicht bei
+normalen Testläufen automatisch überschrieben.
+
+`npm run test:release` prüft den zuvor gebauten Release-Einstieg in drei Browsern.
+Echtdaten- und PDF-Prüfung sind im Migrationsstand reproduzierbar beschrieben.
+Temporäre Browserbilder, PDF-Dateien und Berichte liegen unter `test-results/`;
+nur die ausdrücklich abgenommenen KERN-Referenzbilder gehören ins Repository.
 
 ## Quellen und Lizenzen
 

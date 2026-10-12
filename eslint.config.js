@@ -4,6 +4,7 @@ export default [
   {
     ignores: [
       'dist/**',
+      'dist-release/**',
       'node_modules/**',
       'test-results/**',
       'playwright-report/**',

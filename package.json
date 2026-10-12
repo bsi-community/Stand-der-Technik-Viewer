@@ -19,7 +19,10 @@
     "check": "npm run lint && npm run format:check && npm run typecheck && npm test && npm run build && npm run test:e2e",
     "test:baseline": "node scripts/compare-baseline.mjs",
     "test:live": "node scripts/live-smoke.mjs",
-    "preview:kern": "vite --host 127.0.0.1 --port 5186 --strictPort"
+    "preview:kern": "vite --host 127.0.0.1 --port 5186 --strictPort",
+    "build:release": "vite build --mode release --outDir dist-release && node scripts/check-build.mjs dist-release",
+    "test:release": "playwright test --config playwright.release.config.js",
+    "test:kern-visual": "playwright test --config playwright.kern.config.js"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",

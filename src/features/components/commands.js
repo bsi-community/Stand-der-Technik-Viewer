@@ -1,4 +1,5 @@
 /** features/components/commands: see docs/architecture.md for responsibilities. */
+import { setButtonLabel } from '../../shared/ui/kern.js';
 import { renderHighlightedInline, renderMarkupWithParams } from '../../shared/markup.js';
 import { containsAnySearchTerm, parseSearchQuery } from '../../shared/search.js';
 
@@ -112,19 +113,19 @@ export function appendConfigCommands(parent, req, searchTerm) {
           button.disabled = true;
           copyConfigCommandText(rawValue)
             .then(function () {
-              button.textContent = 'Kopiert';
+              setButtonLabel(button, 'Kopiert');
               button.classList.add('is-copied');
               setTimeout(function () {
-                button.textContent = 'Kopieren';
+                setButtonLabel(button, 'Kopieren');
                 button.classList.remove('is-copied');
                 button.disabled = false;
               }, 1400);
             })
             .catch(function () {
-              button.textContent = 'Nicht kopiert';
+              setButtonLabel(button, 'Nicht kopiert');
               button.title = 'Der Browser hat den Zugriff auf die Zwischenablage blockiert.';
               setTimeout(function () {
-                button.textContent = 'Kopieren';
+                setButtonLabel(button, 'Kopieren');
                 button.disabled = false;
               }, 1800);
             });

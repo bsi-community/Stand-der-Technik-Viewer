@@ -1,7 +1,8 @@
 /* Shared typography for the remaining workspaces. Technical JSON/code keeps
    its monospace face; interface labels use the selected Fira/BundesSans token. */
 .component-summary,
-.component-doc-heading {
+.component-doc-heading,
+.catalog-requirements-heading {
   font-size: 18px;
   font-weight: 700;
   color: var(--text);

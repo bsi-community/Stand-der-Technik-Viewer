@@ -1,4 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
+const port = process.env.VIEWER_TEST_PORT || '4173';
+const baseURL = `http://127.0.0.1:${port}/Stand-der-Technik-Viewer/`;
 export default defineConfig({
   testDir: './tests/e2e',
   fullyParallel: true,
@@ -7,7 +9,7 @@ export default defineConfig({
   workers: process.env.CI ? 2 : undefined,
   reporter: [['list'], ['html', { open: 'never' }]],
   use: {
-    baseURL: 'http://127.0.0.1:4173/Stand-der-Technik-Viewer/',
+    baseURL,
     viewport: { width: 1440, height: 1000 },
     locale: 'de-DE',
     trace: 'retain-on-failure',
@@ -19,8 +21,8 @@ export default defineConfig({
     { name: 'webkit', use: { ...devices['Desktop Safari'] } },
   ],
   webServer: {
-    command: 'node node_modules/vite/bin/vite.js preview',
-    url: 'http://127.0.0.1:4173/Stand-der-Technik-Viewer/',
+    command: `node node_modules/vite/bin/vite.js preview --port ${port} --strictPort`,
+    url: baseURL,
     reuseExistingServer: !process.env.CI,
   },
 });

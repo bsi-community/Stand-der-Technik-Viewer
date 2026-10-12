@@ -40,6 +40,8 @@
   overflow: auto;
 }
 .chart-legend h4 {
+  overflow-wrap: anywhere;
+  hyphens: auto;
   color: var(--text);
   font-size: 14px;
   font-weight: 700;
@@ -146,4 +148,110 @@
   .chart-legend {
     display: block;
   }
+}
+
+/* Controls and equivalent tables sit outside the fixed chart surface. */
+.viewer-chart-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 0;
+  min-width: 0;
+}
+.viewer-chart-controls .viewer-button {
+  padding: 8px 12px;
+}
+.viewer-chart-data {
+  margin: 16px 0;
+  min-width: 0;
+  max-width: 100%;
+}
+.viewer-chart-data > p,
+.viewer-chart-data-section {
+  margin: 16px;
+}
+.viewer-chart-data-section {
+  min-width: 0;
+}
+.viewer-chart-data-section h3 {
+  font-size: 1.125rem;
+  margin: 0 0 12px;
+}
+.viewer-chart-data-search {
+  max-width: 36rem;
+  display: grid;
+  gap: 8px;
+}
+.viewer-chart-data table {
+  min-width: 560px;
+}
+.viewer-chart-data th,
+.viewer-chart-data td {
+  white-space: pre-line;
+}
+.viewer-chart-data-pages {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+.viewer-chart-data-pages[hidden] {
+  display: none;
+}
+.target-hierarchy-view {
+  height: auto;
+  grid-template-rows: none;
+  overflow: visible;
+}
+.target-hierarchy-workspace {
+  grid-template-rows: none;
+  align-items: start;
+}
+.target-hierarchy-view > .viewer-chart-controls {
+  padding: 12px 16px;
+}
+.target-hierarchy-view > .viewer-chart-data {
+  margin: 16px;
+}
+.target-hierarchy-canvas {
+  height: clamp(500px, calc(100dvh - 300px), 800px);
+}
+.target-hierarchy-fit {
+  display: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .target-hierarchy-node {
+    transition: none;
+  }
+}
+
+/* Keep words intact; narrow viewports scroll the table instead of crushing columns. */
+.viewer-chart-data table {
+  table-layout: auto;
+}
+.viewer-chart-data .viewer-chart-data-sized {
+  min-width: 85rem;
+  table-layout: fixed;
+}
+.viewer-chart-data th,
+.viewer-chart-data td {
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: auto;
+  padding: 12px 16px;
+}
+.viewer-chart-data thead th {
+  hyphens: none;
+}
+.viewer-chart-data button {
+  white-space: nowrap;
+  word-break: normal;
+  overflow-wrap: normal;
+}
+.target-hierarchy-workspace {
+  overflow: visible;
+}
+.target-hierarchy-details {
+  height: auto;
+  overflow: visible;
 }

@@ -137,7 +137,7 @@ header h1 {
   display: none;
 }
 .wrap {
-  grid-template-columns: 288px minmax(0, 1fr);
+  grid-template-columns: 344px minmax(0, 1fr);
   gap: 32px;
   padding: 32px;
   max-width: 1800px;
@@ -399,4 +399,148 @@ header h1 {
   padding: 10px 12px;
   font-size: 14px;
   font-weight: 500;
+}
+/* Workbench navigation: primary areas and one tablist of views within that area. */
+.tabs {
+  display: block;
+}
+.workspace-tab-group {
+  border-bottom: 1px solid var(--muted);
+}
+.workspace-tab-group [aria-current] {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+  font-weight: 700;
+}
+.visualization-tab-group {
+  margin: 0;
+  padding: 8px 0;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.visualization-tab-group .visual-context-label {
+  display: block !important;
+  flex: 1 0 100%;
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: var(--dim);
+  padding: 0 12px 4px;
+}
+.viewer-view-tab,
+.visualization-tab-group .tab {
+  display: block;
+  width: auto;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid transparent;
+  border-radius: var(--viewer-radius);
+  background: transparent;
+  color: var(--accent);
+  font: 500 0.9375rem/1.5 var(--viewer-font);
+  white-space: normal;
+  text-align: left;
+}
+.viewer-view-tab.active,
+.visualization-tab-group .tab.active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  font-weight: 700;
+}
+.viewer-view-tab:focus-visible,
+.visualization-tab-group .tab:focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: 2px;
+}
+/* Panels are programmatic reading anchors, not keyboard stops. Interactive
+   descendants retain their own visible focus indication. */
+main [role='tabpanel'][tabindex='-1']:focus {
+  outline: none;
+}
+.header-brand h1 {
+  white-space: normal;
+}
+.wrap > aside {
+  scrollbar-gutter: stable;
+}
+@media (max-width: 400px) {
+  .header-brand {
+    gap: 8px;
+  }
+  .workspace-tab-group .tab {
+    padding: 10px 8px;
+    font-size: 0.875rem;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+  .workspace-tab-group {
+    flex-wrap: wrap;
+  }
+}
+.tabs {
+  min-width: 0;
+}
+.header-nav {
+  overflow: visible;
+}
+.visualization-tab-group .visual-context-label {
+  position: static;
+  inset: auto;
+  height: auto;
+  background: transparent;
+  text-align: left;
+  text-transform: none;
+  letter-spacing: 0;
+  white-space: normal;
+  overflow: visible;
+  line-height: 1.5;
+}
+
+/* Catalogue overview: one line of figures plus actions, with room for active filters. */
+.overview.overview--compact {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 24px;
+  padding-bottom: 16px;
+}
+.overview--compact .overview-top {
+  flex: 0 1 auto;
+  min-width: 0;
+}
+.overview--compact h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  line-height: 1.4;
+}
+.overview--compact .overview-grid {
+  flex: 1 1 auto;
+  gap: 8px 20px;
+  margin: 0;
+}
+.overview--compact .overview-stat {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 0;
+  border: 0;
+}
+.overview--compact .overview-stat-value {
+  order: -1;
+  font: 600 1rem/1.5 var(--viewer-font);
+  margin: 0;
+}
+.overview--compact .overview-stat-label {
+  font-size: 0.875rem;
+}
+.overview--compact .overview-actions,
+.overview--compact .overview-chip-list {
+  flex-basis: 100%;
+  margin: 0;
+}
+.overview--compact .overview-actions .viewer-button {
+  min-height: 44px;
+  padding: 8px 12px;
+}
+.overview--compact .overview-actions .kern-label {
+  font-size: 0.875rem;
 }

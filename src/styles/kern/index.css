@@ -1,3 +1,10 @@
+@layer structure, kern, viewer;
+@import './content-layout.css' layer(structure);
+@import './registry-layout.css' layer(structure);
+@import './mapping-layout.css' layer(structure);
+@import './chart-layout.css' layer(structure);
+@import './source-layout.css' layer(structure);
+@import './application.css' layer(structure);
 @import '@kern-ux/native/dist/kern.min.css' layer(kern);
 @import '@kern-ux/native/dist/fonts/fira-sans.css';
 @import './foundation.css' layer(viewer);
@@ -7,3 +14,6 @@
 @import './mappings.css' layer(viewer);
 @import './visualizations.css' layer(viewer);
 @import './workspaces.css' layer(viewer);
+
+@import './primitives.css' layer(viewer);
+@import './print.css' layer(viewer);

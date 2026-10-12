@@ -7,7 +7,7 @@ test.beforeEach(async ({ page }) => {
 test('KERN preview: start page, local fonts, accessible search and legacy comparison', async ({
   page,
 }) => {
-  await page.goto('./');
+  await page.goto('./?preview=home');
   await expect(page.getByText('KERN UX · Testversion', { exact: true })).toBeVisible();
   await expect(page.locator('.registry-search-row .kern-btn')).toHaveText('Suchen');
   await expect(page.locator('header h1')).toContainText('Stand der Technik');

@@ -1,4 +1,5 @@
 /** features/components/view: see docs/architecture.md for responsibilities. */
+import { kernContent } from '../../shared/ui/kern.js';
 import { setComponentExpansion } from '../../app/actions.js';
 import { exportComponentToPdf } from '../../app/print.js';
 import { resetComponentFilters } from '../../app/reset.js';
@@ -104,6 +105,7 @@ export function renderComponentDocumentInfo(container, searchTerm) {
     container.appendChild(backDetails);
   }
 
+  kernContent(container);
   var sep = document.createElement('hr');
   sep.className = 'catalog-separator';
   container.appendChild(sep);

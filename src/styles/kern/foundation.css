@@ -2,16 +2,23 @@
 :root {
   --viewer-font: 'Fira Sans', Arial, sans-serif;
   --kern-typography-font-family-default: var(--viewer-font);
-  --bg: #fff;
-  --panel: #f5f6fa;
-  --card: #fff;
+  --bg: var(--kern-color-layout-background-default);
+  --panel: var(--kern-color-layout-background-default-surface);
+  --card: var(--bg);
   --text: var(--kern-color-layout-text-default, #131525);
   --dim: var(--kern-color-layout-text-muted, #51577a);
   --accent: var(--kern-color-action-default, #1a3da5);
-  --accent-strong: #142d7a;
-  --accent-soft: #edf1fc;
-  --muted: #c8cbd8;
-  --ring: #454b6b;
+  --accent-strong: var(--kern-color-action-default);
+  --accent-soft: color-mix(in srgb, var(--accent) 8%, var(--bg));
+  --muted: var(--kern-color-decorative-border-default);
+  --ring: var(--kern-color-action-focus-default);
+  --viewer-highlight: var(--kern-color-feedback-warning-background, #fff3cd);
+  --ok: var(--kern-color-feedback-success);
+  --success: var(--kern-color-feedback-success);
+  --success-soft: var(--kern-color-feedback-success-background);
+  --warning: var(--kern-color-feedback-warning);
+  --warning-soft: var(--kern-color-feedback-warning-background);
+  --danger: var(--kern-color-feedback-danger);
   --shadow: none;
   --shadow-soft: none;
 }

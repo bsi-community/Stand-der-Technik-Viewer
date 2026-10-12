@@ -1,4 +1,5 @@
 /** features/components/owner-view: see docs/architecture.md for responsibilities. */
+import { isKern, kernContent, descriptionListFromMeta } from '../../shared/ui/kern.js';
 import { componentStore, uiStore } from '../../app/store.js';
 import { componentOwnerName } from '../../app/components.js';
 import { isComponentFilterActive } from './filters.js';
@@ -99,6 +100,12 @@ export function renderComponentOwner(owner, searchTerm, options) {
   var card = document.createElement('article');
   card.className = 'card component-card ' + (owner.kind === 'capability' ? 'capability' : '');
   card.id = 'component-owner-' + cssId(stateKey);
+  if (isKern()) {
+    for (const meta of [...summary.querySelectorAll('.meta')]) {
+      card.append(descriptionListFromMeta(meta));
+      meta.remove();
+    }
+  }
   if (String(owner.description || '').trim()) {
     var desc = document.createElement('div');
     desc.className =
@@ -212,6 +219,8 @@ export function renderComponentOwner(owner, searchTerm, options) {
     jsonBtn.className = 'btn small';
     jsonBtn.type = 'button';
     jsonBtn.textContent = 'JSON';
+    if (isKern())
+      jsonBtn.setAttribute('aria-label', 'JSON zu ' + componentOwnerName(owner) + ' anzeigen');
     jsonBtn.addEventListener('click', function () {
       openJsonModal(owner.raw, jsonBtn);
     });
@@ -225,5 +234,6 @@ export function renderComponentOwner(owner, searchTerm, options) {
     }
   }
   wrapper.appendChild(body);
+  kernContent(wrapper);
   return wrapper;
 }

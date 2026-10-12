@@ -1,17 +1,27 @@
-import './styles/legacy.css';
-import { prepareKernPreview, loadPreviewScenario } from './app/kern-preview.js';
+import { prepareKernPresentation } from './app/kern-presentation.js';
 import { startViewer } from './app/bootstrap.js';
-// The production HTML checks for a newer release before any document can be loaded.
-// Development has no release manifest and starts immediately.
+// Wait for the release guard before loading any document or comparison data.
 Promise.resolve(window.__viewerReady).then(async (ready) => {
   if (ready === false) return;
-  const kern = new URLSearchParams(location.search).get('design') !== 'legacy';
+  const params = new URLSearchParams(location.search);
+  const comparison = import.meta.env.VIEWER_COMPARISON;
+  const kern = !comparison || params.get('design') !== 'legacy';
+  let fontStatus;
   if (kern) {
     document.documentElement.dataset.kernTheme = 'light';
     document.documentElement.dataset.viewerDesign = 'kern';
     await import('./styles/kern/index.css');
-    await prepareKernPreview();
+    fontStatus = await prepareKernPresentation();
+  } else {
+    await import('./styles/legacy.css');
   }
   await startViewer();
-  await loadPreviewScenario();
+  if (
+    import.meta.env.VIEWER_COMPARISON &&
+    ['home', 'catalog', 'mapping'].includes(params.get('preview'))
+  ) {
+    const { prepareKernPreview, loadPreviewScenario } = await import('./app/kern-preview.js');
+    if (kern) prepareKernPreview(fontStatus);
+    await loadPreviewScenario();
+  }
 });

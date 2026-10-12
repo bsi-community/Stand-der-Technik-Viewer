@@ -1,0 +1,409 @@
+/* Application geometry owned by the KERN presentation, independent of legacy CSS. */
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+main {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+.wrap {
+  display: grid;
+  align-items: start;
+}
+.wrap > aside {
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+.header-brand,
+.header-brand > div:last-child,
+.header-nav,
+.workspace-tab-group,
+.visualization-tab-group,
+.side-panel,
+[role='tabpanel'] {
+  min-width: 0;
+}
+.header-brand-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+.header-home-button svg {
+  stroke: currentColor;
+  stroke-width: 2.2;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  width: 24px;
+  height: 24px;
+}
+header h1 {
+  margin: 0;
+}
+.eyebrow,
+.sidebar-intro,
+.sidebar-tabs,
+.viewer-logo {
+  display: none;
+}
+.home-mode .wrap > aside {
+  display: none;
+}
+.tab[hidden],
+[hidden] {
+  display: none !important;
+}
+.side-panel {
+  display: grid;
+}
+.sidebar-section > summary {
+  display: flex;
+  gap: 8px;
+  align-items: start;
+}
+.sidebar-section-heading {
+  display: grid;
+  gap: 4px;
+}
+.sidebar-section-body {
+  display: grid;
+  gap: 12px;
+}
+.sidebar-section-body > *,
+.sidebar-section-body .input {
+  min-width: 0;
+  max-width: 100%;
+}
+.sidebar-section-body .kern-btn {
+  width: 100%;
+}
+.toolbar,
+.status,
+.selection-state {
+  display: grid;
+  gap: 8px;
+}
+.field-label,
+.upload-label,
+.section-caption {
+  display: block;
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+.section-caption {
+  margin-top: 8px;
+  color: var(--dim);
+}
+.panel-title {
+  margin: 0 0 8px;
+}
+.panel-copy,
+.hint,
+.note {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.filter-split {
+  border: 0;
+  border-top: 1px solid var(--muted);
+  margin: 8px 0;
+}
+.selection-state {
+  padding: 12px;
+  border: 1px solid var(--muted);
+  background: var(--panel);
+}
+.selection-header {
+  display: grid;
+  gap: 4px;
+}
+.selection-title {
+  font-size: 14px;
+  font-weight: 600;
+}
+.selection-subtitle {
+  font-size: 14px;
+  color: var(--dim);
+}
+.status .pill {
+  display: block;
+}
+.pill,
+.badge,
+.overview-chip {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+  max-width: 100%;
+  border: 1px solid var(--muted);
+  padding: 4px 8px;
+  font-size: 14px;
+  color: var(--dim);
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+.badge.ok {
+  color: var(--viewer-success);
+}
+.overview-actions,
+.overview-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.overview-stat {
+  display: grid;
+}
+.overview h2 {
+  margin: 0 0 8px;
+  overflow-wrap: anywhere;
+}
+.overview-stat-value {
+  font-weight: 700;
+}
+.card {
+  padding: 16px;
+  border: 1px solid var(--muted);
+  border-radius: 4px;
+  background: var(--card);
+  min-width: 0;
+}
+.title,
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+.title h3 {
+  margin: 0;
+}
+.meta {
+  margin-top: 8px;
+}
+.meta .kv {
+  padding: 4px 8px;
+  border: 1px solid var(--muted);
+  background: var(--panel);
+  font-size: 14px;
+}
+.meta code {
+  font: inherit;
+}
+details {
+  margin: 12px 0;
+  padding: 12px;
+}
+summary {
+  cursor: pointer;
+}
+.control-summary {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+}
+.control-summary-id {
+  min-width: 0;
+}
+.practice-group,
+.topic-group {
+  padding: 0;
+  background: var(--panel);
+  border: 1px solid var(--muted);
+}
+.practice-title,
+.topic-title {
+  flex-wrap: wrap;
+}
+.practice-children,
+.topic-children {
+  margin: 0;
+  padding: 16px;
+}
+.topic-children {
+  border-left: 0;
+}
+.rel {
+  display: grid;
+  gap: 12px;
+  margin-top: 12px;
+}
+.rel-group,
+.rel-label {
+  margin-left: 16px;
+}
+.rel-group {
+  padding: 0 0 0 16px;
+  border-left: 2px solid var(--muted);
+}
+.rel-label {
+  font-size: 14px;
+}
+.rel-item {
+  padding: 12px;
+}
+.highlight {
+  outline: 3px solid var(--ring);
+  outline-offset: 2px;
+}
+mark.search-hit {
+  background: var(--viewer-highlight);
+  color: var(--text);
+  padding: 0 2px;
+}
+details.ms {
+  margin: 8px 0;
+  padding: 0;
+}
+details.ms > summary {
+  list-style: none;
+}
+details.ms > summary::-webkit-details-marker {
+  display: none;
+}
+.ms-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+.ms-divider {
+  border-top: 1px solid var(--muted);
+  margin: 4px 0;
+}
+.ms-label {
+  min-width: 0;
+}
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgb(0 0 0 / 50%);
+}
+.modal-card {
+  display: flex;
+  flex-direction: column;
+  width: min(100%, 960px);
+  max-height: calc(100dvh - 32px);
+  overflow: hidden;
+}
+.modal-header {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  border-bottom: 1px solid var(--muted);
+}
+.modal-body {
+  padding: 16px;
+  overflow: auto;
+}
+.modal-header h2 {
+  margin: 0;
+}
+.json-pre {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.err {
+  color: var(--text);
+  background: var(--kern-color-feedback-danger-background);
+}
+#graph,
+#sunburst,
+#bar {
+  position: relative;
+}
+.chart-unavailable {
+  display: grid !important;
+  place-items: center;
+}
+.chart-unavailable .card {
+  margin: 16px;
+}
+.input {
+  width: 100%;
+}
+.registry-model-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.registry-help {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.registry-help-card.guide {
+  grid-column: 1 / -1;
+}
+.registry-model-card,
+.registry-document-row {
+  cursor: pointer;
+  text-align: left;
+}
+.registry-document-row {
+  width: 100%;
+}
+.registry-help-card p,
+.registry-help-card dd {
+  overflow-wrap: anywhere;
+}
+.registry-list-head,
+.registry-document-row {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr) minmax(0, 1fr);
+  gap: 16px;
+}
+.workspace-empty-inner {
+  max-width: 1100px;
+}
+.source-item-label {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.mapping-table {
+  width: 100%;
+}
+.mapping-viewport-scrollbar {
+  background: var(--panel);
+  border-color: var(--muted);
+}
+@media (max-width: 800px) {
+  .registry-model-grid,
+  .registry-help {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .registry-help-card.guide {
+    grid-column: auto;
+  }
+  .registry-list-head {
+    display: none;
+  }
+  .registry-document-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+  }
+  .workspace-upload-options {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .practice-children,
+  .topic-children {
+    padding: 8px;
+  }
+  .rel-group,
+  .rel-label {
+    margin-left: 0;
+  }
+}

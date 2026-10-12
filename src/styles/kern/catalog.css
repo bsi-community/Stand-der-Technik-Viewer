@@ -157,3 +157,18 @@ summary {
     break-inside: avoid;
   }
 }
+
+.catalog-document-title {
+  display: grid;
+  gap: 2px;
+  margin: 0 0 16px;
+  overflow-wrap: anywhere;
+}
+.catalog-document-title-label {
+  font: 400 0.8125rem/1.5 var(--viewer-font);
+  color: var(--dim);
+}
+.catalog-document-title-value {
+  font: 500 1.125rem/1.5 var(--viewer-font);
+  color: var(--text);
+}

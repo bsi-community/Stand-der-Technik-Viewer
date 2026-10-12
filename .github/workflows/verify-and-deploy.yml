@@ -30,6 +30,8 @@ jobs:
       - run: npx playwright install --with-deps chromium firefox webkit
       - run: npm run check
       - run: npm run test:baseline
+      - run: npm run build:release
+      - run: npm run test:release
       - name: Save browser diagnostics
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -43,7 +45,7 @@ jobs:
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
-          path: dist
+          path: dist-release
 
   deploy:
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'

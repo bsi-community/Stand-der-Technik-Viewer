@@ -1,3 +1,11 @@
+import {
+  beginChartAccess,
+  renderChartData,
+  graphDataSections,
+  addGraphControls,
+  chartMotionDuration,
+} from './accessibility.js';
+import { isKern } from '../../shared/ui/kern.js';
 /** features/visualizations/components: see docs/architecture.md for responsibilities. */
 import { goToCatalogControlFromComponent, openComponentLocation } from '../../app/actions.js';
 import { uiStore } from '../../app/store.js';
@@ -25,6 +33,7 @@ export function drawComponentGraph() {
     try {
       var el = document.getElementById('graph');
       if (!el) return;
+      beginChartAccess(el, 'component:graph');
       setGraphSimulation(el, null);
       el.classList.remove('chart-unavailable');
       el.innerHTML =
@@ -143,7 +152,7 @@ export function drawComponentGraph() {
         .attr('y', 4)
         .attr('font-size', '12px')
         .attr('fill', '#162434');
-      node.on('click', function (ev, d) {
+      function openGraphNode(ev, d) {
         if (d.nodeType === 'requirement') {
           if (d.requirement && getCatalogControlByRef(d.requirement.controlId)) {
             goToCatalogControlFromComponent(d.requirement);
@@ -153,13 +162,16 @@ export function drawComponentGraph() {
         } else {
           openComponentLocation(d.owner);
         }
-      });
+      }
+      node.on('click', openGraphNode);
+      var userInteracted = false;
 
       var zoom = d3
         .zoom()
         .scaleExtent([0.03, 10])
         .on('zoom', function (event) {
           g.attr('transform', event.transform);
+          if (event.sourceEvent) userInteracted = true;
         });
       svg.call(zoom);
 
@@ -185,7 +197,7 @@ export function drawComponentGraph() {
         var ty = ((el.clientHeight || 600) - scale * (minY + maxY)) / 2;
         svg
           .transition()
-          .duration(400)
+          .duration(chartMotionDuration(400))
           .call(zoom.transform, d3.zoomIdentity.translate(tx, ty).scale(scale));
       }
 
@@ -212,7 +224,28 @@ export function drawComponentGraph() {
           return 'translate(' + d.x + ',' + d.y + ')';
         });
       });
-      sim.on('end', fitToScreen);
+      sim.on('end', () => {
+        if (!isKern() || !userInteracted) fitToScreen();
+      });
+      addGraphControls(el, svg, zoom, fitToScreen, () => {
+        userInteracted = true;
+      });
+      renderChartData(
+        el,
+        nodes.length +
+          ' Knoten und ' +
+          links.length +
+          ' Beziehungen der gefilterten Komponenten und Capabilities.',
+        graphDataSections(
+          nodes,
+          links,
+          (d) => openGraphNode(null, d),
+          (d) =>
+            ({ component: 'Komponente', capability: 'Capability', requirement: 'Anforderung' })[
+              d.nodeType
+            ] || d.nodeType,
+        ),
+      );
       uiStore.compEls.graphInfo.textContent =
         'Graph: ' + nodes.length + ' Knoten / ' + links.length + ' Kanten';
     } catch (e) {
@@ -229,6 +262,7 @@ export function drawComponentGraph() {
 export function drawComponentSunburst() {
   return withDataMode('component', function () {
     var container = document.getElementById('sunburst');
+    beginChartAccess(container, 'component:sunburst');
     container.innerHTML = '';
     if (typeof d3 === 'undefined') {
       container.innerHTML = '<div class="card">D3 wurde nicht geladen.</div>';
@@ -313,12 +347,24 @@ export function drawComponentSunburst() {
       return d.data.name;
     });
     addSunburstCenterLabel(g, 'Komponenten', root.value, 'Anforderungen');
+    renderChartData(
+      container,
+      'Implementierte Anforderungen je gefilterter Komponente. Mehrfach implementierte Anforderungen werden je Implementierung gezählt; Capabilities sind in dieser Verteilung nicht enthalten.',
+      [
+        {
+          title: 'Komponentenverteilung',
+          headers: ['Komponente', 'Implementierte Anforderungen'],
+          rows: dataItems.map((item) => ({ cells: [item.name, item.value] })),
+        },
+      ],
+    );
   });
 }
 
 export function drawComponentBar() {
   return withDataMode('component', function () {
     var container = document.getElementById('bar');
+    beginChartAccess(container, 'component:bar');
     container.innerHTML = '';
     if (typeof d3 === 'undefined') {
       container.innerHTML = '<div class="card">D3 wurde nicht geladen.</div>';
@@ -483,5 +529,16 @@ export function drawComponentBar() {
         return d.group;
       });
     addBarAxisTitles(g, w, h, margin, 'Komponente', 'Anzahl implementierter Anforderungen');
+    renderChartData(
+      container,
+      'Implementierte Anforderungen je gefilterter Komponente. Mehrfach implementierte Anforderungen werden je Implementierung gezählt; Capabilities sind in dieser Verteilung nicht enthalten.',
+      [
+        {
+          title: 'Komponentenverteilung',
+          headers: ['Komponente', 'Implementierte Anforderungen'],
+          rows: data.map((item) => ({ cells: [item.group, item.value] })),
+        },
+      ],
+    );
   });
 }

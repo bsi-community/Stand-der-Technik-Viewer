@@ -1,8 +1,17 @@
 /** app/print: see docs/architecture.md for responsibilities. */
+import { isKern } from '../shared/ui/kern.js';
+import { printKernDocument } from './kern-print.js';
 import { renderComponentView, renderList, switchTab } from './actions.js';
 import { catalogStore, componentStore, uiStore } from './store.js';
 
-export function exportToPdf() {
+export function exportToPdf(event) {
+  if (isKern())
+    return printKernDocument(
+      uiStore.els.listTab,
+      catalogStore.state.catalogMetadata?.title || 'Anforderungen',
+      !!catalogStore.state.controls?.length,
+      event?.currentTarget,
+    );
   try {
     if (!catalogStore.state.controls || !catalogStore.state.controls.length) {
       uiStore.els.msg.className = 'card err';
@@ -66,13 +75,23 @@ export function bindExportButton() {
   if (btn && !btn._gsppBound) {
     btn.addEventListener('click', function (ev) {
       ev.preventDefault();
-      exportToPdf();
+      exportToPdf(ev);
     });
     btn._gsppBound = true;
   }
 }
 
-export function exportComponentToPdf() {
+export function exportComponentToPdf(event) {
+  if (isKern())
+    return printKernDocument(
+      uiStore.els.componentTab,
+      componentStore.componentState.metadata?.title || 'Komponentendefinition',
+      !!(
+        componentStore.componentState.components?.length ||
+        componentStore.componentState.capabilities?.length
+      ),
+      event?.currentTarget,
+    );
   try {
     if (
       (!componentStore.componentState.components ||
@@ -130,7 +149,7 @@ export function bindComponentExportButton() {
   if (btn && !btn._gsppBound) {
     btn.addEventListener('click', function (ev) {
       ev.preventDefault();
-      exportComponentToPdf();
+      exportComponentToPdf(ev);
     });
     btn._gsppBound = true;
   }

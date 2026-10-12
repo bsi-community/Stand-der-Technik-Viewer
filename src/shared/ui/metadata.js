@@ -1,4 +1,5 @@
 /** shared/ui/metadata: see docs/architecture.md for responsibilities. */
+import { createDescriptionList, isKern, kernContent } from './kern.js';
 import { escapeHtml } from '../html.js';
 import { renderHighlightedInline, renderMarkupMultiline } from '../markup.js';
 import { getBackMatterResource, getBackMatterResourceLabel, resolveResourceUrl } from '../urls.js';
@@ -98,6 +99,8 @@ export function buildGenericValueNode(val, searchTerm, resourceMap, baseUrl) {
 }
 
 export function buildGenericObjectInline(obj, searchTerm, resourceMap, baseUrl) {
+  if (isKern())
+    return buildMetadataList(getObjectDisplayRows(obj), searchTerm, resourceMap, baseUrl);
   var block = document.createElement('div');
   var keys = Object.keys(obj || {}).filter(function (key) {
     return hasDisplayValue(obj[key]);
@@ -136,7 +139,69 @@ export function buildGenericObjectInline(obj, searchTerm, resourceMap, baseUrl) 
   return block;
 }
 
+const kernMetadataLabels = {
+  uuid: 'UUID',
+  'document-ids': 'Dokumentkennungen',
+  scheme: 'Schema',
+  identifier: 'Kennung',
+  name: 'Name',
+  value: 'Wert',
+  ns: 'Namensraum',
+  title: 'Titel',
+  version: 'Version',
+  'oscal-version': 'OSCAL-Version',
+  'last-modified': 'Letzte Änderung',
+  published: 'Veröffentlicht',
+  remarks: 'Anmerkungen',
+  description: 'Beschreibung',
+  roles: 'Rollen',
+  parties: 'Beteiligte',
+  'responsible-parties': 'Verantwortliche',
+  'responsible-roles': 'Verantwortliche Rollen',
+  links: 'Verweise',
+  href: 'Verweisziel',
+  url: 'URL',
+  rel: 'Beziehung',
+  props: 'Eigenschaften',
+  resources: 'Ressourcen',
+  rlinks: 'Ressourcenlinks',
+  method: 'Methode',
+  status: 'Status',
+  'matching-rationale': 'Zuordnungsgrundlage',
+  'mapping-description': 'Beschreibung der Zuordnung',
+  'confidence-score': 'Konfidenzwert',
+};
+
+function buildMetadataList(rows, searchTerm, resourceMap, baseUrl) {
+  return createDescriptionList(
+    getDisplayRows(rows).map((row) => {
+      const label = document.createElement('span');
+      label.innerHTML = renderHighlightedInline(
+        kernMetadataLabels[row.name] || formatCatalogKey(row.name),
+        searchTerm,
+      );
+      label.title = 'OSCAL: ' + row.name;
+      let value;
+      if (row.name === 'props' && Array.isArray(row.value)) {
+        value = document.createElement('div');
+        appendPropertiesSection(value, row.value, searchTerm, resourceMap, baseUrl);
+      } else if (['href', 'url'].includes(row.name) && typeof row.value === 'string') {
+        value = document.createElement('div');
+        value.innerHTML = buildDocumentLinkHtml(
+          row.value,
+          row.value,
+          searchTerm,
+          resourceMap,
+          baseUrl,
+        );
+      } else value = buildGenericValueNode(row.value, searchTerm, resourceMap, baseUrl);
+      return { label, value };
+    }),
+  );
+}
+
 export function buildGenericTable(rows, searchTerm, resourceMap, baseUrl) {
+  if (isKern()) return buildMetadataList(rows, searchTerm, resourceMap, baseUrl);
   var table = document.createElement('table');
   table.className = 'catalog-table';
   var tbody = document.createElement('tbody');
@@ -290,6 +355,7 @@ export function appendPropertiesSection(parent, props, searchTerm, resourceMap, 
   table.appendChild(tbody);
   wrap.appendChild(table);
   details.appendChild(wrap);
+  kernContent(details);
   parent.appendChild(details);
 }
 

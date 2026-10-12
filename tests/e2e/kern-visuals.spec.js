@@ -167,7 +167,7 @@ test('remaining workspaces: expanded content, hierarchy details, dialog and empt
   await page
     .locator('.control-card')
     .first()
-    .getByRole('button', { name: 'JSON', exact: true })
+    .getByRole('button', { name: /^JSON(?: zu .+ anzeigen)?$/ })
     .click();
   await page.locator('.modal-card').screenshot({ path: testInfo.outputPath('json-dialog.png') });
   await page.keyboard.press('Escape');

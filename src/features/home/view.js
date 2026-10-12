@@ -1,4 +1,12 @@
 /** features/home/view: see docs/architecture.md for responsibilities. */
+import {
+  isKern,
+  kernButton,
+  kernField,
+  createButton,
+  runImportAction,
+} from '../../shared/ui/kern.js';
+import { loadBsiRepositoryOptions } from './repository.js';
 import { loadCatalogFromUrl, loadComponentFromUrl, switchTab } from '../../app/actions.js';
 import { updateVisualizationContext } from '../../app/navigation.js';
 import { uiStore } from '../../app/store.js';
@@ -74,6 +82,7 @@ export function renderRegistrySearch(parent, placeholder) {
   input.className =
     document.documentElement.dataset.viewerDesign === 'kern' ? 'input kern-form-input' : 'input';
   input.type = 'search';
+  input.id = 'registrySearch';
   input.placeholder = placeholder || 'Dokumente suchen...';
   input.value = uiStore.registryState.query || '';
   input.setAttribute('aria-label', 'Repository-Dokumente suchen');
@@ -81,6 +90,7 @@ export function renderRegistrySearch(parent, placeholder) {
   button.className =
     document.documentElement.dataset.viewerDesign === 'kern' ? 'kern-btn kern-btn--primary' : 'btn';
   button.type = 'button';
+  button.id = 'registrySearchSubmit';
   if (document.documentElement.dataset.viewerDesign === 'kern') {
     button.innerHTML = '<span class="kern-label">Suchen</span>';
   } else button.textContent = 'Suchen';
@@ -100,6 +110,8 @@ export function renderRegistrySearch(parent, placeholder) {
   row.appendChild(input);
   row.appendChild(button);
   parent.appendChild(row);
+  kernField(input, 'Bibliothek durchsuchen');
+  kernButton(button, 'primary');
 }
 
 export function renderRegistryModelCard(parent, kind, count) {
@@ -134,6 +146,7 @@ export function renderRegistryModelCard(parent, kind, count) {
     uiStore.registryState.selectedModel = kind;
     uiStore.registryState.query = '';
     renderRegistryHome();
+    if (isKern()) document.getElementById('homeTitle')?.focus();
   });
   parent.appendChild(card);
 }
@@ -188,6 +201,14 @@ export function renderRegistryHomeHelp(parent) {
     '<div><dt>PDF-Export</dt><dd>Erfolgt über den Druckdialog des Browsers. Pop-ups beziehungsweise Druckdialoge dürfen nicht durch Richtlinien blockiert sein.</dd></div>' +
     '</dl>' +
     '</section>';
+  if (isKern()) {
+    const steps = help.querySelectorAll('.registry-guide-list li > span');
+    steps[1].textContent =
+      'Kataloge, Komponentendefinitionen und Mappings sind die drei Arbeitsbereiche. Darunter stehen die zum Datenbereich passenden Darstellungen: Liste, Graph, Sunburst und Balkendiagramm sowie bei geeigneten Katalogen die Vererbung der Zielobjektkategorien.';
+    help.querySelector('.compatibility-badge').textContent = 'Responsive Darstellung';
+    help.querySelector('.registry-compatibility-list dd').textContent =
+      'Die Oberfläche passt sich schmalen Fenstern an. Breite Vergleichstabellen lassen sich innerhalb ihres Rahmens horizontal scrollen. Für umfangreiche Diagramme empfiehlt sich ein großes Fenster.';
+  }
   parent.appendChild(help);
 }
 
@@ -212,7 +233,18 @@ export function renderRegistryBrowse(parent) {
     empty.textContent =
       uiStore.registryState.status === 'loading'
         ? 'Repository-Inhalte werden geladen.'
-        : 'Keine Dokumente entsprechen der aktuellen Suche.';
+        : uiStore.registryState.status === 'error'
+          ? 'Die Bibliothek ist momentan nicht erreichbar. Bitte erneut laden oder eine eigene Datei öffnen.'
+          : 'Keine Dokumente entsprechen der aktuellen Suche.';
+    if (isKern() && uiStore.registryState.query && uiStore.registryState.status === 'ready') {
+      empty.append(
+        createButton('Suche zurücksetzen', () => {
+          uiStore.registryState.query = '';
+          renderRegistryHome();
+          document.getElementById('registrySearch')?.focus();
+        }),
+      );
+    }
     list.appendChild(empty);
   }
   for (var i = 0; i < visible.length; i++) {
@@ -232,8 +264,11 @@ export function renderRegistryBrowse(parent) {
         '<span class="registry-document-badge">' +
         escapeHtml(cfg.badge) +
         '</span>';
-      row.addEventListener('click', function () {
-        loadRegistryDocument(file);
+      row.addEventListener('click', async function () {
+        const hadFocus = document.activeElement === row;
+        const result = await runImportAction(row, () => loadRegistryDocument(file));
+        if (isKern() && result && hadFocus)
+          document.querySelector('main [role="tabpanel"]:not(.hidden)')?.focus();
       });
       list.appendChild(row);
     })(visible[i]);
@@ -247,6 +282,34 @@ export function renderRegistryBrowse(parent) {
 
 export function renderRegistryHome() {
   if (!uiStore.els.homeTab) return;
+  const active =
+    isKern() && uiStore.els.homeTab.contains(document.activeElement)
+      ? document.activeElement
+      : null;
+  const draft =
+    active?.id === 'registrySearch'
+      ? { value: active.value, start: active.selectionStart, end: active.selectionEnd }
+      : null;
+  function finishRender() {
+    if (!isKern()) return;
+    if (draft) {
+      const field = document.getElementById('registrySearch');
+      field.value = draft.value;
+      field.setSelectionRange(draft.start, draft.end);
+    }
+    if (active)
+      (document.getElementById(active.id) || document.getElementById('homeTitle'))?.focus({
+        preventScroll: true,
+      });
+    const status = document.getElementById('viewerResultStatus');
+    if (status)
+      status.textContent =
+        uiStore.registryState.status === 'ready'
+          ? registryVisibleFiles().length + ' Dokumente in der aktuellen Bibliotheksauswahl.'
+          : uiStore.registryState.status === 'loading'
+            ? 'Bibliothek wird geladen.'
+            : 'Bibliothek konnte nicht geladen werden.';
+  }
   uiStore.els.homeTab.innerHTML = '';
   document.body.classList.add('home-mode');
   var total = uiStore.registryState.catalogs.length + uiStore.registryState.components.length;
@@ -262,6 +325,7 @@ export function renderRegistryHome() {
     hero.innerHTML =
       '<h2 id="homeTitle">Sicherheitsanforderungen verstehen und vergleichen</h2><p>Durchsuche die Stand der Technik-Bibliothek des BSI. Lies Anforderungen im Zusammenhang, prüfe ihre Umsetzung und vergleiche Kataloge miteinander.</p>';
   }
+  if (isKern()) hero.querySelector('h2').tabIndex = -1;
   renderRegistrySearch(hero, 'Dokumente suchen...');
   var count = document.createElement('div');
   count.className = 'registry-count';
@@ -272,6 +336,16 @@ export function renderRegistryHome() {
       'Repository-Inhalte konnten nicht geladen werden. Lokale Dateien und URL-Uploads funktionieren weiterhin.';
   else count.textContent = total + ' Dokumente in 2 Modelltypen';
   hero.appendChild(count);
+  if (isKern() && uiStore.registryState.status === 'error') {
+    const retry = createButton('Bibliothek erneut laden', () => loadBsiRepositoryOptions());
+    retry.id = 'registryRetry';
+    hero.append(retry);
+    const local = createButton('Eigene Datei öffnen', () => {
+      switchTab('list');
+      document.querySelector('#listTab .workspace-upload-dropzone')?.focus();
+    });
+    hero.append(local);
+  }
   if (uiStore.registryState.selectedModel || uiStore.registryState.query) {
     var backBtn = document.createElement('button');
     backBtn.className = 'btn registry-back-button';
@@ -279,7 +353,9 @@ export function renderRegistryHome() {
     backBtn.textContent = 'Zurück';
     backBtn.addEventListener('click', function () {
       showHomePage(true);
+      if (isKern()) document.getElementById('homeTitle')?.focus();
     });
+    kernButton(backBtn);
     hero.appendChild(backBtn);
   }
   primary.appendChild(hero);
@@ -289,6 +365,7 @@ export function renderRegistryHome() {
     shell.appendChild(primary);
     renderRegistryHomeHelp(shell);
     uiStore.els.homeTab.appendChild(shell);
+    finishRender();
     return;
   }
 
@@ -309,6 +386,7 @@ export function renderRegistryHome() {
   shell.appendChild(primary);
   renderRegistryHomeHelp(shell);
   uiStore.els.homeTab.appendChild(shell);
+  finishRender();
 }
 
 export function showHomePage(resetRegistry) {
@@ -343,12 +421,14 @@ export function loadRegistryDocument(file) {
   if (!file || !file.url) return;
   var title = registryFileTitle(file);
   if (file.kind === 'component') {
-    loadComponentFromUrl(file.url, title).then(function (kind) {
+    return loadComponentFromUrl(file.url, title).then(function (kind) {
       if (kind) switchTab('components');
+      return kind;
     });
   } else {
-    loadCatalogFromUrl(file.url, title).then(function (kind) {
+    return loadCatalogFromUrl(file.url, title).then(function (kind) {
       if (kind) switchTab('list');
+      return kind;
     });
   }
 }

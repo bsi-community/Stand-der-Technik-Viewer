@@ -1,3 +1,6 @@
+import { resetAllFilters } from './reset.js';
+import { matches } from '../features/catalog/selectors.js';
+import { isKern } from '../shared/ui/kern.js';
 /** app/cross-navigation: see docs/architecture.md for responsibilities. */
 import { activateCatalogSource, renderComponentView, renderList, switchTab } from './actions.js';
 import { catalogStore, componentStore, sourceStore, uiStore } from './store.js';
@@ -14,6 +17,15 @@ import { showMsg } from '../shared/ui/messages.js';
 export function goToCatalogControl(controlRef, preferredCatalogIndex) {
   var ref = String(controlRef || '').trim();
   if (!ref) return;
+  if (
+    isKern() &&
+    Number.isInteger(preferredCatalogIndex) &&
+    preferredCatalogIndex >= 0 &&
+    preferredCatalogIndex < sourceStore.loadedCatalogSources.length &&
+    preferredCatalogIndex !== sourceStore.activeCatalogSourceIndex
+  ) {
+    activateCatalogSource(preferredCatalogIndex);
+  }
   var target = getCatalogControlByRef(ref);
   if (!target) {
     var sourceIndex =
@@ -34,6 +46,15 @@ export function goToCatalogControl(controlRef, preferredCatalogIndex) {
     );
     return;
   }
+  if (isKern()) {
+    uiStore.uiState.catalogExpandOverride = null;
+    if (!matches(target)) {
+      resetAllFilters();
+      showMsg(
+        'Die Katalogfilter wurden zurückgesetzt, damit die referenzierte Anforderung sichtbar ist.',
+      );
+    }
+  }
   switchTab('list');
   if (target.groupKey) {
     openGroupChain(target.groupKey);
@@ -53,7 +74,8 @@ export function goToCatalogControl(controlRef, preferredCatalogIndex) {
   setTimeout(function () {
     var card = document.getElementById('card-' + cssId(target.id));
     if (card) {
-      card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      card.scrollIntoView({ behavior: isKern() ? 'auto' : 'smooth', block: 'center' });
+      if (isKern()) card.querySelector('summary')?.focus({ preventScroll: true });
       card.classList.add('highlight');
       setTimeout(function () {
         card.classList.remove('highlight');
@@ -77,6 +99,10 @@ export function goToCatalogControlFromComponent(req) {
 
 export function openComponentLocation(owner, req) {
   if (!owner) return;
+  if (isKern()) {
+    uiStore.uiState.componentExpandOverride = null;
+    if (req?.implKey) componentStore.componentState.openImplementations[req.implKey] = true;
+  }
   var key = owner.uuid || owner.name;
   if (owner.kind === 'capability') {
     componentStore.componentState.openCapabilities[key] = true;
@@ -97,7 +123,12 @@ export function openComponentLocation(owner, req) {
       el = document.getElementById('component-owner-' + cssId(key));
     }
     if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      el.scrollIntoView({ behavior: isKern() ? 'auto' : 'smooth', block: 'start' });
+      if (isKern()) {
+        const target = req ? el : el.querySelector(':scope > summary') || el;
+        if (target.tagName !== 'SUMMARY') target.tabIndex = -1;
+        target.focus({ preventScroll: true });
+      }
       el.classList.add('highlight');
       setTimeout(function () {
         el.classList.remove('highlight');

@@ -1,4 +1,13 @@
+import {
+  beginChartAccess,
+  renderChartData,
+  graphDataSections,
+  addGraphControls,
+  chartMotionDuration,
+} from './accessibility.js';
+import { isKern } from '../../shared/ui/kern.js';
 /** features/visualizations/catalog: see docs/architecture.md for responsibilities. */
+import { resetAllFilters } from '../../app/reset.js';
 import { renderList, switchTab } from '../../app/actions.js';
 import { catalogStore, uiStore } from '../../app/store.js';
 import { SDT_PRACTICES } from '../../config.js';
@@ -37,6 +46,7 @@ export function drawGraph() {
   try {
     var el = document.getElementById('graph');
     if (!el) return;
+    beginChartAccess(el, 'catalog:graph');
     setGraphSimulation(el, null);
     el.classList.remove('chart-unavailable');
     el.innerHTML =
@@ -242,7 +252,8 @@ export function drawGraph() {
       .attr('y', 4)
       .attr('font-size', '12px')
       .attr('fill', '#162434');
-    node.on('click', function (ev, d) {
+    function openGraphNode(ev, d) {
+      if (isKern() && !primaryIds.has(d.id)) resetAllFilters();
       switchTab('list');
       if (d.groupKey) {
         openGroupChain(d.groupKey);
@@ -263,14 +274,20 @@ export function drawGraph() {
       setTimeout(function () {
         var card = document.getElementById('card-' + cssId(d.id));
         if (card) {
-          card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          card.scrollIntoView({
+            behavior: chartMotionDuration(1) ? 'smooth' : 'auto',
+            block: 'center',
+          });
+          if (isKern()) card.querySelector('summary')?.focus({ preventScroll: true });
           card.classList.add('highlight');
           setTimeout(function () {
             card.classList.remove('highlight');
           }, 1500);
         }
       }, 0);
-    });
+    }
+
+    node.on('click', openGraphNode);
 
     var autoFitDone = false;
     var userInteracted = false;
@@ -310,7 +327,7 @@ export function drawGraph() {
       var ty = ((el.clientHeight || 600) - scale * (minY + maxY)) / 2;
       svg
         .transition()
-        .duration(400)
+        .duration(chartMotionDuration(400))
         .call(zoom.transform, d3.zoomIdentity.translate(tx, ty).scale(scale));
     }
 
@@ -348,6 +365,22 @@ export function drawGraph() {
       });
     });
     sim.on('end', autoFitToScreen);
+    addGraphControls(el, svg, zoom, manualFitToScreen, () => {
+      userInteracted = true;
+    });
+    renderChartData(
+      el,
+      nodes.length +
+        ' Anforderungen und ' +
+        links.length +
+        ' Beziehungen. Kontextknoten ergänzen die Filtertreffer; ihr Öffnen setzt die Filter zurück. Bei required zeigt der Ausgangspunkt die Voraussetzung und das Ziel die abhängige Anforderung.',
+      graphDataSections(
+        nodes,
+        links,
+        (d) => openGraphNode(null, d),
+        (d) => (primaryIds.has(d.id) ? 'Filtertreffer' : 'Kontext außerhalb der Filter'),
+      ),
+    );
 
     uiStore.els.graphInfo.textContent =
       'Graph: ' + nodes.length + ' Knoten / ' + links.length + ' Kanten';
@@ -443,6 +476,7 @@ export function drawSunburst() {
     return;
   }
   var container = document.getElementById('sunburst');
+  beginChartAccess(container, 'catalog:sunburst');
   container.innerHTML = '';
   if (typeof d3 === 'undefined') {
     container.innerHTML = '<div class="card">D3 wurde nicht geladen.</div>';
@@ -526,6 +560,23 @@ export function drawSunburst() {
     return d.data.name;
   });
   addSunburstCenterLabel(g, 'Katalog', root.value, 'Anforderungen');
+  renderChartData(
+    container,
+    'Anzahl der gefilterten Anforderungen je ' + catalogPrimaryGroupFacetLabel() + '.',
+    [
+      {
+        title: 'Anforderungsverteilung',
+        headers: ['Gruppe', 'Anzahl', 'Zusätzliche Angaben'],
+        rows: keys.map((key) => ({
+          cells: [
+            diagramGroupTitle(key),
+            counts[key],
+            buildDiagramTooltip(key, counts[key], diagramStats),
+          ],
+        })),
+      },
+    ],
+  );
 }
 
 export function drawBar() {
@@ -538,6 +589,7 @@ export function drawBar() {
     return;
   }
   var container = document.getElementById('bar');
+  beginChartAccess(container, 'catalog:bar');
   container.innerHTML = '';
   if (typeof d3 === 'undefined') {
     container.innerHTML = '<div class="card">D3 wurde nicht geladen.</div>';
@@ -635,4 +687,21 @@ export function drawBar() {
       return d.value;
     });
   addBarAxisTitles(g, w, h, margin, catalogPrimaryGroupFacetLabel(), 'Anzahl Anforderungen');
+  renderChartData(
+    container,
+    'Anzahl der gefilterten Anforderungen je ' + catalogPrimaryGroupFacetLabel() + '.',
+    [
+      {
+        title: 'Anforderungsverteilung',
+        headers: ['Gruppe', 'Anzahl', 'Zusätzliche Angaben'],
+        rows: keys.map((key) => ({
+          cells: [
+            diagramGroupTitle(key),
+            counts[key],
+            buildDiagramTooltip(key, counts[key], diagramStats),
+          ],
+        })),
+      },
+    ],
+  );
 }

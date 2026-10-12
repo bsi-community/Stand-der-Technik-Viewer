@@ -8,6 +8,7 @@ import {
   removeMappingSource,
 } from '../../app/actions.js';
 import { sourceStore, uiStore } from '../../app/store.js';
+import { isKern } from '../../shared/ui/kern.js';
 import { escapeHtml } from '../../shared/html.js';
 
 export function shortenSourceLabel(label) {
@@ -40,6 +41,7 @@ export function rebuildSourceSelect(selectEl, items, activeIndex, emptyLabel) {
 
 export function setSourcePickerOpen(pickerEl, buttonEl, menuEl, isOpen) {
   if (!pickerEl || !buttonEl || !menuEl) return;
+  if (isKern() && !isOpen && menuEl.contains(document.activeElement)) buttonEl.focus();
   pickerEl.classList.toggle('open', !!isOpen);
   menuEl.classList.toggle('hidden', !isOpen);
   buttonEl.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
@@ -57,6 +59,15 @@ export function renderSourcePicker(
 ) {
   if (!pickerEl || !buttonEl || !menuEl) return;
   menuEl.innerHTML = '';
+  if (isKern()) {
+    buttonEl.removeAttribute('aria-haspopup');
+    buttonEl.setAttribute('aria-controls', menuEl.id);
+    menuEl.setAttribute('role', 'group');
+    const label = document.querySelector(
+      `label[for="${pickerEl.parentElement.querySelector('select')?.id}"]`,
+    );
+    if (label) label.htmlFor = buttonEl.id;
+  }
   var activeItem = activeIndex >= 0 && items[activeIndex] ? items[activeIndex] : null;
   var activeLabel = activeItem ? String(activeItem.label || '').trim() : '';
   buttonEl.textContent = activeItem
@@ -88,6 +99,7 @@ export function renderSourcePicker(
         '</span>';
       activateBtn.addEventListener('click', function () {
         onActivate(index);
+        if (isKern()) buttonEl.focus();
       });
       row.appendChild(activateBtn);
 
@@ -100,6 +112,10 @@ export function renderSourcePicker(
         ev.preventDefault();
         ev.stopPropagation();
         onRemove(index);
+        if (isKern()) {
+          const next = menuEl.querySelector('.source-item-button');
+          (next || buttonEl.closest('.sidebar-section')?.querySelector('summary'))?.focus();
+        }
       });
       row.appendChild(removeBtn);
 

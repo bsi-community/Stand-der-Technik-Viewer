@@ -1,0 +1,411 @@
+/* KERN viewer composition: functional layout with semantic surface and text roles. */
+.target-hierarchy-view {
+  height: 82vh;
+  min-height: 680px;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  overflow: hidden;
+  background: var(--panel);
+  border: 1px solid var(--muted);
+  border-radius: 4px;
+}
+.target-hierarchy-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) max-content;
+  align-items: center;
+  gap: 22px;
+  padding: 16px 20px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--muted);
+}
+.target-hierarchy-heading {
+  min-width: 0;
+  width: 100%;
+}
+.target-hierarchy-eyebrow {
+  margin: 0 0 5px;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: normal;
+  text-transform: none;
+}
+.target-hierarchy-heading h2 {
+  margin: 0;
+  color: var(--text);
+  font-size: clamp(20px, 2vw, 28px);
+  line-height: 1.2;
+}
+.target-hierarchy-heading p {
+  max-width: 1050px;
+  margin: 7px 0 0;
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.5;
+}
+.target-hierarchy-header .target-hierarchy-fit {
+  width: max-content !important;
+  min-width: 0;
+  max-width: none;
+  justify-self: end;
+  align-self: center;
+  white-space: nowrap;
+}
+.target-hierarchy-workspace {
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(280px, 340px) minmax(0, 1fr);
+  overflow: hidden;
+}
+.target-hierarchy-details {
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 20px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: auto;
+  scrollbar-gutter: stable;
+  overflow-anchor: none;
+  background: var(--panel);
+  border-right: 1px solid var(--muted);
+  color: var(--text);
+}
+.target-hierarchy-details.is-empty {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.target-hierarchy-details:focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: -4px;
+}
+.target-hierarchy-details-eyebrow {
+  margin: 0 0 8px;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: normal;
+  text-transform: none;
+}
+.target-hierarchy-details h3 {
+  margin: 0 0 14px;
+  color: var(--text);
+  font-size: 20px;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+.target-hierarchy-details p {
+  margin: 0;
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.55;
+}
+.target-hierarchy-details dl {
+  display: grid;
+  gap: 0;
+  margin: 0;
+}
+.target-hierarchy-details dt {
+  margin: 0 0 3px;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: normal;
+  text-transform: none;
+}
+.target-hierarchy-details dd {
+  margin: 0 0 13px;
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+.target-hierarchy-details dd:last-child {
+  margin-bottom: 0;
+}
+.target-hierarchy-canvas {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+  overflow-anchor: none;
+  background: var(--panel);
+  background-size:
+    auto,
+    32px 32px,
+    32px 32px,
+    auto;
+}
+.target-hierarchy-canvas svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  cursor: grab;
+  touch-action: none;
+}
+.target-hierarchy-canvas svg:active {
+  cursor: grabbing;
+}
+.target-hierarchy-link {
+  fill: none;
+  stroke: #91a39e;
+  stroke-width: 1.6;
+  opacity: 0.82;
+}
+.target-hierarchy-node {
+  cursor: default;
+  outline: none;
+}
+.target-hierarchy-node rect {
+  stroke: rgba(255, 255, 255, 0.96);
+  stroke-width: 2;
+}
+.target-hierarchy-node:hover rect,
+.target-hierarchy-node:focus rect,
+.target-hierarchy-node.is-active rect {
+  stroke: #ffffff;
+  stroke-width: 3;
+}
+.target-hierarchy-node text {
+  fill: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: normal;
+  pointer-events: none;
+}
+.target-hierarchy-summary {
+  position: absolute;
+  right: 18px;
+  bottom: 18px;
+  width: min(310px, calc(100% - 36px));
+  padding: 14px 16px;
+  background: var(--panel);
+  border: 1px solid var(--muted);
+  border-radius: 4px;
+  color: var(--text);
+  pointer-events: none;
+}
+.target-hierarchy-summary strong {
+  display: block;
+  margin-bottom: 7px;
+  color: var(--text);
+  font-size: 15px;
+}
+.target-hierarchy-summary span {
+  display: block;
+  font-size: 14px;
+  line-height: 1.55;
+}
+.target-hierarchy-summary .direction {
+  margin-top: 5px;
+  color: var(--text);
+  font-weight: 700;
+}
+.target-hierarchy-status {
+  min-height: 0;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  padding: 34px;
+  text-align: center;
+}
+.target-hierarchy-status-card {
+  width: min(620px, 100%);
+  padding: 28px;
+  background: var(--panel);
+  border: 1px solid var(--muted);
+  border-radius: 4px;
+  color: var(--text);
+}
+.target-hierarchy-status-card strong {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--text);
+  font-size: 18px;
+}
+.target-hierarchy-status-card .btn {
+  margin-top: 16px;
+}
+@media (max-width: 1000px) {
+  .target-hierarchy-view {
+    height: auto;
+    min-height: 82vh;
+    grid-template-rows: auto auto;
+  }
+  .target-hierarchy-workspace {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: 260px minmax(500px, 1fr);
+    overflow: visible;
+  }
+  .target-hierarchy-details {
+    height: 100%;
+    max-height: 260px;
+    border-right: 0;
+    border-bottom: 1px solid var(--muted);
+  }
+}
+@media (max-width: 760px) {
+  .target-hierarchy-view {
+    grid-template-rows: auto auto;
+  }
+  .target-hierarchy-header {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+    padding: 15px 16px;
+    gap: 12px;
+  }
+  .target-hierarchy-header .target-hierarchy-fit {
+    justify-self: start;
+  }
+  .target-hierarchy-workspace {
+    grid-template-rows: 230px minmax(500px, 1fr);
+  }
+  .target-hierarchy-details {
+    height: 100%;
+    padding: 16px;
+    max-height: 230px;
+  }
+  .target-hierarchy-details h3 {
+    font-size: 18px;
+  }
+  .target-hierarchy-canvas,
+  .target-hierarchy-canvas svg,
+  .target-hierarchy-status {
+    height: 500px;
+    min-height: 500px;
+  }
+  .target-hierarchy-summary {
+    right: 12px;
+    bottom: 12px;
+  }
+}
+.chart-legend {
+  position: absolute;
+  z-index: 4;
+  top: 14px;
+  left: 14px;
+  width: min(310px, calc(100% - 110px));
+  max-height: calc(100% - 28px);
+  overflow: auto;
+  padding: 12px 14px;
+  border: 1px solid var(--muted);
+  background: var(--panel);
+  color: var(--text);
+}
+.chart-legend h4 {
+  margin: 0 0 8px;
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.3;
+  font-weight: 700;
+  letter-spacing: normal;
+  text-transform: none;
+}
+.chart-legend-note {
+  margin: 0 0 9px;
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.4;
+}
+.chart-legend-list {
+  display: grid;
+  gap: 7px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.chart-legend-item {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.35;
+}
+.chart-legend-symbol {
+  position: relative;
+  display: block;
+  justify-self: center;
+  color: var(--legend-color, #51677f);
+}
+.chart-legend-symbol.node {
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--muted);
+  border-radius: 50%;
+  background: var(--legend-color, var(--accent));
+}
+.chart-legend-symbol.swatch {
+  width: 16px;
+  height: 12px;
+  border: 1px solid var(--muted);
+  background: var(--legend-color, var(--accent));
+}
+.chart-legend-symbol.line {
+  width: 27px;
+  height: 0;
+  border-top: 3px solid var(--legend-color, var(--muted));
+}
+.chart-legend-symbol.line.dashed {
+  border-top-style: dashed;
+}
+.chart-legend-symbol.line.arrow::after {
+  content: '›';
+  position: absolute;
+  right: -1px;
+  top: -11px;
+  color: var(--legend-color, #51677f);
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1;
+}
+.chart-legend-value {
+  color: var(--text);
+  font-weight: 700;
+  white-space: nowrap;
+}
+.sunburst-legend {
+  left: auto;
+  right: 14px;
+  width: min(300px, 32%);
+}
+.sunburst-segment-label {
+  pointer-events: none;
+  paint-order: stroke;
+  stroke: rgba(0, 0, 0, 0.42);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+}
+.sunburst-center-title {
+  fill: #24364b;
+  font-size: 13px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+.sunburst-center-value {
+  fill: #637389;
+  font-size: 14px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+.chart-axis-title {
+  fill: #24364b;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: normal;
+}
+@media (max-width: 1100px) {
+  .chart-legend {
+    width: min(270px, 42%);
+    padding: 10px 12px;
+  }
+  .sunburst-legend {
+    width: min(260px, 38%);
+  }
+}

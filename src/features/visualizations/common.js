@@ -120,7 +120,10 @@ export function addSunburstSegmentLabels(group, nodes, radius, innerRatio, label
     var inner = sunburstInnerRadius(d, radius, innerRatio);
     var middle = (inner + d.y1) / 2;
     var arcLength = (d.x1 - d.x0) * middle;
-    return arcLength >= 46 && d.y1 - inner >= 24;
+    if (document.documentElement.dataset.viewerDesign !== 'kern')
+      return arcLength >= 46 && d.y1 - inner >= 24;
+    // Labels run radially: the wedge needs room for text height, not text length.
+    return arcLength >= 18 && d.y1 - inner >= 24;
   });
   group
     .append('g')
@@ -165,6 +168,22 @@ export function addSunburstSegmentLabels(group, nodes, radius, innerRatio, label
             ),
           ) + '…'
         : full;
+    })
+    .each(function (d) {
+      if (document.documentElement.dataset.viewerDesign !== 'kern') return;
+      var inner = sunburstInnerRadius(d, radius, innerRatio);
+      var middle = (inner + d.y1) / 2;
+      var full = String(labelFn ? labelFn(d) : (d.data && d.data.name) || '');
+      this.textContent = full;
+      while (this.getComputedTextLength() > d.y1 - inner - 12 && full.length > 1) {
+        full = full.slice(0, -1);
+        this.textContent = full + '…';
+      }
+      var length = this.getComputedTextLength();
+      var nearEdge = middle - length / 2 - 3;
+      var halfAngle = Math.min(Math.PI / 2, (d.x1 - d.x0) / 2);
+      if (nearEdge <= 0 || 2 * nearEdge * Math.sin(halfAngle) < 18 || length > d.y1 - inner - 12)
+        this.remove();
     })
     .append('title')
     .text(function (d) {
