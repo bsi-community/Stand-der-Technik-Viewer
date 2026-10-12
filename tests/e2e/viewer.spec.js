@@ -40,8 +40,10 @@ test('start, model tabs and legacy URL preserve navigation', async ({ page }) =>
   await page.locator('#tab-list').click();
   await expect(page.locator('#catalogPanel')).toBeVisible();
   await page.goto('Stand%20der%20Technik-Viewer.html?primary_tab=components#bookmark');
-  await expect(page.locator('#componentPanel')).toBeVisible();
+  await expect(page.locator('#homeTab')).toBeVisible();
   await expect(page).toHaveURL(/primary_tab=components#bookmark$/);
+  await page.locator('#tab-components').click();
+  await expect(page.locator('#componentPanel')).toBeVisible();
 });
 test('catalog: nested controls, parameters, search, reset and diagrams', async ({ page }) => {
   await upload(page, '#file', catalog, 'catalog.json');
@@ -247,18 +249,23 @@ test('JSON dialog escapes document content and closes with Escape', async ({ pag
   await page
     .locator('.control-card')
     .first()
-    .getByRole('button', { name: 'JSON', exact: true })
+    .getByRole('button', { name: /^JSON(?: zu .+ anzeigen)?$/ })
     .click();
   await expect(page.locator('#jsonModal')).toBeVisible();
   await expect(page.locator('#jsonModalBody')).toContainText('onerror');
   await expect(page.locator('#jsonModalClose')).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(page.getByRole('region', { name: 'JSON-Inhalt' })).toBeFocused();
   await page.keyboard.press('Tab');
   await expect(page.locator('#jsonModalClose')).toBeFocused();
   expect(await page.evaluate(() => window.injected)).toBeUndefined();
   await page.keyboard.press('Escape');
   await expect(page.locator('#jsonModal')).toBeHidden();
   await expect(
-    page.locator('.control-card').first().getByRole('button', { name: 'JSON', exact: true }),
+    page
+      .locator('.control-card')
+      .first()
+      .getByRole('button', { name: /^JSON(?: zu .+ anzeigen)?$/ }),
   ).toBeFocused();
 });
 test('multiple sources can be switched and removed', async ({ page }) => {
@@ -377,7 +384,7 @@ test('repository search resolves metadata and opens its catalog', async ({ page 
   );
   await page.reload();
   await expect(page.getByText('2 Dokumente in 2 Modelltypen', { exact: true })).toBeVisible();
-  await page.getByRole('searchbox', { name: 'Repository-Dokumente suchen' }).fill('Testkatalog');
+  await page.getByRole('searchbox', { name: 'Bibliothek durchsuchen' }).fill('Testkatalog');
   await page.getByRole('button', { name: 'Suchen', exact: true }).click();
   await page
     .locator('#homeTab')

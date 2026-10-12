@@ -1,0 +1,114 @@
+/* Shared typography for the remaining workspaces. Technical JSON/code keeps
+   its monospace face; interface labels use the selected Fira/BundesSans token. */
+.component-summary,
+.component-doc-heading,
+.catalog-requirements-heading {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+}
+.component-info-heading,
+.component-subheading {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+}
+.component-card,
+.component-link-card,
+.catalog-info-box {
+  border-color: var(--muted);
+  border-radius: 4px;
+  box-shadow: none;
+  background: white;
+}
+.component-card.capability {
+  border-left-color: var(--accent);
+}
+.component-summary code,
+.implementation-requirement-id strong,
+.mapping-id-value,
+.chart-legend-value,
+.component-inline-list .kv code,
+.component-link-meta .kv code,
+.pill {
+  font-family: var(--viewer-font);
+}
+.component-property-table th,
+.implementation-table th,
+.catalog-table th {
+  color: var(--text);
+  background: var(--panel);
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: 0;
+}
+.component-property-table td,
+.implementation-table td {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text);
+}
+.implementation-requirement-prose,
+.implementation-description,
+.implementation-statement {
+  font-size: 16px;
+  line-height: 1.6;
+}
+.component-source,
+.component-inline-list .kv,
+.component-link-meta .kv,
+.implementation-statement-label {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--dim);
+}
+.catalog-section-title.emphasis {
+  background: var(--panel);
+  border-left: 3px solid var(--accent);
+  padding: 12px 16px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+}
+.modal-card {
+  border: 1px solid var(--muted);
+  border-radius: 4px;
+  background: white;
+}
+.modal-header,
+.modal-body {
+  background: white;
+  color: var(--text);
+}
+.json-pre {
+  font-size: 14px;
+  line-height: 1.5;
+}
+.registry-list,
+.registry-document-row,
+.registry-empty,
+.workspace-empty-state {
+  background: white;
+  border-color: var(--muted);
+  border-radius: 4px;
+  box-shadow: none;
+}
+.registry-list-head {
+  background: var(--panel);
+  color: var(--dim);
+  font-size: 14px;
+  text-transform: none;
+  letter-spacing: 0;
+}
+.registry-document-title {
+  color: var(--accent);
+  font-size: 16px;
+  font-weight: 500;
+}
+.registry-document-meta,
+.registry-document-badge {
+  color: var(--dim);
+  font-size: 13px;
+  font-weight: 400;
+}

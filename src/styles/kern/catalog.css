@@ -1,0 +1,174 @@
+.catalog-info-heading {
+  font-size: 18px;
+}
+details {
+  border-radius: 4px;
+  background: white;
+  border: 1px solid var(--muted);
+}
+summary {
+  min-height: 44px;
+  padding: 8px 0;
+}
+.catalog-group,
+.catalog-subgroup {
+  border-radius: 4px;
+  background: white;
+  box-shadow: none;
+}
+.card.control-card {
+  border: 1px solid var(--muted);
+  border-radius: 4px;
+  padding: 0;
+  background: #fff;
+  box-shadow: none;
+  margin-top: 12px;
+}
+.control-summary {
+  padding: 16px 20px;
+  background: #f5f6fa;
+  gap: 16px;
+  border: 0;
+  min-height: 60px;
+}
+.control-card[open] > .control-summary {
+  border-bottom: 1px solid var(--muted);
+  background: #eef1fa;
+}
+.control-summary-title {
+  font-size: 18px;
+  line-height: 1.4;
+  font-weight: 700;
+}
+.control-summary-id mark {
+  background: transparent;
+  color: var(--accent);
+  padding: 0;
+  font-size: 16px;
+}
+.control-card-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.control-card-body > .meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
+  gap: 12px 24px;
+  border-top: 1px solid var(--muted);
+  padding-top: 16px;
+  margin: 0;
+}
+.control-meta-heading {
+  margin: 0;
+  grid-column: 1 / -1;
+  font-weight: 700;
+  font-size: 16px;
+}
+.control-card-body > .meta .kv {
+  display: block;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  margin: 0;
+  background: none;
+  line-height: 1.5;
+  font-size: 14px;
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+.control-card-body > .meta .kv strong {
+  display: block;
+  font-size: 13px;
+  color: var(--dim);
+  font-weight: 400;
+}
+.control-card-body > .meta .kv code {
+  font-family: var(--viewer-font);
+  font-size: 14px;
+}
+.control-card-body details {
+  margin: 0 0 12px;
+  padding: 0 16px 12px;
+  background: white;
+  border: 0;
+  border-left: 3px solid var(--muted);
+}
+.control-card-body details[open] {
+  border-left-color: var(--accent);
+}
+.control-card-body summary {
+  font-size: 16px;
+}
+.catalog-md {
+  font-size: 16px;
+  line-height: 1.65;
+}
+.catalog-md p {
+  line-height: 1.65;
+  max-width: 95ch;
+}
+.catalog-table th,
+.catalog-table td {
+  font-size: 14px;
+}
+.badge,
+.pill,
+.meta .kv {
+  border-radius: 4px;
+}
+.rel-item.related,
+.rel-item.required {
+  background: var(--panel);
+  border: 1px solid var(--muted);
+  border-left: 3px solid var(--accent);
+  border-radius: 4px;
+  color: var(--text);
+}
+.rel-item.required {
+  border-left-color: #806019;
+  background: #fff8e7;
+}
+.rel-item .hint,
+.rel-item .kv {
+  color: var(--dim);
+}
+.rel-item .kv {
+  background: white;
+  border-color: var(--muted);
+  font-size: 13px;
+}
+.rel-item .kv code {
+  color: inherit;
+  background: transparent;
+}
+.param {
+  color: #755300;
+}
+.param-value {
+  color: #6b3da6;
+}
+@media print {
+  .control-card-body {
+    display: block;
+  }
+  .control-card-body > .meta {
+    break-inside: avoid;
+  }
+}
+
+.catalog-document-title {
+  display: grid;
+  gap: 2px;
+  margin: 0 0 16px;
+  overflow-wrap: anywhere;
+}
+.catalog-document-title-label {
+  font: 400 0.8125rem/1.5 var(--viewer-font);
+  color: var(--dim);
+}
+.catalog-document-title-value {
+  font: 500 1.125rem/1.5 var(--viewer-font);
+  color: var(--text);
+}

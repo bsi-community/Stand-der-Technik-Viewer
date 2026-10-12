@@ -82,7 +82,13 @@ export function catalogSourceHasControlRef(source, controlRef) {
 export function catalogSourceMatchesRequirement(source, req) {
   if (!source || !req) return false;
   var candidates = [req.source, req.sourceLabel, req.catalogControlUuid];
-  var sourceValues = [source.catalogUuid, source.catalogTitle, source.label];
+  var sourceValues = [
+    source.catalogUuid,
+    source.catalogTitle,
+    source.label,
+    source.originalLabel,
+    source.baseUrl,
+  ];
   for (var i = 0; i < candidates.length; i++) {
     var candidate = normalizeSourceMatchValue(candidates[i]);
     if (!candidate) continue;
@@ -107,7 +113,6 @@ export function findCatalogSourceIndexByControlRef(controlRef) {
 
 export function findCatalogSourceIndexForRequirement(req) {
   if (!req) return -1;
-  if (getCatalogControlByRef(req.controlId)) return sourceStore.activeCatalogSourceIndex;
   var fallbackIndex = -1;
   for (var i = 0; i < sourceStore.loadedCatalogSources.length; i++) {
     var source = sourceStore.loadedCatalogSources[i];
@@ -116,6 +121,8 @@ export function findCatalogSourceIndexForRequirement(req) {
     if (matchesSource && hasRef) return i;
     if (hasRef && fallbackIndex === -1) fallbackIndex = i;
   }
+  // An explicit source match takes precedence over an ID in the active catalog.
+  if (getCatalogControlByRef(req.controlId)) return sourceStore.activeCatalogSourceIndex;
   return fallbackIndex;
 }
 

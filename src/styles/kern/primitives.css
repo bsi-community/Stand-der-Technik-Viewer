@@ -1,0 +1,446 @@
+/* Viewer-specific composition of native KERN components; no domain colors here. */
+:root {
+  --viewer-space-xs: var(--kern-metric-space-x-small, 4px);
+  --viewer-space-sm: var(--kern-metric-space-small, 8px);
+  --viewer-space-md: var(--kern-metric-space-default, 16px);
+  --viewer-space-lg: var(--kern-metric-space-large, 24px);
+  --viewer-space-xl: var(--kern-metric-space-x-large, 32px);
+  --viewer-radius: var(--kern-metric-border-radius-default, 4px);
+  --viewer-border: var(--kern-color-layout-border);
+  --viewer-danger: var(--kern-color-feedback-danger);
+  --viewer-success: var(--kern-color-feedback-success);
+}
+.viewer-button {
+  min-height: 48px;
+  max-width: 100%;
+  flex-shrink: 0;
+  font-family: var(--viewer-font);
+}
+.viewer-button .kern-label {
+  font: 600 1rem/1.5 var(--viewer-font);
+  white-space: normal;
+}
+.viewer-button:disabled {
+  cursor: not-allowed;
+}
+.viewer-field-label,
+.viewer-option-search > .kern-label {
+  display: block;
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+}
+.kern-form-input__input,
+.kern-form-input__select {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  font: 400 1rem/1.5 var(--viewer-font);
+}
+.viewer-field-hint,
+.viewer-field-error {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.viewer-field-hint {
+  color: var(--dim);
+}
+.viewer-field-error {
+  color: var(--viewer-danger);
+  font-weight: 600;
+}
+[aria-invalid='true'] {
+  border-color: var(--viewer-danger);
+}
+.viewer-message,
+.viewer-import-status:not(:empty) {
+  padding: var(--viewer-space-md);
+  border: 1px solid var(--viewer-border);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--viewer-radius);
+  background: var(--panel);
+  color: var(--text);
+  font-size: 1rem;
+  overflow-wrap: anywhere;
+}
+.viewer-import-status:empty {
+  display: none;
+}
+.viewer-message.err,
+.viewer-import-status[data-state='error'] {
+  border-left-color: var(--viewer-danger);
+  background: var(--kern-color-feedback-danger-background);
+}
+.viewer-import-status[data-state='success'] {
+  border-left-color: var(--viewer-success);
+  background: var(--kern-color-feedback-success-background);
+}
+.viewer-details > .kern-details__header::after {
+  display: none;
+}
+.viewer-details > .kern-details__header::before {
+  flex: 0 0 24px;
+}
+/* Inline disclosures keep options inside the scrolling sidebar and visible on zoom. */
+.sidebar-section details.ms .ms-menu {
+  position: static;
+  width: 100%;
+  min-width: 0;
+  max-height: min(420px, 55vh);
+  overflow: auto;
+  box-shadow: none;
+  padding: 12px;
+  border: 0;
+  border-top: 1px solid var(--muted);
+}
+.sidebar-section details.ms > summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--viewer-space-sm);
+  white-space: normal;
+}
+.viewer-filter-label {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.viewer-filter-count {
+  color: var(--dim);
+  font-size: 0.8125rem;
+  font-weight: 400;
+}
+.viewer-filter-options {
+  min-width: 0;
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+.viewer-filter-options .ms-item {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  gap: 8px;
+  align-items: center;
+  min-height: 48px;
+  padding: 8px 0;
+}
+.viewer-filter-options .ms-label {
+  font: 400 0.9375rem/1.5 var(--viewer-font);
+  min-width: 0;
+  overflow-wrap: anywhere;
+  white-space: normal;
+  padding: 0;
+}
+.viewer-filter-options input[type='checkbox'] {
+  width: 32px;
+  height: 32px;
+  flex: none;
+}
+.viewer-filter-options input:indeterminate::before {
+  content: '';
+  display: block;
+  width: 16px;
+  height: 2px;
+  border: 0;
+  background: currentColor;
+  position: absolute;
+  inset: 50% auto auto 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+}
+.viewer-filter-options input:indeterminate {
+  position: relative;
+}
+.viewer-filter-options [hidden],
+.ms-menu > [hidden] {
+  display: none !important;
+}
+.viewer-option-search {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.source-picker-menu {
+  position: static;
+  max-height: 360px;
+  overflow: auto;
+}
+.source-item-remove {
+  min-width: 44px;
+  min-height: 44px;
+}
+.source-item-button {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.workspace-upload-url-row {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+.viewer-description-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+  gap: 16px 24px;
+}
+.viewer-description-list .kern-description-list-item {
+  display: block;
+  min-width: 0;
+}
+.viewer-description-list .kern-description-list-item__key,
+.viewer-description-list .kern-description-list-item__value {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+}
+.viewer-description-list .kern-description-list-item__key {
+  font: 600 0.875rem/1.5 var(--viewer-font);
+  color: var(--dim);
+}
+.viewer-description-list .kv {
+  display: block;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background: none;
+  border-radius: 0;
+  color: var(--text);
+  font: 400 1rem/1.5 var(--viewer-font);
+  overflow-wrap: anywhere;
+}
+.viewer-description-list code {
+  font: inherit;
+  color: inherit;
+  background: transparent;
+}
+.viewer-control-metadata {
+  border-top: 1px solid var(--muted);
+  padding-top: 16px;
+}
+.viewer-control-metadata .control-meta-heading {
+  margin-bottom: 16px;
+}
+.viewer-control .control-summary {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+}
+.viewer-control .control-summary-title {
+  overflow-wrap: anywhere;
+}
+.viewer-control .catalog-md {
+  overflow-wrap: anywhere;
+}
+@media (max-width: 600px) {
+  .viewer-control .control-summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 16px;
+  }
+  .viewer-control .control-summary-title {
+    flex: 1 1 180px;
+  }
+  .viewer-control .control-card-body {
+    padding: 16px;
+  }
+}
+@media (forced-colors: active) {
+  .viewer-filter-options input:indeterminate::before {
+    background: CanvasText;
+  }
+  [aria-current],
+  [aria-selected='true'] {
+    outline: 2px solid Highlight;
+  }
+}
+@media print {
+  .viewer-import-status,
+  .viewer-message {
+    display: none !important;
+  }
+  .viewer-control-metadata {
+    break-inside: avoid;
+  }
+}
+/* Keep every filter full width; the separate help button sits inside its frame. */
+.filter-with-help {
+  position: relative;
+  display: block;
+}
+.filter-with-help > .search-help {
+  position: absolute;
+  top: 50%;
+  right: 5px;
+  height: 44px;
+  margin: 0;
+  transform: translateY(-50%);
+}
+.filter-with-help > .search-help .search-help-trigger {
+  width: 32px;
+  min-width: 32px;
+  height: 44px;
+  min-height: 44px;
+  border: 0;
+  background: transparent;
+}
+.filter-with-help .search-help-trigger:focus-visible {
+  outline-offset: -3px;
+}
+.sidebar-section details.ms > summary {
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+}
+.sidebar-section details.ms > summary::before {
+  width: 16px;
+  height: 16px;
+}
+.sidebar-section .filter-with-help details.ms > summary {
+  padding-right: 40px;
+}
+.viewer-filter-label {
+  hyphens: auto;
+}
+.viewer-filter-count {
+  grid-column: 3;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+/* Metadata remains readable at every nesting level; only data tables scroll. */
+.viewer-description-list .viewer-description-list {
+  grid-template-columns: minmax(0, 1fr);
+  margin: 0;
+  padding-left: 12px;
+  border-left: 2px solid var(--muted);
+}
+.viewer-description-list .kern-description-list-item__value {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font: 400 1rem/1.6 var(--viewer-font);
+}
+.viewer-description-list .catalog-table-wrap {
+  max-width: 100%;
+  min-width: 0;
+}
+.viewer-description-list .catalog-md > :first-child {
+  margin-top: 0;
+}
+.viewer-table-scroll {
+  max-width: 100%;
+  min-width: 0;
+  overflow: auto;
+  overscroll-behavior-x: contain;
+}
+.viewer-data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.viewer-data-table caption {
+  text-align: left;
+}
+.viewer-data-table th,
+.viewer-data-table td {
+  font: 400 1rem/1.6 var(--viewer-font);
+  overflow-wrap: anywhere;
+  vertical-align: top;
+}
+.viewer-data-table th {
+  font-weight: 600;
+}
+.viewer-data-table .kern-label {
+  font-size: 0.9375rem;
+}
+.implementation-table.viewer-data-table {
+  min-width: 640px;
+}
+.component-property-table.viewer-data-table {
+  min-width: 560px;
+}
+#componentTab .viewer-details > summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+}
+#componentTab .viewer-details > summary > * {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+#componentTab .practice-header,
+#componentTab .topic-header {
+  flex-wrap: wrap;
+  gap: 8px;
+}
+#componentTab .practice-children,
+#componentTab .topic-children,
+#componentTab .component-children {
+  min-width: 0;
+}
+@media (max-width: 600px) {
+  #componentTab .practice-children,
+  #componentTab .topic-children {
+    padding: 8px;
+  }
+  #componentTab .component-card {
+    padding: 12px;
+  }
+  #componentTab .viewer-details > summary {
+    padding: 12px;
+  }
+}
+
+#componentTab .viewer-details > summary > .practice-header,
+#componentTab .viewer-details > summary > .topic-header,
+#componentTab .viewer-details > summary > .component-summary,
+#componentTab .viewer-details > summary > .config-command-summary-copy {
+  flex: 1;
+}
+#componentTab .viewer-details > summary > .component-source {
+  flex-basis: 100%;
+  padding-left: 36px;
+}
+#componentTab .config-command-section > summary > .config-command-icon {
+  display: none;
+}
+#componentTab .config-command-count {
+  width: auto;
+}
+#componentTab .practice-title > mark,
+#componentTab .topic-title > mark {
+  background: var(--panel);
+  color: var(--dim);
+}
+
+.target-object-help-tooltip {
+  max-height: calc(100vh - 16px);
+  overflow: auto;
+}
+.target-object-help-tooltip.is-visible {
+  pointer-events: auto;
+}
+
+/* Outlined selects already have a complete border; avoid a second underline. */
+.kern-form-input__select-wrapper {
+  border: 0;
+  background: transparent;
+}
+.kern-form-input__select-wrapper .kern-form-input__select {
+  padding: 10px 40px 10px 12px;
+  border: 1px solid var(--muted);
+  border-radius: 4px;
+  background: white;
+}
+.kern-form-input__select-wrapper:hover {
+  border: 0;
+}
+.kern-form-input__select-wrapper:hover .kern-form-input__select {
+  padding: 10px 40px 10px 12px;
+  border-color: var(--accent);
+}
+.kern-form-input__select-wrapper .kern-form-input__select:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}

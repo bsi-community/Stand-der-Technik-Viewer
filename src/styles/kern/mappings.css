@@ -1,0 +1,209 @@
+.mapping-workspace {
+  gap: 24px;
+}
+.mapping-document-grid {
+  gap: 16px;
+}
+.mapping-info-card {
+  border-radius: 4px;
+  background: #fff;
+  box-shadow: none;
+  padding: 16px;
+}
+.mapping-info-card h3 {
+  font-size: 18px;
+}
+.mapping-info-list {
+  gap: 8px 16px;
+}
+.mapping-info-list dt,
+.mapping-info-list dd {
+  font-size: 14px;
+}
+.mapping-table-wrap {
+  border: 1px solid var(--muted);
+  border-radius: 4px;
+  overflow-x: auto;
+  scrollbar-width: auto;
+}
+.mapping-table-wrap::-webkit-scrollbar {
+  height: 12px;
+}
+.mapping-table-wrap::-webkit-scrollbar-thumb {
+  background: #757b94;
+  border-radius: 6px;
+}
+.mapping-table {
+  min-width: 1100px;
+  border-collapse: collapse;
+  background: #fff;
+}
+.mapping-table th {
+  background: #eef0f6;
+  color: var(--text);
+  font-size: 14px;
+  padding: 12px;
+  border-color: var(--muted);
+}
+.mapping-table td {
+  font-size: 15px;
+  line-height: 1.6;
+  background: #fff;
+  padding: 16px 12px;
+  border-color: var(--muted);
+  vertical-align: top;
+}
+.mapping-table .mapping-source-context,
+.mapping-table .mapping-target-context {
+  background: #e4e9f7;
+  border-top: 4px solid var(--accent);
+  text-align: left;
+  padding: 16px;
+}
+.mapping-resource-title {
+  font-size: 16px;
+}
+.mapping-resource-meta,
+.mapping-resource-help {
+  font-size: 13px;
+  color: var(--dim);
+}
+.mapping-title-value {
+  font-size: 15px;
+  font-weight: 700;
+}
+.mapping-prose-value {
+  font-size: 15px;
+  line-height: 1.6;
+}
+.mapping-id-value {
+  font-size: 14px;
+  color: var(--accent);
+  font-weight: 700;
+}
+.mapping-relation-badge {
+  font-size: 12px;
+  border-radius: 4px;
+  padding: 4px 8px;
+}
+.mapping-relation-symbol {
+  color: var(--accent);
+  font-size: 24px;
+}
+.mapping-row-meta,
+.mapping-catalog-missing {
+  font-size: 13px;
+  color: var(--dim);
+}
+.mapping-catalog-missing {
+  opacity: 1;
+}
+.mapping-table .mapping-entry-start td {
+  border-top: 2px solid var(--muted);
+}
+@media print {
+  .mapping-table {
+    min-width: 0;
+  }
+  .mapping-table-wrap {
+    overflow: visible;
+  }
+}
+.mapping-document-details {
+  margin: 0;
+  padding: 0 16px;
+  border: 1px solid var(--muted);
+}
+.mapping-document-details > summary {
+  font-size: 15px;
+  color: var(--accent);
+}
+.mapping-document-details .mapping-document-grid {
+  padding: 8px 0 16px;
+}
+.mapping-table th {
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.mapping-table td .mapping-control-title {
+  hyphens: auto;
+}
+
+.mapping-table td.mapping-relation,
+.mapping-table th.mapping-relation-heading {
+  text-align: center;
+}
+.mapping-table .mapping-relationship-trigger {
+  display: inline-flex;
+  justify-content: center;
+  margin-inline: auto;
+  min-height: 32px;
+  cursor: help;
+  white-space: nowrap;
+  font-family: var(--viewer-font);
+}
+.mapping-relationship-trigger:hover {
+  background: #e4e9f7;
+  color: var(--accent);
+}
+.mapping-relationship-tooltip {
+  position: fixed;
+  inset: auto;
+  margin: 0;
+  width: min(26rem, calc(100vw - 24px));
+  max-height: calc(100dvh - 24px);
+  overflow: auto;
+  padding: 16px 20px;
+  border: 1px solid var(--muted);
+  border-radius: 4px;
+  background: var(--panel);
+  color: var(--text);
+  box-shadow: 0 4px 20px #16193126;
+  font: 400 1rem/1.5 var(--viewer-font);
+  text-align: left;
+}
+.mapping-relationship-tooltip p {
+  margin: 8px 0;
+}
+.mapping-relationship-tooltip small {
+  display: block;
+  color: var(--dim);
+  font-size: 0.875rem;
+}
+.mapping-document-details .mapping-document-fields {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.mapping-document-details .mapping-document-wide {
+  grid-column: 1 / -1;
+}
+.mapping-document-details .mapping-document-fields .mapping-document-fields {
+  padding: 16px;
+  margin: 8px 0;
+  border: 1px solid var(--muted);
+  background: var(--panel);
+}
+.mapping-document-details .catalog-section + .catalog-section {
+  border-top: 1px solid var(--muted);
+  padding-top: 24px;
+  margin-top: 24px;
+}
+.mapping-document-details .catalog-md {
+  max-width: 85ch;
+}
+.mapping-relationship-note {
+  margin: 0;
+  color: var(--dim);
+  font-size: 0.875rem;
+  max-width: 100ch;
+}
+@media (max-width: 760px) {
+  .mapping-document-details .mapping-document-fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media print {
+  .mapping-relationship-tooltip {
+    display: none;
+  }
+}

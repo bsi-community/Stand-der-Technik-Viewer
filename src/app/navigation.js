@@ -14,6 +14,7 @@ import { resetTargetHierarchyDetails } from '../features/visualizations/target-h
 import { $$, cssId } from '../shared/dom.js';
 import { hideEffortTooltip } from '../shared/ui/effort-tooltip.js';
 import { updateHeaderSubtitle } from '../shared/ui/overview.js';
+import { syncKernNavigation } from '../shared/ui/kern-navigation.js';
 
 export function setSidebarMode(mode) {
   var isCatalog = mode === 'catalog';
@@ -70,6 +71,7 @@ export function updateVisualizationContext() {
       isVisual && tabs[i].getAttribute('data-tab') === modeTab,
     );
   }
+  syncKernNavigation(uiStore.uiState.dataMode, uiStore.uiState.view);
 }
 
 export function restoreComponentReturnTarget() {

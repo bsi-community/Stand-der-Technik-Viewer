@@ -1,5 +1,6 @@
 /** shared/ui/multiselect: see docs/architecture.md for responsibilities. */
 import { RefreshViews, handleTargetCheckboxChange } from '../../app/actions.js';
+import { isKern, kernDetails } from './kern.js';
 import { catalogStore } from '../../app/store.js';
 
 export function msSetItems(detailsEl, menuEl, allLabel, items, onChange) {
@@ -117,6 +118,8 @@ export function msSetItems(detailsEl, menuEl, allLabel, items, onChange) {
     onChange();
   };
 
+  if (isKern()) prepareKernFilter(detailsEl, menuEl, allLabel);
+
   // default: all selected
   const cbs = [...menuEl.querySelectorAll('input[type="checkbox"]')].filter(
     (x) => x.dataset.value !== '__all__',
@@ -128,6 +131,22 @@ export function msSetItems(detailsEl, menuEl, allLabel, items, onChange) {
 export function msUpdateSummary(detailsEl, allLabel, itemCbs) {
   const checked = itemCbs.filter((x) => x.checked).map((x) => x.dataset.label || x.dataset.value);
   const sum = detailsEl.querySelector('summary');
+  if (isKern()) {
+    const label = document.createElement('span');
+    label.className = 'viewer-filter-label';
+    label.textContent = allLabel.replace(/^Alle[nrs]? /, '');
+    const count = document.createElement('span');
+    count.className = 'viewer-filter-count';
+    count.textContent = itemCbs.length ? `${checked.length} / ${itemCbs.length}` : 'Keine Werte';
+    sum.replaceChildren(label, count);
+    sum.setAttribute(
+      'aria-label',
+      `${label.textContent}: ${itemCbs.length ? `${checked.length} von ${itemCbs.length} ausgewählt` : 'keine Werte vorhanden'}`,
+    );
+    const all = detailsEl.querySelector('[data-value="__all__"]');
+    if (all) all.disabled = !itemCbs.length;
+    return;
+  }
   if (itemCbs.length === 0) {
     sum.textContent = allLabel;
     return;
@@ -148,4 +167,57 @@ export function msGetSelected(detailsEl, menuEl) {
     (x) => x.dataset.value !== '__all__',
   );
   return cbs.filter((x) => x.checked).map((x) => x.dataset.value);
+}
+
+function prepareKernFilter(details, menu, allLabel) {
+  kernDetails(details);
+  const fieldset = document.createElement('fieldset');
+  fieldset.className = 'kern-fieldset viewer-filter-options';
+  const legend = document.createElement('legend');
+  legend.className = 'kern-sr-only';
+  legend.textContent = allLabel.replace(/^Alle[nrs]? /, '');
+  const rows = [...menu.querySelectorAll('.ms-item')];
+  const all = rows[0];
+  all.querySelector('.ms-label').textContent = 'Alle auswählen';
+  rows.forEach((row) => {
+    row.classList.add('kern-form-check');
+    row.querySelector('input').classList.add('kern-form-check__checkbox');
+    row.querySelector('.ms-label').classList.add('kern-label');
+  });
+  fieldset.append(legend, ...menu.childNodes);
+  menu.append(fieldset);
+  if (rows.length > 11) {
+    const label = document.createElement('label');
+    label.className = 'viewer-option-search';
+    const caption = document.createElement('span');
+    caption.className = 'kern-label';
+    caption.textContent = 'Filterwerte suchen';
+    const input = document.createElement('input');
+    input.type = 'search';
+    input.className = 'kern-form-input__input';
+    input.autocomplete = 'off';
+    const hint = document.createElement('p');
+    hint.className = 'viewer-field-hint';
+    hint.textContent =
+      'Die Suche verändert die Auswahl nicht. „Alle auswählen“ gilt für alle Werte.';
+    const empty = document.createElement('p');
+    empty.textContent = 'Keine passenden Filterwerte.';
+    empty.hidden = true;
+    input.addEventListener('input', () => {
+      const query = input.value.toLocaleLowerCase('de').trim();
+      rows.slice(1).forEach((row) => {
+        row.hidden = !row.textContent.toLocaleLowerCase('de').includes(query);
+      });
+      empty.hidden = rows.slice(1).some((row) => !row.hidden);
+    });
+    label.append(caption, input);
+    menu.prepend(label, hint, empty);
+  }
+  details.onkeydown = (event) => {
+    if (event.key === 'Escape' && details.open) {
+      event.preventDefault();
+      details.open = false;
+      details.querySelector('summary').focus();
+    }
+  };
 }

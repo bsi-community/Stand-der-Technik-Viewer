@@ -1,0 +1,546 @@
+header {
+  position: static;
+  display: block;
+  background: #fff;
+  backdrop-filter: none;
+  border-bottom: 1px solid var(--muted);
+  padding: 0;
+  box-shadow: none;
+}
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 88px;
+  padding: 16px 32px;
+  border: 0;
+}
+.header-brand-mark {
+  width: 44px;
+  height: 44px;
+  min-height: 44px;
+  border: 1px solid var(--muted);
+  border-radius: 4px;
+  background: #fff;
+  color: var(--accent);
+  flex: 0 0 44px;
+}
+.header-brand-mark:hover {
+  background: var(--accent-soft);
+}
+.header-brand > div:last-child {
+  display: block;
+  min-height: 0;
+  padding: 0;
+  background: none;
+  position: static;
+}
+header h1 {
+  font: 700 24px/1.25 var(--viewer-font);
+  color: var(--text);
+}
+.header-subtitle {
+  display: block !important;
+  margin: 4px 0 0;
+  max-width: none;
+  font-size: 14px;
+  color: var(--dim);
+}
+.viewer-version {
+  position: static;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  margin-left: 12px;
+  font-size: 12px;
+  line-height: 1.5;
+  font-weight: 400;
+}
+.header-nav {
+  display: block;
+  background: #fff;
+  padding: 0 32px;
+  margin: 0;
+}
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  width: 100%;
+  max-width: none;
+  background: #fff;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+.workspace-tab-group,
+.visualization-tab-group {
+  display: flex;
+  align-items: center;
+  position: static;
+  padding: 0;
+  gap: 0;
+  flex: 0 1 auto;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.visualization-tab-group {
+  margin-left: auto;
+}
+.nav-group-label {
+  display: none;
+}
+.visual-context-label {
+  display: none !important;
+}
+.tab,
+.tab[data-tab] {
+  display: block;
+  width: auto;
+  flex: 0 1 auto;
+  min-height: 48px;
+  padding: 12px 16px;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--dim);
+  border: 0;
+  border-bottom: 4px solid transparent;
+  border-radius: 0;
+  background: none;
+  margin: 0;
+  white-space: nowrap;
+}
+.tab.active,
+.tab[data-tab].active {
+  background: none;
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+  box-shadow: none;
+  outline: none;
+}
+.tab:focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: -3px;
+}
+.tab::after,
+.workspace-tab-group::after {
+  display: none;
+}
+.tab[disabled] {
+  opacity: 0.5;
+  cursor: default;
+}
+.home-mode .visualization-tab-group {
+  display: none;
+}
+.wrap {
+  grid-template-columns: 344px minmax(0, 1fr);
+  gap: 32px;
+  padding: 32px;
+  max-width: 1800px;
+  margin: 0 auto;
+}
+.wrap > aside {
+  position: sticky;
+  top: 16px;
+  max-height: calc(100vh - 32px);
+  background: var(--panel);
+  border: 1px solid var(--muted);
+  border-radius: 4px;
+  box-shadow: none;
+  padding: 0;
+}
+.sidebar-section {
+  margin: 0;
+  border: 0;
+  border-bottom: 1px solid var(--muted);
+  border-radius: 0;
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.sidebar-section > summary {
+  padding: 16px;
+  min-height: 56px;
+  background: transparent;
+}
+.sidebar-section-heading strong {
+  font-size: 16px;
+}
+.sidebar-section-heading small {
+  font-size: 13px;
+  color: var(--dim);
+}
+.sidebar-section-icon {
+  display: none;
+}
+.sidebar-section-body {
+  padding: 0 16px 20px;
+}
+.panel-intro {
+  padding: 0;
+  background: none;
+  border: 0;
+}
+.panel-kicker {
+  display: none;
+}
+.panel-title {
+  font-size: 18px;
+}
+.ms-btn {
+  min-height: 44px;
+  font-size: 14px;
+  background: white;
+  border: 1px solid #6c7189;
+  border-radius: 4px;
+}
+.ms-menu {
+  background: #fff;
+  color: var(--text);
+  border-color: var(--muted);
+  border-radius: 4px;
+}
+.ms-row {
+  font-size: 14px;
+  min-height: 40px;
+}
+.overview-card {
+  padding: 0 0 24px;
+  background: #fff;
+  border: 0;
+  border-bottom: 1px solid var(--muted);
+  border-radius: 0;
+  box-shadow: none;
+}
+.overview-top h2 {
+  font-size: 28px;
+  line-height: 1.25;
+  margin: 0 0 8px;
+}
+.overview-top p {
+  font-size: 16px;
+  max-width: 80ch;
+  margin: 0;
+  color: var(--dim);
+}
+.overview-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin: 20px 0 12px;
+  border: 0;
+  background: transparent;
+}
+.overview-stat {
+  padding: 0 24px 0 0;
+  border: 0;
+  border-right: 1px solid var(--muted);
+  background: none;
+  box-shadow: none;
+  flex: 0 1 auto;
+}
+.overview-stat-value {
+  font-size: 24px;
+  line-height: 1.25;
+  color: var(--text);
+}
+.overview-stat-label,
+.overview-stat-note {
+  font-size: 13px;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--dim);
+}
+.overview-section-title {
+  font-size: 13px;
+  text-transform: none;
+  letter-spacing: 0;
+  margin: 12px 0 6px;
+}
+.overview-chip,
+.overview-chip.neutral {
+  font-size: 14px;
+  border: 0;
+  padding: 4px 8px;
+  background: var(--panel);
+  color: var(--dim);
+}
+.overview-actions {
+  gap: 8px;
+}
+@media (max-width: 1200px) {
+  .visualization-tab-group {
+    margin-left: 0;
+  }
+  .wrap {
+    gap: 24px;
+    padding: 24px;
+  }
+  .tab,
+  .tab[data-tab] {
+    font-size: 14px;
+    padding: 10px 12px;
+  }
+}
+@media (max-width: 800px) {
+  .wrap {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 16px;
+  }
+  .wrap > aside {
+    position: static;
+    max-height: none;
+  }
+  .header-brand,
+  .header-nav {
+    padding: 16px;
+  }
+  .header-nav {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  .workspace-tab-group,
+  .visualization-tab-group {
+    flex-wrap: wrap;
+  }
+  .kern-preview-bar {
+    padding: 8px 16px;
+  }
+  header h1 {
+    font-size: 21px;
+  }
+}
+@media print {
+  header {
+    position: static;
+  }
+  .wrap {
+    display: block;
+    padding: 0;
+  }
+  .wrap > aside {
+    display: none;
+  }
+}
+.header-brand {
+  justify-content: flex-start;
+}
+.workspace-tab-group,
+.visualization-tab-group {
+  min-height: 0;
+}
+.header-brand > div:last-child {
+  flex: 1;
+}
+.header-subtitle {
+  visibility: visible;
+}
+/* Compact workbench summary and filters; release CSS remains isolated in legacy. */
+.sidebar-section > summary {
+  grid-template-columns: minmax(0, 1fr) 18px;
+}
+.sidebar-section-heading {
+  min-width: 0;
+}
+.side-panel {
+  gap: 0;
+}
+.overview {
+  padding: 0 0 20px;
+  background: #fff;
+  border: 0;
+  border-bottom: 1px solid var(--muted);
+  border-radius: 0;
+  box-shadow: none;
+}
+.overview::before {
+  display: none;
+}
+.overview h2 {
+  font-size: 28px;
+  line-height: 1.25;
+  letter-spacing: 0;
+}
+.overview p {
+  font-size: 16px;
+  line-height: 1.5;
+  margin: 0;
+}
+.overview-stat {
+  min-height: 0;
+}
+.overview-stat-value {
+  margin: 4px 0;
+  letter-spacing: 0;
+}
+.overview-top {
+  display: block;
+}
+.overview-actions {
+  margin-top: 8px;
+}
+.ms-item {
+  min-height: 36px;
+  font-size: 14px;
+}
+.sidebar-section[data-section='filters'] details.ms {
+  padding: 0;
+  margin: 8px 0;
+  border-radius: 4px;
+  background: white;
+}
+.sidebar-section[data-section='filters'] details.ms > summary {
+  min-height: 44px;
+  padding: 10px 12px;
+  font-size: 14px;
+  font-weight: 500;
+}
+/* Workbench navigation: primary areas and one tablist of views within that area. */
+.tabs {
+  display: block;
+}
+.workspace-tab-group {
+  border-bottom: 1px solid var(--muted);
+}
+.workspace-tab-group [aria-current] {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+  font-weight: 700;
+}
+.visualization-tab-group {
+  margin: 0;
+  padding: 8px 0;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.visualization-tab-group .visual-context-label {
+  display: block !important;
+  flex: 1 0 100%;
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: var(--dim);
+  padding: 0 12px 4px;
+}
+.viewer-view-tab,
+.visualization-tab-group .tab {
+  display: block;
+  width: auto;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid transparent;
+  border-radius: var(--viewer-radius);
+  background: transparent;
+  color: var(--accent);
+  font: 500 0.9375rem/1.5 var(--viewer-font);
+  white-space: normal;
+  text-align: left;
+}
+.viewer-view-tab.active,
+.visualization-tab-group .tab.active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  font-weight: 700;
+}
+.viewer-view-tab:focus-visible,
+.visualization-tab-group .tab:focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: 2px;
+}
+/* Panels are programmatic reading anchors, not keyboard stops. Interactive
+   descendants retain their own visible focus indication. */
+main [role='tabpanel'][tabindex='-1']:focus {
+  outline: none;
+}
+.header-brand h1 {
+  white-space: normal;
+}
+.wrap > aside {
+  scrollbar-gutter: stable;
+}
+@media (max-width: 400px) {
+  .header-brand {
+    gap: 8px;
+  }
+  .workspace-tab-group .tab {
+    padding: 10px 8px;
+    font-size: 0.875rem;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+  .workspace-tab-group {
+    flex-wrap: wrap;
+  }
+}
+.tabs {
+  min-width: 0;
+}
+.header-nav {
+  overflow: visible;
+}
+.visualization-tab-group .visual-context-label {
+  position: static;
+  inset: auto;
+  height: auto;
+  background: transparent;
+  text-align: left;
+  text-transform: none;
+  letter-spacing: 0;
+  white-space: normal;
+  overflow: visible;
+  line-height: 1.5;
+}
+
+/* Catalogue overview: one line of figures plus actions, with room for active filters. */
+.overview.overview--compact {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 24px;
+  padding-bottom: 16px;
+}
+.overview--compact .overview-top {
+  flex: 0 1 auto;
+  min-width: 0;
+}
+.overview--compact h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  line-height: 1.4;
+}
+.overview--compact .overview-grid {
+  flex: 1 1 auto;
+  gap: 8px 20px;
+  margin: 0;
+}
+.overview--compact .overview-stat {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 0;
+  border: 0;
+}
+.overview--compact .overview-stat-value {
+  order: -1;
+  font: 600 1rem/1.5 var(--viewer-font);
+  margin: 0;
+}
+.overview--compact .overview-stat-label {
+  font-size: 0.875rem;
+}
+.overview--compact .overview-actions,
+.overview--compact .overview-chip-list {
+  flex-basis: 100%;
+  margin: 0;
+}
+.overview--compact .overview-actions .viewer-button {
+  min-height: 44px;
+  padding: 8px 12px;
+}
+.overview--compact .overview-actions .kern-label {
+  font-size: 0.875rem;
+}

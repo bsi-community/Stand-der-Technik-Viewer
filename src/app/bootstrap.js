@@ -73,6 +73,7 @@ import { $ } from '../shared/dom.js';
 import { bindDropzone } from '../shared/ui/dropzone.js';
 import { closeJsonModal } from '../shared/ui/messages.js';
 import { updateHeaderSubtitle } from '../shared/ui/overview.js';
+import { runImportAction } from '../shared/ui/kern.js';
 import { bindStatusPillTooltips } from '../shared/ui/status.js';
 
 export function startViewer() {
@@ -573,7 +574,9 @@ export function startViewer() {
   if (uiStore.els.urlLoadBtn) {
     uiStore.els.urlLoadBtn.addEventListener('click', function (ev) {
       ev.preventDefault();
-      loadCatalogFromUrl(uiStore.els.urlInput && uiStore.els.urlInput.value);
+      runImportAction(uiStore.els.urlLoadBtn, () =>
+        loadCatalogFromUrl(uiStore.els.urlInput && uiStore.els.urlInput.value),
+      );
     });
   }
 
@@ -581,7 +584,9 @@ export function startViewer() {
     uiStore.els.urlInput.addEventListener('keydown', function (ev) {
       if (ev.key === 'Enter') {
         ev.preventDefault();
-        loadCatalogFromUrl(uiStore.els.urlInput.value);
+        runImportAction(uiStore.els.urlLoadBtn, () =>
+          loadCatalogFromUrl(uiStore.els.urlInput.value),
+        );
       }
     });
   }
@@ -599,7 +604,9 @@ export function startViewer() {
   if (uiStore.compEls.urlLoadBtn) {
     uiStore.compEls.urlLoadBtn.addEventListener('click', function (ev) {
       ev.preventDefault();
-      loadComponentFromUrl(uiStore.compEls.urlInput && uiStore.compEls.urlInput.value);
+      runImportAction(uiStore.compEls.urlLoadBtn, () =>
+        loadComponentFromUrl(uiStore.compEls.urlInput && uiStore.compEls.urlInput.value),
+      );
     });
   }
 
@@ -607,7 +614,9 @@ export function startViewer() {
     uiStore.compEls.urlInput.addEventListener('keydown', function (ev) {
       if (ev.key === 'Enter') {
         ev.preventDefault();
-        loadComponentFromUrl(uiStore.compEls.urlInput.value);
+        runImportAction(uiStore.compEls.urlLoadBtn, () =>
+          loadComponentFromUrl(uiStore.compEls.urlInput.value),
+        );
       }
     });
   }
@@ -624,7 +633,9 @@ export function startViewer() {
   if (uiStore.mappingEls.urlLoadBtn) {
     uiStore.mappingEls.urlLoadBtn.addEventListener('click', function (ev) {
       ev.preventDefault();
-      loadMappingFromUrl(uiStore.mappingEls.urlInput && uiStore.mappingEls.urlInput.value);
+      runImportAction(uiStore.mappingEls.urlLoadBtn, () =>
+        loadMappingFromUrl(uiStore.mappingEls.urlInput && uiStore.mappingEls.urlInput.value),
+      );
     });
   }
 
@@ -632,7 +643,9 @@ export function startViewer() {
     uiStore.mappingEls.urlInput.addEventListener('keydown', function (ev) {
       if (ev.key === 'Enter') {
         ev.preventDefault();
-        loadMappingFromUrl(uiStore.mappingEls.urlInput.value);
+        runImportAction(uiStore.mappingEls.urlLoadBtn, () =>
+          loadMappingFromUrl(uiStore.mappingEls.urlInput.value),
+        );
       }
     });
   }
@@ -738,5 +751,5 @@ export function startViewer() {
 
   bindMappingResetButton();
 
-  restoreViewerStateFromUrl();
+  return restoreViewerStateFromUrl();
 }

@@ -4,6 +4,12 @@ Browseranwendung für OSCAL Catalogs, Component Definitions und Mapping Collecti
 
 **[Veröffentlichten Viewer öffnen](https://bsi-community.github.io/Stand-der-Technik-Viewer/)** · [Bedienungsanleitung](docs/user-guide.md)
 
+## KERN-Testversion auf `restructure-viewer-KERN`
+
+Dieser Branch enthält eine interaktive KERN-UX-Vorschau mit Startseite, geöffneter Beispielanforderung und gefüllter Mapping-Tabelle. Starten mit `npm run preview:kern` oder auf diesem Mac über `KERN-Vorschau.command`; anschließend [lokale Vorschau öffnen](http://127.0.0.1:5186/Stand-der-Technik-Viewer/).
+
+BundesSans-Webfonts können lokal nachgereicht werden. Solange sie fehlen, zeigt die Vorschau ausdrücklich Fira Sans an. Einrichtung, Vergleichslinks und Ausbauplan: [KERN-Vorschau](docs/kern-preview.md).
+
 ## Lokal entwickeln und testen
 
 Voraussetzung: Node.js 24 LTS mit npm (siehe `.nvmrc`).

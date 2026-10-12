@@ -1,0 +1,257 @@
+/* Chart legends are overlays, never workspace sidebars. SVG must not inherit
+   KERN's height:auto media rule: D3 draws in the container's pixel coordinates. */
+#graph,
+#sunburst,
+#bar {
+  display: block;
+  height: clamp(420px, calc(100dvh - 300px), 800px);
+  min-height: 420px;
+  background: white;
+  border: 1px solid var(--muted);
+  border-radius: 4px;
+  overflow: hidden;
+}
+#graph > svg,
+#sunburst > svg,
+#bar > svg,
+.target-hierarchy-canvas > svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  flex: none;
+}
+:is(#graph, #sunburst, #bar, .target-hierarchy-canvas) svg text {
+  font-family: var(--viewer-font);
+}
+.chart-legend {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  max-height: calc(100% - 32px);
+  width: min(310px, calc(100% - 160px));
+  padding: 12px 16px;
+  border: 1px solid var(--muted);
+  border-radius: 4px;
+  background: white;
+  color: var(--text);
+  box-shadow: none;
+  backdrop-filter: none;
+  overflow: auto;
+}
+.chart-legend h4 {
+  overflow-wrap: anywhere;
+  hyphens: auto;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: 0;
+}
+.chart-legend-note,
+.chart-legend-item,
+.chart-legend-value {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--dim);
+}
+.chart-legend-item > span:nth-child(2) {
+  overflow-wrap: anywhere;
+}
+.chart-legend-value {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+.sunburst-legend {
+  left: auto;
+  right: 16px;
+  width: min(280px, 35%);
+}
+.sunburst-center-title {
+  fill: var(--text);
+  font-size: 16px;
+  font-weight: 700;
+}
+.sunburst-center-value {
+  fill: var(--dim);
+  font-size: 13px;
+  font-weight: 400;
+}
+.chart-axis-title {
+  fill: var(--text);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+#bar .tick text {
+  fill: var(--dim);
+  font-size: 12px;
+}
+.target-hierarchy-view {
+  border: 1px solid var(--muted);
+  border-radius: 4px;
+  background: white;
+  box-shadow: none;
+}
+.target-hierarchy-header,
+.target-hierarchy-details {
+  background: white;
+  border-color: var(--muted);
+}
+.target-hierarchy-details {
+  position: static;
+  top: auto;
+  max-height: none;
+  border-radius: 0;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+.target-hierarchy-summary {
+  border: 1px solid var(--muted);
+  border-radius: 4px;
+  background: white;
+  color: var(--dim);
+  box-shadow: none;
+  backdrop-filter: none;
+}
+.target-hierarchy-summary strong,
+.target-hierarchy-summary .direction {
+  color: var(--text);
+  font-weight: 700;
+}
+.target-hierarchy-node text {
+  font-weight: 700;
+  text-shadow: none;
+}
+.target-hierarchy-heading h2,
+.target-hierarchy-details h3 {
+  color: var(--text);
+  font-weight: 700;
+}
+.target-hierarchy-heading p,
+.target-hierarchy-details p,
+.target-hierarchy-details dd {
+  color: var(--dim);
+  font-size: 14px;
+  line-height: 1.5;
+}
+.target-hierarchy-eyebrow,
+.target-hierarchy-details-eyebrow,
+.target-hierarchy-details dt {
+  color: var(--dim);
+  font-size: 13px;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0;
+}
+@media print {
+  .chart-legend {
+    display: block;
+  }
+}
+
+/* Controls and equivalent tables sit outside the fixed chart surface. */
+.viewer-chart-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 0;
+  min-width: 0;
+}
+.viewer-chart-controls .viewer-button {
+  padding: 8px 12px;
+}
+.viewer-chart-data {
+  margin: 16px 0;
+  min-width: 0;
+  max-width: 100%;
+}
+.viewer-chart-data > p,
+.viewer-chart-data-section {
+  margin: 16px;
+}
+.viewer-chart-data-section {
+  min-width: 0;
+}
+.viewer-chart-data-section h3 {
+  font-size: 1.125rem;
+  margin: 0 0 12px;
+}
+.viewer-chart-data-search {
+  max-width: 36rem;
+  display: grid;
+  gap: 8px;
+}
+.viewer-chart-data table {
+  min-width: 560px;
+}
+.viewer-chart-data th,
+.viewer-chart-data td {
+  white-space: pre-line;
+}
+.viewer-chart-data-pages {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+.viewer-chart-data-pages[hidden] {
+  display: none;
+}
+.target-hierarchy-view {
+  height: auto;
+  grid-template-rows: none;
+  overflow: visible;
+}
+.target-hierarchy-workspace {
+  grid-template-rows: none;
+  align-items: start;
+}
+.target-hierarchy-view > .viewer-chart-controls {
+  padding: 12px 16px;
+}
+.target-hierarchy-view > .viewer-chart-data {
+  margin: 16px;
+}
+.target-hierarchy-canvas {
+  height: clamp(500px, calc(100dvh - 300px), 800px);
+}
+.target-hierarchy-fit {
+  display: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .target-hierarchy-node {
+    transition: none;
+  }
+}
+
+/* Keep words intact; narrow viewports scroll the table instead of crushing columns. */
+.viewer-chart-data table {
+  table-layout: auto;
+}
+.viewer-chart-data .viewer-chart-data-sized {
+  min-width: 85rem;
+  table-layout: fixed;
+}
+.viewer-chart-data th,
+.viewer-chart-data td {
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: auto;
+  padding: 12px 16px;
+}
+.viewer-chart-data thead th {
+  hyphens: none;
+}
+.viewer-chart-data button {
+  white-space: nowrap;
+  word-break: normal;
+  overflow-wrap: normal;
+}
+.target-hierarchy-workspace {
+  overflow: visible;
+}
+.target-hierarchy-details {
+  height: auto;
+  overflow: visible;
+}

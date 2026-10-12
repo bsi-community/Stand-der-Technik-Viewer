@@ -1,3 +1,10 @@
+import {
+  beginChartAccess,
+  renderChartData,
+  addGraphControls,
+  chartMotionDuration,
+} from './accessibility.js';
+import { isKern, kernButton } from '../../shared/ui/kern.js';
 /** features/visualizations/target-hierarchy: see docs/architecture.md for responsibilities. */
 import { RefreshViews } from '../../app/actions.js';
 import { catalogStore, hierarchyStore, uiStore } from '../../app/store.js';
@@ -7,6 +14,7 @@ import { loadTargetHierarchy } from '../../infrastructure/target-hierarchy.js';
 
 export function clearTargetHierarchyCanvas() {
   if (!uiStore.els.targetHierarchyCanvas) return;
+  beginChartAccess(uiStore.els.targetHierarchyCanvas, 'catalog:hierarchy');
   while (uiStore.els.targetHierarchyCanvas.firstChild)
     uiStore.els.targetHierarchyCanvas.removeChild(uiStore.els.targetHierarchyCanvas.firstChild);
 }
@@ -123,6 +131,7 @@ export function renderTargetHierarchyStatus(title, text, retry) {
       hierarchyStore.targetHierarchyState.error = null;
       renderTargetHierarchyView();
     });
+    kernButton(button);
     card.appendChild(button);
   }
   status.appendChild(card);
@@ -261,6 +270,18 @@ export function renderTargetHierarchyView() {
     '#3c91b5',
     '#667f9b',
   ];
+  const kern = document.documentElement.dataset.viewerDesign === 'kern';
+  if (kern)
+    palette = [
+      '#176e66',
+      '#945009',
+      '#70408d',
+      '#246946',
+      '#725800',
+      '#863d63',
+      '#256985',
+      '#465c75',
+    ];
   var colorByRoot = Object.create(null);
   for (var ri = 0; ri < hierarchyStore.targetHierarchyState.roots.length; ri++)
     colorByRoot[hierarchyStore.targetHierarchyState.roots[ri].uuid] = palette[ri % palette.length];
@@ -272,6 +293,7 @@ export function renderTargetHierarchyView() {
   }
   function nodeColor(item) {
     var base = d3.color(colorByRoot[item.data.rootUuid] || palette[0]);
+    if (kern) return base.formatHex();
     return item.depth > 1
       ? base.brighter(Math.min(0.42, (item.depth - 1) * 0.11)).formatHex()
       : base.formatHex();
@@ -283,7 +305,7 @@ export function renderTargetHierarchyView() {
     .attr('width', width)
     .attr('height', height)
     .attr('viewBox', '0 0 ' + width + ' ' + height)
-    .attr('role', 'img')
+    .attr('role', isKern() ? 'button' : 'img')
     .attr('aria-label', 'Hierarchie der BSI-Zielobjektkategorien');
   var defs = svg.append('defs');
   defs
@@ -341,7 +363,7 @@ export function renderTargetHierarchyView() {
       return 'translate(' + nodeX(item) + ',' + nodeY(item) + ')';
     })
     .attr('tabindex', 0)
-    .attr('role', 'img')
+    .attr('role', isKern() ? 'button' : 'img')
     .attr('aria-controls', 'targetHierarchyDetails')
     .attr('aria-label', function (item) {
       return item.data.name + '. Kategorie: ' + (item.data.category || 'nicht angegeben') + '.';
@@ -378,6 +400,14 @@ export function renderTargetHierarchyView() {
       showTargetHierarchyDetails(item.data, this);
     });
 
+  if (isKern())
+    node.on('keydown', function (event, item) {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        showTargetHierarchyDetails(item.data, this);
+        uiStore.els.targetHierarchyDetails.focus();
+      }
+    });
   var zoom = d3
     .zoom()
     .scaleExtent([0.18, 2.6])
@@ -398,7 +428,7 @@ export function renderTargetHierarchyView() {
     var ty = height / 2 - scale * (bounds.y + bounds.height / 2);
     svg
       .transition()
-      .duration(320)
+      .duration(chartMotionDuration(320))
       .call(zoom.transform, d3.zoomIdentity.translate(tx, ty).scale(scale));
   }
   if (uiStore.els.targetHierarchyFitBtn) uiStore.els.targetHierarchyFitBtn.onclick = fitHierarchy;
@@ -422,5 +452,37 @@ export function renderTargetHierarchyView() {
   direction.textContent = 'Elternknoten → Kindknoten · Allgemein → Speziell';
   summary.appendChild(direction);
   canvas.appendChild(summary);
+  addGraphControls(canvas, svg, zoom, fitHierarchy);
+  renderChartData(
+    canvas,
+    nodes.length +
+      ' Einträge der aktuellen Zielobjekthierarchie. Elternkategorien sind allgemeiner als ihre Kindkategorien. Diese Ansicht zeigt die gesamte geladene Hierarchie.',
+    [
+      {
+        title: 'Zielobjektkategorien',
+        headers: ['Bezeichnung', 'Übergeordnete Kategorie', 'Kategorie', 'Definition', 'Synonyme'],
+        columnWidths: ['13rem', '13rem', '10rem', '30rem', '12rem'],
+        rows: nodes.map((item) => ({
+          cells: [
+            item.data.name,
+            item.parent?.depth ? item.parent.data.name : 'Wurzelkategorie',
+            item.data.category || '–',
+            item.data.definition || '–',
+            (item.data.synonyms || []).join(', ') || '–',
+          ],
+          actionLabel: 'Details zu ' + item.data.name + ' öffnen',
+          open: () => {
+            showTargetHierarchyDetails(item.data, null);
+            uiStore.els.targetHierarchyDetails.focus();
+          },
+        })),
+      },
+    ],
+    { interactiveSvg: true },
+  );
+  if (isKern()) {
+    canvas.parentElement.before(canvas.previousElementSibling);
+    canvas.parentElement.after(canvas.nextElementSibling);
+  }
   requestAnimationFrame(fitHierarchy);
 }

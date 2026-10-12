@@ -1,4 +1,5 @@
 /** features/catalog/metadata: see docs/architecture.md for responsibilities. */
+import { isKern } from '../../shared/ui/kern.js';
 import { catalogStore, uiStore } from '../../app/store.js';
 import {
   renderHighlightedInline,
@@ -294,6 +295,19 @@ export function renderCatalogInfo() {
   heading.className = 'catalog-info-heading';
   heading.textContent = 'Katalog Informationen';
   uiStore.els.listTab.appendChild(heading);
+  const title = catalogStore.state.catalogMetadata?.title;
+  if (isKern() && hasDisplayValue(title)) {
+    const documentTitle = document.createElement('p');
+    documentTitle.className = 'catalog-document-title';
+    const label = document.createElement('span');
+    label.className = 'catalog-document-title-label';
+    label.textContent = 'Geladener Katalog';
+    const value = document.createElement('span');
+    value.className = 'catalog-document-title-value';
+    value.innerHTML = renderInlineMarkup(title);
+    documentTitle.append(label, value);
+    uiStore.els.listTab.append(documentTitle);
+  }
 
   if (hasMeta) {
     var metaDetails = document.createElement('details');

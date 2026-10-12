@@ -1,3 +1,11 @@
+import {
+  beginChartAccess,
+  renderChartData,
+  graphDataSections,
+  addGraphControls,
+  chartMotionDuration,
+} from './accessibility.js';
+import { isKern } from '../../shared/ui/kern.js';
 /** features/visualizations/components: see docs/architecture.md for responsibilities. */
 import { goToCatalogControlFromComponent, openComponentLocation } from '../../app/actions.js';
 import { uiStore } from '../../app/store.js';
@@ -7,11 +15,14 @@ import { componentOwnerName } from '../../app/components.js';
 import { buildComponentGraphData, getMatchedComponentOwners } from '../components/graph-data.js';
 import {
   addBarAxisTitles,
+  barAxisTickValues,
   addSunburstCenterLabel,
   addSunburstSegmentLabels,
   renderChartLegend,
   renderSunburstLegend,
   sunburstChartCenterX,
+  sunburstChartRadius,
+  setGraphSimulation,
 } from './common.js';
 import { escapeHtml } from '../../shared/html.js';
 import { showMsg } from '../../shared/ui/messages.js';
@@ -22,6 +33,8 @@ export function drawComponentGraph() {
     try {
       var el = document.getElementById('graph');
       if (!el) return;
+      beginChartAccess(el, 'component:graph');
+      setGraphSimulation(el, null);
       el.classList.remove('chart-unavailable');
       el.innerHTML =
         '<div class="graph-toolbar"><button id="fitBtn" class="btn" title="Alles anzeigen">Alles anzeigen</button></div>';
@@ -81,6 +94,7 @@ export function drawComponentGraph() {
         .force('charge', d3.forceManyBody().strength(-250))
         .force('center', d3.forceCenter(width / 2, height / 2))
         .force('collide', d3.forceCollide(36));
+      setGraphSimulation(el, sim);
 
       var link = g
         .selectAll('.link')
@@ -138,7 +152,7 @@ export function drawComponentGraph() {
         .attr('y', 4)
         .attr('font-size', '12px')
         .attr('fill', '#162434');
-      node.on('click', function (ev, d) {
+      function openGraphNode(ev, d) {
         if (d.nodeType === 'requirement') {
           if (d.requirement && getCatalogControlByRef(d.requirement.controlId)) {
             goToCatalogControlFromComponent(d.requirement);
@@ -148,13 +162,16 @@ export function drawComponentGraph() {
         } else {
           openComponentLocation(d.owner);
         }
-      });
+      }
+      node.on('click', openGraphNode);
+      var userInteracted = false;
 
       var zoom = d3
         .zoom()
         .scaleExtent([0.03, 10])
         .on('zoom', function (event) {
           g.attr('transform', event.transform);
+          if (event.sourceEvent) userInteracted = true;
         });
       svg.call(zoom);
 
@@ -180,7 +197,7 @@ export function drawComponentGraph() {
         var ty = ((el.clientHeight || 600) - scale * (minY + maxY)) / 2;
         svg
           .transition()
-          .duration(400)
+          .duration(chartMotionDuration(400))
           .call(zoom.transform, d3.zoomIdentity.translate(tx, ty).scale(scale));
       }
 
@@ -207,7 +224,28 @@ export function drawComponentGraph() {
           return 'translate(' + d.x + ',' + d.y + ')';
         });
       });
-      sim.on('end', fitToScreen);
+      sim.on('end', () => {
+        if (!isKern() || !userInteracted) fitToScreen();
+      });
+      addGraphControls(el, svg, zoom, fitToScreen, () => {
+        userInteracted = true;
+      });
+      renderChartData(
+        el,
+        nodes.length +
+          ' Knoten und ' +
+          links.length +
+          ' Beziehungen der gefilterten Komponenten und Capabilities.',
+        graphDataSections(
+          nodes,
+          links,
+          (d) => openGraphNode(null, d),
+          (d) =>
+            ({ component: 'Komponente', capability: 'Capability', requirement: 'Anforderung' })[
+              d.nodeType
+            ] || d.nodeType,
+        ),
+      );
       uiStore.compEls.graphInfo.textContent =
         'Graph: ' + nodes.length + ' Knoten / ' + links.length + ' Kanten';
     } catch (e) {
@@ -224,6 +262,7 @@ export function drawComponentGraph() {
 export function drawComponentSunburst() {
   return withDataMode('component', function () {
     var container = document.getElementById('sunburst');
+    beginChartAccess(container, 'component:sunburst');
     container.innerHTML = '';
     if (typeof d3 === 'undefined') {
       container.innerHTML = '<div class="card">D3 wurde nicht geladen.</div>';
@@ -253,7 +292,7 @@ export function drawComponentSunburst() {
     var data = { name: 'Komponenten', children: dataItems };
     var w = container.clientWidth || 900,
       h = container.clientHeight || 600,
-      r = Math.min(w, h) / 2 - 36;
+      r = sunburstChartRadius(w, h, 36);
     var root = d3.hierarchy(data).sum(function (d) {
       return d.value || 0;
     });
@@ -308,12 +347,24 @@ export function drawComponentSunburst() {
       return d.data.name;
     });
     addSunburstCenterLabel(g, 'Komponenten', root.value, 'Anforderungen');
+    renderChartData(
+      container,
+      'Implementierte Anforderungen je gefilterter Komponente. Mehrfach implementierte Anforderungen werden je Implementierung gezählt; Capabilities sind in dieser Verteilung nicht enthalten.',
+      [
+        {
+          title: 'Komponentenverteilung',
+          headers: ['Komponente', 'Implementierte Anforderungen'],
+          rows: dataItems.map((item) => ({ cells: [item.name, item.value] })),
+        },
+      ],
+    );
   });
 }
 
 export function drawComponentBar() {
   return withDataMode('component', function () {
     var container = document.getElementById('bar');
+    beginChartAccess(container, 'component:bar');
     container.innerHTML = '';
     if (typeof d3 === 'undefined') {
       container.innerHTML = '<div class="card">D3 wurde nicht geladen.</div>';
@@ -404,7 +455,7 @@ export function drawComponentBar() {
       .attr('transform', 'translate(0,' + h + ')')
       .call(d3.axisBottom(x).tickFormat(''));
     g.append('g')
-      .call(d3.axisLeft(y).ticks(6).tickFormat(d3.format('d')))
+      .call(d3.axisLeft(y).ticks(6).tickValues(barAxisTickValues(y)).tickFormat(d3.format('d')))
       .selectAll('text')
       .attr('fill', '#40566f');
     g.selectAll('.domain, .tick line').attr('stroke', '#c3d1e0');
@@ -478,5 +529,16 @@ export function drawComponentBar() {
         return d.group;
       });
     addBarAxisTitles(g, w, h, margin, 'Komponente', 'Anzahl implementierter Anforderungen');
+    renderChartData(
+      container,
+      'Implementierte Anforderungen je gefilterter Komponente. Mehrfach implementierte Anforderungen werden je Implementierung gezählt; Capabilities sind in dieser Verteilung nicht enthalten.',
+      [
+        {
+          title: 'Komponentenverteilung',
+          headers: ['Komponente', 'Implementierte Anforderungen'],
+          rows: data.map((item) => ({ cells: [item.group, item.value] })),
+        },
+      ],
+    );
   });
 }

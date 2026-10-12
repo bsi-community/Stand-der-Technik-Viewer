@@ -51,7 +51,7 @@ try {
   if (!ready) throw new Error('Production preview did not start. Run npm run build first.');
   for (const [name, url] of [
     ['before', 'http://127.0.0.1:4174/Stand-der-Technik-Viewer/'],
-    ['after', 'http://127.0.0.1:4183/Stand-der-Technik-Viewer/'],
+    ['after', 'http://127.0.0.1:4183/Stand-der-Technik-Viewer/?design=legacy'],
   ]) {
     const page = await browser.newPage({
       viewport: { width: 1440, height: 1000 },

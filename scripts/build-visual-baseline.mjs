@@ -29,7 +29,10 @@ export async function buildVisualBaseline() {
     execFileSync('tar', ['-x', '-C', root], { input: archive });
     const referenceLock = await readFile(path.join(root, 'package-lock.json'));
     const currentLock = await readFile('package-lock.json');
-    if (!referenceLock.equals(currentLock)) {
+    const legacyLock = JSON.parse(currentLock);
+    delete legacyLock.packages['']['dependencies']['@kern-ux/native'];
+    delete legacyLock.packages['node_modules/@kern-ux/native'];
+    if (JSON.stringify(JSON.parse(referenceLock)) !== JSON.stringify(legacyLock)) {
       throw new Error(
         'Visual baseline dependencies changed. Review and update the frozen reference before comparing builds.',
       );

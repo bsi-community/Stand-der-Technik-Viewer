@@ -7,6 +7,7 @@ import {
   catalogPrimaryGroupFacetLabel,
   catalogSecondaryGroupFacetLabel,
 } from './catalog/hierarchy-filters.js';
+import { isKern } from '../shared/ui/kern.js';
 import { escapeHtml } from '../shared/html.js';
 import { createChip, formatChipValues } from '../shared/ui/overview.js';
 
@@ -17,7 +18,7 @@ export function collectCatalogActiveFilterChips() {
   }
   if (
     catalogStore.allGroups.length &&
-    catalogStore.state.groups.length &&
+    (isKern() || catalogStore.state.groups.length) &&
     catalogStore.state.groups.length !== catalogStore.allGroups.length
   ) {
     chips.push(
@@ -33,7 +34,7 @@ export function collectCatalogActiveFilterChips() {
   }
   if (
     catalogStore.allSubgroups.length &&
-    catalogStore.state.subgroups.length &&
+    (isKern() || catalogStore.state.subgroups.length) &&
     catalogStore.state.subgroups.length !== catalogStore.allSubgroups.length
   ) {
     chips.push(
@@ -49,21 +50,24 @@ export function collectCatalogActiveFilterChips() {
   }
   if (
     catalogStore.allClasses.length &&
-    catalogStore.state.classes.length &&
+    (isKern() || catalogStore.state.classes.length) &&
     catalogStore.state.classes.length !== catalogStore.allClasses.length
   ) {
     chips.push('Quellkataloge: ' + formatChipValues(catalogStore.state.classes, 2));
   }
   if (
     catalogStore.allSecs.length &&
-    catalogStore.state.secs.length &&
+    (isKern() || catalogStore.state.secs.length) &&
     catalogStore.state.secs.length !== catalogStore.allSecs.length
   ) {
     chips.push('Sicherheitsniveaus: ' + formatChipValues(catalogStore.state.secs, 2));
   }
   if (catalogStore.allTargets.length) {
     var targetBase = catalogStore.allTargets.length + 1;
-    if (catalogStore.state.targets.length && catalogStore.state.targets.length !== targetBase) {
+    if (
+      (isKern() || catalogStore.state.targets.length) &&
+      catalogStore.state.targets.length !== targetBase
+    ) {
       var targetChip =
         'Zielobjekte: ' +
         formatChipValues(
@@ -80,7 +84,10 @@ export function collectCatalogActiveFilterChips() {
   }
   if (catalogStore.allTags.length) {
     var tagBase = catalogStore.allTags.length + 1;
-    if (catalogStore.state.tags.length && catalogStore.state.tags.length !== tagBase) {
+    if (
+      (isKern() || catalogStore.state.tags.length) &&
+      catalogStore.state.tags.length !== tagBase
+    ) {
       chips.push(
         'Tags: ' +
           formatChipValues(
@@ -94,28 +101,28 @@ export function collectCatalogActiveFilterChips() {
   }
   if (
     catalogStore.allEfforts.length &&
-    catalogStore.state.efforts.length &&
+    (isKern() || catalogStore.state.efforts.length) &&
     catalogStore.state.efforts.length !== catalogStore.allEfforts.length
   ) {
     chips.push('Aufwand: ' + formatChipValues(catalogStore.state.efforts, 3));
   }
   if (
     catalogStore.allModalverbs.length &&
-    catalogStore.state.modalverbs.length &&
+    (isKern() || catalogStore.state.modalverbs.length) &&
     catalogStore.state.modalverbs.length !== catalogStore.allModalverbs.length
   ) {
     chips.push('Modalverben: ' + formatChipValues(catalogStore.state.modalverbs, 3));
   }
   if (
     catalogStore.allDocumentations.length &&
-    catalogStore.state.documentations.length &&
+    (isKern() || catalogStore.state.documentations.length) &&
     catalogStore.state.documentations.length !== catalogStore.allDocumentations.length
   ) {
     chips.push('Dokumentation: ' + formatChipValues(catalogStore.state.documentations, 2));
   }
   if (
     catalogStore.allActionwords.length &&
-    catalogStore.state.actionwords.length &&
+    (isKern() || catalogStore.state.actionwords.length) &&
     catalogStore.state.actionwords.length !== catalogStore.allActionwords.length
   ) {
     chips.push('Handlungswörter: ' + formatChipValues(catalogStore.state.actionwords, 2));
@@ -141,28 +148,28 @@ export function collectComponentActiveFilterChips() {
   }
   if (
     componentStore.allComponentTypes.length &&
-    componentStore.componentState.types.length &&
+    (isKern() || componentStore.componentState.types.length) &&
     componentStore.componentState.types.length !== componentStore.allComponentTypes.length
   ) {
     chips.push('Typen: ' + formatChipValues(componentStore.componentState.types, 2));
   }
   if (
     componentStore.allComponentSources.length &&
-    componentStore.componentState.sources.length &&
+    (isKern() || componentStore.componentState.sources.length) &&
     componentStore.componentState.sources.length !== componentStore.allComponentSources.length
   ) {
     chips.push('Quellen: ' + formatChipValues(componentStore.componentState.sources, 2));
   }
   if (
     componentStore.allComponentNames.length &&
-    componentStore.componentState.names.length &&
+    (isKern() || componentStore.componentState.names.length) &&
     componentStore.componentState.names.length !== componentStore.allComponentNames.length
   ) {
     chips.push('Komponenten: ' + formatChipValues(componentStore.componentState.names, 2));
   }
   if (
     componentStore.allCapabilityNames.length &&
-    componentStore.componentState.capabilityNames.length &&
+    (isKern() || componentStore.componentState.capabilityNames.length) &&
     componentStore.componentState.capabilityNames.length !==
       componentStore.allCapabilityNames.length
   ) {

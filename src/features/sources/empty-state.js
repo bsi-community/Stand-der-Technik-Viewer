@@ -9,6 +9,13 @@ import {
 } from '../../app/actions.js';
 import { uiStore } from '../../app/store.js';
 import { escapeHtml } from '../../shared/html.js';
+import {
+  isKern,
+  kernField,
+  kernButton,
+  prepareUrlField,
+  runImportAction,
+} from '../../shared/ui/kern.js';
 import { bindDropzone } from '../../shared/ui/dropzone.js';
 
 export function getWorkspaceUploadConfig(mode) {
@@ -172,7 +179,7 @@ export function renderWorkspaceEmptyState(container, mode) {
   urlButton.textContent = 'Von URL laden';
   function submitWorkspaceUrl() {
     if (cfg.urlInput) cfg.urlInput.value = urlInput.value;
-    cfg.urlLoader(urlInput.value);
+    runImportAction(urlButton, () => cfg.urlLoader(urlInput.value));
   }
   urlButton.addEventListener('click', submitWorkspaceUrl);
   urlInput.addEventListener('keydown', function (ev) {
@@ -183,6 +190,12 @@ export function renderWorkspaceEmptyState(container, mode) {
   });
   urlRow.appendChild(urlInput);
   urlRow.appendChild(urlButton);
+  if (isKern()) {
+    urlInput.id = `workspace-${mode}-url`;
+    kernField(urlInput, 'Dokument-URL', { hideLabel: true });
+    prepareUrlField(urlInput, mode);
+    kernButton(urlButton, 'primary');
+  }
   urlOption.appendChild(urlRow);
   options.appendChild(urlOption);
 
@@ -208,6 +221,10 @@ export function renderWorkspaceEmptyState(container, mode) {
       repositorySelect.value = '';
     });
     repositoryOption.appendChild(repositorySelect);
+    if (isKern()) {
+      repositorySelect.id = `workspace-${mode}-repository`;
+      kernField(repositorySelect, 'Dokument aus der Bibliothek', { hideLabel: true });
+    }
     var repositoryStatus = document.createElement('p');
     repositoryStatus.className = 'workspace-upload-status';
     repositoryStatus.setAttribute('data-workspace-repository-status', mode);

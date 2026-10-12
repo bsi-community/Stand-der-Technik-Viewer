@@ -1,12 +1,23 @@
+import {
+  beginChartAccess,
+  renderChartData,
+  graphDataSections,
+  addGraphControls,
+  chartMotionDuration,
+} from './accessibility.js';
+import { isKern } from '../../shared/ui/kern.js';
 /** features/visualizations/mappings: see docs/architecture.md for responsibilities. */
 import * as d3 from 'd3';
 import {
   addBarAxisTitles,
+  barAxisTickValues,
   addSunburstCenterLabel,
   addSunburstSegmentLabels,
   renderChartLegend,
   renderSunburstLegend,
   sunburstChartCenterX,
+  sunburstChartRadius,
+  setGraphSimulation,
   sunburstInnerRadius,
   visibleMappingEntries,
 } from './common.js';
@@ -14,6 +25,8 @@ import {
 export function drawMappingGraph() {
   var el = document.getElementById('graph');
   if (!el) return;
+  beginChartAccess(el, 'mapping:graph');
+  setGraphSimulation(el, null);
   el.classList.remove('chart-unavailable');
   el.innerHTML =
     '<div class="graph-toolbar"><button id="fitBtn" class="btn" title="Alles anzeigen">Alles anzeigen</button></div>';
@@ -107,6 +120,7 @@ export function drawMappingGraph() {
     .force('charge', d3.forceManyBody().strength(-310))
     .force('center', d3.forceCenter(width / 2, height / 2))
     .force('collide', d3.forceCollide(42));
+  setGraphSimulation(el, sim);
   var link = g
     .selectAll('.mapping-graph-link')
     .data(links)
@@ -163,11 +177,13 @@ export function drawMappingGraph() {
   node.append('title').text(function (d) {
     return (d.side === 'source' ? 'Source: ' : 'Target: ') + d.catalog + ' · ' + d.label;
   });
+  var userInteracted = false;
   var zoom = d3
     .zoom()
     .scaleExtent([0.05, 8])
     .on('zoom', function (ev) {
       g.attr('transform', ev.transform);
+      if (ev.sourceEvent) userInteracted = true;
     });
   svg.call(zoom);
   function fit() {
@@ -181,7 +197,7 @@ export function drawMappingGraph() {
     var ty = height / 2 - scale * (bounds.y + bounds.height / 2);
     svg
       .transition()
-      .duration(350)
+      .duration(chartMotionDuration(350))
       .call(zoom.transform, d3.zoomIdentity.translate(tx, ty).scale(scale));
   }
   var fitBtn = document.getElementById('fitBtn');
@@ -204,11 +220,34 @@ export function drawMappingGraph() {
       return 'translate(' + d.x + ',' + d.y + ')';
     });
   });
-  sim.on('end', fit);
+  sim.on('end', () => {
+    if (!isKern() || !userInteracted) fit();
+  });
+  addGraphControls(el, svg, zoom, fit, () => {
+    userInteracted = true;
+  });
+  renderChartData(
+    el,
+    nodes.length +
+      ' Quell- und Zielknoten mit ' +
+      links.length +
+      ' Verbindungen. Mehrfachzuordnungen erscheinen im Graphen als einzelne Quell-Ziel-Verbindungen. Die Beziehung wird aus Sicht der Quelle gelesen.',
+    graphDataSections(
+      nodes,
+      links,
+      null,
+      (d) => (d.side === 'source' ? 'Quelle: ' : 'Ziel: ') + d.catalog,
+      {
+        id: (d) => d.label,
+        endpoint: (d) => d.label + ' · ' + d.catalog,
+      },
+    ),
+  );
 }
 
 export function drawMappingSunburst() {
   var container = document.getElementById('sunburst');
+  beginChartAccess(container, 'mapping:sunburst');
   container.classList.remove('chart-unavailable');
   container.innerHTML = '';
   if (typeof d3 === 'undefined') {
@@ -242,7 +281,7 @@ export function drawMappingSunburst() {
   };
   var w = container.clientWidth || 900,
     h = container.clientHeight || 600,
-    r = Math.min(w, h) / 2 - 24;
+    r = sunburstChartRadius(w, h, 24);
   var root = d3.hierarchy(data).sum(function (d) {
     return d.value || 0;
   });
@@ -310,10 +349,26 @@ export function drawMappingSunburst() {
     return d.data.name;
   });
   addSunburstCenterLabel(g, 'Mappings', root.value, 'Beziehungen');
+  renderChartData(
+    container,
+    'Gefilterte Mapping-Beziehungen, gegliedert nach Quellkatalog und Beziehungstyp.',
+    [
+      {
+        title: 'Mapping-Verteilung',
+        headers: ['Quellkatalog', 'Beziehung', 'Anzahl'],
+        rows: catalogs.flatMap((catalog) =>
+          Object.keys(grouped[catalog]).map((rel) => ({
+            cells: [catalog, rel, grouped[catalog][rel]],
+          })),
+        ),
+      },
+    ],
+  );
 }
 
 export function drawMappingBar() {
   var container = document.getElementById('bar');
+  beginChartAccess(container, 'mapping:bar');
   container.classList.remove('chart-unavailable');
   container.innerHTML = '';
   if (typeof d3 === 'undefined') {
@@ -362,7 +417,7 @@ export function drawMappingBar() {
     .style('text-anchor', 'end')
     .attr('fill', '#40566f');
   g.append('g')
-    .call(d3.axisLeft(y).ticks(6).tickFormat(d3.format('d')))
+    .call(d3.axisLeft(y).ticks(6).tickValues(barAxisTickValues(y)).tickFormat(d3.format('d')))
     .selectAll('text')
     .attr('fill', '#40566f');
   g.selectAll('.mapping-bar')
@@ -403,4 +458,11 @@ export function drawMappingBar() {
       return counts[k];
     });
   addBarAxisTitles(g, w, h, margin, 'Relationship-Typ', 'Anzahl Mapping-Beziehungen');
+  renderChartData(container, 'Anzahl der gefilterten Mapping-Beziehungen je Beziehungstyp.', [
+    {
+      title: 'Mapping-Verteilung',
+      headers: ['Beziehung', 'Anzahl'],
+      rows: keys.map((key) => ({ cells: [key, counts[key]] })),
+    },
+  ]);
 }

@@ -41,7 +41,7 @@ test('current release starts once and preserves bookmarked parameters and fragme
 }) => {
   const { documents, checks } = await serveStartup(page);
   await page.goto('./?primary_tab=mappings&keep=a%2Fb&keep=c#bookmark');
-  await expect(page.locator('#mappingPanel')).toBeVisible();
+  await expect(page.locator('#homeTab')).toBeVisible();
   expect(documents).toHaveLength(1);
   expect(checks).toHaveLength(1);
   await expect(page).toHaveURL(/primary_tab=mappings&keep=a%2Fb&keep=c#bookmark$/);
@@ -56,12 +56,13 @@ for (const missingAssets of [false, true]) {
       await page.route('**/removed-entry.js', (route) => route.fulfill({ status: 404, body: '' }));
     }
     await page.goto('./?primary_tab=mappings&keep=a%2Fb&keep=c#bookmark');
-    await expect(page.locator('#mappingPanel')).toBeVisible();
+    await expect(page.locator('#homeTab')).toBeVisible();
     await expect(page).not.toHaveURL(/_viewer_release/);
     expect(documents).toHaveLength(2);
     expect(new URL(documents[1]).searchParams.get('_viewer_release')).toBe(release.buildId);
     expect(checks).toHaveLength(2);
     await expect(page).toHaveURL(/primary_tab=mappings&keep=a%2Fb&keep=c#bookmark$/);
+    await page.locator('#tab-mappings').click();
     await page.locator('#mappingFile').setInputFiles({
       name: 'mapping.json',
       mimeType: 'application/json',
@@ -71,10 +72,12 @@ for (const missingAssets of [false, true]) {
   });
 }
 
-test('legacy bookmarks retain their workspace and fragment during an update', async ({ page }) => {
+test('legacy bookmarks retain their parameters and fragment but start at home during an update', async ({
+  page,
+}) => {
   const { documents } = await serveStartup(page, { stale: true });
   await page.goto('Stand%20der%20Technik-Viewer.html?primary_tab=components#bookmark');
-  await expect(page.locator('#componentPanel')).toBeVisible();
+  await expect(page.locator('#homeTab')).toBeVisible();
   await expect(page).toHaveURL(/\/\?primary_tab=components#bookmark$/);
   expect(documents).toHaveLength(2);
 });
@@ -82,7 +85,7 @@ test('legacy bookmarks retain their workspace and fragment during an update', as
 test('an inconsistent deployment cannot cause a reload loop', async ({ page }) => {
   const { documents } = await serveStartup(page, { stale: true, alwaysStale: true });
   await page.goto('./?primary_tab=mappings#bookmark');
-  await expect(page.locator('#mappingPanel')).toBeVisible();
+  await expect(page.locator('#homeTab')).toBeVisible();
   await expect(page).not.toHaveURL(/_viewer_release/);
   expect(documents).toHaveLength(2);
 });
@@ -95,7 +98,7 @@ for (const failure of ['unavailable', 'invalid', 'timeout']) {
       await route.fulfill({ json: { buildId: 'https://example.org/untrusted' } });
     });
     await page.goto('./?primary_tab=mappings');
-    await expect(page.locator('#mappingPanel')).toBeVisible();
+    await expect(page.locator('#homeTab')).toBeVisible();
     await expect(page).toHaveURL(new RegExp(base + '\\?primary_tab=mappings$'));
   });
 }
@@ -105,7 +108,8 @@ test('a running session keeps uploaded files when a newer release becomes availa
 }) => {
   const { checks, documents } = await serveStartup(page);
   await page.goto('./?primary_tab=mappings');
-  await expect(page.locator('#mappingPanel')).toBeVisible();
+  await expect(page.locator('#homeTab')).toBeVisible();
+  await page.locator('#tab-mappings').click();
   await page.locator('#mappingFile').setInputFiles({
     name: 'mapping.json',
     mimeType: 'application/json',

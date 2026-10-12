@@ -94,6 +94,14 @@ export function restoreViewerStateFromUrl() {
   if (!allowedSecondary[secondary]) secondary = '';
 
   return loadOscalDeepLink().then(function (loaded) {
+    // A stale workspace tab must not replace the home page on a fresh KERN visit.
+    // Document deep links and explicit comparison scenarios retain their destination.
+    if (
+      document.documentElement.dataset.viewerDesign === 'kern' &&
+      !loaded &&
+      !params.has('preview')
+    )
+      return loaded;
     if (primary) switchTab(primary);
     if (secondary) switchTab(secondary);
     return loaded;

@@ -1,6 +1,7 @@
 /** features/catalog/target-filter: see docs/architecture.md for responsibilities. */
 import { catalogStore, hierarchyStore, uiStore } from '../../app/store.js';
 import { normalizeTargetCategoryName } from '../../domain/target-hierarchy.js';
+import { isKern } from '../../shared/ui/kern.js';
 import { uniqueList } from '../../shared/collections.js';
 import { msUpdateSummary } from '../../shared/ui/multiselect.js';
 
@@ -110,6 +111,24 @@ export function positionTargetHelpTooltip() {
   if (!trigger || !trigger.getBoundingClientRect) return;
   var triggerRect = trigger.getBoundingClientRect();
   if (triggerRect.height <= 0) return;
+  if (isKern()) {
+    const tooltip = uiStore.els.targetHelpTooltip;
+    const width = Math.min(300, window.innerWidth - 16);
+    tooltip.style.width = width + 'px';
+    const beside = triggerRect.right + 10 + width <= window.innerWidth - 8;
+    const left = beside
+      ? triggerRect.right + 10
+      : Math.max(8, Math.min(triggerRect.right - width, window.innerWidth - width - 8));
+    const height = tooltip.offsetHeight;
+    const top = beside
+      ? triggerRect.top + (triggerRect.height - height) / 2
+      : triggerRect.bottom + 8 + height <= window.innerHeight - 8
+        ? triggerRect.bottom + 8
+        : triggerRect.top - height - 8;
+    tooltip.style.left = left + 'px';
+    tooltip.style.top = Math.max(8, Math.min(top, window.innerHeight - height - 8)) + 'px';
+    return;
+  }
   var left = triggerRect.right + 10;
   var availableWidth = Math.max(80, window.innerWidth - left - 8);
   uiStore.els.targetHelpTooltip.style.width = Math.min(300, availableWidth) + 'px';
@@ -153,7 +172,8 @@ export function bindTargetHelpUi() {
     trigger.addEventListener('keydown', function (event) {
       if (event.key === 'Escape') {
         hideTargetHelpTooltip();
-        trigger.blur();
+        if (!isKern()) trigger.blur();
+        event.preventDefault();
       }
     });
   }

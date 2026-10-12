@@ -1,0 +1,122 @@
+/* The print copy is never part of the interactive workspace. */
+#viewerPrintDocument {
+  display: none;
+}
+@media print {
+  @page {
+    size: A4;
+    margin: 15mm;
+  }
+  body.print-mode {
+    display: block;
+    min-height: 0;
+    margin: 0;
+  }
+  #viewerPrintDocument :is(p, li, dd, dt, .catalog-md, .description) {
+    font-size: 10pt;
+    line-height: 1.5;
+  }
+  #viewerPrintDocument :is(.card, details) {
+    border: 0;
+    padding: 0;
+    margin: 0 0 10pt;
+  }
+  #viewerPrintDocument summary {
+    font-size: 12pt;
+    padding: 4pt 0;
+  }
+  #viewerPrintDocument tr {
+    break-inside: avoid;
+  }
+  #viewerPrintDocument .description-collapse-content {
+    max-height: none !important;
+    overflow: visible !important;
+    mask-image: none !important;
+    -webkit-mask-image: none !important;
+  }
+  #viewerPrintDocument .description-collapse::after {
+    display: none !important;
+  }
+  #viewerPrintDocument .implemented-requirement-remarks {
+    display: block;
+  }
+  #viewerPrintDocument .catalog-md p {
+    orphans: 3;
+    widows: 3;
+  }
+  #viewerPrintDocument h2,
+  #viewerPrintDocument h3,
+  #viewerPrintDocument dt {
+    break-after: avoid;
+  }
+  #viewerPrintDocument .kern-description-list-item {
+    break-inside: avoid;
+  }
+
+  body.print-mode > :not(#viewerPrintDocument) {
+    display: none !important;
+  }
+  body.print-mode #viewerPrintDocument {
+    display: block !important;
+    color: #000;
+    background: #fff;
+    font: 400 10pt/1.5 var(--viewer-font);
+    width: 100%;
+    max-width: none;
+  }
+  #viewerPrintDocument > h1 {
+    font-size: 18pt;
+    margin: 0 0 8pt;
+  }
+  #viewerPrintDocument h2 {
+    font-size: 14pt;
+  }
+  #viewerPrintDocument .card,
+  #viewerPrintDocument details,
+  #viewerPrintDocument .viewer-description-list {
+    break-inside: auto;
+    page-break-inside: auto;
+  }
+  #viewerPrintDocument summary {
+    break-after: avoid;
+  }
+  #viewerPrintDocument .viewer-table-scroll {
+    overflow: visible;
+    border: 0;
+  }
+  #viewerPrintDocument table {
+    min-width: 0;
+    width: 100%;
+    table-layout: fixed;
+  }
+  #viewerPrintDocument thead {
+    display: table-header-group;
+  }
+  #viewerPrintDocument th,
+  #viewerPrintDocument td,
+  #viewerPrintDocument .kern-description-list-item__value {
+    font-size: 10pt;
+    overflow-wrap: anywhere;
+  }
+  #viewerPrintDocument .viewer-description-list {
+    display: block;
+  }
+  #viewerPrintDocument .kern-description-list-item {
+    margin: 0 0 8pt;
+  }
+  #viewerPrintDocument pre {
+    background: #fff;
+    color: #000;
+    border: 1px solid #777;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+  #viewerPrintDocument .practice-children,
+  #viewerPrintDocument .topic-children {
+    padding: 0 0 0 8pt;
+  }
+  #viewerPrintDocument .kern-details__header::before,
+  #viewerPrintDocument summary::after {
+    display: none;
+  }
+}

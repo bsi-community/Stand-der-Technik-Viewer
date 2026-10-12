@@ -67,3 +67,18 @@ test('bootstrap provides every callback exposed to views', () => {
   ).expression.arguments[0];
   expect(wiring.properties.map((p) => p.key.name).sort()).toEqual(required.sort());
 });
+
+test('KERN CSS imports only its own composition modules and the pinned native package', () => {
+  for (const file of walk(path.join(root, 'styles/kern')).filter((f) => f.endsWith('.css'))) {
+    const css = fs.readFileSync(file, 'utf8');
+    for (const match of css.matchAll(/@import\s+['"]([^'"]+)['"]/g)) {
+      if (match[1].startsWith('@kern-ux/native/')) continue;
+      expect(
+        path
+          .resolve(path.dirname(file), match[1])
+          .startsWith(path.join(root, 'styles/kern') + path.sep),
+      ).toBe(true);
+    }
+    expect(css).not.toMatch(/layer\(legacy\)/);
+  }
+});

@@ -1,0 +1,175 @@
+/* KERN 2.8.2 tokens; the BundesSans brand exception changes only the font token. */
+:root {
+  --viewer-font: 'Fira Sans', Arial, sans-serif;
+  --kern-typography-font-family-default: var(--viewer-font);
+  --bg: var(--kern-color-layout-background-default);
+  --panel: var(--kern-color-layout-background-default-surface);
+  --card: var(--bg);
+  --text: var(--kern-color-layout-text-default, #131525);
+  --dim: var(--kern-color-layout-text-muted, #51577a);
+  --accent: var(--kern-color-action-default, #1a3da5);
+  --accent-strong: var(--kern-color-action-default);
+  --accent-soft: color-mix(in srgb, var(--accent) 8%, var(--bg));
+  --muted: var(--kern-color-decorative-border-default);
+  --ring: var(--kern-color-action-focus-default);
+  --viewer-highlight: var(--kern-color-feedback-warning-background, #fff3cd);
+  --ok: var(--kern-color-feedback-success);
+  --success: var(--kern-color-feedback-success);
+  --success-soft: var(--kern-color-feedback-success-background);
+  --warning: var(--kern-color-feedback-warning);
+  --warning-soft: var(--kern-color-feedback-warning-background);
+  --danger: var(--kern-color-feedback-danger);
+  --shadow: none;
+  --shadow-soft: none;
+}
+html {
+  scroll-behavior: auto;
+}
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--viewer-font);
+  font-size: 16px;
+  line-height: 1.5;
+}
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+button,
+.btn,
+select,
+.input {
+  border-radius: 4px;
+}
+button,
+.btn {
+  cursor: pointer;
+  box-shadow: none;
+  transform: none;
+}
+.btn {
+  background: white;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  padding: 10px 16px;
+  min-height: 44px;
+  font-weight: 500;
+}
+.btn.small {
+  font-size: 14px;
+  min-height: 40px;
+  padding: 8px 12px;
+}
+.btn:hover,
+.tab:hover,
+.sidebar-tab:hover {
+  transform: none;
+  background: var(--accent-soft);
+  box-shadow: none;
+}
+.input,
+select {
+  background: white;
+  border: 1px solid #6c7189;
+  min-height: 44px;
+  padding: 10px 12px;
+  color: var(--text);
+}
+.input:focus {
+  outline: 3px solid var(--ring);
+  outline-offset: 2px;
+}
+:where(button, a, summary, input, select, textarea, [tabindex]):focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: 3px;
+}
+a {
+  color: var(--accent);
+  text-underline-offset: 3px;
+}
+code,
+pre,
+.json-pre {
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+}
+.hint,
+.note,
+.panel-copy {
+  color: var(--dim);
+  font-size: 14px;
+}
+.hidden {
+  display: none !important;
+}
+.kern-btn {
+  width: auto;
+}
+.kern-skip {
+  position: absolute;
+  left: 16px;
+  top: -90px;
+  z-index: 100;
+  background: white;
+  padding: 12px;
+}
+.kern-skip:focus {
+  top: 8px;
+}
+.kern-preview-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  padding: 8px 32px;
+  background: #eef0f6;
+  color: #343950;
+  font-size: 14px;
+  border-bottom: 1px solid var(--muted);
+}
+.kern-preview-bar p {
+  margin: 0;
+}
+.kern-preview-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.kern-preview-nav a {
+  white-space: nowrap;
+}
+.kern-preview-nav a[aria-current='page'] {
+  font-weight: 700;
+  text-decoration-thickness: 2px;
+}
+.kern-font-note {
+  font-size: 12px;
+  color: var(--dim);
+}
+@media print {
+  .kern-preview-bar,
+  .kern-skip {
+    display: none !important;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.kern-demo-note {
+  margin: 0;
+  padding: 10px 14px;
+  background: #fff7dc;
+  border-left: 4px solid #94611d;
+  font-size: 14px;
+  color: #594008;
+}

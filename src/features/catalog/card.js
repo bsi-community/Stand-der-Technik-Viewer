@@ -11,6 +11,7 @@ import {
 } from '../../shared/markup.js';
 import { containsAnySearchTerm } from '../../shared/search.js';
 import { bindEffortTooltip, getEffortDisplayValue } from '../../shared/ui/effort-tooltip.js';
+import { isKern, kernDetails, kernButton, descriptionListFromMeta } from '../../shared/ui/kern.js';
 import { openJsonModal } from '../../shared/ui/messages.js';
 
 export function renderCard(c) {
@@ -194,6 +195,26 @@ export function renderCard(c) {
     }
   }
   if (details.childElementCount) body.appendChild(details);
+  if (document.documentElement.dataset.viewerDesign === 'kern') {
+    const meta = body.querySelector(':scope > .meta');
+    const section = document.createElement('section');
+    section.className = 'viewer-control-metadata';
+    const heading = document.createElement('h4');
+    heading.className = 'control-meta-heading';
+    heading.textContent = 'Metadaten';
+    section.append(heading, descriptionListFromMeta(meta));
+    meta.remove();
+    body.append(section);
+    for (const disclosure of details.querySelectorAll('details')) kernDetails(disclosure);
+    const labels = {
+      Statement: 'Anforderung',
+      Guidance: 'Umsetzungshinweise',
+      Remarks: 'Anmerkungen',
+    };
+    for (const strong of details.querySelectorAll('summary > strong')) {
+      if (labels[strong.textContent]) strong.textContent = labels[strong.textContent];
+    }
+  }
 
   var required = [],
     related = [];
@@ -255,9 +276,15 @@ export function renderCard(c) {
       openJsonModal(c.raw, jsonBtn);
     }
   });
+  kernButton(jsonBtn);
+  if (isKern()) jsonBtn.setAttribute('aria-label', `JSON zu ${c.id} anzeigen`);
   actions.appendChild(jsonBtn);
   body.appendChild(actions);
   div.appendChild(body);
+  if (isKern()) {
+    div.classList.add('viewer-control');
+    summary.setAttribute('aria-label', `${c.id}: ${c.title}`);
+  }
 
   return div;
 }
@@ -304,6 +331,7 @@ export function renderRelItem(t, kind) {
       ? '<div class="hint catalog-md" style="margin-top:6px">' + stHtml + '</div>'
       : '') +
     '<div style="margin-top:10px"><button class="btn small btn-goto" type="button" style="width:auto">Zum Eintrag</button></div>';
+  kernButton(el.querySelector('.btn-goto'));
   el.querySelector('.btn-goto').addEventListener('click', function () {
     switchTab('list');
     if (t.groupKey) {

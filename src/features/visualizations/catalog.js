@@ -1,4 +1,13 @@
+import {
+  beginChartAccess,
+  renderChartData,
+  graphDataSections,
+  addGraphControls,
+  chartMotionDuration,
+} from './accessibility.js';
+import { isKern } from '../../shared/ui/kern.js';
 /** features/visualizations/catalog: see docs/architecture.md for responsibilities. */
+import { resetAllFilters } from '../../app/reset.js';
 import { renderList, switchTab } from '../../app/actions.js';
 import { catalogStore, uiStore } from '../../app/store.js';
 import { SDT_PRACTICES } from '../../config.js';
@@ -8,11 +17,14 @@ import { catalogPrimaryGroupFacetLabel } from '../catalog/hierarchy-filters.js';
 import { baseMatches, matches } from '../catalog/selectors.js';
 import {
   addBarAxisTitles,
+  barAxisTickValues,
   addSunburstCenterLabel,
   addSunburstSegmentLabels,
   renderChartLegend,
   renderSunburstLegend,
   sunburstChartCenterX,
+  sunburstChartRadius,
+  setGraphSimulation,
   sunburstInnerRadius,
 } from './common.js';
 import { drawComponentBar, drawComponentGraph, drawComponentSunburst } from './components.js';
@@ -34,6 +46,8 @@ export function drawGraph() {
   try {
     var el = document.getElementById('graph');
     if (!el) return;
+    beginChartAccess(el, 'catalog:graph');
+    setGraphSimulation(el, null);
     el.classList.remove('chart-unavailable');
     el.innerHTML =
       '<div class="graph-toolbar"><button id="fitBtn" class="btn" title="Alles anzeigen">Alles anzeigen</button></div>';
@@ -178,6 +192,7 @@ export function drawGraph() {
       .force('charge', d3.forceManyBody().strength(-240))
       .force('center', d3.forceCenter(width / 2, height / 2))
       .force('collide', d3.forceCollide(40));
+    setGraphSimulation(el, sim);
 
     var link = g
       .selectAll('.link')
@@ -209,6 +224,7 @@ export function drawGraph() {
         d3
           .drag()
           .on('start', function (ev, d) {
+            userInteracted = true;
             d.fx = d.x;
             d.fy = d.y;
           })
@@ -237,7 +253,8 @@ export function drawGraph() {
       .attr('y', 4)
       .attr('font-size', '12px')
       .attr('fill', '#162434');
-    node.on('click', function (ev, d) {
+    function openGraphNode(ev, d) {
+      if (isKern() && !primaryIds.has(d.id)) resetAllFilters();
       switchTab('list');
       if (d.groupKey) {
         openGroupChain(d.groupKey);
@@ -258,14 +275,20 @@ export function drawGraph() {
       setTimeout(function () {
         var card = document.getElementById('card-' + cssId(d.id));
         if (card) {
-          card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          card.scrollIntoView({
+            behavior: chartMotionDuration(1) ? 'smooth' : 'auto',
+            block: 'center',
+          });
+          if (isKern()) card.querySelector('summary')?.focus({ preventScroll: true });
           card.classList.add('highlight');
           setTimeout(function () {
             card.classList.remove('highlight');
           }, 1500);
         }
       }, 0);
-    });
+    }
+
+    node.on('click', openGraphNode);
 
     var autoFitDone = false;
     var userInteracted = false;
@@ -281,7 +304,7 @@ export function drawGraph() {
       });
     svg.call(zoom);
 
-    function fitToScreenInternal() {
+    function fitToScreenInternal(animate = true) {
       var minX = Infinity,
         minY = Infinity,
         maxX = -Infinity,
@@ -303,10 +326,8 @@ export function drawGraph() {
       if (scale > 10) scale = 10;
       var tx = ((el.clientWidth || 900) - scale * (minX + maxX)) / 2;
       var ty = ((el.clientHeight || 600) - scale * (minY + maxY)) / 2;
-      svg
-        .transition()
-        .duration(400)
-        .call(zoom.transform, d3.zoomIdentity.translate(tx, ty).scale(scale));
+      const target = animate ? svg.transition().duration(chartMotionDuration(400)) : svg;
+      target.call(zoom.transform, d3.zoomIdentity.translate(tx, ty).scale(scale));
     }
 
     function autoFitToScreen() {
@@ -316,6 +337,7 @@ export function drawGraph() {
     }
 
     function manualFitToScreen() {
+      userInteracted = true;
       fitToScreenInternal();
     }
 
@@ -324,7 +346,7 @@ export function drawGraph() {
       fitBtn.addEventListener('click', manualFitToScreen);
     }
 
-    sim.on('tick', function () {
+    function renderGraphTick() {
       link
         .attr('x1', function (d) {
           return d.source.x;
@@ -341,8 +363,29 @@ export function drawGraph() {
       node.attr('transform', function (d) {
         return 'translate(' + d.x + ',' + d.y + ')';
       });
-    });
+      // Keep large graphs in view from the first frame. Waiting for simulation.end
+      // leaves slow devices with a clipped graph for several seconds.
+      if (isKern() && !userInteracted) fitToScreenInternal(false);
+    }
+    sim.on('tick', renderGraphTick);
     sim.on('end', autoFitToScreen);
+    if (isKern()) renderGraphTick();
+    addGraphControls(el, svg, zoom, manualFitToScreen, () => {
+      userInteracted = true;
+    });
+    renderChartData(
+      el,
+      nodes.length +
+        ' Anforderungen und ' +
+        links.length +
+        ' Beziehungen. Kontextknoten ergänzen die Filtertreffer; ihr Öffnen setzt die Filter zurück. Bei required zeigt der Ausgangspunkt die Voraussetzung und das Ziel die abhängige Anforderung.',
+      graphDataSections(
+        nodes,
+        links,
+        (d) => openGraphNode(null, d),
+        (d) => (primaryIds.has(d.id) ? 'Filtertreffer' : 'Kontext außerhalb der Filter'),
+      ),
+    );
 
     uiStore.els.graphInfo.textContent =
       'Graph: ' + nodes.length + ' Knoten / ' + links.length + ' Kanten';
@@ -438,6 +481,7 @@ export function drawSunburst() {
     return;
   }
   var container = document.getElementById('sunburst');
+  beginChartAccess(container, 'catalog:sunburst');
   container.innerHTML = '';
   if (typeof d3 === 'undefined') {
     container.innerHTML = '<div class="card">D3 wurde nicht geladen.</div>';
@@ -463,7 +507,7 @@ export function drawSunburst() {
 
   var w = container.clientWidth || 900;
   var h = container.clientHeight || 600;
-  var r = Math.min(w, h) / 2 - 30;
+  var r = sunburstChartRadius(w, h, 30);
 
   var color = d3.scaleOrdinal(d3.schemeTableau10).domain(keys);
 
@@ -521,6 +565,23 @@ export function drawSunburst() {
     return d.data.name;
   });
   addSunburstCenterLabel(g, 'Katalog', root.value, 'Anforderungen');
+  renderChartData(
+    container,
+    'Anzahl der gefilterten Anforderungen je ' + catalogPrimaryGroupFacetLabel() + '.',
+    [
+      {
+        title: 'Anforderungsverteilung',
+        headers: ['Gruppe', 'Anzahl', 'Zusätzliche Angaben'],
+        rows: keys.map((key) => ({
+          cells: [
+            diagramGroupTitle(key),
+            counts[key],
+            buildDiagramTooltip(key, counts[key], diagramStats),
+          ],
+        })),
+      },
+    ],
+  );
 }
 
 export function drawBar() {
@@ -533,6 +594,7 @@ export function drawBar() {
     return;
   }
   var container = document.getElementById('bar');
+  beginChartAccess(container, 'catalog:bar');
   container.innerHTML = '';
   if (typeof d3 === 'undefined') {
     container.innerHTML = '<div class="card">D3 wurde nicht geladen.</div>';
@@ -584,7 +646,7 @@ export function drawBar() {
     .style('text-anchor', 'end')
     .attr('fill', '#40566f');
   g.append('g')
-    .call(d3.axisLeft(y).ticks(6).tickFormat(d3.format('d')))
+    .call(d3.axisLeft(y).ticks(6).tickValues(barAxisTickValues(y)).tickFormat(d3.format('d')))
     .selectAll('text')
     .attr('fill', '#40566f');
   g.selectAll('.domain, .tick line').attr('stroke', '#c3d1e0');
@@ -630,4 +692,21 @@ export function drawBar() {
       return d.value;
     });
   addBarAxisTitles(g, w, h, margin, catalogPrimaryGroupFacetLabel(), 'Anzahl Anforderungen');
+  renderChartData(
+    container,
+    'Anzahl der gefilterten Anforderungen je ' + catalogPrimaryGroupFacetLabel() + '.',
+    [
+      {
+        title: 'Anforderungsverteilung',
+        headers: ['Gruppe', 'Anzahl', 'Zusätzliche Angaben'],
+        rows: keys.map((key) => ({
+          cells: [
+            diagramGroupTitle(key),
+            counts[key],
+            buildDiagramTooltip(key, counts[key], diagramStats),
+          ],
+        })),
+      },
+    ],
+  );
 }

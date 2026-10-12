@@ -12,6 +12,7 @@ import { renderHighlightedInline, renderTextWithParams } from '../../shared/mark
 import { hideEffortTooltip } from '../../shared/ui/effort-tooltip.js';
 import { showMsg } from '../../shared/ui/messages.js';
 import { renderOverviewCard } from '../../shared/ui/overview.js';
+import { isKern } from '../../shared/ui/kern.js';
 
 export function renderList() {
   try {
@@ -52,6 +53,12 @@ export function renderList() {
       uiStore.els.graphInfo.textContent = 'Graph: 0 Knoten';
       return;
     }
+    if (isKern()) {
+      const heading = document.createElement('h2');
+      heading.className = 'catalog-requirements-heading';
+      heading.textContent = 'Anforderungen';
+      uiStore.els.listTab.appendChild(heading);
+    }
     renderSelectionState(
       uiStore.els.selectionState,
       'Katalogfokus',
@@ -60,8 +67,12 @@ export function renderList() {
     );
     renderOverviewCard({
       title: matched.length ? 'Kataloganalyse' : 'Keine Treffer im Katalog',
+      compact: true,
+      showDescription: !matched.length,
       description: matched.length
-        ? 'Die Übersicht priorisiert sichtbare Treffer, aktive Einschränkungen und Schnellaktionen, damit Navigation und Auswertung ohne Suchaufwand funktionieren.'
+        ? document.documentElement.dataset.viewerDesign === 'kern'
+          ? 'Anforderungen lesen, nach Merkmalen filtern und im Zusammenhang prüfen.'
+          : 'Die Übersicht priorisiert sichtbare Treffer, aktive Einschränkungen und Schnellaktionen, damit Navigation und Auswertung ohne Suchaufwand funktionieren.'
         : 'Die aktuelle Suche oder Filterung liefert keine sichtbaren Anforderungen. Passe die Einschränkungen an oder setze sie gesammelt zurück.',
       stats: [
         {

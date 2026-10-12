@@ -1,6 +1,7 @@
 package-lock.json
 node_modules
 dist
+dist-release
 test-results
 playwright-report
 coverage

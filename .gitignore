@@ -6,3 +6,8 @@ coverage/
 .DS_Store
 .env*
 !.env.example
+
+# Locally supplied BundesSans webfonts; redistribution is not assumed.
+public/assets/bundessans/
+
+dist-release/
