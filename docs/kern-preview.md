@@ -1,12 +1,11 @@
-# KERN-Vorschau
+# Lokale KERN-Entwicklung, Vergleich und Schriftintegration
 
 ## Start und Vergleich
 
-Die Vorschau läuft ausschließlich lokal auf dem Branch `restructure-viewer-KERN`.
-Die vorhandene Pages-Veröffentlichung bleibt unverändert. Der Workflow im Testbranch
-ist für den späteren Release-Build vorbereitet; veröffentlicht wird weiterhin nur
-aus `main`.
-Eine lokale Änderung oder ein lokaler Commit veröffentlicht nichts.
+KERN UX ist die veröffentlichte Oberfläche. Diese Anleitung beschreibt die lokale
+Entwicklung und zusätzliche QA-Vergleiche, nicht eine unveröffentlichte Viewer-Variante.
+Ein bestimmter Branchname ist nicht erforderlich. Lokale Änderungen, Commits und
+Feature-Branch-Pushes veröffentlichen nichts; Pages deployt geprüfte `main`-Builds.
 
 Voraussetzung für eine frische Installation: Node.js 24 mit npm.
 
@@ -17,8 +16,8 @@ npm run preview:kern
 
 Auf dem eingerichteten Mac kann alternativ `KERN-Vorschau.command` im Projektordner
 per Doppelklick gestartet werden. Das Terminal geöffnet lassen; mit Ctrl+C beenden.
-Der Starter prüft den Branch und verwendet bei Bedarf die vorhandene Node-Laufzeit
-von Codex. Belegte Ports werden nicht automatisch ersetzt. Der ausgegebene Link
+Der Starter funktioniert unabhängig vom Branchnamen und verwendet bei Bedarf die
+vorhandene Node-Laufzeit von Codex. Belegte Ports werden nicht automatisch ersetzt. Der ausgegebene Link
 führt seit dem 11. Oktober 2026 zur normalen Ansicht ohne Test- und Vergleichsleiste.
 Die folgenden Vergleichslinks sind ausschließlich für Entwicklung und QA gedacht.
 
@@ -44,13 +43,14 @@ als Datei zu öffnen wird nicht unterstützt. Für einen gebauten Stand:
 
 ## BundesSans nachreichen
 
-Die eigentlichen BundesSans-Dateien liegen dem Repository nicht bei. Die Vorschau
-verwendet deshalb zunächst die lokal ausgelieferte KERN-Standardschrift Fira Sans
+Ein geeigneter, zur Web-Auslieferung freigegebener BundesSans-Satz liegt dem
+Repository nicht bei. Der veröffentlichte Viewer und die lokale Entwicklung verwenden deshalb die lokal ausgelieferte KERN-Standardschrift Fira Sans
 und zeigt diesen Zustand in der optionalen Vergleichsleiste an. BundesSans ist eine bewusste typografische
 Anpassung des KERN-Standards.
 
 Ein zur Nutzung bereitgestelltes BundesSans-Webfont-Paket zunächst entpacken.
-Benötigt wird mindestens Regular als WOFF2 oder WOFF; empfohlen sind zusätzlich
+Der Importer akzeptiert WOFF2 oder WOFF in normaler Laufweite, keine OTF-Dateien
+und keine Condensed-Ersatzschnitte. Benötigt wird mindestens Regular; empfohlen sind zusätzlich
 Bold, Italic und Bold Italic. Danach:
 
 ```sh
@@ -58,20 +58,22 @@ python3 scripts/import-bundessans.py "/Pfad/zum/entpackten/Webfont-Paket"
 ```
 
 Vorschau neu starten oder neu bauen. Nach erfolgreichem Laden wechselt die
-Statusanzeige auf „BundesSans Web“. Bei Ladefehlern bleibt Fira Sans aktiv und die
+Statusanzeige in der optionalen Vergleichsleiste auf „BundesSans Web“. Bei Ladefehlern bleibt Fira Sans aktiv und die
 Anzeige nennt den Fehler. Die Schriften werden vom lokalen Server geladen, nicht
 von einem CDN. `public/assets/bundessans/` einschließlich Manifest wird von Git
 ignoriert. Ein lokaler Produktionsbuild enthält dort vorhandene Dateien trotzdem;
-vor einer späteren Veröffentlichung ist deren Nutzungsfreigabe zu klären.
+vor einer Veröffentlichung ist deren Nutzungsfreigabe zu klären. Ein lokaler Import
+allein integriert die Fonts **nicht** in GitHub Actions: Ein frischer CI-Checkout
+besitzt die ignorierten Dateien nicht. Die freigegebene Bereitstellung im Build
+muss daher in einem eigenen Änderungsschritt eingerichtet und getestet werden.
 
-## Technische Grundlage und weitere Umstellung
+## Technische Grundlage und Release-Abgrenzung
 
 Eingebunden ist `@kern-ux/native` in festgelegter Version 2.8.2 mit den originalen
-KERN-Tokens, Basisstilen und Fira-Sans-Dateien. Die Vorschau verwendet KERN-Markup
+KERN-Tokens, Basisstilen und Fira-Sans-Dateien. Die Oberfläche verwendet KERN-Markup
 für Buttons, Felder, Checkboxen/Fieldsets, Details, Anforderungsmetadaten und die
-Mapping-Tabelle sowie eigene Kompositionen für fachliche Viewer-Komponenten. Sie ist noch keine vollständig
-auf native KERN-Komponenten umgestellte oder auf Barrierefreiheit zertifizierte
-Anwendung.
+Mapping-Tabelle sowie eigene Kompositionen für fachliche Viewer-Komponenten. Fachliche Viewer-Kompositionen ergänzen native KERN-Komponenten. Daraus folgt
+keine Zertifizierung der Barrierefreiheit; die echte Screenreader-Abnahme bleibt offen.
 
 KERN und Legacy haben getrennte CSS-Einstiege. Die KERN-Layer `structure`, `kern`
 und `viewer` enthalten ausschließlich eigene Viewer-Kompositionen und native
@@ -90,7 +92,7 @@ npm run preview -- --outDir dist-release
 
 `dist-release/` enthält keine Legacy-Styles und keine Vergleichs-/Demodatenmodule.
 Auch entsprechende URL-Parameter aktivieren dort keinen Vergleich. Der Workflow
-prüft beide Builds und paketiert für eine spätere Veröffentlichung nur
+prüft beide Builds und paketiert für die Veröffentlichung nur
 `dist-release/`. Ein lokaler Build allein veröffentlicht nichts.
 
 Die Zuständigkeiten sind getrennt:
@@ -109,8 +111,8 @@ Der [Migrationsstand](kern-migration.md) dokumentiert die umgestellten Bereiche,
 die Echtdaten- und Druckprüfung sowie die noch ausstehende BundesSans-Einbindung
 und manuelle Abnahme mit assistiven Technologien.
 
-Ein offizieller Bundes-Header wird nicht mitgeliefert. Die Vorschauleiste
-kennzeichnet die Testversion; die Verwendung eines Designsystems allein bestätigt
+Ein offizieller Bundes-Header wird nicht mitgeliefert. Nur die optionalen
+Vergleichsansichten tragen eine Testleiste; die Verwendung eines Designsystems allein bestätigt
 keine amtliche Herausgeberschaft.
 
 ## Prüfung
@@ -123,8 +125,10 @@ Unit-/Architekturtests, Build und die Browserfälle in Chromium, Firefox und Web
 Import, Anforderung, Sunburst, Mapping und Komponenten bei 1440 und 375 Pixeln.
 Die geprüften Referenzen liegen unter `tests/visual/references/darwin/` und gelten
 für Chromium aus der festgelegten Playwright-Version auf macOS mit Fira Sans.
-Andere Betriebssysteme brauchen separat geprüfte Referenzen. Nach BundesSans-
-Einbindung sind die Referenzen bewusst neu abzunehmen. Sie werden nicht bei
+Andere Betriebssysteme brauchen separat geprüfte Referenzen. Die Referenzen sind datierte Sollbilder der Migration, kein automatischer Nachweis
+für jeden späteren Commit. Nach sichtbaren Änderungen, einschließlich der neuen
+Logo-Kopfzeile und einer späteren BundesSans-Einbindung, sind Abweichungen visuell
+zu prüfen und die betroffenen Referenzen bewusst neu abzunehmen. Sie werden nicht bei
 normalen Testläufen automatisch überschrieben.
 
 `npm run test:release` prüft den zuvor gebauten Release-Einstieg in drei Browsern.

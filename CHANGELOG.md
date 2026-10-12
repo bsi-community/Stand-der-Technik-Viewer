@@ -4,7 +4,28 @@ Alle wesentlichen Änderungen am Stand der Technik-Viewer werden in dieser Datei
 
 Das Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/). Die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
-## 3.0.0 – Unveröffentlicht
+## Unveröffentlicht
+
+### Dokumentation
+
+- README, Bedienung, Architektur, KERN-Stand, Prüfstrategie und Pages-Betrieb auf die veröffentlichte KERN-Oberfläche abgestimmt; alte Prüfberichte als historische Nachweise gekennzeichnet.
+- Verbindliche Dokumentationspflege im selben PR durch Beitragsregeln, Agentenhinweise und PR-Checkliste festgehalten.
+- Lokaler Mac-Starter unabhängig vom abgeschlossenen KERN-Testbranch nutzbar.
+
+## 3.0.0 – Veröffentlicht, dokumentierter Stand 2026-10-12
+
+Die sichtbare Versionsnummer blieb bei den folgenden Merges 3.0.0. Die Liste beschreibt den auf `main` übernommenen Stand einschließlich PR #13 und #14; sie behauptet keinen neuen Release-Tag.
+
+### KERN UX und Bedienung
+
+- KERN UX als Standardoberfläche mit einheitlichen Farben, Fira Sans, Formularen, Aufklappbereichen und responsiven Layouts eingeführt; BundesSans noch ausstehend.
+- Arbeitsbereiche und Darstellungstabs getrennt; Filter, Quellenwahl, Metadaten, Mapping-Informationen und PDF-Ansichten überarbeitet.
+- Tastaturbedienung, Fokusführung, Statusmeldungen und durchsuchbare Diagrammtabellen ergänzt. Keine abgeschlossene Screenreader-Abnahme oder Barrierefreiheitszertifizierung.
+- Diagrammgrenzen, Größenwechsel, Sunburst-Beschriftungen und das Scrollen im Hierarchie-Detailbereich korrigiert.
+- Dokumenttitel im Katalog sichtbar gemacht, Überschrift „Anforderungen“ ergänzt und Relationship-Erläuterungen auf Deutsch eingeführt.
+- Neue SVG-Bildmarke und Favicon; separater Home-Button neben Logo und Texttitel.
+- Importbestätigungen verschwinden nach fünf Sekunden oder bei Navigation/Entfernung; Fehler- und Ladezustände bleiben lesbar.
+- Veröffentlichung auf `dist-release/` ohne Legacy-CSS, Vergleichsleiste und synthetische Demodaten begrenzt.
 
 ### Geändert
 

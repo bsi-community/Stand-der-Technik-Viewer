@@ -1,4 +1,26 @@
-# Prüfbericht zum Architekturumbau
+# Prüfstände und historische Nachweise
+
+## Aktueller Bezug – 12. Oktober 2026
+
+Der KERN-Umbau und die Folgekorrekturen sind auf `main` übernommen: PR #13
+(`6e01c199`) und PR #14 (`fc4e960`, Logo und Importbestätigung). Die GitHub-
+Prüfungen des letzten PR-Commits `7ed6426` waren für Push und Pull Request
+erfolgreich. Der Workflow prüft `main` vor jeder Pages-Veröffentlichung erneut;
+maßgeblich für den Live-Stand ist der jeweilige erfolgreiche Deploy-Lauf.
+
+Für die Importkorrektur bestanden lokal Lint, Formatierung, TypeScript,
+43 Unit-/Architekturtests, der Build und 36 gezielte Browserprüfungen in drei
+Engines. Das ist kein erneuter Volltest aller Ansichten. Frühere KERN-Prüfungen
+sind in [kern-migration.md](kern-migration.md) und [kern-acceptance.md](kern-acceptance.md)
+datiert dokumentiert. Die echte Screenreader-Abnahme bleibt offen; macOS-KERN-
+Bildreferenzen müssen nach der neuen Logo-Kopfzeile erneut abgenommen werden.
+
+Die folgenden Abschnitte sind **historische Prüfberichte**. Ihre Testzahlen,
+Branch-Namen und damaligen Aussagen zur noch ausstehenden Veröffentlichung gelten
+für den jeweiligen Prüfzeitpunkt, nicht als Beschreibung des heutigen Betriebs.
+Aktuelle Befehle und Freigabeschritte: [Prüfstrategie](testing.md) und [Betrieb](deployment.md).
+
+## Historie: Architekturumbau
 
 ## Ergänzung vom 08.10.2026: automatische Aktualisierung beim Öffnen
 

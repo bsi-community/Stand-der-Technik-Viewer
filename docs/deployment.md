@@ -13,29 +13,42 @@ npm run test:release
 npm run preview -- --outDir dist-release
 ```
 
-Auf dem Umbau-Branch muss `restructure-viewer-KERN` erscheinen. Vorschau: `http://127.0.0.1:4173/Stand-der-Technik-Viewer/`. Das ist derselbe Produktionsbuild und derselbe URL-Unterpfad wie bei Pages. Für die Entwicklung zusätzlich `npm run dev` verwenden. `dist/` und `dist-release/` nicht von Hand bearbeiten. `dist/` enthält die Entwicklungsversion mit historischen Vergleichsszenarien; ausschließlich `dist-release/` ist zur Veröffentlichung vorgesehen.
+Auf einem eigenen Feature-Branch arbeiten; `main` nicht für ungeprüfte Änderungen verwenden. Vorschau: `http://127.0.0.1:4173/Stand-der-Technik-Viewer/`. Das ist derselbe Produktionsbuild und derselbe URL-Unterpfad wie bei Pages. Für die Entwicklung zusätzlich `npm run dev` verwenden. `dist/` und `dist-release/` nicht von Hand bearbeiten. `dist/` enthält die Entwicklungsversion mit historischen Vergleichsszenarien; ausschließlich `dist-release/` ist zur Veröffentlichung vorgesehen.
 
-## Erstmalige Umstellung
+## Veröffentlichung des aktuellen Viewers
 
-1. Änderungen auf `restructure-viewer-KERN` prüfen, committen und auf diesen Branch pushen. Vorher in **Settings → Pages** verifizieren, dass nicht dieser Testbranch als bisherige Veröffentlichungsquelle eingerichtet ist. Einen Pull Request nach `main` öffnen; erfolgreiche CI und fachliche Abnahme abwarten.
-2. Den aktuellen produktiven Commit bzw. die letzte erfolgreiche Pages-Veröffentlichung notieren. Der Ausgangsstand dieser Migration ist `36c1dc82243360c0f2e8578fc641af2ab80b5a98`.
-3. **Vor dem Merge** unter **Settings → Pages → Build and deployment → Source** von der bisherigen branchbasierten Veröffentlichung auf **GitHub Actions** umstellen. Auch die Environment-Regeln für `github-pages` müssen Deployments von `main` zulassen. Die existierende Website bleibt bis zum nächsten erfolgreichen Deployment der zuletzt veröffentlichte Stand; bei organisatorisch besonders kritischer Verfügbarkeit zuerst in einem separaten Testrepository proben.
-4. Den geprüften Pull Request nach `main` mergen. Der Workflow prüft erneut, baut und veröffentlicht ausschließlich `dist-release/`. Er benötigt keine gespeicherten persönlichen Tokens; die Pages-Berechtigungen werden nur dem Deployment-Job gewährt.
-5. Nach erfolgreichem Deployment die Live-URL, das Logo, die sichtbare Version, einen Katalog, eine Komponentendefinition, ein Mapping und einen Deep Link im Browser prüfen. Erst damit ist die Live-Abnahme abgeschlossen.
+Die KERN-Umstellung ist auf `main` übernommen. Pages verwendet **GitHub Actions**;
+eine erneute Umstellung der Veröffentlichungsquelle ist nicht erforderlich.
 
-Ein Merge vor der Pages-Umstellung kann dazu führen, dass Quellcode statt des gebauten Artefakts veröffentlicht wird. Diese Reihenfolge ist daher Teil des Releases, nicht bloß eine optionale Einstellung.
+1. Änderungen und zugehörige Dokumentation auf einem Feature-Branch committen
+   und pushen. Ein offener PR dieses Branches nimmt weitere Commits automatisch auf.
+2. Im PR die erfolgreichen Prüfungen des neuesten Commits und die für die Änderung
+   nötige fachliche Abnahme abwarten. Der Workflow läuft für Push und Pull Request,
+   weshalb zwei `verify`-Einträge erscheinen können. Weitere Pushes ersetzen ältere
+   Prüfläufe. Abhängig von Installation und Browsertests dauern die Läufe mehrere Minuten.
+3. Den PR nach `main` mergen. Danach läuft die Prüfung auf `main` erneut; erst bei
+   Erfolg wird `dist-release/` paketiert und nach Pages veröffentlicht. Der Merge
+   allein bedeutet noch nicht, dass die neue Version bereits live ist.
+4. Den erfolgreichen `deploy`-Job abwarten. Anschließend Live-URL, Seitentitel/Logo
+   und die betroffenen Benutzerabläufe prüfen. Die letzte erfolgreiche
+   Veröffentlichung bleibt bei einem fehlgeschlagenen neuen Lauf bestehen.
+
+Für ein neu eingerichtetes Repository muss unter **Settings → Pages → Build and
+deployment → Source** die Option **GitHub Actions** gewählt sein; die Environment-
+Regeln für `github-pages` müssen Deployments von `main` erlauben. Der Workflow
+benötigt keine persönlichen Tokens. Pages-Berechtigungen erhält nur der Deploy-Job.
 
 ## Workflow
 
 `verify-and-deploy.yml` läuft auf Pull Requests, Branch-Pushes und manuell. Prüfungen benötigen nur Lesezugriff auf das Repository. Bei Fehlern scheitert der Workflow vor der Veröffentlichung. Browserberichte werden als Diagnoseartefakt gesichert. Der Pages-Upload enthält ausschließlich `dist-release/`; Testdaten, Dokumentationen, Quelldateien und `node_modules/` werden nicht mit veröffentlicht.
 
-Nur ein Push oder manueller Workflowlauf auf `main` kann deployen. Pull Requests und `restructure-viewer-KERN` erhalten **keine eigene öffentlich erreichbare Pages-Vorschau** und überschreiben die Produktion durch diesen Workflow nicht. Lokal lässt sich trotzdem der vollständige Build testen. Soll später eine öffentliche Staging-Website entstehen, benötigt sie eine getrennte Hostingquelle.
+Nur ein Push oder manueller Workflowlauf auf `main` kann deployen. Pull Requests und Feature-Branches erhalten **keine eigene öffentlich erreichbare Pages-Vorschau** und überschreiben die Produktion durch diesen Workflow nicht. Lokal lässt sich trotzdem der vollständige Build testen. Soll später eine öffentliche Staging-Website entstehen, benötigt sie eine getrennte Hostingquelle.
 
 Der Basis-Pfad ist in `vite.config.js` auf `/Stand-der-Technik-Viewer/` festgelegt. Bei Repository-Umbenennung, Organisationswechsel oder eigener Domain Pfad, Testadressen, Links und Deployment-Dokumentation gemeinsam anpassen.
 
 ## Aktualisierung bei Lesezeichen-Aufrufen
 
-GitHub Pages liefert HTML mit `Cache-Control: max-age=600`. Ein normaler Aufruf kann deshalb bis zu zehn Minuten alte Startseiten verwenden; verschiedene Query-Strings besitzen getrennte Cache-Einträge. Die gehashten JS-/CSS-Dateinamen allein lösen dies nicht, weil eine alte Startseite weiterhin die alten Dateien referenziert.
+Beim dokumentierten Live-Abruf lieferte GitHub Pages HTML mit `Cache-Control: max-age=600`. Ein normaler Aufruf kann deshalb bis zu zehn Minuten alte Startseiten verwenden; verschiedene Query-Strings besitzen getrennte Cache-Einträge. Die gehashten JS-/CSS-Dateinamen allein lösen dies nicht, weil eine alte Startseite weiterhin die alten Dateien referenziert.
 
 Der Build veröffentlicht deshalb `release.json` mit einer aus dem Build-Inhalt erzeugten Kennung. Ein kleines Inline-Skript in der Startseite prüft diese Kennung vor dem Anwendungsstart per `fetch` mit `cache: 'no-store'` und einer eindeutigen Anfrage-URL. Bei einer neuen Veröffentlichung öffnet es dieselbe Adresse einmalig mit einem Release-Parameter und entfernt diesen anschließend aus der sichtbaren URL. Bestehende Parameter und Fragmente bleiben erhalten. Das Skript läuft unabhängig von den gehashten Modulen, damit auch eine alte Startseite mit inzwischen entfernten Assets aktualisiert werden kann. Die Kennung ändert sich auch ohne Änderung von `VERSION`.
 
@@ -44,8 +57,8 @@ Es gibt keine Hintergrund-Neuladung während der Arbeit: Lokal geladene Dokument
 ## Rückfall und Störungen
 
 - Vor dem Merge: Branch nicht mergen; die bestehende Veröffentlichung bleibt unberührt.
-- Nach der Umstellung: Ein fehlgeschlagener Prüf-/Buildjob veröffentlicht nichts Neues. Den fehlgeschlagenen Schritt und das Browserartefakt prüfen.
-- Nach einem fehlerhaften modularen Release: Den fehlerhaften Merge mit einem nachvollziehbaren Revert rückgängig machen oder einen bekannten guten modularen Stand erneut deployen. Keine History-Rewrites auf `main`.
+- Bei einem neuen Release: Ein fehlgeschlagener Prüf-/Buildjob veröffentlicht nichts Neues. Den fehlgeschlagenen Schritt und das Browserartefakt prüfen.
+- Nach einem fehlerhaften Release: Den fehlerhaften Merge mit einem nachvollziehbaren Revert rückgängig machen oder einen bekannten guten modularen Stand erneut deployen. Keine History-Rewrites auf `main`.
 - Rückkehr zum alten Ein-Datei-Stand: Den alten Stand in einem ausdrücklich geplanten Revert wiederherstellen und die frühere branchbasierte Pages-Quelle wieder aktivieren. Der alte Commit besitzt den neuen Buildworkflow nicht; nur ein Workflow-Rerun ist deshalb keine ausreichende Rückfallanleitung. Die neue Anwendung und die alte Veröffentlichungsart nicht mischen.
 
 GitHub Pages/Actions, GitHub API, Raw-Dateien und verlinkte externe Ressourcen besitzen eigene Verfügbarkeitsgrenzen. Bei Repository-API-Ausfall bleiben lokale JSON-Dateien verwendbar. CORS-Probleme fremder Dokumentserver kann der statische Viewer nicht serverseitig umgehen. Keine Secrets in Frontend-Konfiguration oder `VITE_*`-Variablen ablegen: Frontend-Buildwerte sind öffentlich.

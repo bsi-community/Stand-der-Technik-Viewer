@@ -1,6 +1,6 @@
 # Sicherheit und Datenschutz
 
-Der Viewer verarbeitet lokale JSON-Dateien im Browser; es gibt keinen eigenen Uploadserver und keine Telemetrie. Eine URL-Eingabe, Repositoryauswahl, Zielobjekthierarchie und externe Bilder können jedoch Netzwerkzugriffe auslösen. Dabei gelten die Datenschutz- und Verfügbarkeitsbedingungen der jeweiligen Zielserver. OSCAL-Inhalte können sicherheitsrelevante Informationen enthalten: Nur freigegebene Daten aus vertrauenswürdigen Quellen verwenden.
+Der Viewer verarbeitet lokale JSON-Dateien im Browser; es gibt keinen eigenen Uploadserver und keine Telemetrie. Eine URL-Eingabe, Repositoryauswahl, Zielobjekthierarchie und externe Bilder können jedoch Netzwerkzugriffe auslösen. Beim Start wird außerdem die Build-Kennung vom eigenen Hosting-Ursprung abgerufen; während laufender Arbeit erfolgt keine automatische Neuladung. KERN, Fira Sans und D3 werden mit dem Build ausgeliefert und benötigen kein externes Font- oder Skript-CDN. Dabei gelten die Datenschutz- und Verfügbarkeitsbedingungen der jeweiligen Zielserver. OSCAL-Inhalte können sicherheitsrelevante Informationen enthalten: Nur freigegebene Daten aus vertrauenswürdigen Quellen verwenden.
 
 Der Viewer ist eine Anzeigeanwendung, kein vollständiger OSCAL-Schemavalidator. Die unterstützte Struktur wird beim Einlesen geprüft und aufbereitet; erfolgreiche Anzeige ist kein Nachweis fachlicher oder vollständiger Schema-Konformität.
 

@@ -1,10 +1,6 @@
 #!/bin/zsh
 set -eu
 cd "${0:A:h}"
-if [[ "$(git branch --show-current)" != "restructure-viewer-KERN" ]]; then
-  print 'Bitte zuerst den Branch restructure-viewer-KERN öffnen.'
-  exit 1
-fi
 viewer_node="$(command -v node || true)"
 if [[ -z "$viewer_node" ]]; then
   viewer_node="$HOME/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node"

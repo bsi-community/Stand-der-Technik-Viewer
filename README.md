@@ -4,11 +4,11 @@ Browseranwendung für OSCAL Catalogs, Component Definitions und Mapping Collecti
 
 **[Veröffentlichten Viewer öffnen](https://bsi-community.github.io/Stand-der-Technik-Viewer/)** · [Bedienungsanleitung](docs/user-guide.md)
 
-## KERN-Testversion auf `restructure-viewer-KERN`
+## Oberfläche auf Basis von KERN UX
 
-Dieser Branch enthält eine interaktive KERN-UX-Vorschau mit Startseite, geöffneter Beispielanforderung und gefüllter Mapping-Tabelle. Starten mit `npm run preview:kern` oder auf diesem Mac über `KERN-Vorschau.command`; anschließend [lokale Vorschau öffnen](http://127.0.0.1:5186/Stand-der-Technik-Viewer/).
+KERN UX ist die Grundlage der veröffentlichten Oberfläche und der weiteren Entwicklung. Der Viewer bietet getrennte Arbeitsbereiche für Kataloge, Komponentendefinitionen und Mappings, Suche und Filter, Diagramme mit tabellarischen Alternativen sowie einen PDF-Export für Kataloge und Komponenten. Dokumente lassen sich lokal, per URL oder aus der öffentlichen Bibliothek laden.
 
-BundesSans-Webfonts können lokal nachgereicht werden. Solange sie fehlen, zeigt die Vorschau ausdrücklich Fira Sans an. Einrichtung, Vergleichslinks und Ausbauplan: [KERN-Vorschau](docs/kern-preview.md).
+Die Oberfläche verwendet lokal mitgelieferte **Fira Sans**. BundesSans ist vorbereitet, aber noch nicht Bestandteil der Veröffentlichung. Tastaturbedienung, semantische Strukturen und Fokusführung unterstützen die Zugänglichkeit; eine vollständige Barrierefreiheitsprüfung ist damit nicht belegt. Siehe [KERN-Stand und offene Abnahmen](docs/kern-migration.md).
 
 ## Lokal entwickeln und testen
 
@@ -42,7 +42,8 @@ src/
   features/        Kataloge, Komponenten, Mappings, Startseite und Visualisierungen
   infrastructure/  GitHub-Repository und Zielobjekt-CSV
   shared/          Wiederverwendbare Text-, DOM- und UI-Hilfen
-  styles/          CSS in bewusst beibehaltener Kaskadenreihenfolge
+  styles/          KERN-Oberfläche und getrennte historische Legacy-Styles
+  assets/          Gebündelte SVG-Bildmarke und weitere importierte Assets
 public/            Statische Ressourcen und Weiterleitung der bisherigen HTML-URL
 tests/             Synthetische Testdaten, Unit-, Architektur- und Browsertests
 scripts/           Reproduzierbarer visueller Vergleich mit dem Ausgangsstand
@@ -52,15 +53,27 @@ index.html         Gemeinsames HTML-Grundgerüst; keine Anwendungslogik
 VERSION            Einzige Quelle der sichtbaren Viewer-Version
 ```
 
-Gebaut wird mit Vite. D3 wird als fest versionierte Abhängigkeit mitgeliefert, nicht zur Laufzeit von einem CDN geladen. `dist/` und `node_modules/` gehören nicht in Git.
+Gebaut wird mit Vite. D3 wird als fest versionierte Abhängigkeit mitgeliefert, nicht zur Laufzeit von einem CDN geladen. `dist/`, `dist-release/` und `node_modules/` gehören nicht in Git.
 
 ## Veröffentlichung
 
-GitHub Pages kann den Viewer weiterhin als statische Website betreiben. Der Workflow prüft Änderungen auf Branches und Pull Requests; **nur `main` darf nach erfolgreichen Prüfungen deployen**. Ein Push auf `restructure-viewer` veröffentlicht den Viewer nicht über diesen Workflow.
+GitHub Pages kann den Viewer weiterhin als statische Website betreiben. Der Workflow prüft Änderungen auf Branches und Pull Requests; **nur `main` darf nach erfolgreichen Prüfungen deployen**. Feature-Branches und Pull Requests veröffentlichen keine Pages-Version.
 
-Für die einmalige Umstellung muss unter **Settings → Pages → Build and deployment → Source** die Option **GitHub Actions** gewählt werden. Die Reihenfolge und Rückfallstrategie sind in [Betrieb und Veröffentlichung](docs/deployment.md) beschrieben. Nicht einfach die Quell-HTML über eine branchbasierte Pages-Veröffentlichung ausliefern: Ausgeliefert wird ausschließlich das geprüfte `dist/`-Artefakt.
+Die Pages-Veröffentlichung erfolgt über **GitHub Actions**. Nach einem Merge nach `main` prüft der Workflow erneut und veröffentlicht bei Erfolg ausschließlich das gebaute `dist-release/`-Artefakt. Der Quellcode und der Vergleichsbuild `dist/` sind keine Veröffentlichungsartefakte. Details: [Betrieb und Veröffentlichung](docs/deployment.md).
+
+Für eine lokale Prüfung des tatsächlichen Release-Einstiegs:
+
+```sh
+npm run build:release
+npm run test:release
+npm run preview -- --outDir dist-release
+```
+
+Optionale synthetische Vergleichsansichten sind nur für Entwicklung und QA vorgesehen: [Lokale KERN-Entwicklung](docs/kern-preview.md).
 
 ## Weiterentwicklung
+
+Viewer und Dokumentation werden im selben Pull Request aktualisiert. Aktuelle Anleitungen beschreiben den geltenden Stand; datierte Prüfprotokolle bleiben als historische Nachweise erkennbar. Die [PR-Checkliste](.github/pull_request_template.md) und [Beitragsregeln](CONTRIBUTING.md) halten diesen Ablauf fest.
 
 - [Architektur und Erweiterungspunkte](docs/architecture.md)
 - [Beitragen und Qualitätsregeln](CONTRIBUTING.md)

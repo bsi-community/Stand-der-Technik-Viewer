@@ -1,18 +1,29 @@
-# KERN-Migration: unabhängige Oberfläche und Release-Vorbereitung
+# KERN UX: aktueller Stand und Migrationshistorie
 
-## Stand und Grenze dieses Ausbauschritts
+## Aktueller Stand – 12. Oktober 2026
 
-Dieser Stand gehört ausschließlich zum lokalen Branch `restructure-viewer-KERN`.
-Er erweitert die Vergleichsvorschau um wiederverwendbare Oberflächenbausteine,
-Navigation, Import, Mehrfachfilter, Anforderungen, Komponenten und Mappings sowie
-Bibliothek, Druckvorbereitung, Diagrammbedienung und tabellarische Alternativen. Die fachlichen
-OSCAL-Parser und die bestehenden Auswahlregeln werden weiterverwendet.
+KERN UX ist auf `main` die Grundlage des veröffentlichten Viewers und seiner
+Weiterentwicklung. Die Umstellung wurde mit PR #13 übernommen; PR #14 ergänzt die
+neue SVG-Bildmarke, den separaten Home-Button und die kurzzeitige Importbestätigung.
+Die sichtbare Version ist weiterhin 3.0.0; die Build-Kennung unterscheidet die
+Veröffentlichungen auch ohne Versionsnummernwechsel.
 
-Die KERN-Ansicht ist vollständig von den Legacy-CSS-Dateien getrennt. Native
-KERN-Bausteine werden durch eigene fachliche Viewer-Kompositionen ergänzt. Die
-technische Umstellung ist damit weitgehend abgeschlossen; Schriftwechsel und
-die tatsächliche Screenreader-Abnahme und die fachliche Freigabe bleiben offen. Die technische Inhaltsabnahme und manuelle Tastaturprüfung sind dokumentiert in [KERN-Abnahmeprotokoll](kern-acceptance.md). Dies ist keine Zertifizierung der Barrierefreiheit. Fira Sans bleibt aktiv, bis die separat
-bereitgestellten BundesSans-Webfonts importiert werden.
+Native KERN-Bausteine und fachliche Viewer-Kompositionen decken Navigation,
+Import, Mehrfachfilter, Anforderungen, Komponenten, Mappings, Bibliothek,
+Druckvorbereitung, Diagrammbedienung und tabellarische Alternativen ab. Fachliche
+OSCAL-Parser und Auswahlregeln werden weiterverwendet. KERN und Legacy haben
+getrennte CSS-Einstiege; Pages enthält ausschließlich den KERN-Release-Build.
+
+Fira Sans bleibt die lokal ausgelieferte Schrift. Ein geeigneter freigegebener
+BundesSans-Webfont-Satz und dessen Bereitstellung in CI fehlen weiterhin. Die
+echte Screenreader-Abnahme und eine dokumentierte fachliche Gesamtabnahme sind
+nicht als abgeschlossen nachgewiesen. Technische Inhalts- und Tastaturprüfungen
+stehen im [Abnahmeprotokoll](kern-acceptance.md); sie sind keine Zertifizierung.
+
+Die folgenden Ausbauschritte dokumentieren die Migration und ihre jeweiligen
+Prüfzeitpunkte. Angaben zu lokalen Testbranches oder damaligen Prüfzahlen sind
+historische Nachweise. Für aktuelle Nutzung und Veröffentlichung gelten
+[Bedienungsanleitung](user-guide.md) und [Betrieb](deployment.md).
 
 ## Komponenten und Zuständigkeiten
 
@@ -112,7 +123,7 @@ Die Legacy-Renderer bleiben als getrennte Vergleichsansicht erhalten.
 - Ladefehler bieten „Bibliothek erneut laden“ und den Einstieg zu eigenen Dateien.
   Leere Suchergebnisse erlauben das Zurücksetzen der Suche. Das Öffnen eines
   Dokuments sperrt die betroffene Schaltfläche während des Imports.
-- Hinweise zur Navigation und zu schmalen Ansichten entsprechen der KERN-Testversion.
+- Hinweise zur Navigation und zu schmalen Ansichten wurden im damaligen KERN-Teststand angepasst.
   Der JSON-Dialog verwendet ebenfalls den gemeinsamen KERN-Button.
 - Katalog- und Komponentenexport drucken eine isolierte Kopie der aktuellen
   Auswahl. Alle Details sind dort offen; Navigation, Aktionen und Textkürzungen
@@ -195,7 +206,8 @@ Prüfbericht mit SHA-256-Dateihashes und Bildschirmbilder liegen danach unter
   Legacy-CSS, Vergleichsmodul und synthetische Datensatzmodule aus den Artefakten.
   Release-Tests prüfen auch, dass Vergleichsparameter dort wirkungslos bleiben.
 - Der Workflow im Testbranch prüft und paketiert den separaten Release-Build.
-  Es wurde nichts veröffentlicht, gepusht oder mit `main` zusammengeführt.
+  Zu diesem damaligen Prüfzeitpunkt wurde noch nichts veröffentlicht oder gemergt;
+  die spätere Übernahme ist im aktuellen Stand oben vermerkt.
 - Zwölf feste Chromium-Bildreferenzen sichern sechs Ansichten auf Desktop und
   Mobilgeräten ab. Sie gelten für macOS, die festgelegte Playwright-Version und
   Fira Sans. Separate Linux-Referenzen sind nicht als geprüft ausgewiesen; der
@@ -402,7 +414,7 @@ hängen bleiben. Die bisherige Grafik bleibt für die Legacy-Ansicht erhalten.
 Geprüft: Lint, TypeScript, Release-Build und Build-Isolation; drei Release-Tests
 in Chromium, Firefox und WebKit; Darstellung bei 320 und 375 Pixeln sowie im
 normalen Desktop-Fenster; Rückkehr zur Startseite per Tastatur. Die Logo-Änderung
-liegt lokal auf `codex/viewer-kern-logo` und ist noch nicht veröffentlicht.
+und die folgende Importkorrektur wurden mit PR #14 nach `main` übernommen.
 
 ## Kurzzeitige Importbestätigung (12. Oktober 2026)
 
@@ -416,7 +428,7 @@ automatisch ausgeblendet. Das gilt für Kataloge, Komponentendefinitionen und
 Mappings gleichermaßen. Browserprüfungen decken Ablauf, Navigation, Entfernen
 und den Schutz neuer Lade-/Fehlermeldungen vor alten Timern ab.
 
-## Verbleibende Schritte bis zur Gesamtabnahme
+## Verbleibende Abnahmen und Nacharbeiten
 
 1. BundesSans-Webfonts nach Bereitstellung einbinden; anschließend Schriftmetriken,
    Umbrüche, PDF-Layout und KERN-Bildreferenzen erneut prüfen. Fira Sans bleibt bis
@@ -428,9 +440,12 @@ und den Schutz neuer Lade-/Fehlermeldungen vor alten Timern ab.
    Die technische Inhaltsabnahme mit unabhängigem Quellenabgleich sowie die
    Echtdaten- und PDF-Prüfungen sind abgeschlossen; Grenzen und Prüfschritte
    sind im [Abnahmeprotokoll](kern-acceptance.md) dokumentiert.
-4. Die KERN-Umstellung wurde vom Nutzer nach `main` gemergt und über GitHub
+4. Die macOS-KERN-Bildreferenzen nach den späteren sichtbaren Änderungen, insbesondere
+   der Logo-Kopfzeile, neu sichten und gezielt aktualisieren. Die historischen
+   Bildvergleiche belegen keine aktuelle visuelle Vollabnahme.
+5. Die KERN-Umstellung wurde vom Nutzer nach `main` gemergt und über GitHub
    Pages veröffentlicht. Weitere Änderungen benötigen erneut eine Freigabe;
-   die neue Bildmarke ist bislang nur lokal vorbereitet.
+   Bildmarke und Importkorrektur sind ebenfalls auf `main` übernommen.
 
 ## Referenz
 
