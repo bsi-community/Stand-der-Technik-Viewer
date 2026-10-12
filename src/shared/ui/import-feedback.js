@@ -3,12 +3,24 @@ import { isKern } from './kern.js';
 const pending = new Map();
 let batchErrors = 0;
 let batchSuccess = 0;
+let successTimer;
+
+/** Clear only confirmations; pending imports and errors must remain readable. */
+export function clearImportSuccess() {
+  clearTimeout(successTimer);
+  const status = document.getElementById('viewerImportStatus');
+  if (status?.dataset.state !== 'success') return;
+  status.textContent = '';
+  delete status.dataset.state;
+}
 
 function display(text, state) {
+  clearTimeout(successTimer);
   const status = document.getElementById('viewerImportStatus');
   if (!status) return;
   status.dataset.state = state;
   status.textContent = text;
+  if (state === 'success') successTimer = setTimeout(clearImportSuccess, 5000);
 }
 
 export function urlValidationError(kind, message) {

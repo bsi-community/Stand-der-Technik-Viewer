@@ -386,6 +386,36 @@ neun Diagramm-/Fenstergrößenkombinationen samt umfangreicher Trace-Aufzeichnun
 - Der Workflow und seine Veröffentlichungssperre bei Fehlern bleiben bestehen.
   Pages veröffentlicht weiterhin ausschließlich den geprüften Release-Build.
 
+## Neue Viewer-Bildmarke (12. Oktober 2026)
+
+Nach dem Merge der KERN-Umstellung verwendet der Viewer eine eigenständige,
+reduzierte SVG-Bildmarke in KERN-Blau: ein Dokument mit verbundenen Knoten als
+Verweis auf Anforderungen und ihre Beziehungen. Sie steht kompakt neben dem
+Seitentitel als reine, nicht interaktive Bildmarke. Links daneben bleibt die
+eigenständige Home-Schaltfläche mit Häuschen und zugänglichem Namen
+„Zur Startseite“ erhalten. Der sichtbare Texttitel bleibt unverändert.
+
+Dieselbe SVG-Datei wird als Favicon verwendet. Vite liefert sie mit Inhalts-Hash
+im Dateinamen aus, sodass spätere Änderungen nicht an einem alten Asset-Cache
+hängen bleiben. Die bisherige Grafik bleibt für die Legacy-Ansicht erhalten.
+
+Geprüft: Lint, TypeScript, Release-Build und Build-Isolation; drei Release-Tests
+in Chromium, Firefox und WebKit; Darstellung bei 320 und 375 Pixeln sowie im
+normalen Desktop-Fenster; Rückkehr zur Startseite per Tastatur. Die Logo-Änderung
+liegt lokal auf `codex/viewer-kern-logo` und ist noch nicht veröffentlicht.
+
+## Kurzzeitige Importbestätigung (12. Oktober 2026)
+
+Erfolgreiche Datei- und URL-Importe zeigen die gemeinsame grüne Bestätigung für
+fünf Sekunden. Beim Ansichtswechsel, bei Rückkehr zur Startseite und beim
+Entfernen eines Dokuments wird eine bestehende Erfolgsmeldung sofort geleert.
+Die Live-Region bleibt im DOM erhalten; der leere Balken benötigt keinen Platz.
+Neue Importe ersetzen die alte Bestätigung und setzen deren Timer zurück.
+Laufende Importe sowie Fehler und gemischte Ergebnisse mit Fehlern werden nicht
+automatisch ausgeblendet. Das gilt für Kataloge, Komponentendefinitionen und
+Mappings gleichermaßen. Browserprüfungen decken Ablauf, Navigation, Entfernen
+und den Schutz neuer Lade-/Fehlermeldungen vor alten Timern ab.
+
 ## Verbleibende Schritte bis zur Gesamtabnahme
 
 1. BundesSans-Webfonts nach Bereitstellung einbinden; anschließend Schriftmetriken,
@@ -398,8 +428,9 @@ neun Diagramm-/Fenstergrößenkombinationen samt umfangreicher Trace-Aufzeichnun
    Die technische Inhaltsabnahme mit unabhängigem Quellenabgleich sowie die
    Echtdaten- und PDF-Prüfungen sind abgeschlossen; Grenzen und Prüfschritte
    sind im [Abnahmeprotokoll](kern-acceptance.md) dokumentiert.
-4. Erst danach eine Veröffentlichung gesondert freigeben. Der bestehende
-   gehostete Viewer ist unverändert; der Testbranch enthält die Vorbereitung.
+4. Die KERN-Umstellung wurde vom Nutzer nach `main` gemergt und über GitHub
+   Pages veröffentlicht. Weitere Änderungen benötigen erneut eine Freigabe;
+   die neue Bildmarke ist bislang nur lokal vorbereitet.
 
 ## Referenz
 

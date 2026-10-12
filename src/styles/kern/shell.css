@@ -544,3 +544,11 @@ main [role='tabpanel'][tabindex='-1']:focus {
 .overview--compact .overview-actions .kern-label {
   font-size: 0.875rem;
 }
+
+/* Decorative product mark beside the separate home button and live text title. */
+.viewer-brand-mark {
+  display: block;
+  width: 40px;
+  height: 40px;
+  flex: none;
+}
