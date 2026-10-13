@@ -309,6 +309,8 @@ export function startViewer() {
     sourcePickerMenu: $('#mappingSourceMenu'),
     urlInput: $('#mappingUrlInput'),
     urlLoadBtn: $('#mappingUrlLoadBtn'),
+    bsiSelect: $('#bsiMappingSelect'),
+    bsiStatus: $('#bsiMappingStatus'),
     q: $('#mappingQ'),
     practice: $('#mappingPracticeMS'),
     relationship: $('#mappingRelationshipMS'),
@@ -334,6 +336,7 @@ export function startViewer() {
     status: 'loading',
     catalogs: [],
     components: [],
+    mappings: [],
     selectedModel: '',
     query: '',
     error: '',
@@ -673,6 +676,19 @@ export function startViewer() {
           option && option.dataset.documentTitle ? option.dataset.documentTitle : '',
         );
       uiStore.compEls.bsiSelect.value = '';
+    });
+  }
+
+  if (uiStore.mappingEls.bsiSelect) {
+    uiStore.mappingEls.bsiSelect.addEventListener('change', function () {
+      var option = uiStore.mappingEls.bsiSelect.options[uiStore.mappingEls.bsiSelect.selectedIndex];
+      var url = uiStore.mappingEls.bsiSelect.value;
+      if (url)
+        loadMappingFromUrl(
+          url,
+          option && option.dataset.documentTitle ? option.dataset.documentTitle : '',
+        );
+      uiStore.mappingEls.bsiSelect.value = '';
     });
   }
 

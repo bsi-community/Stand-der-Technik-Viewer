@@ -24,9 +24,40 @@ Fachtabellen können innerhalb ihres Rahmens horizontal gescrollt werden.
    - über die Dateiauswahl eine lokale OSCAL-JSON-Datei auswählen oder
    - eine URL zu einem OSCAL-JSON-Dokument eingeben und laden.
 
-   Lokale JSON-Uploads und URL-Importe stehen in der Katalog-, Komponenten- und Mappingansicht im linken Arbeitsbereich zur Verfügung. Die Repository-Auswahl wird für Kataloge und Komponentendefinitionen angeboten.
+   Lokale JSON-Uploads und URL-Importe stehen in der Katalog-, Komponenten- und Mappingansicht im linken Arbeitsbereich zur Verfügung. Die Repository-Auswahl wird für Kataloge, Komponentendefinitionen und Mappings angeboten – sowohl unter Dateiupload in der Seitenleiste als auch als dritte Ladeoption im noch leeren Arbeitsbereich.
 
-2. Nach dem Laden können die Katalog-, Komponenten- oder Mappingansicht sowie Suche, Filter, Diagramme, JSON-Detailanzeigen und PDF-Export verwendet werden. Bei geeigneten Katalogen erscheint zusätzlich der Tab `Vererbung Zielobjektkategorien`. Für die vollständige Komponenten- und Mappingdarstellung sollten die passenden Kataloge zusätzlich in der Katalogansicht geladen sein.
+2. Nach dem Laden können die Katalog-, Komponenten- oder Mappingansicht sowie Suche, Filter, Diagramme, JSON-Detailanzeigen und PDF-Export verwendet werden. Bei geeigneten Katalogen erscheint zusätzlich der Tab `Vererbung Zielobjektkategorien`. Beim Import von Komponentendefinitionen und Mapping Collections ergänzt der Viewer passende öffentliche Kataloge automatisch. Nicht auffindbare Kataloge können weiterhin manuell geladen werden.
+
+### Automatisch zugehörige Kataloge laden
+
+Beim lokalen Dateiimport und beim Laden per URL oder Repositoryauswahl prüft der
+Viewer die Katalogreferenzen von Komponentendefinitionen und Mapping Collections.
+Er ergänzt passende Kataloge in der Katalogansicht, während der gewählte
+Komponenten- oder Mapping-Arbeitsbereich erhalten bleibt. Mehrere Kataloge sind
+möglich; bereits geladene Exemplare werden wiederverwendet.
+
+Die Suche bleibt auf tatsächliche OSCAL Catalogs unter `control_layer/` im aktuellen
+öffentlichen BSI-Repository begrenzt. Pro Referenz gilt:
+
+1. `document-ids` der referenzierten Back-Matter-Ressource stimmen mit einem der
+   `metadata.document-ids` des Katalogs überein. Eine vorhandene ID ist verbindlich:
+   Ohne ID-Treffer wird kein anderer Katalog über Pfad oder Titel gewählt.
+2. Ohne Document-ID wird ein exakt vorhandener Repositorypfad verwendet. Absolute
+   Raw-/GitHub-Links auf `main`, explizite `control_layer/...`-Pfade und relativ zur
+   Dokument-URL auflösbare Referenzen werden berücksichtigt. Ein bloßer Dateiname
+   wird nicht repositoryweit geraten.
+3. Gibt es keinen Pfadtreffer, wird ein exakt übereinstimmender Katalogtitel gesucht.
+   Unterschiedliche Großschreibung, Zusätze oder ähnliche Dateinamen genügen nicht.
+   Mehrere exakt passende Kataloge bleiben Kandidaten; identische Dokumente werden
+   nur einmal geladen.
+
+Die Prüfung betrifft die tatsächlich referenzierten Ressourcen, nicht beliebige
+Literaturangaben im Back Matter. Während der Prüfung bleibt der Importstatus
+sichtbar. Fehlende Kataloge oder Netzwerkfehler verhindern den Import des
+Hauptdokuments nicht; anschließend bleiben die vorhandenen Hinweise auf fehlende
+Kataloge sichtbar. Profile werden nicht aufgelöst und fremde Referenz-URLs nicht
+automatisch heruntergeladen. Details und Quellen:
+[Automatische Katalogauflösung](catalog-autoload.md).
 
 ### Rückmeldungen beim Laden
 
@@ -69,11 +100,25 @@ Bereits erfolgreich geladene Dokumente bleiben bei einem weiteren Importfehler e
 Die Startseite dient als Einstieg in die Stand der Technik-Bibliothek. Sie enthält:
 
 - eine Suche nach Repository-Dokumenten
-- Modellkacheln für `Kataloge` und `Komponentendefinitionen`
+- Modellkacheln für `Kataloge`, `Komponentendefinitionen` und `Mappings`
 - eine kurze Anleitung `Wie nutze ich den Viewer?`
 - eine Begriffserklärung zentraler OSCAL- und Viewer-Begriffe
 
-Über die Kacheln `Kataloge` und `Komponentendefinitionen` werden die entsprechenden Inhalte aus dem [öffentlichen BSI Stand der Technik GitHub-Repository](https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek) angezeigt. Ein Klick auf ein gelistetes Dokument lädt es direkt im Viewer.
+Über die Kacheln `Kataloge`, `Komponentendefinitionen` und `Mappings` werden die entsprechenden Inhalte aus dem [öffentlichen BSI Stand der Technik GitHub-Repository](https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek) angezeigt. Ein Klick auf ein gelistetes Dokument lädt es direkt im Viewer.
+
+Die Kachel `Mappings` steht auf breiten Bildschirmen rechts neben
+`Komponentendefinitionen`. Sie zeigt Mapping Collections aus
+[`control_layer/Mappings/`](https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/control_layer/Mappings)
+einschließlich aller Themen-Unterordner. Ein ausgewähltes Mapping öffnet sich in
+der Mappingansicht und ist auch über die allgemeine Startseitensuche auffindbar.
+
+Bei jedem Start wird die Dateiliste frisch von GitHub abgerufen. Titel und Document
+IDs werden nur bei unveränderter Datei-SHA aus dem Browser-Cache übernommen.
+Entfernte Dateien verschwinden beim nächsten Start; neue und geänderte Dateien
+werden berücksichtigt. Bei einer leeren Liste oder einem Abruffehler ist das
+Dropdown deaktiviert und zeigt einen Statushinweis. Bei Fehlern kann die Bibliothek
+auf der Startseite erneut geladen werden. Lokale Dateien und URL-Importe bleiben
+nutzbar; ein tatsächlicher URL-Abruf setzt die Erreichbarkeit der Quelle voraus.
 
 Die Anleitung erklärt:
 
@@ -139,7 +184,7 @@ Die Startseite enthält kompakte Begriffserklärungen für zentrale Begriffe:
 
 Die Kopfzeile der Mapping-Tabelle benennt für Source und Target die in der Mapping-Datei referenzierten Kataloge, auch wenn noch keine Kataloge geladen wurden. Sie zeigt den Dateinamen bzw. einen vorhandenen Titel, die vollständige Referenz und den Hinweis, den Katalog für Titel und Anforderungstexte in der Katalogansicht zu laden. Bei `#uuid`-Verweisen werden Titel und Dateiverweise aus dem zugehörigen Back Matter ergänzt. Gleiche Ressourcen werden je Tabellenseite zusammengefasst; aktive Filter bestimmen, welche Ressourcen erscheinen.
 
-HTTP-/HTTPS-Referenzen lassen sich öffnen. Relative Referenzen werden bei per URL geladenen Mappings gegen deren Dokument-URL aufgelöst. Bei lokalen Dateien fehlt diese Basis; die Pfade bleiben deshalb als kopierbarer Text sichtbar. Kataloge werden nicht automatisch nachgeladen.
+HTTP-/HTTPS-Referenzen lassen sich öffnen. Relative Referenzen werden bei per URL geladenen Mappings gegen deren Dokument-URL aufgelöst. Bei lokalen Dateien fehlt diese Basis; die Pfade bleiben deshalb als kopierbarer Text sichtbar. Passende Kataloge werden anhand der unten beschriebenen Prioritäten automatisch aus der öffentlichen Bibliothek ergänzt.
 
 **Versionsangaben:** Das [OSCAL Mapping-Modell](https://pages.nist.gov/OSCAL-Reference/models/v1.2.3/mapping/json-reference/#/mapping-collection/mappings/source-resource) verlangt `type` und `href` für die Ressourcenreferenzen, aber keine Katalogversion. `metadata.version` bezeichnet die Mapping-Datei und `metadata.oscal-version` die OSCAL-Modellversion. Beide werden nicht als Katalogversion ausgegeben. Der Viewer zeigt optionale Properties namens `version`, `catalog-version` oder `document-version` an der Ressourcenreferenz oder der direkt referenzierten Back-Matter-Ressource als „Versionsangabe im Mapping“. Diese Angaben können je Herausgeber unterschiedliche Bedeutungen haben; sie sind keine verifizierte Versionsbindung. Die Version eines zugeordneten, geladenen Katalogs erscheint separat aus dessen `metadata.version`. Versionsnummern werden nicht aus Dateinamen geraten.
 

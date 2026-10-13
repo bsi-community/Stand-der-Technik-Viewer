@@ -383,7 +383,7 @@ test('repository search resolves metadata and opens its catalog', async ({ page 
     route.fulfill({ json: component }),
   );
   await page.reload();
-  await expect(page.getByText('2 Dokumente in 2 Modelltypen', { exact: true })).toBeVisible();
+  await expect(page.getByText('2 Dokumente in 3 Modelltypen', { exact: true })).toBeVisible();
   await page.getByRole('searchbox', { name: 'Bibliothek durchsuchen' }).fill('Testkatalog');
   await page.getByRole('button', { name: 'Suchen', exact: true }).click();
   await page

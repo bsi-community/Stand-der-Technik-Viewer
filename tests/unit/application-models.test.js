@@ -69,7 +69,14 @@ test('metadata cache is accepted only for the same SHA', () => {
   ).toHaveLength(1);
   expect(
     applyRepositoryMetadataCache(files, {
-      'a.json': { sha: 'new', title: 'Current', documentId: '' },
+      'a.json': {
+        sha: 'new',
+        title: 'Current',
+        documentId: '',
+        documentIds: [],
+        documentUuid: '',
+        model: 'catalog',
+      },
     }),
   ).toHaveLength(0);
   expect(files[0].title).toBe('Current');

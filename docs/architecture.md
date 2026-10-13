@@ -42,7 +42,7 @@ Datei / URL / Repositoryauswahl
   → Filter/Selektoren → Fachansicht oder Diagramm
 ```
 
-Original-JSON bleibt für Detailanzeigen erhalten. Lokale Dateien werden mit `FileReader` verarbeitet. URL-Dokumente benötigen serverseitig erlaubtes CORS. Die Basis-URL bleibt an der Quelle, damit relative Links aufgelöst werden. Komponentenimporte werden wie bisher anhand der bereits geladenen Definitionen aufgelöst; kein automatischer rekursiver Download fremder Dateien.
+Original-JSON bleibt für Detailanzeigen erhalten. Lokale Dateien werden mit `FileReader` verarbeitet. URL-Dokumente benötigen serverseitig erlaubtes CORS. Die Basis-URL bleibt an der Quelle, damit relative Links aufgelöst werden. Komponentenimporte werden anhand der bereits geladenen Definitionen aufgelöst. Referenzierte öffentliche Kataloge werden vor dem Einfügen eines Komponenten- oder Mappingdokuments ergänzt; kein automatischer rekursiver Download fremder Dateien.
 
 ## JavaScript und TypeScript
 
@@ -119,3 +119,47 @@ Legacy-CSS und Demo-Chunks. `check-build.mjs dist-release` prüft die Artefaktgr
 Workflow paketiert nur `dist-release`; seine Freigabe bleibt an `main` gebunden.
 Die separaten macOS-KERN-Bildreferenzen ersetzen nicht den plattformübergreifenden
 funktionalen Browserlauf oder die eingefrorene Legacy-Referenz.
+
+## Repositoryauswahl für Mappings (13. Oktober 2026)
+
+`features/home/repository.js` nutzt dieselbe rekursive GitHub-Dateiliste für alle
+drei Modelle. JSON-Dateien unter `control_layer/Mappings/` werden als `mapping`
+geführt und bleiben aus der Katalogauswahl ausgeschlossen. Die Dateiliste wird bei
+jedem Anwendungsstart mit `cache: 'no-store'` geladen; ausschließlich Metadaten
+unveränderter Dateien werden anhand der SHA wiederverwendet.
+
+`registryState.mappings` versorgt die KERN-Startseitenkachel, die globale Suche und
+die Mappingauswahl in der Seitenleiste. Der leere Arbeitsbereich übernimmt Optionen,
+Lade-/Fehlerzustand und Dokumenttitel über `refreshWorkspaceRepositoryControls`.
+Alle drei Einstiege verwenden den bestehenden `loadMappingFromUrl`-Import und
+behalten dessen Quellen-URL für relative Referenzen bei. Keine neue Netzwerkquelle
+und keine neue Abhängigkeit. Die historische Legacy-Vergleichsoberfläche behält
+ihren bisherigen Einstieg mit zwei Modellkacheln.
+
+## Automatische Katalogabhängigkeiten
+
+`domain/catalog-references.js` extrahiert scoped Referenzen und prüft die Priorität
+Document-ID → exakter Repositorypfad → exakter Titel ohne Netzwerkzugriff.
+`infrastructure/repository-index.js` liefert eine von Startseite und Importen
+geteilte Promise für die aktuelle Dateiliste und ihre Metadaten. Alle JSON-Dateien
+unter `control_layer/` werden indexiert; nur tatsächlich erkannte Catalogs kommen
+für den automatischen Import infrage. Mappings und Profile bleiben ausgeschlossen.
+
+Der SHA-gebundene Metadaten-Cache v3 enthält alle Document-IDs, Instanz-UUID und
+Modelltyp. `repository-fetch.js` bündelt laufende Requests, begrenzt jeden Abruf
+auf acht Sekunden und hält bis zu 24 öffentliche Katalog-JSONs im Arbeitsspeicher.
+Ein beim Indexieren bereits abgerufenes Katalogdokument muss für den Import nicht
+erneut übertragen werden. Ein Neuladen beginnt wieder mit einer frischen Dateiliste.
+
+`app/catalog-dependencies.js` koordiniert bis zu vier parallele Katalogabrufe,
+validiert Dokumenttyp und Identität vor der Übernahme, prüft nach dem Warten erneut
+auf bereits importierte Kataloge und fügt neue Quellen gesammelt über
+`addCatalogSources` ein. Ein vorhandener aktiver Katalog bleibt aktiv; pro Gruppe
+wird die Katalogansicht nur einmal aufgebaut. Lokale und URL-Loader warten vor dem
+Einfügen des Hauptdokuments auf diese Prüfung. Fehler bei Abhängigkeiten werden
+isoliert, sodass das Hauptdokument weiterhin importiert werden kann.
+
+Die Anforderungsauflösung berücksichtigt dieselben Identitäten: Eine explizite,
+nicht passende Document-ID darf nicht durch zufällig gleiche Control-IDs eines
+anderen geladenen Katalogs ersetzt werden. Details, unterstützte Referenzstellen
+und Grenzen stehen in [catalog-autoload.md](catalog-autoload.md).

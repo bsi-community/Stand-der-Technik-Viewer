@@ -65,9 +65,12 @@
   margin: 12px 0 16px;
 }
 .registry-model-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  max-width: none;
   gap: 24px;
 }
 .registry-model-card {
+  grid-template-rows: auto 1fr auto;
   align-content: start;
   justify-items: start;
   background: #fff;
@@ -86,6 +89,8 @@
   border-color: var(--accent);
 }
 .registry-model-card h3 {
+  overflow-wrap: anywhere;
+  hyphens: auto;
   font-size: 24px;
   color: var(--text);
   margin: 0 0 12px;
@@ -96,6 +101,9 @@
   color: var(--dim);
   line-height: 1.5;
 }
+.registry-model-footer {
+  flex-wrap: wrap;
+}
 .registry-model-footer,
 .registry-model-status {
   justify-content: flex-start;
@@ -105,6 +113,7 @@
   display: none;
 }
 .registry-model-link {
+  white-space: nowrap;
   color: var(--accent);
   font-weight: 500;
   text-decoration: underline;

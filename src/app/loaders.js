@@ -5,6 +5,7 @@ import { detectOscalKind, oscalKindLabel } from '../domain/documents.js';
 import { escapeHtml } from '../shared/html.js';
 import { showMsg } from '../shared/ui/messages.js';
 import { normalizeCatalogUrl } from '../shared/urls.js';
+import { ensureCatalogDependencies } from './catalog-dependencies.js';
 import { isKern } from '../shared/ui/kern.js';
 import { beginImport, urlValidationError } from '../shared/ui/import-feedback.js';
 
@@ -25,7 +26,7 @@ function loadLocalDocument(file, kind) {
       finish(message);
       resolve('');
     }
-    reader.onload = (event) => {
+    reader.onload = async (event) => {
       try {
         const json = JSON.parse(event.target.result || '');
         const detected = detectOscalKind(json);
@@ -35,6 +36,7 @@ function loadLocalDocument(file, kind) {
               oscalKindLabel(kind) +
               '. Bitte eine passende OSCAL-JSON-Datei auswählen.',
           );
+        if (kind !== 'catalog') await ensureCatalogDependencies(json);
         const entry = { label: file.name, json, baseUrl: '' };
         if (kind === 'catalog') addCatalogSource(entry);
         else if (kind === 'component') addComponentSource(entry);
@@ -108,7 +110,10 @@ export function loadOscalFromUrl(rawUrl, expectedKind, sourceLabel, errorPrefix)
       }
       return res.json();
     })
-    .then(function (json) {
+    .then(async function (json) {
+      const detected = detectOscalKind(json);
+      if (detected && detected !== 'catalog' && (!expectedKind || expectedKind === detected))
+        await ensureCatalogDependencies(json, url);
       const kind = addOscalUrlSource(expectedKind, json, url, sourceLabel);
       finish();
       return kind;

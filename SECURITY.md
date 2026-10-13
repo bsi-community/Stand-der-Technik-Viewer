@@ -1,8 +1,20 @@
 # Sicherheit und Datenschutz
 
-Der Viewer verarbeitet lokale JSON-Dateien im Browser; es gibt keinen eigenen Uploadserver und keine Telemetrie. Eine URL-Eingabe, Repositoryauswahl, Zielobjekthierarchie und externe Bilder können jedoch Netzwerkzugriffe auslösen. Beim Start wird außerdem die Build-Kennung vom eigenen Hosting-Ursprung abgerufen; während laufender Arbeit erfolgt keine automatische Neuladung. KERN, Fira Sans und D3 werden mit dem Build ausgeliefert und benötigen kein externes Font- oder Skript-CDN. Dabei gelten die Datenschutz- und Verfügbarkeitsbedingungen der jeweiligen Zielserver. OSCAL-Inhalte können sicherheitsrelevante Informationen enthalten: Nur freigegebene Daten aus vertrauenswürdigen Quellen verwenden.
+Der Viewer verarbeitet lokale JSON-Dateien im Browser; es gibt keinen eigenen Uploadserver und keine Telemetrie. Eine URL-Eingabe, Repositoryauswahl, automatisches Nachladen referenzierter öffentlicher Kataloge, Zielobjekthierarchie und externe Bilder können jedoch Netzwerkzugriffe auslösen. Beim Start wird außerdem die Build-Kennung vom eigenen Hosting-Ursprung abgerufen; während laufender Arbeit erfolgt keine automatische Neuladung. KERN, Fira Sans und D3 werden mit dem Build ausgeliefert und benötigen kein externes Font- oder Skript-CDN. Dabei gelten die Datenschutz- und Verfügbarkeitsbedingungen der jeweiligen Zielserver. OSCAL-Inhalte können sicherheitsrelevante Informationen enthalten: Nur freigegebene Daten aus vertrauenswürdigen Quellen verwenden.
 
 Der Viewer ist eine Anzeigeanwendung, kein vollständiger OSCAL-Schemavalidator. Die unterstützte Struktur wird beim Einlesen geprüft und aufbereitet; erfolgreiche Anzeige ist kein Nachweis fachlicher oder vollständiger Schema-Konformität.
+
+## Automatische Katalogabrufe
+
+Auch ein lokaler Komponenten- oder Mappingimport kann passende öffentliche
+Kataloge nachladen. Die Auswahl erfolgt lokal anhand des frisch geladenen
+Repository-Index; der Inhalt lokaler Dateien und deren Suchkriterien werden nicht
+an eine Such-API übertragen. Automatisch abgerufen werden ausschließlich im
+aktuellen BSI-Repository unter `control_layer/` nachgewiesene JSON-Dateien. Vor der
+Übernahme werden der Catalog-Root und die maßgebliche Identität erneut geprüft.
+Ungeprüfte Fremd-URLs, Literaturverweise, Profile und importierte Component
+Definitions werden nicht automatisch verfolgt. Die Repositoryabrufe verwenden
+`credentials: 'omit'`, haben ein Zeitlimit und werden bei Parallelität geteilt.
 
 ## Entwicklungsregeln
 

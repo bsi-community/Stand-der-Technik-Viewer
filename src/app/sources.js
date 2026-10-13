@@ -84,15 +84,28 @@ export function activateMappingSource(index) {
 }
 
 export function addCatalogSource(entry) {
-  var meta = buildCatalogSourceMeta(entry.json, entry.label);
-  entry.catalogUuid = meta.catalogUuid;
-  entry.catalogTitle = meta.catalogTitle;
-  entry.originalLabel = entry.label || '';
-  entry.label = meta.catalogTitle || entry.label;
-  entry.controlRefs = meta.controlRefs;
-  entry.controlLookup = meta.controlLookup;
-  sourceStore.loadedCatalogSources.push(entry);
-  activateCatalogSource(sourceStore.loadedCatalogSources.length - 1);
+  addCatalogSources([entry]);
+}
+
+/** Batch dependency additions parse and render the catalog workspace only once. */
+export function addCatalogSources(entries, { preserveActive = false } = {}) {
+  const previousIndex = sourceStore.activeCatalogSourceIndex;
+  if (!entries.length) return;
+  for (const entry of entries) {
+    var meta = buildCatalogSourceMeta(entry.json, entry.label);
+    entry.catalogUuid = meta.catalogUuid;
+    entry.catalogTitle = meta.catalogTitle;
+    entry.originalLabel = entry.label || '';
+    entry.label = meta.catalogTitle || entry.label;
+    entry.controlRefs = meta.controlRefs;
+    entry.controlLookup = meta.controlLookup;
+    sourceStore.loadedCatalogSources.push(entry);
+  }
+  activateCatalogSource(
+    preserveActive && previousIndex >= 0
+      ? previousIndex
+      : sourceStore.loadedCatalogSources.length - 1,
+  );
   if (uiStore.els.file) uiStore.els.file.value = '';
 }
 

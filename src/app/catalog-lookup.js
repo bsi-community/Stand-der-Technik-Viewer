@@ -1,4 +1,5 @@
 /** app/catalog-lookup: see docs/architecture.md for responsibilities. */
+import { catalogIdentity, matchingCatalogs } from '../domain/catalog-references.js';
 import { catalogStore, sourceStore } from '../app/store.js';
 import { buildParamMap, partText } from '../domain/parameters.js';
 import { valueOfProp } from '../domain/properties.js';
@@ -113,6 +114,20 @@ export function findCatalogSourceIndexByControlRef(controlRef) {
 
 export function findCatalogSourceIndexForRequirement(req) {
   if (!req) return -1;
+  if (req.catalogReference) {
+    const identities = sourceStore.loadedCatalogSources.map((source, index) => ({
+      ...catalogIdentity(source.json, source.baseUrl),
+      index,
+    }));
+    const matches = matchingCatalogs(req.catalogReference, identities);
+    if (matches.length)
+      return (
+        matches.find((match) =>
+          catalogSourceHasControlRef(sourceStore.loadedCatalogSources[match.index], req.controlId),
+        ) || matches[0]
+      ).index;
+    if (req.catalogReference.ids.length) return -1;
+  }
   var fallbackIndex = -1;
   for (var i = 0; i < sourceStore.loadedCatalogSources.length; i++) {
     var source = sourceStore.loadedCatalogSources[i];
@@ -167,7 +182,10 @@ export function findCatalogControlForRequirement(req) {
     );
     if (sourceControl) return { control: sourceControl, sourceIndex: sourceIndex };
   }
-  return { control: getAnyCatalogControlByRef(req.controlId), sourceIndex: sourceIndex };
+  return {
+    control: req.catalogReference?.ids.length ? null : getAnyCatalogControlByRef(req.controlId),
+    sourceIndex: sourceIndex,
+  };
 }
 
 export function getCatalogStatementProse(control) {

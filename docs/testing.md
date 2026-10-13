@@ -80,3 +80,29 @@ deren 40-×-40-Abmessungen, den Texttitel und das 24-×-24-Home-Symbol. Kein Auf
 des alten PNG darf erfolgen. Danach werden die Antworten freigegeben und der
 reguläre Start sowie die Home-Navigation geprüft, bei 375 und 1280 Pixeln in allen
 drei Browser-Engines. Der Build-Vertrag schützt zusätzlich die initiale HTML-Ausgabe.
+
+## Öffentliche Mapping-Bibliothek
+
+`tests/e2e/repository-mappings.spec.js` prüft die dritte Modellkachel einschließlich
+Tastaturnavigation, Suche, beide Dropdowns, verschachtelte und URL-kodierte Pfade,
+Aktualisierung beim Neustart trotz Metadaten-Cache, verzögertes Laden, leere und
+fehlgeschlagene bzw. unvollständige Repositoryantworten, erneuten Abruf,
+fehlgeschlagene Mapping-Downloads sowie schmale Ansichten. Die regulären Prüfungen
+ersetzen GitHub-Antworten durch synthetische Daten und laufen in allen drei Engines.
+Die macOS-KERN-Startseitenbilder müssen die dritte Kachel berücksichtigen; die
+historische Legacy-Referenz bleibt unverändert.
+
+## Automatische Katalogabhängigkeiten
+
+`catalog-references.test.js` deckt Referenzstellen, Back-Matter-Priorität, sämtliche
+Document-IDs, Instanz-UUID-URIs, exakte Pfade/Titel, fremde Hosts, lokale relative
+Pfade und explizit importierte bereits geladene Definitionen ab.
+`repository-fetch.test.js` prüft gemeinsame Requests, Wiederverwendung, Fehler-
+Erholung und den Abbruch zeitüberschrittener Abrufe mit kontrollierter Uhr.
+`catalog-dependencies.spec.js` prüft beide Modelle über alle drei Prioritätsstufen,
+Datei- und Repositoryimport, mehrere Kataloge, konkurrierende Importe, vorhandene
+Quellen, relative URLs und Deep Links, kalten/warmen Cache, verzögerten bzw.
+fehlgeschlagenen Abruf sowie die Ablehnung falscher Modelle und IDs. Sämtliche
+Browserfälle laufen mit synthetischen Daten in Chromium, Firefox und WebKit.
+Der separate Echtdatenabgleich darf fehlende oder ungenaue Referenzen im öffentlichen
+Bestand nicht durch unscharfe Fallbacks verdecken.

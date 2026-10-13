@@ -8,7 +8,12 @@ import {
   runImportAction,
 } from '../../shared/ui/kern.js';
 import { loadBsiRepositoryOptions } from './repository.js';
-import { loadCatalogFromUrl, loadComponentFromUrl, switchTab } from '../../app/actions.js';
+import {
+  loadCatalogFromUrl,
+  loadComponentFromUrl,
+  loadMappingFromUrl,
+  switchTab,
+} from '../../app/actions.js';
 import { updateVisualizationContext } from '../../app/navigation.js';
 import { uiStore } from '../../app/store.js';
 import { resetTargetHierarchyDetails } from '../visualizations/target-hierarchy.js';
@@ -19,6 +24,17 @@ import { hideMsg } from '../../shared/ui/messages.js';
 import { updateHeaderSubtitle } from '../../shared/ui/overview.js';
 
 export function registryModelConfig(kind) {
+  if (kind === 'mapping') {
+    return {
+      key: 'mapping',
+      title: 'Mappings',
+      shortTitle: 'Mapping',
+      description:
+        'Zeigt Beziehungen zwischen Anforderungen verschiedener Kataloge und macht ihre Zuordnungen vergleichbar.',
+      color: '#176b78',
+      badge: 'Mapping Collection',
+    };
+  }
   if (kind === 'component') {
     return {
       key: 'component',
@@ -41,9 +57,13 @@ export function registryModelConfig(kind) {
 }
 
 export function registryFilesForModel(model) {
+  if (model === 'mapping') return uiStore.registryState.mappings || [];
   if (model === 'component') return uiStore.registryState.components || [];
   if (model === 'catalog') return uiStore.registryState.catalogs || [];
-  return (uiStore.registryState.catalogs || []).concat(uiStore.registryState.components || []);
+  return (uiStore.registryState.catalogs || []).concat(
+    uiStore.registryState.components || [],
+    isKern() ? uiStore.registryState.mappings || [] : [],
+  );
 }
 
 export function registryFileTitle(file) {
@@ -165,9 +185,17 @@ export function renderRegistryHomeHelp(parent) {
     '<p>Ein kurzer Ablauf für die Arbeit mit Katalogen, Komponentendefinitionen und Mappings.</p>' +
     '</div>' +
     '<ol class="registry-guide-list">' +
-    '<li><strong>Dokument finden oder laden.</strong><span>Nutze die Suche auf der Startseite, eine Modellkachel, einen lokalen JSON-Upload oder eine URL. Upload und URL-Abruf stehen im jeweiligen Arbeitsbereich unter &quot;Dateiupload&quot; bereit. Die Kacheln &quot;Kataloge&quot; und &quot;Komponentendefinitionen&quot; zeigen Inhalte aus dem <a href="https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek" target="_blank" rel="noopener noreferrer">öffentlichen BSI Stand der Technik GitHub-Repository</a>, die sich direkt im Viewer öffnen lassen.</span></li>' +
+    '<li><strong>Dokument finden oder laden.</strong><span>Nutze die Suche auf der Startseite, eine Modellkachel, einen lokalen JSON-Upload oder eine URL. Upload und URL-Abruf stehen im jeweiligen Arbeitsbereich unter &quot;Dateiupload&quot; bereit. Die Kacheln &quot;Kataloge&quot;' +
+    (isKern()
+      ? ', &quot;Komponentendefinitionen&quot; und &quot;Mappings&quot;'
+      : ' und &quot;Komponentendefinitionen&quot;') +
+    ' zeigen Inhalte aus dem <a href="https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek" target="_blank" rel="noopener noreferrer">öffentlichen BSI Stand der Technik GitHub-Repository</a>, die sich direkt im Viewer öffnen lassen.</span></li>' +
     '<li><strong>Obere Menüleiste verstehen.</strong><span>Kataloge, Komponentendefinitionen und Mappings sind die drei Arbeitsbereiche. Die rechts daneben angezeigte Kontextzeile nennt jederzeit den aktiven Datenbereich. Graph, Sunburst und Balkendiagramm passen ihren Inhalt automatisch an diesen Bereich an. Bei geeigneten Katalogen wird zusätzlich die aktuelle Vererbung der BSI-Zielobjektkategorien eingeblendet.</span></li>' +
-    '<li><strong>Passende Ansicht wählen.</strong><span>Kataloge zeigen Anforderungen, Komponentendefinitionen zeigen die Anforderungserfüllung referenzierter Anforderungen, Mappings zeigen Beziehungen zwischen Anforderungen (es muss sichergestellt sein, dass die passenden Kataloge in der Katalogansicht hochgeladen sind, um die Inhalte der entsprechenden Kataloge sauber in der Ansicht für Komponentendefinitionen und in der Mappingansicht anzeigen zu können).</span></li>' +
+    '<li><strong>Passende Ansicht wählen.</strong><span>Kataloge zeigen Anforderungen, Komponentendefinitionen zeigen die Anforderungserfüllung referenzierter Anforderungen, Mappings zeigen Beziehungen zwischen Anforderungen' +
+    (isKern()
+      ? '. Passende Kataloge aus der öffentlichen Bibliothek werden beim Import automatisch ergänzt. Nicht auffindbare Kataloge können weiterhin manuell in der Katalogansicht geladen werden.'
+      : ' (es muss sichergestellt sein, dass die passenden Kataloge in der Katalogansicht hochgeladen sind, um die Inhalte der entsprechenden Kataloge sauber in der Ansicht für Komponentendefinitionen und in der Mappingansicht anzeigen zu können).') +
+    '</span></li>' +
     '<li><strong>Inhalte eingrenzen.</strong><span>In der Katalogansicht, der Ansicht für Komponentendefinitionen und der Mappingansicht steht jeweils eine Menüleiste auf der linken Seite zur Verfügung, welche es ermöglicht die angezeigten Inhalte zu filtern (z.B. über ein Volltext-Suchfeld oder andere vorgegebene Filterungsmöglichkeiten). Somit ist man in der Lage gezielt nach Inhalten zu suchen.</span></li>' +
     '<li><strong>Ergebnisse sichern.</strong><span>Über den PDF-Export können die aktuellen Ansichten für Kataloge und Komponentendefinitionen druckoptimiert ausgegeben werden (via Browser Print-to-PDF-Funktion).</span></li>' +
     '</ol>' +
@@ -221,7 +249,9 @@ export function renderRegistryBrowse(parent) {
       ? 'Komponentendefinitionen'
       : model === 'catalog'
         ? 'Kataloge'
-        : 'Alle Dokumente';
+        : model === 'mapping'
+          ? 'Mappings'
+          : 'Alle Dokumente';
   var root = parent || uiStore.els.homeTab;
 
   var list = document.createElement('div');
@@ -313,7 +343,7 @@ export function renderRegistryHome() {
   }
   uiStore.els.homeTab.innerHTML = '';
   document.body.classList.add('home-mode');
-  var total = uiStore.registryState.catalogs.length + uiStore.registryState.components.length;
+  var total = registryFilesForModel('all').length;
   var shell = document.createElement('div');
   shell.className = 'registry-home-shell';
   var primary = document.createElement('div');
@@ -335,7 +365,7 @@ export function renderRegistryHome() {
   else if (uiStore.registryState.status === 'error')
     count.textContent =
       'Repository-Inhalte konnten nicht geladen werden. Lokale Dateien und URL-Uploads funktionieren weiterhin.';
-  else count.textContent = total + ' Dokumente in 2 Modelltypen';
+  else count.textContent = total + ' Dokumente in ' + (isKern() ? 3 : 2) + ' Modelltypen';
   hero.appendChild(count);
   if (isKern() && uiStore.registryState.status === 'error') {
     const retry = createButton('Bibliothek erneut laden', () => loadBsiRepositoryOptions());
@@ -378,6 +408,7 @@ export function renderRegistryHome() {
   grid.className = 'registry-model-grid';
   renderRegistryModelCard(grid, 'catalog', uiStore.registryState.catalogs.length);
   renderRegistryModelCard(grid, 'component', uiStore.registryState.components.length);
+  if (isKern()) renderRegistryModelCard(grid, 'mapping', uiStore.registryState.mappings.length);
   primary.appendChild(grid);
   var helpIntro = document.createElement('p');
   helpIntro.className = 'registry-help-intro';
@@ -422,7 +453,12 @@ export function showHomePage(resetRegistry) {
 export function loadRegistryDocument(file) {
   if (!file || !file.url) return;
   var title = registryFileTitle(file);
-  if (file.kind === 'component') {
+  if (file.kind === 'mapping') {
+    return loadMappingFromUrl(file.url, title).then(function (kind) {
+      if (kind) switchTab('mappings');
+      return kind;
+    });
+  } else if (file.kind === 'component') {
     return loadComponentFromUrl(file.url, title).then(function (kind) {
       if (kind) switchTab('components');
       return kind;
