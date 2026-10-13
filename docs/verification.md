@@ -1,5 +1,35 @@
 # Prüfstände und historische Nachweise
 
+## Automatisches Nachladen referenzierter Kataloge – 13. Oktober 2026
+
+Auf `codex/viewer-public-mappings` ergänzt: automatische Katalogübernahme beim
+Import von Component Definitions und Mapping Collections über Datei, URL und
+Repository-Auswahl. Die Auflösung verwendet zuerst referenzierte document-ids,
+bei deren Fehlen exakte öffentliche Pfade und anschließend exakte Titel. Eine
+vorhandene, aber nicht gefundene document-id wird nicht durch schwächere Treffer
+ersetzt. Gemeinsamer Repository-Index, begrenzte Parallelität, Download-Cache und
+gebündelte Übernahme vermeiden doppelte Abrufe und wiederholtes Rendern.
+
+Lokal erfolgreich: Lint, vollständige Formatprüfung, TypeScript, 73 Unit-/
+Architekturtests, 324 reguläre Browserfälle, zehn unveränderte Legacy-Bildvergleiche,
+zwölf unveränderte KERN-Bildvergleiche und 21 Release-Browserfälle. Entwicklungs-
+und Release-Build bestehen die Artefaktprüfung. Die Browserprüfungen liefen in
+Chromium, Firefox und WebKit ohne Test-Retries. Die 54 neuen Browserfälle decken
+unter anderem beide Modelle, alle Auflösungsprioritäten, mehrere Referenzen,
+konkurrierende Importe, bereits geladene Kataloge sowie verzögerte und fehlerhafte
+Netzwerkantworten ab.
+
+Ein zusätzlicher Browserlauf gegen die echte öffentliche Bibliothek bestätigte
+den Import der Passwortrichtlinie samt zugehörigem Katalog in etwa 0,8 Sekunden
+nach bereitstehendem Index (Einzelmessung, keine Laufzeitgarantie). Die beiden
+öffentlichen Mappings und fünf weitere geprüfte Component Definitions liefern
+aktuell keine Treffer nach den vorgegebenen exakten Regeln: Dateinamen ohne
+auflösbaren Repository-Pfad beziehungsweise abweichende Katalogtitel reichen
+nicht aus. Details und Modellquellen: [Katalog-Autoload](catalog-autoload.md).
+
+Diese Erweiterung ist lokal geprüft und noch nicht committet oder gepusht.
+Ein CI- oder Veröffentlichungsnachweis für diese Änderungen wird nicht behauptet.
+
 ## Öffentliche Mapping-Bibliothek – 13. Oktober 2026
 
 Branch `codex/viewer-public-mappings`: dritte KERN-Modellkachel, Mapping-Suche und

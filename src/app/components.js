@@ -1,4 +1,5 @@
 /** app/components: see docs/architecture.md for responsibilities. */
+import { describeCatalogReference } from '../domain/catalog-references.js';
 import { componentStore, sourceStore, uiStore } from '../app/store.js';
 import {
   getCatalogControlByRef,
@@ -44,6 +45,15 @@ export function createImplementationEntry(impl, owner) {
   var source = String((impl && impl.source) || '').trim();
   var sourceResource = getBackMatterResource(componentStore.componentState.resourceByUuid, source);
   var sourceLabel = sourceResource ? getBackMatterResourceLabel(sourceResource) : source;
+  var catalogReference = describeCatalogReference(
+    impl,
+    {
+      resources: sourceResource
+        ? [sourceResource]
+        : componentStore.componentState.backMatter?.resources || [],
+    },
+    sourceResource?.__baseUrl || componentStore.componentState.baseUrl || '',
+  );
   var implEntry = {
     key:
       (owner.uuid || owner.id || owner.name || 'owner') +
@@ -91,6 +101,7 @@ export function createImplementationEntry(impl, owner) {
       responsibleRoles: req['responsible-roles'] || [],
       remarks: req.remarks || '',
       raw: req,
+      catalogReference,
       source: implEntry.source,
       sourceLabel: implEntry.sourceLabel,
       ownerUuid: owner.uuid,

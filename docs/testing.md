@@ -91,3 +91,18 @@ fehlgeschlagene Mapping-Downloads sowie schmale Ansichten. Die regulären Prüfu
 ersetzen GitHub-Antworten durch synthetische Daten und laufen in allen drei Engines.
 Die macOS-KERN-Startseitenbilder müssen die dritte Kachel berücksichtigen; die
 historische Legacy-Referenz bleibt unverändert.
+
+## Automatische Katalogabhängigkeiten
+
+`catalog-references.test.js` deckt Referenzstellen, Back-Matter-Priorität, sämtliche
+Document-IDs, Instanz-UUID-URIs, exakte Pfade/Titel, fremde Hosts, lokale relative
+Pfade und explizit importierte bereits geladene Definitionen ab.
+`repository-fetch.test.js` prüft gemeinsame Requests, Wiederverwendung, Fehler-
+Erholung und den Abbruch zeitüberschrittener Abrufe mit kontrollierter Uhr.
+`catalog-dependencies.spec.js` prüft beide Modelle über alle drei Prioritätsstufen,
+Datei- und Repositoryimport, mehrere Kataloge, konkurrierende Importe, vorhandene
+Quellen, relative URLs und Deep Links, kalten/warmen Cache, verzögerten bzw.
+fehlgeschlagenen Abruf sowie die Ablehnung falscher Modelle und IDs. Sämtliche
+Browserfälle laufen mit synthetischen Daten in Chromium, Firefox und WebKit.
+Der separate Echtdatenabgleich darf fehlende oder ungenaue Referenzen im öffentlichen
+Bestand nicht durch unscharfe Fallbacks verdecken.

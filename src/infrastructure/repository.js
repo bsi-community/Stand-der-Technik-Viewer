@@ -7,10 +7,15 @@ import {
   BSI_REPOSITORY_RAW_ROOT,
 } from '../config.js';
 import {
+  detectOscalKind,
+  getOscalDocumentRoot,
   getOscalDocumentIdentifier,
   getOscalDocumentTitle,
   normalizeOscalDocumentIdentifier,
 } from '../domain/documents.js';
+
+import { documentIds, normalizeDocumentId } from '../domain/catalog-references.js';
+import { fetchRepositoryJson } from './repository-fetch.js';
 
 export function getRepositoryFileName(path) {
   var parts = String(path || '').split('/');
@@ -123,10 +128,16 @@ export function applyRepositoryMetadataCache(files, cache) {
       cached.sha === file.sha &&
       typeof cached.title === 'string' &&
       cached.title.trim() &&
-      typeof cached.documentId === 'string'
+      typeof cached.documentId === 'string' &&
+      Array.isArray(cached.documentIds) &&
+      typeof cached.model === 'string' &&
+      typeof cached.documentUuid === 'string'
     ) {
       file.title = cached.title.trim();
       file.documentId = normalizeOscalDocumentIdentifier(cached.documentId);
+      file.documentIds = cached.documentIds;
+      file.documentUuid = cached.documentUuid;
+      file.model = cached.model;
       file.metadataLoaded = true;
     } else {
       file.title = file.fallbackTitle;
@@ -146,6 +157,9 @@ export function persistRepositoryMetadataCache(currentFiles) {
         sha: file.sha,
         title: file.title.trim(),
         documentId: file.documentId || '',
+        documentIds: file.documentIds || [],
+        documentUuid: file.documentUuid || '',
+        model: file.model || '',
       };
     }
   }
@@ -212,14 +226,13 @@ export function enrichRepositoryMetadata(files, cache) {
   function worker() {
     if (nextIndex >= list.length) return Promise.resolve();
     var file = list[nextIndex++];
-    return fetch(file.url, { credentials: 'omit', cache: 'no-store' })
-      .then(function (res) {
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        return res.json();
-      })
+    return fetchRepositoryJson(file.url, { retain: file.kind === 'catalog' })
       .then(function (json) {
         file.title = getOscalDocumentTitle(json, file.fallbackTitle);
         file.documentId = getOscalDocumentIdentifier(json);
+        file.documentIds = documentIds(getOscalDocumentRoot(json)?.metadata);
+        file.documentUuid = normalizeDocumentId(getOscalDocumentRoot(json)?.uuid);
+        file.model = detectOscalKind(json);
         file.metadataLoaded = true;
         if (file.sha)
           cache[file.path] = { sha: file.sha, title: file.title, documentId: file.documentId };

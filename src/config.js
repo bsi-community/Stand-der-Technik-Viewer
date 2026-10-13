@@ -53,7 +53,7 @@ export const BSI_REPOSITORY_TREE_URL =
 export const BSI_REPOSITORY_RAW_ROOT =
   'https://raw.githubusercontent.com/BSI-Bund/Stand-der-Technik-Bibliothek/main/';
 
-export const BSI_REPOSITORY_METADATA_CACHE_KEY = 'sdt-viewer:bsi-repository-metadata:v2';
+export const BSI_REPOSITORY_METADATA_CACHE_KEY = 'sdt-viewer:bsi-repository-metadata:v3';
 
 export const BSI_CONTROL_LAYER_PREFIX = 'control_layer/';
 

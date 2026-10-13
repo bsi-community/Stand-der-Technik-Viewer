@@ -1,5 +1,10 @@
 /** features/mappings/resolution: see docs/architecture.md for responsibilities. */
-import { sourceStore } from '../../app/store.js';
+import {
+  describeCatalogReference,
+  catalogIdentity,
+  matchingCatalogs,
+} from '../../domain/catalog-references.js';
+import { sourceStore, mappingStore } from '../../app/store.js';
 import {
   getCatalogSourceControlByRef,
   getCatalogStatementProse,
@@ -36,7 +41,21 @@ export function mappingCatalogMatchScore(source, resource, catalogLabel) {
   return best;
 }
 
+function identifiedCatalogSources(resource) {
+  const state = mappingStore.mappingState;
+  const reference = describeCatalogReference(resource, state?.backMatter, state?.baseUrl || '');
+  const identities = sourceStore.loadedCatalogSources.map((source) => ({
+    ...catalogIdentity(source.json, source.baseUrl),
+    source,
+  }));
+  const matches = matchingCatalogs(reference, identities);
+  return matches.length || reference.ids.length
+    ? matches.map((match) => match.source)
+    : sourceStore.loadedCatalogSources;
+}
+
 export function resolveMappingCatalogSource(resource, catalogLabel, refs) {
+  const identified = identifiedCatalogSources(resource);
   var candidates = [];
   var referenceList = uniqueList(
     (refs || [])
@@ -45,8 +64,8 @@ export function resolveMappingCatalogSource(resource, catalogLabel, refs) {
       })
       .filter(Boolean),
   );
-  for (var i = 0; i < sourceStore.loadedCatalogSources.length; i++) {
-    var source = sourceStore.loadedCatalogSources[i];
+  for (var i = 0; i < identified.length; i++) {
+    var source = identified[i];
     var refMatches = 0;
     for (var r = 0; r < referenceList.length; r++) {
       if (getCatalogSourceControlByRef(source, referenceList[r])) refMatches++;
@@ -58,6 +77,8 @@ export function resolveMappingCatalogSource(resource, catalogLabel, refs) {
     });
   }
   if (!candidates.length) return null;
+  if (identified !== sourceStore.loadedCatalogSources && candidates.length === 1)
+    return candidates[0].source;
   candidates.sort(function (a, b) {
     if (b.refMatches !== a.refMatches) return b.refMatches - a.refMatches;
     return b.resourceScore - a.resourceScore;
@@ -76,9 +97,10 @@ export function resolveMappingCatalogSource(resource, catalogLabel, refs) {
 }
 
 export function resolveMappingControl(ref, resource, catalogLabel) {
+  const identified = identifiedCatalogSources(resource);
   var candidates = [];
-  for (var i = 0; i < sourceStore.loadedCatalogSources.length; i++) {
-    var source = sourceStore.loadedCatalogSources[i];
+  for (var i = 0; i < identified.length; i++) {
+    var source = identified[i];
     var control = getCatalogSourceControlByRef(source, ref);
     if (control) {
       candidates.push({

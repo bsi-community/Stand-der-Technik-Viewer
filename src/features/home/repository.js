@@ -1,21 +1,10 @@
 /** features/home/repository: see docs/architecture.md for responsibilities. */
 import { refreshWorkspaceRepositoryControls, renderRegistryHome } from '../../app/actions.js';
 import { uiStore } from '../../app/store.js';
-import {
-  BSI_CONTROL_LAYER_MAPPINGS_PREFIX,
-  BSI_CONTROL_LAYER_PREFIX,
-  BSI_IMPLEMENTATION_LAYER_PREFIX,
-  BSI_REPOSITORY_TREE_URL,
-} from '../../config.js';
+import { loadRepositoryIndex } from '../../infrastructure/repository-index.js';
 import {
   appendRepositoryOptions,
-  applyRepositoryMetadataCache,
   deduplicateRepositoryFilesByDocumentId,
-  enrichRepositoryMetadata,
-  getRepositoryJsonFiles,
-  isControlLayerSourceCatalogPath,
-  persistRepositoryMetadataCache,
-  readRepositoryMetadataCache,
   sortRepositoryFiles,
 } from '../../infrastructure/repository.js';
 
@@ -106,6 +95,7 @@ export function publishRepositoryFiles(
 }
 
 export function loadBsiRepositoryOptions() {
+  const retry = uiStore.registryState.status === 'error';
   uiStore.registryState.status = 'loading';
   uiStore.registryState.catalogs = [];
   uiStore.registryState.components = [];
@@ -119,57 +109,21 @@ export function loadBsiRepositoryOptions() {
   }
   for (var mode of ['catalog', 'component', 'mapping']) refreshWorkspaceRepositoryControls(mode);
   if (uiStore.uiState.view === 'home') renderRegistryHome();
-  return fetch(BSI_REPOSITORY_TREE_URL, { credentials: 'omit', cache: 'no-store' })
-    .then(function (res) {
-      if (!res.ok) {
-        throw new Error('GitHub API HTTP ' + res.status);
-      }
-      return res.json();
-    })
-    .then(function (tree) {
-      if (tree.truncated) {
-        throw new Error('Die GitHub-Dateiliste ist unvollständig.');
-      }
-      var controlLayerJsonFiles = getRepositoryJsonFiles(tree, BSI_CONTROL_LAYER_PREFIX, false, [
-        BSI_CONTROL_LAYER_MAPPINGS_PREFIX,
-      ]);
-      var sourceCatalogs = [];
-      var userCatalogs = [];
-      for (var i = 0; i < controlLayerJsonFiles.length; i++) {
-        if (isControlLayerSourceCatalogPath(controlLayerJsonFiles[i].path)) {
-          sourceCatalogs.push(controlLayerJsonFiles[i]);
-        } else if (
-          controlLayerJsonFiles[i].path.indexOf('/sources/') === -1 &&
-          /catalog\.json$/i.test(controlLayerJsonFiles[i].path)
-        ) {
-          userCatalogs.push(controlLayerJsonFiles[i]);
-        }
-      }
-      var componentDefinitions = getRepositoryJsonFiles(
-        tree,
-        BSI_IMPLEMENTATION_LAYER_PREFIX,
-        false,
+  return loadRepositoryIndex({ retry })
+    .then(function (files) {
+      // Keep failed metadata entries selectable for manual retry, but never use
+      // them as identity evidence for automatic catalog loading.
+      const visible = files.filter(
+        (file) =>
+          file.model === file.kind ||
+          (!file.metadataLoaded && (file.kind !== 'catalog' || /catalog\.json$/i.test(file.path))),
       );
-      var mappings = getRepositoryJsonFiles(tree, BSI_CONTROL_LAYER_MAPPINGS_PREFIX, false);
-      tagRepositoryFiles(mappings, 'mapping', 'Mappings');
-      tagRepositoryFiles(userCatalogs, 'catalog', 'Anwenderkataloge');
-      tagRepositoryFiles(sourceCatalogs, 'catalog', 'Quellkataloge');
-      tagRepositoryFiles(componentDefinitions, 'component', 'Komponentendefinitionen');
-      var allFiles = userCatalogs.concat(sourceCatalogs, componentDefinitions, mappings);
-      var metadataCache = readRepositoryMetadataCache();
-      var pendingFiles = applyRepositoryMetadataCache(allFiles, metadataCache);
-
-      // Ausschließlich die frisch geladene GitHub-Dateiliste bestimmt den sichtbaren Bestand.
-      // Titel und Document IDs unveränderter Dateien kommen aus dem SHA-gebundenen Cache.
-      if (!pendingFiles.length) {
-        persistRepositoryMetadataCache(allFiles);
-        publishRepositoryFiles(sourceCatalogs, userCatalogs, componentDefinitions, mappings);
-        return;
-      }
-      return enrichRepositoryMetadata(pendingFiles, metadataCache).then(function () {
-        persistRepositoryMetadataCache(allFiles);
-        publishRepositoryFiles(sourceCatalogs, userCatalogs, componentDefinitions, mappings);
-      });
+      publishRepositoryFiles(
+        visible.filter((file) => file.kind === 'catalog' && file.category === 'Quellkataloge'),
+        visible.filter((file) => file.kind === 'catalog' && file.category === 'Anwenderkataloge'),
+        visible.filter((file) => file.kind === 'component'),
+        visible.filter((file) => file.kind === 'mapping'),
+      );
     })
     .catch(function (err) {
       uiStore.registryState.status = 'error';

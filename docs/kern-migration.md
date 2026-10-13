@@ -1,5 +1,25 @@
 # KERN UX: aktueller Stand und Migrationshistorie
 
+## Erweiterung: automatische Katalogübernahme – 13. Oktober 2026
+
+Auf `codex/viewer-public-mappings` werden referenzierte öffentliche Kataloge beim
+Import von Komponentendefinitionen und Mapping Collections automatisch in die
+Katalogansicht übernommen. Die bestehenden Ladewege und KERN-Bausteine bleiben
+erhalten; Hilfetexte erklären die automatische Übernahme. Ein bereits aktiver
+Katalog bleibt ausgewählt. Die Zuordnung folgt document-id, exaktem Pfad und
+exaktem Titel; eine vorhandene document-id bleibt verbindlich.
+
+Der gemeinsame Bibliotheksindex und begrenzte Download-Cache werden auch von der
+Startseite genutzt. Fremde URLs aus Referenzen werden nicht automatisch geladen.
+Fehlende oder fehlerhafte Abhängigkeiten verhindern den Import des Hauptdokuments
+nicht. Grenzen aktueller öffentlicher Referenzen und Verhalten bei mehreren
+Katalogen sind in [catalog-autoload.md](catalog-autoload.md) dokumentiert.
+
+Alle lokalen Code-, Browser-, Build- und Bildprüfungen bestanden; siehe
+[verification.md](verification.md). Diese Folgeänderung ist lokal vorbereitet,
+noch nicht committet oder gepusht. Die vorherige Mapping-Erweiterung hat der
+Nutzer bereits gepusht; ein Merge oder Deployment wird hier nicht behauptet.
+
 ## Erweiterung: öffentliche Mappings – 13. Oktober 2026
 
 Auf `codex/viewer-public-mappings`, ausgehend vom aktuellen `origin/main`, ergänzt:

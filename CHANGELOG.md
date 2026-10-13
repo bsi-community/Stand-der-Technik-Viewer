@@ -8,6 +8,9 @@ Das Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1
 
 ### Hinzugefügt
 
+- Automatisches Nachladen referenzierter öffentlicher Kataloge beim Datei-, URL- und Repositoryimport von Komponenten und Mappings. Priorität: Document-ID, exakter Repositorypfad, exakter Titel. Mehrfachreferenzen und bereits geladene Kataloge werden berücksichtigt; explizite IDs verhindern Verwechslungen zwischen gleichnamigen Controls.
+- Geteilter Repository-Index mit sämtlichen Katalog-Document-IDs, begrenzten parallelen Abrufen, Zeitlimit, Wiederverwendung öffentlicher Katalogdaten und gebündelter Aktualisierung der Katalogansicht.
+
 - KERN-Startseite mit dritter Kachel „Mappings“, Suche nach Mapping-Dokumenten und direktem Öffnen in der Mappingansicht.
 - Mapping-Repositoryauswahl unter Dateiupload und als dritte Option im leeren Arbeitsbereich. JSON-Dateien aus `control_layer/Mappings/` einschließlich Themen-Unterordnern werden bei jedem Start frisch ermittelt; Metadaten-Cache, Lade-, Leer- und Fehlerzustände entsprechen den anderen Modellen.
 
