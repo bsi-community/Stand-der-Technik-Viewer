@@ -39,13 +39,7 @@ function fields(object, state, resources) {
     }
     const field = rendered.firstElementChild;
     if (!field) continue;
-    if (
-      !scalar ||
-      ['title', 'remarks', 'description', 'mapping-description', 'value'].includes(row.name) ||
-      String(row.value).length > 100
-    ) {
-      field.classList.add('mapping-document-wide');
-    }
+    if (!scalar) field.classList.add('viewer-description-list-item--wide');
     list.append(field);
   }
   return list;

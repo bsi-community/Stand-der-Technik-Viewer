@@ -7,6 +7,8 @@ import {
   renderMarkupMultiline,
 } from '../../shared/markup.js';
 import {
+  appendDocumentTitle,
+  buildGenericTable,
   formatCatalogKey,
   getDisplayRows,
   getObjectDisplayRows,
@@ -263,7 +265,19 @@ export function appendCatalogObjectList(parent, title, items) {
 export function renderMetadataInfo(container) {
   var meta = catalogStore.state.catalogMetadata || {};
   var rows = getObjectDisplayRows(meta, [{ name: 'uuid', value: catalogStore.state.catalogUuid }]);
-  appendCatalogSection(container, '', rows);
+  if (isKern()) {
+    const section = document.createElement('section');
+    section.className = 'catalog-section';
+    section.append(
+      buildGenericTable(
+        rows,
+        catalogStore.state.qRaw,
+        catalogStore.state.catalogResourcesByUuid,
+        catalogStore.state.catalogBaseUrl,
+      ),
+    );
+    container.append(section);
+  } else appendCatalogSection(container, '', rows);
 }
 
 export function renderBackMatterInfo(container) {
@@ -295,19 +309,11 @@ export function renderCatalogInfo() {
   heading.className = 'catalog-info-heading';
   heading.textContent = 'Katalog Informationen';
   uiStore.els.listTab.appendChild(heading);
-  const title = catalogStore.state.catalogMetadata?.title;
-  if (isKern() && hasDisplayValue(title)) {
-    const documentTitle = document.createElement('p');
-    documentTitle.className = 'catalog-document-title';
-    const label = document.createElement('span');
-    label.className = 'catalog-document-title-label';
-    label.textContent = 'Geladener Katalog';
-    const value = document.createElement('span');
-    value.className = 'catalog-document-title-value';
-    value.innerHTML = renderInlineMarkup(title);
-    documentTitle.append(label, value);
-    uiStore.els.listTab.append(documentTitle);
-  }
+  appendDocumentTitle(
+    uiStore.els.listTab,
+    'Geladener Katalog',
+    catalogStore.state.catalogMetadata?.title,
+  );
 
   if (hasMeta) {
     var metaDetails = document.createElement('details');

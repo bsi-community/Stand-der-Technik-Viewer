@@ -125,7 +125,7 @@ test('mapping metadata is expanded clearly; relationship help is centered and ac
   await expect(info.locator('details')).toHaveCount(0);
   await expect(info).toContainText('Property remarks retained');
   const prose = info
-    .locator('.mapping-document-wide')
+    .locator('.viewer-description-list-item--wide')
     .filter({ hasText: 'Beschreibung der Zuordnung' })
     .first();
   expect((await prose.boundingBox()).width).toBeGreaterThan(600);

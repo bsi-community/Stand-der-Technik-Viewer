@@ -1,5 +1,21 @@
 # KERN UX: aktueller Stand und Migrationshistorie
 
+## Metadatenlayout und Komponententitel – 13. Oktober 2026
+
+Auf `codex/viewer-metadata-layout`, ausgehend von `origin/main` nach PR #18
+(`6bde8f9`), werden Dokumenttitel für Kataloge und Komponentendefinitionen mit
+demselben Baustein dargestellt. Der Katalog-Metadatenbereich verwendet nun wie
+die Komponentenansicht die gemeinsame native KERN-Beschreibungsliste. Lange
+Textfelder und strukturierte Angaben erhalten in allen drei Ansichten eine
+eigene Zeile; die Mappingansicht verwendet dieselbe Regel. Anmerkungen nutzen
+die volle verfügbare Breite, auch in verschachtelten Angaben.
+
+Die beiden KERN-Komponentenreferenzbilder wurden wegen des sichtbaren Titels
+nach Sichtprüfung aktualisiert. Der historische
+Legacy-Vergleich bleibt unverändert. Prüfergebnisse siehe [verification.md](verification.md).
+Die Änderungen sind lokal vorbereitet; Commit, Push und Veröffentlichung stehen aus.
+BundesSans sowie echte Screenreader- und fachliche Gesamtabnahme bleiben offen.
+
 ## Erweiterung: automatische Katalogübernahme – 13. Oktober 2026
 
 Auf `codex/viewer-public-mappings` werden referenzierte öffentliche Kataloge beim

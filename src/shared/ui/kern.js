@@ -69,9 +69,10 @@ export function kernDetails(details) {
 export function createDescriptionList(entries) {
   const list = document.createElement('dl');
   list.className = 'kern-description-list viewer-description-list';
-  for (const { label, value } of entries) {
+  for (const { label, value, wide = false } of entries) {
     const row = document.createElement('div');
     row.className = 'kern-description-list-item';
+    if (wide) row.classList.add('viewer-description-list-item--wide');
     const term = document.createElement('dt');
     term.className = 'kern-description-list-item__key';
     term.append(label);

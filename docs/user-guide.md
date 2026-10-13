@@ -254,7 +254,11 @@ Für die spätere Identifizierung des tatsächlich verwendeten Stands sollten Ma
 
 ### Kataloginformationen
 
-Unter „Katalog Informationen“ steht der Dokumenttitel sichtbar über den aufklappbaren Metadaten. Unter Backmatter und Trennlinie beginnt der Abschnitt „Anforderungen“. Angezeigt werden außerdem:
+Unter „Katalog Informationen“ steht der Dokumenttitel sichtbar über den aufklappbaren Metadaten. In der Komponentenansicht erscheint entsprechend „Geladene Komponentendefinition“ mit dem Titel aus `metadata.title`; beim Wechsel der Quelle aktualisiert sich dieser Titel.
+
+In allen drei Dokumentansichten nutzen Anmerkungen und Beschreibungen eine eigene Zeile über die volle verfügbare Breite des Metadatenbereichs. Absätze, Listen und Verweise bleiben erhalten. Kurze Angaben wie Version und Änderungsdatum stehen bei ausreichendem Platz nebeneinander; auf schmalen Bildschirmen werden sie untereinander angeordnet.
+
+Unter Backmatter und Trennlinie beginnt der Abschnitt „Anforderungen“. Angezeigt werden außerdem:
 
 - `Metadaten`
 - `Backmatter`

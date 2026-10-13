@@ -1,5 +1,31 @@
 # Prüfstände und historische Nachweise
 
+## Metadatenlayout und Komponententitel – 13. Oktober 2026
+
+Branch `codex/viewer-metadata-layout` auf `origin/main` nach PR #18 (`6bde8f9`):
+sichtbarer Komponentendefinitionstitel analog zum Katalogtitel und gemeinsame
+volle Lesebreite für Anmerkungen in allen drei Dokumentansichten. Kurze Angaben
+bleiben in einem responsiven Raster; auch strukturierte und verschachtelte
+Metadaten erhalten genügend Platz.
+
+Lokal erfolgreich: Lint, vollständige Formatprüfung, TypeScript, 73 Unit-/
+Architekturtests, 336 reguläre Browserfälle, zehn unveränderte Legacy-Bildvergleiche,
+zwölf KERN-Bildvergleiche und 21 Release-Browserfälle. Entwicklungs- und Release-
+Build bestehen die Artefaktprüfung. Die finalen Browserläufe nutzten Chromium,
+Firefox und WebKit ohne Test-Retries. Ein bestehender Mapping-Test wurde auf die
+nun gemeinsame Layoutklasse angepasst; seine Breitenprüfung bleibt erhalten.
+
+Die zwölf neuen Browserfälle prüfen alle drei Modelle bei 1440, 820, 375 und
+320 Pixeln, Absatz-/Listen-/Linkinhalt, verschachtelte Angaben und Tastaturbedienung.
+Zusätzlich werden Quellenwechsel, fehlende Titel und sicheres Titel-Markup geprüft.
+Desktop- und Mobilbilder wurden visuell gesichtet. Die zwei Komponenten-
+Referenzbilder sind wegen des neuen sichtbaren Dokumenttitels gezielt aktualisiert;
+die übrigen zehn KERN-Referenzbilder blieben unverändert. Der abschließende
+KERN-Bildvergleich lief ohne Aktualisierung der Referenzen erfolgreich.
+
+Diese Änderungen sind lokal geprüft und noch nicht committet oder gepusht.
+CI, Merge, Deployment und eine echte Screenreader-Abnahme werden nicht behauptet.
+
 ## Automatisches Nachladen referenzierter Kataloge – 13. Oktober 2026
 
 Auf `codex/viewer-public-mappings` ergänzt: automatische Katalogübernahme beim

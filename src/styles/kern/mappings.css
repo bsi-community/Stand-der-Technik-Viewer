@@ -174,9 +174,6 @@
 .mapping-document-details .mapping-document-fields {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
-.mapping-document-details .mapping-document-wide {
-  grid-column: 1 / -1;
-}
 .mapping-document-details .mapping-document-fields .mapping-document-fields {
   padding: 16px;
   margin: 8px 0;
