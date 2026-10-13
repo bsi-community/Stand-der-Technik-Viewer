@@ -106,3 +106,13 @@ fehlgeschlagenen Abruf sowie die Ablehnung falscher Modelle und IDs. Sämtliche
 Browserfälle laufen mit synthetischen Daten in Chromium, Firefox und WebKit.
 Der separate Echtdatenabgleich darf fehlende oder ungenaue Referenzen im öffentlichen
 Bestand nicht durch unscharfe Fallbacks verdecken.
+
+## Metadatenlayout und Dokumenttitel
+
+`metadata-layout.spec.js` prüft die volle Lesebreite von Anmerkungen in Catalogs,
+Component Definitions und Mapping Collections bei 1440, 820, 375 und 320 Pixeln.
+Die synthetischen Daten enthalten mehrere Absätze, Listen, Links und verschachtelte
+Anmerkungen. Zusätzlich werden Tastaturbedienung der Metadaten, Quellenwechsel,
+fehlende Titel und sichere Titel-Markupdarstellung geprüft. Die Fälle laufen in
+Chromium, Firefox und WebKit. Layout-Screenshots werden als Prüfartefakte erzeugt;
+die bestehenden KERN-Komponentenbilder berücksichtigen den neuen Dokumenttitel.

@@ -16,6 +16,7 @@ import { collectComponentActiveFilterChips, renderSelectionState } from '../sele
 import { renderWorkspaceEmptyState } from '../sources/empty-state.js';
 import { enhanceCollapsibleDescriptions } from '../../shared/ui/collapsible.js';
 import {
+  appendDocumentTitle,
   appendGenericObjectList,
   appendGenericSection,
   appendRemainingObjectFields,
@@ -36,6 +37,11 @@ export function renderComponentDocumentInfo(container, searchTerm) {
   heading.className = 'component-info-heading';
   heading.textContent = 'Komponenteninformationen';
   container.appendChild(heading);
+  appendDocumentTitle(
+    container,
+    'Geladene Komponentendefinition',
+    componentStore.componentState.metadata?.title,
+  );
 
   if (hasMeta) {
     var metaDetails = document.createElement('details');

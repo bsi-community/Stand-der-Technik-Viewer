@@ -1,8 +1,23 @@
 /** shared/ui/metadata: see docs/architecture.md for responsibilities. */
 import { createDescriptionList, isKern, kernContent } from './kern.js';
 import { escapeHtml } from '../html.js';
-import { renderHighlightedInline, renderMarkupMultiline } from '../markup.js';
+import { renderHighlightedInline, renderInlineMarkup, renderMarkupMultiline } from '../markup.js';
 import { getBackMatterResource, getBackMatterResourceLabel, resolveResourceUrl } from '../urls.js';
+
+/** Shared visible document identity above the metadata disclosure. */
+export function appendDocumentTitle(container, labelText, title) {
+  if (!isKern() || !hasDisplayValue(title)) return;
+  const documentTitle = document.createElement('p');
+  documentTitle.className = 'catalog-document-title';
+  const label = document.createElement('span');
+  label.className = 'catalog-document-title-label';
+  label.textContent = labelText;
+  const value = document.createElement('span');
+  value.className = 'catalog-document-title-value';
+  value.innerHTML = renderInlineMarkup(title);
+  documentTitle.append(label, value);
+  container.append(documentTitle);
+}
 
 export function formatCatalogKey(key) {
   return String(key || '').replace(/-/g, ' ');
@@ -195,7 +210,14 @@ function buildMetadataList(rows, searchTerm, resourceMap, baseUrl) {
           baseUrl,
         );
       } else value = buildGenericValueNode(row.value, searchTerm, resourceMap, baseUrl);
-      return { label, value };
+      return {
+        label,
+        value,
+        wide:
+          typeof row.value === 'object' ||
+          ['title', 'remarks', 'description', 'mapping-description', 'value'].includes(row.name) ||
+          String(row.value).length > 100,
+      };
     }),
   );
 }

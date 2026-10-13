@@ -8,6 +8,8 @@ Das Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1
 
 ### Hinzugefügt
 
+- Sichtbarer Titel der geladenen Komponentendefinition oberhalb der Metadaten, analog zum Katalogtitel und beim Quellenwechsel aktualisiert.
+
 - Automatisches Nachladen referenzierter öffentlicher Kataloge beim Datei-, URL- und Repositoryimport von Komponenten und Mappings. Priorität: Document-ID, exakter Repositorypfad, exakter Titel. Mehrfachreferenzen und bereits geladene Kataloge werden berücksichtigt; explizite IDs verhindern Verwechslungen zwischen gleichnamigen Controls.
 - Geteilter Repository-Index mit sämtlichen Katalog-Document-IDs, begrenzten parallelen Abrufen, Zeitlimit, Wiederverwendung öffentlicher Katalogdaten und gebündelter Aktualisierung der Katalogansicht.
 
@@ -15,6 +17,8 @@ Das Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1
 - Mapping-Repositoryauswahl unter Dateiupload und als dritte Option im leeren Arbeitsbereich. JSON-Dateien aus `control_layer/Mappings/` einschließlich Themen-Unterordnern werden bei jedem Start frisch ermittelt; Metadaten-Cache, Lade-, Leer- und Fehlerzustände entsprechen den anderen Modellen.
 
 ### Behoben
+
+- Einheitliches Metadatenlayout in Katalog-, Komponenten- und Mappingansicht: Anmerkungen, Beschreibungen und strukturierte Angaben belegen eine eigene Zeile über die verfügbare Breite. Kurze Angaben bleiben kompakt nebeneinander; schmale Ansichten umbrechen ohne horizontalen Seitenüberlauf.
 
 - Neues KERN-Logo bereits im initialen HTML mit festen Abmessungen hinterlegt. Das alte, zuvor kurzzeitig übergroß sichtbare PNG wird nur noch in der historischen Vergleichsansicht nach deren Stylesheet geladen. Auch das Home-Symbol besitzt feste Ausgangsmaße.
 

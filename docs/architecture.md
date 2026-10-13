@@ -92,6 +92,11 @@ verhaltensbewahrende Migration oben bleibt die Grundlage der OSCAL-Fachlogik.
 Buttons und Details für explizit übergebene Inhaltsbereiche bereit. Die generischen
 Metadatenrenderer behalten sichere Linkauflösung und Rich Text bei. Mapping-
 Dokumentinformationen liegen in `features/mappings/document-info.js`.
+`shared/ui/metadata.js` kennzeichnet Anmerkungen, Beschreibungen, lange Werte und
+strukturierte Angaben für eine ganze Rasterzeile; alle drei Metadatenansichten
+verwenden diese Regel. Der Katalog nutzt dafür ebenfalls den gemeinsamen
+KERN-Metadatenrenderer. `appendDocumentTitle` stellt die sichtbare Dokumentidentität
+für Kataloge und Komponentendefinitionen einheitlich dar.
 `app/kern-print.js` druckt ausschließlich eine DOM-Kopie der aktuellen Auswahl;
 Print-Details verändern daher keine Aufklappzustände im Store.
 

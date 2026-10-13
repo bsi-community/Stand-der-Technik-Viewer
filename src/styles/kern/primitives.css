@@ -444,3 +444,21 @@
   outline: 3px solid var(--accent);
   outline-offset: 2px;
 }
+
+/* Prose and structured metadata occupy their own row in every document view. */
+.viewer-description-list > .viewer-description-list-item--wide {
+  grid-column: 1 / -1;
+}
+.viewer-description-list
+  > .viewer-description-list-item--wide
+  > dd
+  > .catalog-table-wrap
+  > .catalog-md,
+.viewer-description-list
+  > .viewer-description-list-item--wide
+  > dd
+  > .catalog-table-wrap
+  > .catalog-md
+  > p {
+  max-width: none;
+}
