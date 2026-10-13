@@ -80,10 +80,11 @@ export function getWorkspaceUploadConfig(mode) {
       urlPlaceholder: 'Control-Mapping-URL einfügen (JSON)',
       urlInput: uiStore.mappingEls.urlInput,
       urlLoader: loadMappingFromUrl,
-      repositoryTitle: '',
-      repositoryDescription: '',
-      repositorySelect: null,
-      repositoryStatus: null,
+      repositoryTitle: 'Aus dem öffentlichen BSI Repository laden',
+      repositoryDescription:
+        'Wähle ein aktuelles Mapping direkt aus dem Stand der Technik GitHub Repository.',
+      repositorySelect: isKern() ? uiStore.mappingEls.bsiSelect : null,
+      repositoryStatus: uiStore.mappingEls.bsiStatus,
     },
   };
   return configs[mode] || configs.catalog;

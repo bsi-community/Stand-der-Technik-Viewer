@@ -24,7 +24,7 @@ Fachtabellen können innerhalb ihres Rahmens horizontal gescrollt werden.
    - über die Dateiauswahl eine lokale OSCAL-JSON-Datei auswählen oder
    - eine URL zu einem OSCAL-JSON-Dokument eingeben und laden.
 
-   Lokale JSON-Uploads und URL-Importe stehen in der Katalog-, Komponenten- und Mappingansicht im linken Arbeitsbereich zur Verfügung. Die Repository-Auswahl wird für Kataloge und Komponentendefinitionen angeboten.
+   Lokale JSON-Uploads und URL-Importe stehen in der Katalog-, Komponenten- und Mappingansicht im linken Arbeitsbereich zur Verfügung. Die Repository-Auswahl wird für Kataloge, Komponentendefinitionen und Mappings angeboten – sowohl unter Dateiupload in der Seitenleiste als auch als dritte Ladeoption im noch leeren Arbeitsbereich.
 
 2. Nach dem Laden können die Katalog-, Komponenten- oder Mappingansicht sowie Suche, Filter, Diagramme, JSON-Detailanzeigen und PDF-Export verwendet werden. Bei geeigneten Katalogen erscheint zusätzlich der Tab `Vererbung Zielobjektkategorien`. Für die vollständige Komponenten- und Mappingdarstellung sollten die passenden Kataloge zusätzlich in der Katalogansicht geladen sein.
 
@@ -69,11 +69,25 @@ Bereits erfolgreich geladene Dokumente bleiben bei einem weiteren Importfehler e
 Die Startseite dient als Einstieg in die Stand der Technik-Bibliothek. Sie enthält:
 
 - eine Suche nach Repository-Dokumenten
-- Modellkacheln für `Kataloge` und `Komponentendefinitionen`
+- Modellkacheln für `Kataloge`, `Komponentendefinitionen` und `Mappings`
 - eine kurze Anleitung `Wie nutze ich den Viewer?`
 - eine Begriffserklärung zentraler OSCAL- und Viewer-Begriffe
 
-Über die Kacheln `Kataloge` und `Komponentendefinitionen` werden die entsprechenden Inhalte aus dem [öffentlichen BSI Stand der Technik GitHub-Repository](https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek) angezeigt. Ein Klick auf ein gelistetes Dokument lädt es direkt im Viewer.
+Über die Kacheln `Kataloge`, `Komponentendefinitionen` und `Mappings` werden die entsprechenden Inhalte aus dem [öffentlichen BSI Stand der Technik GitHub-Repository](https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek) angezeigt. Ein Klick auf ein gelistetes Dokument lädt es direkt im Viewer.
+
+Die Kachel `Mappings` steht auf breiten Bildschirmen rechts neben
+`Komponentendefinitionen`. Sie zeigt Mapping Collections aus
+[`control_layer/Mappings/`](https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/control_layer/Mappings)
+einschließlich aller Themen-Unterordner. Ein ausgewähltes Mapping öffnet sich in
+der Mappingansicht und ist auch über die allgemeine Startseitensuche auffindbar.
+
+Bei jedem Start wird die Dateiliste frisch von GitHub abgerufen. Titel und Document
+IDs werden nur bei unveränderter Datei-SHA aus dem Browser-Cache übernommen.
+Entfernte Dateien verschwinden beim nächsten Start; neue und geänderte Dateien
+werden berücksichtigt. Bei einer leeren Liste oder einem Abruffehler ist das
+Dropdown deaktiviert und zeigt einen Statushinweis. Bei Fehlern kann die Bibliothek
+auf der Startseite erneut geladen werden. Lokale Dateien und URL-Importe bleiben
+nutzbar; ein tatsächlicher URL-Abruf setzt die Erreichbarkeit der Quelle voraus.
 
 Die Anleitung erklärt:
 

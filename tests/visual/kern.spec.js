@@ -17,7 +17,7 @@ for (const width of [1440, 375]) {
       await expect(target).toHaveScreenshot(`${name}-${width}.png`);
     }
     await page.goto('./');
-    await expect(page.locator('.registry-count')).toHaveText('0 Dokumente in 2 Modelltypen');
+    await expect(page.locator('.registry-count')).toHaveText('0 Dokumente in 3 Modelltypen');
     const field = await page.locator('#registrySearch').boundingBox();
     const home = await page.locator('#homeTab').boundingBox();
     expect(field.x + field.width).toBeLessThanOrEqual(home.x + home.width + 1);

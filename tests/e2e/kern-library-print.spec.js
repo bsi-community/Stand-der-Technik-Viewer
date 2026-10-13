@@ -20,7 +20,7 @@ test('library failure, retry and search keep a draft and offer recovery', async 
   const field = page.getByLabel('Bibliothek durchsuchen', { exact: true });
   await field.fill('noch nicht abgeschickt');
   release();
-  await expect(page.locator('.registry-count')).toHaveText('0 Dokumente in 2 Modelltypen');
+  await expect(page.locator('.registry-count')).toHaveText('0 Dokumente in 3 Modelltypen');
   await expect(field).toHaveValue('noch nicht abgeschickt');
   await expect(field).toBeFocused();
   await field.press('Enter');

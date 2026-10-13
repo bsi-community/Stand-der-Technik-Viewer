@@ -48,9 +48,14 @@ export function tagRepositoryFiles(files, kind, category) {
   return list;
 }
 
-export function publishRepositoryFiles(sourceCatalogs, userCatalogs, componentDefinitions) {
+export function publishRepositoryFiles(
+  sourceCatalogs,
+  userCatalogs,
+  componentDefinitions,
+  mappings,
+) {
   var uniqueFiles = deduplicateRepositoryFilesByDocumentId(
-    userCatalogs.concat(sourceCatalogs, componentDefinitions),
+    userCatalogs.concat(sourceCatalogs, componentDefinitions, mappings),
   );
   userCatalogs = uniqueFiles.filter(function (file) {
     return file.kind === 'catalog' && file.category === 'Anwenderkataloge';
@@ -61,6 +66,11 @@ export function publishRepositoryFiles(sourceCatalogs, userCatalogs, componentDe
   componentDefinitions = uniqueFiles.filter(function (file) {
     return file.kind === 'component';
   });
+  mappings = uniqueFiles.filter(function (file) {
+    return file.kind === 'mapping';
+  });
+  sortRepositoryFiles(mappings);
+  uiStore.registryState.mappings = mappings;
   sortRepositoryFiles(userCatalogs);
   sortRepositoryFiles(sourceCatalogs);
   sortRepositoryFiles(componentDefinitions);
@@ -84,6 +94,12 @@ export function publishRepositoryFiles(sourceCatalogs, userCatalogs, componentDe
   if (uiStore.compEls.bsiStatus)
     uiStore.compEls.bsiStatus.textContent =
       componentDefinitions.length + ' aktuelle Komponentendefinitionen verfügbar.';
+  prepareRepositorySelect(uiStore.mappingEls.bsiSelect, 'Aus dem Repository auswählen');
+  appendRepositoryOptions(uiStore.mappingEls.bsiSelect, '', mappings);
+  if (uiStore.mappingEls.bsiSelect) uiStore.mappingEls.bsiSelect.disabled = !mappings.length;
+  if (uiStore.mappingEls.bsiStatus)
+    uiStore.mappingEls.bsiStatus.textContent = mappings.length + ' aktuelle Mappings verfügbar.';
+  refreshWorkspaceRepositoryControls('mapping');
   refreshWorkspaceRepositoryControls('catalog');
   refreshWorkspaceRepositoryControls('component');
   if (uiStore.uiState.view === 'home') renderRegistryHome();
@@ -93,7 +109,15 @@ export function loadBsiRepositoryOptions() {
   uiStore.registryState.status = 'loading';
   uiStore.registryState.catalogs = [];
   uiStore.registryState.components = [];
+  uiStore.registryState.mappings = [];
   uiStore.registryState.error = '';
+  for (var controls of [uiStore.els, uiStore.compEls, uiStore.mappingEls]) {
+    prepareRepositorySelect(controls.bsiSelect, 'Repository-Inhalte werden geladen…');
+    if (controls.bsiSelect) controls.bsiSelect.disabled = true;
+    if (controls.bsiStatus)
+      controls.bsiStatus.textContent = 'Aktuelle Dateiliste wird von GitHub abgerufen.';
+  }
+  for (var mode of ['catalog', 'component', 'mapping']) refreshWorkspaceRepositoryControls(mode);
   if (uiStore.uiState.view === 'home') renderRegistryHome();
   return fetch(BSI_REPOSITORY_TREE_URL, { credentials: 'omit', cache: 'no-store' })
     .then(function (res) {
@@ -126,10 +150,12 @@ export function loadBsiRepositoryOptions() {
         BSI_IMPLEMENTATION_LAYER_PREFIX,
         false,
       );
+      var mappings = getRepositoryJsonFiles(tree, BSI_CONTROL_LAYER_MAPPINGS_PREFIX, false);
+      tagRepositoryFiles(mappings, 'mapping', 'Mappings');
       tagRepositoryFiles(userCatalogs, 'catalog', 'Anwenderkataloge');
       tagRepositoryFiles(sourceCatalogs, 'catalog', 'Quellkataloge');
       tagRepositoryFiles(componentDefinitions, 'component', 'Komponentendefinitionen');
-      var allFiles = userCatalogs.concat(sourceCatalogs, componentDefinitions);
+      var allFiles = userCatalogs.concat(sourceCatalogs, componentDefinitions, mappings);
       var metadataCache = readRepositoryMetadataCache();
       var pendingFiles = applyRepositoryMetadataCache(allFiles, metadataCache);
 
@@ -137,12 +163,12 @@ export function loadBsiRepositoryOptions() {
       // Titel und Document IDs unveränderter Dateien kommen aus dem SHA-gebundenen Cache.
       if (!pendingFiles.length) {
         persistRepositoryMetadataCache(allFiles);
-        publishRepositoryFiles(sourceCatalogs, userCatalogs, componentDefinitions);
+        publishRepositoryFiles(sourceCatalogs, userCatalogs, componentDefinitions, mappings);
         return;
       }
       return enrichRepositoryMetadata(pendingFiles, metadataCache).then(function () {
         persistRepositoryMetadataCache(allFiles);
-        publishRepositoryFiles(sourceCatalogs, userCatalogs, componentDefinitions);
+        publishRepositoryFiles(sourceCatalogs, userCatalogs, componentDefinitions, mappings);
       });
     })
     .catch(function (err) {
@@ -150,6 +176,8 @@ export function loadBsiRepositoryOptions() {
       uiStore.registryState.error = String(err && err.message ? err.message : err);
       showRepositoryLoadError(uiStore.els.bsiSelect, uiStore.els.bsiStatus);
       showRepositoryLoadError(uiStore.compEls.bsiSelect, uiStore.compEls.bsiStatus);
+      showRepositoryLoadError(uiStore.mappingEls.bsiSelect, uiStore.mappingEls.bsiStatus);
+      refreshWorkspaceRepositoryControls('mapping');
       refreshWorkspaceRepositoryControls('catalog');
       refreshWorkspaceRepositoryControls('component');
       if (uiStore.uiState.view === 'home') renderRegistryHome();

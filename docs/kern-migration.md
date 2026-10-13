@@ -1,5 +1,22 @@
 # KERN UX: aktueller Stand und Migrationshistorie
 
+## Erweiterung: öffentliche Mappings – 13. Oktober 2026
+
+Auf `codex/viewer-public-mappings`, ausgehend vom aktuellen `origin/main`, ergänzt:
+
+- dritte Startseitenkachel `Mappings` rechts neben `Komponentendefinitionen`,
+  Einbindung in die Bibliothekssuche und direktes Öffnen in der Mappingansicht;
+- native Repository-Dropdowns unter Dateiupload und als dritte Ladeoption im
+  noch leeren Mapping-Arbeitsbereich;
+- rekursive Auswahl aus `control_layer/Mappings/`, aktuelle Dateiliste bei jedem
+  Start, SHA-gebundene Metadaten und gemeinsame Lade-/Leer-/Fehlerzustände;
+- drei gleich hohe Kacheln mit responsiven Umbrüchen und gemeinsam ausgerichteten
+  Aktionen. Die zwei KERN-Startseitenreferenzen wurden nach Sichtprüfung erneuert.
+
+Prüfungen und Echtdatenabgleich siehe [verification.md](verification.md).
+BundesSans sowie die echte Screenreader- und fachliche Gesamtabnahme bleiben offen.
+Diese Erweiterung ist lokal vorbereitet; Veröffentlichung und Merge stehen aus.
+
 ## Aktueller Stand – 12. Oktober 2026
 
 KERN UX ist auf `main` die Grundlage des veröffentlichten Viewers und seiner

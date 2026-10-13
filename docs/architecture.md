@@ -119,3 +119,19 @@ Legacy-CSS und Demo-Chunks. `check-build.mjs dist-release` prüft die Artefaktgr
 Workflow paketiert nur `dist-release`; seine Freigabe bleibt an `main` gebunden.
 Die separaten macOS-KERN-Bildreferenzen ersetzen nicht den plattformübergreifenden
 funktionalen Browserlauf oder die eingefrorene Legacy-Referenz.
+
+## Repositoryauswahl für Mappings (13. Oktober 2026)
+
+`features/home/repository.js` nutzt dieselbe rekursive GitHub-Dateiliste für alle
+drei Modelle. JSON-Dateien unter `control_layer/Mappings/` werden als `mapping`
+geführt und bleiben aus der Katalogauswahl ausgeschlossen. Die Dateiliste wird bei
+jedem Anwendungsstart mit `cache: 'no-store'` geladen; ausschließlich Metadaten
+unveränderter Dateien werden anhand der SHA wiederverwendet.
+
+`registryState.mappings` versorgt die KERN-Startseitenkachel, die globale Suche und
+die Mappingauswahl in der Seitenleiste. Der leere Arbeitsbereich übernimmt Optionen,
+Lade-/Fehlerzustand und Dokumenttitel über `refreshWorkspaceRepositoryControls`.
+Alle drei Einstiege verwenden den bestehenden `loadMappingFromUrl`-Import und
+behalten dessen Quellen-URL für relative Referenzen bei. Keine neue Netzwerkquelle
+und keine neue Abhängigkeit. Die historische Legacy-Vergleichsoberfläche behält
+ihren bisherigen Einstieg mit zwei Modellkacheln.

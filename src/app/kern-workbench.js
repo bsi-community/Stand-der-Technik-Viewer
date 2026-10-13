@@ -5,6 +5,7 @@ import { kernButton, kernField, kernDetails, prepareUrlField } from '../shared/u
 import { bindKernTabKeys } from '../shared/ui/kern-navigation.js';
 
 export function prepareKernWorkbench() {
+  document.getElementById('mappingRepositoryControls').hidden = false;
   kernButton(document.getElementById('jsonModalClose'));
   const workspace = document.querySelector('.workspace-tab-group');
   workspace.setAttribute('role', 'navigation');

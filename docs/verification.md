@@ -1,5 +1,32 @@
 # Prüfstände und historische Nachweise
 
+## Öffentliche Mapping-Bibliothek – 13. Oktober 2026
+
+Branch `codex/viewer-public-mappings`: dritte KERN-Modellkachel, Mapping-Suche und
+Repository-Dropdowns in Seitenleiste und leerem Arbeitsbereich. Die Liste wird
+inklusive Unterordnern bei jedem Start frisch geladen.
+
+Lokal erfolgreich: Lint, vollständige Formatprüfung, TypeScript,
+43 Unit-/Architekturtests, 270 reguläre Browserfälle (davon 36 neue Mappingfälle),
+zehn unveränderte Legacy-Bildvergleiche und 21 Release-Browserfälle. Beide Builds
+bestehen die Artefaktprüfung; der Release enthält weiterhin keine Legacy-/Demo-
+Module. Die Browserläufe nutzten Chromium, Firefox und WebKit ohne Test-Retries.
+Nach der abschließenden Kachel-Layoutkorrektur wurden die 36 gezielten Browserfälle
+sowie Lint, Typprüfung, Unit-Tests und Entwicklungsbuild erneut erfolgreich geprüft.
+
+Zusätzlicher Browserabruf der öffentlichen BSI-Bibliothek: beide verfügbaren
+Mapping Collections wurden mit ihren Metadatentiteln angeboten. Das GSMap-Mapping
+ließ sich aus dem mittleren Dropdown mit 1.185 Beziehungen öffnen, ohne protokollierte
+JavaScript-Fehler. Startseite und Mapping-Ladewege wurden bei 1440 Pixeln,
+die Startseite zusätzlich bei 375 und 820 Pixeln visuell geprüft. Die zwei KERN-
+Startseitenreferenzen wurden gezielt nach Sichtprüfung aktualisiert. Anschließend
+bestanden alle zwölf KERN-Bildvergleiche (zwei Browserfälle) und erneut der
+Release-Build samt Artefaktprüfung und allen 21 Release-Browserfällen.
+
+Die Prüfungen sind lokale Nachweise. GitHub-CI und Pages-Veröffentlichung stehen
+für diesen Feature-Branch noch aus; keine neue Screenreader- oder fachliche
+Gesamtabnahme wird behauptet.
+
 ## Startlogo-Korrektur – 12. Oktober 2026
 
 Auf `codex/viewer-startup-logo`, ausgehend von `main` nach PR #16 (`1469c3c`),

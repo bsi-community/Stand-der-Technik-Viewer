@@ -693,6 +693,22 @@
                 <div class="note">
                   Hinweis: GitHub-Blob-Links werden automatisch auf Raw-URLs umgeschrieben.
                 </div>
+                <div id="mappingRepositoryControls" hidden>
+                  <label class="field-label" for="bsiMappingSelect">
+                    Direkt aus dem öffentlichen BSI Stand der Technik GitHub Repository laden
+                  </label>
+                  <select
+                    id="bsiMappingSelect"
+                    class="input repository-select"
+                    aria-describedby="bsiMappingStatus"
+                    disabled
+                  >
+                    <option value="">Repository-Inhalte werden geladen…</option>
+                  </select>
+                  <div id="bsiMappingStatus" class="note" aria-live="polite">
+                    Aktuelle Liste der Mappings wird von GitHub abgerufen.
+                  </div>
+                </div>
               </div>
               <div style="margin-top: 10px; display: grid; gap: 8px">
                 <label class="field-label" for="mappingDatasetSelect">Geladene Mappings</label>

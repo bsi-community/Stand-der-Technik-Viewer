@@ -80,3 +80,14 @@ deren 40-×-40-Abmessungen, den Texttitel und das 24-×-24-Home-Symbol. Kein Auf
 des alten PNG darf erfolgen. Danach werden die Antworten freigegeben und der
 reguläre Start sowie die Home-Navigation geprüft, bei 375 und 1280 Pixeln in allen
 drei Browser-Engines. Der Build-Vertrag schützt zusätzlich die initiale HTML-Ausgabe.
+
+## Öffentliche Mapping-Bibliothek
+
+`tests/e2e/repository-mappings.spec.js` prüft die dritte Modellkachel einschließlich
+Tastaturnavigation, Suche, beide Dropdowns, verschachtelte und URL-kodierte Pfade,
+Aktualisierung beim Neustart trotz Metadaten-Cache, verzögertes Laden, leere und
+fehlgeschlagene bzw. unvollständige Repositoryantworten, erneuten Abruf,
+fehlgeschlagene Mapping-Downloads sowie schmale Ansichten. Die regulären Prüfungen
+ersetzen GitHub-Antworten durch synthetische Daten und laufen in allen drei Engines.
+Die macOS-KERN-Startseitenbilder müssen die dritte Kachel berücksichtigen; die
+historische Legacy-Referenz bleibt unverändert.

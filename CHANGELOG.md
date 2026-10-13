@@ -6,6 +6,11 @@ Das Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1
 
 ## Unveröffentlicht
 
+### Hinzugefügt
+
+- KERN-Startseite mit dritter Kachel „Mappings“, Suche nach Mapping-Dokumenten und direktem Öffnen in der Mappingansicht.
+- Mapping-Repositoryauswahl unter Dateiupload und als dritte Option im leeren Arbeitsbereich. JSON-Dateien aus `control_layer/Mappings/` einschließlich Themen-Unterordnern werden bei jedem Start frisch ermittelt; Metadaten-Cache, Lade-, Leer- und Fehlerzustände entsprechen den anderen Modellen.
+
 ### Behoben
 
 - Neues KERN-Logo bereits im initialen HTML mit festen Abmessungen hinterlegt. Das alte, zuvor kurzzeitig übergroß sichtbare PNG wird nur noch in der historischen Vergleichsansicht nach deren Stylesheet geladen. Auch das Home-Symbol besitzt feste Ausgangsmaße.
