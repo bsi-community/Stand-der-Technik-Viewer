@@ -501,6 +501,14 @@ automatisch ausgeblendet. Das gilt für Kataloge, Komponentendefinitionen und
 Mappings gleichermaßen. Browserprüfungen decken Ablauf, Navigation, Entfernen
 und den Schutz neuer Lade-/Fehlermeldungen vor alten Timern ab.
 
+## CLI-Befehle in Implementierungsbeschreibungen (15. Oktober 2026)
+
+Der vorhandene KERN-Aufklappbereich für Konfiguration/CLI steht innerhalb der
+einzeln aufklappbaren Implementierungsbeschreibung vor den Anmerkungen. Im
+gekürzten Zustand ist er unsichtbar und nicht per Tastatur erreichbar. Der
+Druck zeigt weiterhin die vollständigen Befehle. KERN-Bausteine, Schrift und
+offene manuelle Abnahmen bleiben unverändert.
+
 ## Verbleibende Abnahmen und Nacharbeiten
 
 1. BundesSans-Webfonts nach Bereitstellung einbinden; anschließend Schriftmetriken,

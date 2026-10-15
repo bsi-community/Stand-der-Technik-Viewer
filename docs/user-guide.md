@@ -376,12 +376,12 @@ Der Button springt direkt zur passenden Komponente in der Komponentenansicht und
 
 Unter Komponenten und optional auch unter Capabilities werden `Control Implementations` mit Quelle und zugeordneten Anforderungen angezeigt.
 
-Das aufklappbare Feld `Implementierungsbeschreibungen` zeigt die zugeordneten Anforderungen unmittelbar in einer Tabelle:
+Das aufklappbare Feld `Anforderungserfüllung` zeigt die zugeordneten Anforderungen unmittelbar in einer Tabelle:
 
 - linke Spalte `Anforderung`: fett hervorgehobene Control-ID, Control-Titel und Prose-Text aus einem parallel geladenen Catalog
 - rechte Spalte `Implementierungsbeschreibung`: Description des `Implemented Requirement` und, falls vorhanden, die Descriptions seiner `Statements`
 
-Die Description der jeweiligen `Control Implementation` steht direkt unter der Quellenangabe und vor der Tabelle. Unterhalb der Tabelle erscheint nur dann ein aufklappbares Feld `Remarks`, wenn mindestens ein `Implemented Requirement` einen Remarks-Text enthält.
+Die Description der jeweiligen `Control Implementation` steht direkt unter der Quellenangabe und vor der Tabelle. Lange Implementierungsbeschreibungen werden zunächst gekürzt dargestellt und lassen sich mit `Gesamten Text anzeigen` aufklappen. Das Dropdown `Konfiguration / CLI` mit den Befehlen des Requirements steht innerhalb dieser Beschreibung nach dem CLI-Abschnitt und vor den `Anmerkungen`. Es erscheint erst beim Aufklappen der einzelnen Beschreibung, auch wenn deren Text kurz ist. Ohne CLI-Abschnitt steht es am Ende des Beschreibungstextes vor den Anmerkungen. Anmerkungen aus `implemented-requirement.remarks` erscheinen bei der jeweiligen Anforderung.
 
 Ist kein passender Catalog geladen, weist die linke Spalte darauf hin. Die Implementierungsbeschreibungen aus der Component Definition bleiben trotzdem sichtbar.
 

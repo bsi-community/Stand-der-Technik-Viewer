@@ -116,3 +116,12 @@ Anmerkungen. Zusätzlich werden Tastaturbedienung der Metadaten, Quellenwechsel,
 fehlende Titel und sichere Titel-Markupdarstellung geprüft. Die Fälle laufen in
 Chromium, Firefox und WebKit. Layout-Screenshots werden als Prüfartefakte erzeugt;
 die bestehenden KERN-Komponentenbilder berücksichtigen den neuen Dokumenttitel.
+
+## CLI-Befehle in Implementierungsbeschreibungen
+
+`component-cli.spec.js` prüft die Reihenfolge CLI-Text, Befehlsdropdown und
+Anmerkungen sowie das Ein- und Ausklappen bei 1440 und 375 Pixeln in allen drei
+Browser-Engines. Kurze und fehlende Beschreibungen, fehlende Befehle,
+Tastaturbedienung, verborgene Bedienelemente, Suchtreffer und die vollständige
+Druckkopie sind abgedeckt. Screenshots der aufgeklappten Beschreibungen liegen
+als Testartefakte vor. Der Druckdialog selbst wird weiterhin ersetzt.

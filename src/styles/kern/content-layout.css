@@ -770,6 +770,12 @@ mark.search-hit {
   white-space: normal;
   display: none;
 }
+/* Keep commands out of the collapsed preview and keyboard order, but available in print. */
+@media screen {
+  .description-collapse:not(.is-expanded) .config-command-section {
+    display: none;
+  }
+}
 .config-command-section {
   width: 100%;
   max-width: 100%;
