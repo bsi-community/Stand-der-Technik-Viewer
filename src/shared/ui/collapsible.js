@@ -26,8 +26,10 @@ export function syncCollapsibleDescription(wrapper) {
     Math.max(4, Math.ceil(lineHeight * 0.28)) + 'px',
   );
 
-  var hasCollapsedRemarks = !!content.querySelector('.implemented-requirement-remarks');
-  var hasOverflow = hasCollapsedRemarks || content.scrollHeight > clampHeight + 1;
+  var hasCollapsedSections = !!content.querySelector(
+    '.implemented-requirement-remarks, .config-command-section',
+  );
+  var hasOverflow = hasCollapsedSections || content.scrollHeight > clampHeight + 1;
   wrapper.classList.toggle('has-overflow', hasOverflow);
   toggle.hidden = !hasOverflow;
   if (!hasOverflow) {

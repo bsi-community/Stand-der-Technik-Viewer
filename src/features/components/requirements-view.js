@@ -109,7 +109,8 @@ export function renderImplementationRequirementsTable(impl, searchTerm) {
       var hasDescription = false;
       var hasRequirementDescription = !!String(req.description || '').trim();
       var hasRequirementRemarks = !!String(req.remarks || '').trim();
-      if (hasRequirementDescription || hasRequirementRemarks) {
+      var hasConfigCommands = Array.isArray(req.configCommands) && req.configCommands.length > 0;
+      if (hasRequirementDescription || hasRequirementRemarks || hasConfigCommands) {
         var reqDescription = document.createElement('div');
         reqDescription.className =
           'implementation-description catalog-md js-collapsible-description';
@@ -120,12 +121,9 @@ export function renderImplementationRequirementsTable(impl, searchTerm) {
             searchTerm,
           );
         }
+        appendConfigCommands(reqDescription, req, searchTerm);
         appendImplementedRequirementRemarks(reqDescription, req, searchTerm);
         implementationCell.appendChild(reqDescription);
-        hasDescription = true;
-      }
-
-      if (appendConfigCommands(implementationCell, req, searchTerm)) {
         hasDescription = true;
       }
 
