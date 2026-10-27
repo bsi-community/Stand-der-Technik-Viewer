@@ -50,7 +50,12 @@ alle drei Dokumenttypen Ablauf und Bereinigung der Erfolgsmeldung sowie den
 Schutz neuer Lade-/Fehlerzustände vor älteren Timern.
 
 Der reguläre Ubuntu-Workflow führt die funktionalen Tests und den Legacy-Vergleich
-aus. `test:kern-visual` ist eine zusätzliche macOS-Prüfung mit festen Fira-Sans-
+im versions- und digestgebundenen offiziellen Playwright-Container aus.
+`ci-workflow.test.js` prüft die Übereinstimmung der Image-Version mit den drei
+Playwright-Paketen im Lockfile sowie den Containerbenutzer 1001.
+`scripts/check-ci-browsers.mjs` prüft vor der Suite den Start aller drei Browser.
+Browser und Linux-Bibliotheken sind vorinstalliert;
+es werden keine Prüfungen wegen langsamer APT-Downloads ausgelassen. `test:kern-visual` ist eine zusätzliche macOS-Prüfung mit festen Fira-Sans-
 Referenzen. Die bisher eingecheckten Bilder stammen aus der Migration; die neue
 Logo-Kopfzeile erfordert eine bewusste Sichtprüfung und Aktualisierung. Kein
 normales Testkommando darf die Sollbilder automatisch überschreiben.
@@ -131,7 +136,8 @@ als Testartefakte vor. Der Druckdialog selbst wird weiterhin ersetzt.
 `catalog-parts.test.js` prüft den Erhalt von Titeln, wiederholten Part-Typen und
 Unterabschnitten im Katalogmodell einschließlich Suchtext und fehlender Felder.
 `catalog-parts.spec.js` prüft jeden Part einzeln und in Quellreihenfolge, eigene
-Titel und Fallbacks, die feste Bezeichnung „Anforderung“, sichere Titelanzeige,
+Titel und Fallbacks (einschließlich „Prüfmethode“/„Prüfziel“ bei fehlenden, leeren
+oder nur aus Leerzeichen bestehenden Assessment-Titeln), die feste Bezeichnung „Anforderung“, sichere Titelanzeige,
 Parameter, Listen, Suchtreffer in späteren und verschachtelten Parts,
 Tastaturbedienung, lange Titel bei 1440, 375 und 320 Pixeln sowie die vollständige
 Druckkopie ohne Änderung des Arbeitsbereichs. Auch 40 gleichnamige Parts mit

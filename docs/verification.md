@@ -1,5 +1,50 @@
 # Prüfstände und historische Nachweise
 
+## PR #23: Abbruch beim Linux-Browsersetup – 27. Oktober 2026
+
+Die beiden Läufe für `f134bc9` endeten am unveränderten 20-Minuten-Joblimit:
+[PR-Lauf 40486337414](https://github.com/bsi-community/Stand-der-Technik-Viewer/actions/runs/40486337414)
+und [Push-Lauf 40486288985](https://github.com/bsi-community/Stand-der-Technik-Viewer/actions/runs/40486288985).
+Im PR-Lauf dauerte allein der APT-Download von 119 MB über
+`azure.archive.ubuntu.com` 13 Minuten 59 Sekunden. Danach liefen die Prüfungen
+fehlerfrei bis zum Jobabbruch während WebKit; im Push-Lauf wurde bereits die
+Installation abgebrochen. Es lag kein fehlgeschlagener Assessment-Part-Test vor.
+
+Der Prüfjob verwendet jetzt das offizielle Image `mcr.microsoft.com/playwright:v1.63.0-noble`
+mit festgeschriebenem Registry-Digest und vorinstallierten Browsern sowie
+Linux-Bibliotheken. Die Image-Version entspricht sämtlichen Playwright-Paketen
+im Lockfile; ein neuer Unit-Test sichert diese Zuordnung bei Updates ab.
+Der erste Containerlauf (`3e5c7d1`) beseitigte den langen Download, deckte jedoch
+eine zusätzliche Benutzerkonfiguration auf: Chromium und WebKit bestanden alle
+250 Fälle, während Firefox den Start als root mit einem fremden Home-Verzeichnis
+verweigerte. Der Container läuft deshalb mit UID 1001 gemäß der Playwright-
+GitHub-Actions-Anleitung. Ein vorgelagerter Browserstartcheck prüft alle drei
+Engines, bevor die vollständige Suite beginnt.
+
+Es entfallen nur die APT-/Browserinstallationen, keine Tests. Joblimit,
+Deploymentbedingungen und Referenzbilder bleiben unverändert.
+
+Lokal erfolgreich: Lint, vollständige Formatprüfung, TypeScript und
+76 Unit-/Architekturtests. Die Registry bestätigt das gepinnte Image für Linux
+amd64 und arm64. Ein lokaler Linux-Containerlauf fand wegen des inaktiven
+Docker-Daemons nicht statt. Die maßgebliche Linux-Validierung erfolgt im
+`verify`-Check von [PR #23](https://github.com/bsi-community/Stand-der-Technik-Viewer/pull/23/checks).
+
+## Deutsche Assessment-Überschriften – 27. Oktober 2026
+
+Auf `codex/catalog-assessment-labels`, ausgehend von `origin/main` (`34eeb2b`,
+PR #22), wurden die Standardüberschriften „Prüfmethode“ und „Prüfziel“ ergänzt.
+Die erweiterten synthetischen Part-Fixtures prüfen fehlende, leere und aus
+Leerzeichen bestehende Titel, eigene Titel sowie verschachtelte Assessment-Parts
+in der Katalog- und Druckansicht.
+
+Erfolgreich: Lint, vollständige Formatprüfung, TypeScript, 75 Unit-/Architekturtests,
+15 gezielte Part-Browserfälle und 21 Release-Browserfälle in Chromium, Firefox
+und WebKit. Entwicklungs- und Release-Build bestehen die Artefaktprüfung;
+alle zehn Legacy-Bildvergleiche sind pixelidentisch. Der vollständige reguläre
+Browserlauf wurde für diese reine Überschriftenergänzung nicht erneut ausgeführt.
+Die Änderungen sind lokal vorbereitet, nicht committet oder gepusht.
+
 ## Control-Parts und eigene Titel – 27. Oktober 2026
 
 Vorbereitet auf `codex/catalog-part-titles`, ausgehend von `origin/main`
