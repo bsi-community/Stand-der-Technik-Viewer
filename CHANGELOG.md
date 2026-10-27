@@ -18,6 +18,8 @@ Das Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1
 
 ### Behoben
 
+- Der aufklappbare Bereich für `guidance` in der Katalogansicht heißt „Hinweise“.
+
 - Konfiguration/CLI-Befehle stehen innerhalb der aufklappbaren Implementierungsbeschreibung direkt nach der Beschreibung (einschließlich CLI) und vor den Anmerkungen. Der Befehlsbereich wird erst beim Aufklappen der einzelnen Beschreibung sichtbar; auch kurze Beschreibungen mit Befehlen bleiben aufklappbar.
 
 - Einheitliches Metadatenlayout in Katalog-, Komponenten- und Mappingansicht: Anmerkungen, Beschreibungen und strukturierte Angaben belegen eine eigene Zeile über die verfügbare Breite. Kurze Angaben bleiben kompakt nebeneinander; schmale Ansichten umbrechen ohne horizontalen Seitenüberlauf.

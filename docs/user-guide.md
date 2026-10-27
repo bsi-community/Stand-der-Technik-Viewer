@@ -244,9 +244,9 @@ Für die spätere Identifizierung des tatsächlich verwendeten Stands sollten Ma
 
 ### Detaildarstellung pro Anforderung
 
-- `Statement`
-- `Guidance`
-- `Remarks`
+- `Anforderung` (`statement`)
+- `Hinweise` (`guidance`)
+- `Anmerkungen` (`remarks`)
 - weitere `parts`
 - Beziehungen:
   - `required`
