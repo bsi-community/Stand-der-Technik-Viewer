@@ -1,5 +1,13 @@
 # KERN UX: aktueller Stand und Migrationshistorie
 
+## Deutsche Assessment-Überschriften – 27. Oktober 2026
+
+Die bestehenden KERN-Aufklappbereiche verwenden für `assessment-method` ohne
+eigenen Titel „Prüfmethode“ und für `assessment-objective` „Prüfziel“.
+Leere oder nur aus Leerzeichen bestehende Titel verwenden ebenfalls diese
+Standardtexte. Eigene Titel behalten Vorrang, auch in Unterabschnitten und in
+der Druckkopie. Die bisherigen offenen Abnahmen bleiben unverändert.
+
 ## Control-Parts und eigene Titel – 27. Oktober 2026
 
 Die Katalogansicht verwendet für jeden Control-Part einen eigenen nativen

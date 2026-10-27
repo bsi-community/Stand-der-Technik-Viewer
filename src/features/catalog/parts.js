@@ -2,6 +2,12 @@
 import { renderMarkupWithParams, renderTextWithParams } from '../../shared/markup.js';
 import { containsAnySearchTerm, parseSearchQuery } from '../../shared/search.js';
 
+const partLabels = new Map([
+  ['guidance', 'Hinweise'],
+  ['assessment-method', 'Prüfmethode'],
+  ['assessment-objective', 'Prüfziel'],
+]);
+
 export function renderCatalogParts(parts, paramMap, query) {
   const searchQuery = parseSearchQuery(query);
   function renderPart(part) {
@@ -13,7 +19,7 @@ export function renderCatalogParts(parts, paramMap, query) {
     const label =
       part.name === 'statement'
         ? 'Anforderung'
-        : title || (part.name === 'guidance' ? 'Hinweise' : part.name || part.id || 'Part');
+        : title || partLabels.get(part.name) || part.name || part.id || 'Part';
     const matched =
       containsAnySearchTerm(title + ' ' + prose, searchQuery) ||
       children.some((child) => child.matched);

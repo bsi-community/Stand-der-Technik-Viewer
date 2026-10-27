@@ -25,7 +25,7 @@ test('every part keeps its own label and content in source order, including nest
     'Anforderung',
     'Anforderung',
   ]);
-  await expect(card.locator('.catalog-part > .catalog-md')).toHaveCount(19);
+  await expect(card.locator('.catalog-part > .catalog-md')).toHaveCount(25);
   await expect(card.locator('.catalog-part img, .catalog-part script')).toHaveCount(0);
   await expect(card.locator('.catalog-part > summary strong strong')).toHaveText(
     'Formatierter Titel',

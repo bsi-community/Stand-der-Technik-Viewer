@@ -1,5 +1,20 @@
 # Prüfstände und historische Nachweise
 
+## Deutsche Assessment-Überschriften – 27. Oktober 2026
+
+Auf `codex/catalog-assessment-labels`, ausgehend von `origin/main` (`34eeb2b`,
+PR #22), wurden die Standardüberschriften „Prüfmethode“ und „Prüfziel“ ergänzt.
+Die erweiterten synthetischen Part-Fixtures prüfen fehlende, leere und aus
+Leerzeichen bestehende Titel, eigene Titel sowie verschachtelte Assessment-Parts
+in der Katalog- und Druckansicht.
+
+Erfolgreich: Lint, vollständige Formatprüfung, TypeScript, 75 Unit-/Architekturtests,
+15 gezielte Part-Browserfälle und 21 Release-Browserfälle in Chromium, Firefox
+und WebKit. Entwicklungs- und Release-Build bestehen die Artefaktprüfung;
+alle zehn Legacy-Bildvergleiche sind pixelidentisch. Der vollständige reguläre
+Browserlauf wurde für diese reine Überschriftenergänzung nicht erneut ausgeführt.
+Die Änderungen sind lokal vorbereitet, nicht committet oder gepusht.
+
 ## Control-Parts und eigene Titel – 27. Oktober 2026
 
 Vorbereitet auf `codex/catalog-part-titles`, ausgehend von `origin/main`

@@ -18,6 +18,8 @@ Das Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1
 
 ### Behoben
 
+- Assessment-Parts ohne eigenen Titel erhalten deutsche Überschriften: „Prüfmethode“ für `assessment-method` und „Prüfziel“ für `assessment-objective`. Eigene Titel behalten Vorrang; dies gilt auch für verschachtelte Parts und die Druckansicht.
+
 - Die Katalogansicht zeigt alle wiederholten und verschachtelten Control-Parts einzeln. Vorhandene Part-Titel haben Vorrang vor der bisherigen Bezeichnung; `statement` heißt immer „Anforderung“, `guidance` ohne Titel weiterhin „Hinweise“. Part-Titel und Unterabschnitte werden auch bei Suche und Druck berücksichtigt.
 
 - Konfiguration/CLI-Befehle stehen innerhalb der aufklappbaren Implementierungsbeschreibung direkt nach der Beschreibung (einschließlich CLI) und vor den Anmerkungen. Der Befehlsbereich wird erst beim Aufklappen der einzelnen Beschreibung sichtbar; auch kurze Beschreibungen mit Befehlen bleiben aufklappbar.
