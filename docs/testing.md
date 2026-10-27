@@ -52,7 +52,9 @@ Schutz neuer Lade-/Fehlerzustände vor älteren Timern.
 Der reguläre Ubuntu-Workflow führt die funktionalen Tests und den Legacy-Vergleich
 im versions- und digestgebundenen offiziellen Playwright-Container aus.
 `ci-workflow.test.js` prüft die Übereinstimmung der Image-Version mit den drei
-Playwright-Paketen im Lockfile. Browser und Linux-Bibliotheken sind vorinstalliert;
+Playwright-Paketen im Lockfile sowie den Containerbenutzer 1001.
+`scripts/check-ci-browsers.mjs` prüft vor der Suite den Start aller drei Browser.
+Browser und Linux-Bibliotheken sind vorinstalliert;
 es werden keine Prüfungen wegen langsamer APT-Downloads ausgelassen. `test:kern-visual` ist eine zusätzliche macOS-Prüfung mit festen Fira-Sans-
 Referenzen. Die bisher eingecheckten Bilder stammen aus der Migration; die neue
 Logo-Kopfzeile erfordert eine bewusste Sichtprüfung und Aktualisierung. Kein

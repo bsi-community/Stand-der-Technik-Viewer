@@ -3,6 +3,8 @@ import { test, expect } from 'vitest';
 
 test('CI browser image is pinned and matches the locked Playwright packages', () => {
   const workflow = readFileSync('.github/workflows/verify-and-deploy.yml', 'utf8');
+  expect(workflow).toMatch(/^\s+options:.*--user 1001(?:\s|$)/m);
+  expect(workflow).toContain('run: node scripts/check-ci-browsers.mjs');
   const lock = JSON.parse(readFileSync('package-lock.json', 'utf8'));
   const image = workflow.match(
     /^\s+image: mcr\.microsoft\.com\/playwright:v(\d+\.\d+\.\d+)-noble@sha256:[a-f0-9]{64}$/m,

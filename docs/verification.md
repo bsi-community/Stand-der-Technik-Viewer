@@ -14,6 +14,13 @@ Der Prüfjob verwendet jetzt das offizielle Image `mcr.microsoft.com/playwright:
 mit festgeschriebenem Registry-Digest und vorinstallierten Browsern sowie
 Linux-Bibliotheken. Die Image-Version entspricht sämtlichen Playwright-Paketen
 im Lockfile; ein neuer Unit-Test sichert diese Zuordnung bei Updates ab.
+Der erste Containerlauf (`3e5c7d1`) beseitigte den langen Download, deckte jedoch
+eine zusätzliche Benutzerkonfiguration auf: Chromium und WebKit bestanden alle
+250 Fälle, während Firefox den Start als root mit einem fremden Home-Verzeichnis
+verweigerte. Der Container läuft deshalb mit UID 1001 gemäß der Playwright-
+GitHub-Actions-Anleitung. Ein vorgelagerter Browserstartcheck prüft alle drei
+Engines, bevor die vollständige Suite beginnt.
+
 Es entfallen nur die APT-/Browserinstallationen, keine Tests. Joblimit,
 Deploymentbedingungen und Referenzbilder bleiben unverändert.
 

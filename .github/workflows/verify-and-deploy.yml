@@ -21,7 +21,8 @@ jobs:
     # Keep the version in sync with @playwright/test in package-lock.json.
     container:
       image: mcr.microsoft.com/playwright:v1.63.0-noble@sha256:eff16c30e6f3f4af0a03fa4b706120d5e9b0891c344a27d64559aff5900a4a27
-      options: --init --ipc=host
+      # Match the runner-owned workspace and HOME; Firefox rejects root with a user-owned HOME.
+      options: --init --ipc=host --user 1001
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -32,6 +33,8 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
+      - name: Check browser startup
+        run: node scripts/check-ci-browsers.mjs
       - run: npm run check
       - run: npm run test:baseline
       - run: npm run build:release

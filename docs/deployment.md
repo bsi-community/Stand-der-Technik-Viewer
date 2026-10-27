@@ -51,7 +51,11 @@ Der Basis-Pfad ist in `vite.config.js` auf `/Stand-der-Technik-Viewer/` festgele
 Der Job `verify` läuft im offiziellen Playwright-Container für Ubuntu Noble.
 Image-Version und SHA-256-Digest sind im Workflow festgelegt; die Version muss
 mit `@playwright/test`, `playwright` und `playwright-core` im Lockfile übereinstimmen.
+Der Container läuft mit Benutzer-ID 1001, passend zum Eigentümer der von GitHub
+bereitgestellten Arbeits- und Home-Verzeichnisse. Damit kann auch Firefox starten.
 Chromium, Firefox, WebKit und ihre Linux-Systembibliotheken sind vorinstalliert.
+`Check browser startup` startet und schließt jeden Browser einmal vor der Testsuite;
+fehlende Browser oder Berechtigungsprobleme brechen dadurch früh mit Diagnose ab.
 `npm ci` installiert weiterhin die festgelegten Projektpakete; ein zusätzlicher
 `playwright install --with-deps`-Schritt ist in CI nicht erforderlich.
 Damit hängt die Prüfdauer nicht mehr von APT-Downloads des Ubuntu-Mirrors ab.
