@@ -208,7 +208,7 @@ export function renderCard(c) {
     for (const disclosure of details.querySelectorAll('details')) kernDetails(disclosure);
     const labels = {
       Statement: 'Anforderung',
-      Guidance: 'Umsetzungshinweise',
+      Guidance: 'Hinweise',
       Remarks: 'Anmerkungen',
     };
     for (const strong of details.querySelectorAll('summary > strong')) {

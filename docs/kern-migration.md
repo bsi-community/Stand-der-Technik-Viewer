@@ -139,7 +139,7 @@ Observer auf den drei Auswahlzusammenfassungen aktualisiert die persistente Live
   zusammengefasst. URL-Buttons sind während ihrer Anfrage deaktiviert.
 - Vor dem Hinzufügen einer lokalen Quelle wird der OSCAL-Dokumenttyp geprüft.
   Ungültige Dateien verdrängen keinen bereits gültig geladenen Katalog.
-- Die Anforderung zeigt „Anforderung“, „Umsetzungshinweise“ und „Anmerkungen“ als
+- Die Anforderung zeigt „Anforderung“, „Hinweise“ und „Anmerkungen“ als
   deutsche UI-Beschriftungen; die zugrunde liegenden OSCAL-Feldnamen und JSON-Daten
   bleiben unverändert. Rich Text, Parameter und Aufwand-Tooltips bleiben erhalten.
 
