@@ -1,5 +1,33 @@
 # Prüfstände und historische Nachweise
 
+## Control-Parts und eigene Titel – 27. Oktober 2026
+
+Vorbereitet auf `codex/catalog-part-titles`, ausgehend von `origin/main`
+(`55c4d74`, PR #21). Alle Control-Parts bleiben in Quellreihenfolge erhalten,
+einschließlich gleicher Namen/Titel und verschachtelter Unterabschnitte.
+Titel haben Vorrang vor den bisherigen Bezeichnungen; `statement` bleibt
+„Anforderung“. Synthetische Fixtures prüfen Titel-Fallbacks, sichere
+Markupdarstellung, Parameter, Listen, Suche, Tastatur und Druckkopie.
+
+Erfolgreich: Lint, vollständige Formatprüfung, TypeScript, 75 Unit-/Architekturtests,
+375 reguläre Browserfälle und 21 Release-Browserfälle in Chromium, Firefox und
+WebKit ohne Test-Retries. Entwicklungs- und Release-Build bestehen die
+Artefaktprüfung. Alle zehn Legacy-Bildvergleiche sind pixelidentisch; die
+Referenzen wurden nicht angepasst.
+
+Zusätzlich wurde der lokal bereitgestellte `tr-03183-1-resolved_catalog.json`
+im Release-Build in allen drei Browsern geladen: 134 Controls, 563 Parts,
+alle Part-Überschriften gegen die Quelle geprüft. Bei 1440 und 375 Pixeln
+kein horizontaler Seitenüberlauf und keine JavaScript-Fehler; Desktop- und
+Mobilbilder wurden gesichtet. Der Katalog selbst wird nicht eingecheckt.
+Die synthetischen Browsertests prüfen lange Part-Titel zusätzlich bei 320 Pixeln.
+
+Die Änderung ist lokal vorbereitet, nicht committet oder gepusht. Der separate
+macOS-KERN-Referenzbildlauf wurde für diese Änderung nicht ausgeführt; stattdessen
+wurden gezielte Desktop-/Mobilbilder der geänderten Part-Darstellung erstellt.
+Druckvorbereitung wurde mit ersetztem Druckdialog geprüft, kein echter PDF-Export.
+CI, Deployment und eine echte Screenreader-Abnahme werden nicht behauptet.
+
 ## Metadatenlayout und Komponententitel – 13. Oktober 2026
 
 Branch `codex/viewer-metadata-layout` auf `origin/main` nach PR #18 (`6bde8f9`):

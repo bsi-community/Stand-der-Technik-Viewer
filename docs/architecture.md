@@ -28,6 +28,14 @@ anschließende UI-Entscheidung in [ADR 0003](adr/0003-kern-ui.md).
 
 `domain/catalog.js` und `domain/mapping.js` liefern Datenmodelle ohne DOM-Zugriff. `app/catalog.js` und `app/mapping.js` übernehmen anschließend Zustandswechsel und UI-Effekte. Komponenten benötigen zusätzlich bereits geladene Kataloge und importierte Definitionen; diese zustandsabhängige Koordination ist ausdrücklich in `app/components.js` und `app/catalog-lookup.js` untergebracht, nicht als vermeintlich reiner Parser im Domain-Layer.
 
+Das Katalogmodell erhält bei Control-Parts auch `title` und die verschachtelte
+`parts`-Struktur. Suchtexte enthalten Titel und Prosa aller Ebenen.
+`features/catalog/parts.js` rendert in KERN jeden Part einzeln in Quellreihenfolge
+und öffnet bei Suchtreffern die zugehörigen Elternabschnitte. Die bisherigen
+skalaren `statement`-/`guidance`-Kurztexte bleiben für bestehende Verweisansichten
+und den historischen Legacy-Vergleich erhalten; die vollständige Katalogkarte
+liest direkt aus dem Part-Baum.
+
 `app/bootstrap.js` ist der Composition Root: Er initialisiert Zustandscontainer, verbindet Anwendungsaktionen und bindet Ereignisse. `app/actions.js` stellt die dabei verbundenen Rückrufe für Ansichten bereit. So können etwa eine Karte zur Navigation auffordern und die Navigation Ansichten aktualisieren, ohne zyklische Modulimporte. Die Verbindungen werden vor der ersten Benutzerinteraktion hergestellt. Kein dynamisches Plugin-System und kein Event-Bus mit versteckten Ereignisnamen.
 
 Der Architekturtest prüft existierende Imports, Zyklenfreiheit und die Abhängigkeitsgrenze des Domain-Layers. Bestehende imperative DOM-Renderer dürfen weiterhin auf ihren expliziten Zustandscontainer zugreifen. Das ist eine bewusste Migrationsgrenze, keine Behauptung einer vollständig zustandsfreien Anwendung. Insbesondere einige formatierende UI-Helfer verwenden den aktuellen Ressourcen- und Suchkontext.

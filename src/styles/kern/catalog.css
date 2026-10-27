@@ -172,3 +172,11 @@ summary {
   font: 500 1.125rem/1.5 var(--viewer-font);
   color: var(--text);
 }
+
+.catalog-part > summary {
+  overflow-wrap: anywhere;
+}
+
+.catalog-part > summary > strong {
+  min-width: 0;
+}
