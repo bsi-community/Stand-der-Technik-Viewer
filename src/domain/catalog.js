@@ -21,6 +21,27 @@ import {
 } from './properties.js';
 import { ObjMap } from '../shared/collections.js';
 
+// Preserve the part tree: repeated names identify separate sections, not unique fields.
+function normalizeParts(parts) {
+  if (!Array.isArray(parts)) return [];
+  return parts
+    .filter((part) => part && typeof part === 'object')
+    .map((part) => ({
+      id: part.id,
+      name: part.name,
+      title: part.title || '',
+      prose: part.prose || '',
+      props: part.props || [],
+      parts: normalizeParts(part.parts),
+    }));
+}
+
+function partSearchText(parts) {
+  return parts
+    .map((part) => [part.title, part.prose, partSearchText(part.parts)].join(' '))
+    .join(' ');
+}
+
 export function parseCatalog(root, previous = createCatalogState()) {
   const state = { ...previous };
   state.controls = [];
@@ -90,11 +111,7 @@ export function parseCatalog(root, previous = createCatalogState()) {
     var effortInfo = extractEffortInfo(c.props);
     var effort = effortInfo.value;
     var effortLabel = effortInfo.label;
-    var parts = Array.isArray(c.parts)
-      ? c.parts.map(function (p) {
-          return { id: p.id, name: p.name, prose: p.prose || '', props: p.props || [] };
-        })
-      : [];
+    var parts = normalizeParts(c.parts);
     var targetsArr = extractTargets(c.props, parts);
     if (controlDeclaresTargetObjectCategories(c.props, parts))
       state.hasTargetObjectCategories = true;
@@ -129,12 +146,6 @@ export function parseCatalog(root, previous = createCatalogState()) {
     var topicUuidVal = topicObj ? topicObj.uuid || '' : '';
 
     // build searchable haystack (for Volltextsuche)
-    var allProse = '';
-    if (parts) {
-      for (var pi = 0; pi < parts.length; pi++) {
-        if (parts[pi] && parts[pi].prose) allProse += ' ' + parts[pi].prose;
-      }
-    }
     var hay = [
       id,
       rawId,
@@ -156,7 +167,7 @@ export function parseCatalog(root, previous = createCatalogState()) {
       taxonomyL3,
       taxonomyL4,
       remarks,
-      allProse,
+      partSearchText(parts),
       topicIdVal,
       topicTitleVal,
     ]

@@ -1,5 +1,16 @@
 # KERN UX: aktueller Stand und Migrationshistorie
 
+## Control-Parts und eigene Titel – 27. Oktober 2026
+
+Die Katalogansicht verwendet für jeden Control-Part einen eigenen nativen
+KERN-Aufklappbereich. Wiederholte Part-Typen bleiben getrennt, verschachtelte
+Parts behalten ihre Zuordnung und Reihenfolge. Ein vorhandener Titel ersetzt
+die bisherige Bezeichnung; `statement` bleibt immer „Anforderung“.
+Suche, Tastaturbedienung, schmale Ansichten und Druckvorbereitung sind durch
+gezielte Regressionstests abgedeckt. Die historische Legacy-Darstellung bleibt
+für den Bildvergleich erhalten. BundesSans sowie echte Screenreader- und
+fachliche Gesamtabnahme bleiben offen.
+
 ## Metadatenlayout und Komponententitel – 13. Oktober 2026
 
 Auf `codex/viewer-metadata-layout`, ausgehend von `origin/main` nach PR #18

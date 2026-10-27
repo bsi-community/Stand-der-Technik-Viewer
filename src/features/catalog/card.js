@@ -1,6 +1,7 @@
 /** features/catalog/card: see docs/architecture.md for responsibilities. */
 import { renderList, switchTab } from '../../app/actions.js';
 import { catalogStore, uiStore } from '../../app/store.js';
+import { renderCatalogParts } from './parts.js';
 import { renderSecurityTargetMeta } from './security-targets.js';
 import { cssId } from '../../shared/dom.js';
 import { escapeHtml } from '../../shared/html.js';
@@ -147,7 +148,10 @@ export function renderCard(c) {
   bindEffortTooltip(body);
 
   var details = document.createElement('div');
-  if (c.statement) {
+  if (isKern()) {
+    details.append(renderCatalogParts(c.parts, c.paramMap, catalogStore.state.qRaw));
+  }
+  if (!isKern() && c.statement) {
     var st = document.createElement('details');
     st.open = true;
     st.innerHTML =
@@ -156,7 +160,7 @@ export function renderCard(c) {
       '</div>';
     details.appendChild(st);
   }
-  if (c.guidance) {
+  if (!isKern() && c.guidance) {
     var gu = document.createElement('details');
     if (containsAnySearchTerm(c.guidance, catalogStore.state.searchQuery)) {
       gu.open = true;
@@ -173,12 +177,14 @@ export function renderCard(c) {
       re.open = true;
     }
     re.innerHTML =
-      '<summary><strong>Remarks</strong></summary><div class="catalog-md">' +
+      '<summary><strong>' +
+      (isKern() ? 'Anmerkungen' : 'Remarks') +
+      '</strong></summary><div class="catalog-md">' +
       remarksHtml +
       '</div>';
     details.appendChild(re);
   }
-  if (Array.isArray(c.parts)) {
+  if (!isKern() && Array.isArray(c.parts)) {
     for (var p = 0; p < c.parts.length; p++) {
       var part = c.parts[p];
       if (!part || !part.prose) continue;
@@ -206,14 +212,6 @@ export function renderCard(c) {
     meta.remove();
     body.append(section);
     for (const disclosure of details.querySelectorAll('details')) kernDetails(disclosure);
-    const labels = {
-      Statement: 'Anforderung',
-      Guidance: 'Hinweise',
-      Remarks: 'Anmerkungen',
-    };
-    for (const strong of details.querySelectorAll('summary > strong')) {
-      if (labels[strong.textContent]) strong.textContent = labels[strong.textContent];
-    }
   }
 
   var required = [],

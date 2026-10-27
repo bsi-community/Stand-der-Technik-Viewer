@@ -244,10 +244,12 @@ Für die spätere Identifizierung des tatsächlich verwendeten Stands sollten Ma
 
 ### Detaildarstellung pro Anforderung
 
-- `Anforderung` (`statement`)
-- `Hinweise` (`guidance`)
-- `Anmerkungen` (`remarks`)
-- weitere `parts`
+- Jeder `part` wird einzeln in der Reihenfolge des Katalogs angezeigt, auch bei mehrfach gleichem `name` oder `title`. Verschachtelte Parts erscheinen unter ihrem übergeordneten Part.
+- `statement` heißt immer `Anforderung`, unabhängig von einem eigenen `title`, und ist zunächst aufgeklappt.
+- Alle anderen Part-Typen verwenden bevorzugt ihren eigenen, nicht leeren `title`. Fehlt dieser, bleibt die bisherige Bezeichnung erhalten: `Hinweise` für `guidance`, ansonsten der Part-Name, ersatzweise die ID oder `Part`.
+- Beispielsweise werden zwei `guidance`-Parts mit den Titeln `Assessment Guidance` und `Implementation Guidance` als zwei getrennte Bereiche angezeigt.
+- Part-Titel und Inhalte einschließlich Unterabschnitten sind durchsuchbar. Passende Bereiche und ihre übergeordneten Parts werden bei einer Suche aufgeklappt. Die PDF-Druckansicht enthält alle Parts vollständig.
+- `Anmerkungen` aus dem separaten Control-Feld `remarks`
 - Beziehungen:
   - `required`
   - `related`

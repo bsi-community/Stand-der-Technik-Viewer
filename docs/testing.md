@@ -125,3 +125,15 @@ Browser-Engines. Kurze und fehlende Beschreibungen, fehlende Befehle,
 Tastaturbedienung, verborgene Bedienelemente, Suchtreffer und die vollständige
 Druckkopie sind abgedeckt. Screenshots der aufgeklappten Beschreibungen liegen
 als Testartefakte vor. Der Druckdialog selbst wird weiterhin ersetzt.
+
+## Wiederholte und verschachtelte Control-Parts
+
+`catalog-parts.test.js` prüft den Erhalt von Titeln, wiederholten Part-Typen und
+Unterabschnitten im Katalogmodell einschließlich Suchtext und fehlender Felder.
+`catalog-parts.spec.js` prüft jeden Part einzeln und in Quellreihenfolge, eigene
+Titel und Fallbacks, die feste Bezeichnung „Anforderung“, sichere Titelanzeige,
+Parameter, Listen, Suchtreffer in späteren und verschachtelten Parts,
+Tastaturbedienung, lange Titel bei 1440, 375 und 320 Pixeln sowie die vollständige
+Druckkopie ohne Änderung des Arbeitsbereichs. Auch 40 gleichnamige Parts mit
+gleichem Titel müssen getrennt erhalten bleiben. Die Fixtures sind synthetisch;
+der echte Beispielkatalog wird nicht ins Repository übernommen.
