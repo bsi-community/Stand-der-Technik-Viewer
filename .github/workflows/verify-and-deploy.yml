@@ -17,6 +17,11 @@ jobs:
   verify:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    # Browser binaries and Linux libraries are preinstalled; no per-run APT downloads.
+    # Keep the version in sync with @playwright/test in package-lock.json.
+    container:
+      image: mcr.microsoft.com/playwright:v1.63.0-noble@sha256:eff16c30e6f3f4af0a03fa4b706120d5e9b0891c344a27d64559aff5900a4a27
+      options: --init --ipc=host
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -27,7 +32,6 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
-      - run: npx playwright install --with-deps chromium firefox webkit
       - run: npm run check
       - run: npm run test:baseline
       - run: npm run build:release

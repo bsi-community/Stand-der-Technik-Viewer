@@ -1,5 +1,28 @@
 # Prüfstände und historische Nachweise
 
+## PR #23: Abbruch beim Linux-Browsersetup – 27. Oktober 2026
+
+Die beiden Läufe für `f134bc9` endeten am unveränderten 20-Minuten-Joblimit:
+[PR-Lauf 40486337414](https://github.com/bsi-community/Stand-der-Technik-Viewer/actions/runs/40486337414)
+und [Push-Lauf 40486288985](https://github.com/bsi-community/Stand-der-Technik-Viewer/actions/runs/40486288985).
+Im PR-Lauf dauerte allein der APT-Download von 119 MB über
+`azure.archive.ubuntu.com` 13 Minuten 59 Sekunden. Danach liefen die Prüfungen
+fehlerfrei bis zum Jobabbruch während WebKit; im Push-Lauf wurde bereits die
+Installation abgebrochen. Es lag kein fehlgeschlagener Assessment-Part-Test vor.
+
+Der Prüfjob verwendet jetzt das offizielle Image `mcr.microsoft.com/playwright:v1.63.0-noble`
+mit festgeschriebenem Registry-Digest und vorinstallierten Browsern sowie
+Linux-Bibliotheken. Die Image-Version entspricht sämtlichen Playwright-Paketen
+im Lockfile; ein neuer Unit-Test sichert diese Zuordnung bei Updates ab.
+Es entfallen nur die APT-/Browserinstallationen, keine Tests. Joblimit,
+Deploymentbedingungen und Referenzbilder bleiben unverändert.
+
+Lokal erfolgreich: Lint, vollständige Formatprüfung, TypeScript und
+76 Unit-/Architekturtests. Die Registry bestätigt das gepinnte Image für Linux
+amd64 und arm64. Ein lokaler Linux-Containerlauf fand wegen des inaktiven
+Docker-Daemons nicht statt. Die maßgebliche Linux-Validierung erfolgt im
+`verify`-Check von [PR #23](https://github.com/bsi-community/Stand-der-Technik-Viewer/pull/23/checks).
+
 ## Deutsche Assessment-Überschriften – 27. Oktober 2026
 
 Auf `codex/catalog-assessment-labels`, ausgehend von `origin/main` (`34eeb2b`,

@@ -46,6 +46,25 @@ Nur ein Push oder manueller Workflowlauf auf `main` kann deployen. Pull Requests
 
 Der Basis-Pfad ist in `vite.config.js` auf `/Stand-der-Technik-Viewer/` festgelegt. Bei Repository-Umbenennung, Organisationswechsel oder eigener Domain Pfad, Testadressen, Links und Deployment-Dokumentation gemeinsam anpassen.
 
+### Browserumgebung der CI
+
+Der Job `verify` läuft im offiziellen Playwright-Container für Ubuntu Noble.
+Image-Version und SHA-256-Digest sind im Workflow festgelegt; die Version muss
+mit `@playwright/test`, `playwright` und `playwright-core` im Lockfile übereinstimmen.
+Chromium, Firefox, WebKit und ihre Linux-Systembibliotheken sind vorinstalliert.
+`npm ci` installiert weiterhin die festgelegten Projektpakete; ein zusätzlicher
+`playwright install --with-deps`-Schritt ist in CI nicht erforderlich.
+Damit hängt die Prüfdauer nicht mehr von APT-Downloads des Ubuntu-Mirrors ab.
+Das Job-Zeitlimit bleibt bei 20 Minuten; sämtliche Prüfungen bleiben verpflichtend.
+
+Bei Playwright-Updates die passende offizielle Image-Version und ihren Digest
+über die Microsoft Container Registry verifizieren und zusammen mit dem Lockfile
+aktualisieren. Der Unit-Test `ci-workflow.test.js` erkennt abweichende Versionen.
+Grundlage sind die [Playwright-CI-Anleitung](https://playwright.dev/docs/ci#via-containers)
+und die [Container-Dokumentation](https://playwright.dev/docs/docker).
+Der Container dient ausschließlich der Prüfung; Pages veröffentlicht weiterhin
+nur `dist-release/`. Die oben beschriebenen lokalen Installationsschritte bleiben gültig.
+
 ## Aktualisierung bei Lesezeichen-Aufrufen
 
 Beim dokumentierten Live-Abruf lieferte GitHub Pages HTML mit `Cache-Control: max-age=600`. Ein normaler Aufruf kann deshalb bis zu zehn Minuten alte Startseiten verwenden; verschiedene Query-Strings besitzen getrennte Cache-Einträge. Die gehashten JS-/CSS-Dateinamen allein lösen dies nicht, weil eine alte Startseite weiterhin die alten Dateien referenziert.
